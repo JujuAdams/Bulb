@@ -45,12 +45,21 @@ vertex_begin( vbf_dynamic_shadows, vft_shadow_geometry );
 with ( obj_dynamic_block ) if ( on_screen ) _lighting_add_occlusion( other.vbf_dynamic_shadows );
 vertex_end( vbf_dynamic_shadows );
 
-
+var _camera_l = camera_get_view_x( lighting_camera );
+var _camera_t = camera_get_view_y( lighting_camera );
+var _camera_w = camera_get_view_width( lighting_camera );
+var _camera_h = camera_get_view_height( lighting_camera );
+var _camera_r = _camera_l + _camera_w;
+var _camera_b = _camera_t + _camera_h;
 
 gpu_set_cullmode( lighting_self_lighting ? cull_counterclockwise : cull_noculling );
 //For each light on the screen...
 with ( obj_par_light ) {
-    
+	
+    on_screen = visible and rectangle_in_rectangle( x - light_w_half, y - light_h_half,
+                                                    x + light_w_half, y + light_h_half,
+								                    _camera_l, _camera_t, _camera_r, _camera_b );
+	
     //If they're on screen...
     if ( on_screen ) {
         
@@ -83,7 +92,7 @@ gpu_set_cullmode( argument0 );
 
 
 //Create composite lighting surface
-srf_lighting = surface_check( srf_lighting, __view_get( e__VW.WView, LIGHTING_VIEW ), __view_get( e__VW.HView, LIGHTING_VIEW ) );
+srf_lighting = surface_check( srf_lighting, _camera_w, _camera_h );
 surface_set_target( srf_lighting );
 	
     //Clear the surface with the ambient colour
@@ -91,7 +100,7 @@ surface_set_target( srf_lighting );
     
     //Use a cumulative blend mode to add lights together
     gpu_set_blendmode( bm_max );
-    with ( obj_par_light ) if ( on_screen ) draw_surface( srf_light, x - light_w_half - __view_get( e__VW.XView, LIGHTING_VIEW ), y - light_h_half - __view_get( e__VW.YView, LIGHTING_VIEW ) );
+    with ( obj_par_light ) if ( on_screen ) draw_surface( srf_light, x - light_w_half - _camera_l, y - light_h_half - _camera_t );
     gpu_set_blendmode( bm_normal );
 
 surface_reset_target();
@@ -99,5 +108,5 @@ surface_reset_target();
 
 
 gpu_set_blendmode_ext( bm_dest_color, bm_zero );
-draw_surface( srf_lighting, __view_get( e__VW.XView, LIGHTING_VIEW ), __view_get( e__VW.YView, LIGHTING_VIEW ) );
+draw_surface( srf_lighting, _camera_l, _camera_t );
 gpu_set_blendmode( bm_normal );

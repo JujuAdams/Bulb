@@ -1,4 +1,4 @@
-///lighting_start( ambient colour, self-lighting )
+///lighting_create( ambient colour, self-lighting )
 //
 //  Initialises the necessary variables for a controller object to use the lighting system.
 //  Should be called in one object per room.
@@ -18,32 +18,18 @@
 //  This code and engine are provided under the Creative Commons "Attribution - NonCommerical - ShareAlike" international license.
 //  https://creativecommons.org/licenses/by-nc-sa/4.0/
 
-#macro LIGHTING_VIEW 0
 #macro LIGHTING_Z_LIMIT 2000
 #macro LIGHTING_DYNAMIC_INCLUSION 256
 
+lighting_camera = argument0;
+
 //Assign the ambient colour used for the darkest areas of the screen. This can be changed on the fly.
-if ( argument_count >= 1 ) {
-    if ( argument[0] != noone ) {
-        lighting_ambient_colour = argument[0];
-    } else {
-        lighting_ambient_colour = c_black;
-    }
-} else {
-    lighting_ambient_colour = c_black;
-}
+lighting_ambient_colour = argument1;
 
 //If culling is switched on, shadows will only be cast from the rear faces of shadow casters.
 //This requires careful object placement as not to create weird graphical glitches.
-if ( argument_count >= 2 ) {
-    if ( argument[1] != noone ) {
-        lighting_self_lighting = argument[1];
-    } else {
-        lighting_self_lighting = false;
-    }
-} else {
-    lighting_self_lighting = false;
-}
+lighting_self_lighting = argument2;
+
 
 //--- Create vertex format for the shadow casting vertex buffers
 vertex_format_begin();

@@ -5,4 +5,3 @@ x = xprevious;
 y = yprevious;
 
 destroying = true;
-

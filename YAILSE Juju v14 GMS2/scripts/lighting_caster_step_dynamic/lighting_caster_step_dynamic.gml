@@ -15,7 +15,7 @@
 //  
 //  This code and engine are provided under the Creative Commons "Attribution - NonCommerical - ShareAlike" international license.
 //  https://creativecommons.org/licenses/by-nc-sa/4.0/
-
+/*
 if ( rectangle_in_rectangle( bbox_left, bbox_top,
                              bbox_right, bbox_left,
                              __view_get( e__VW.XView, LIGHTING_VIEW ) - LIGHTING_DYNAMIC_INCLUSION, __view_get( e__VW.YView, LIGHTING_VIEW ) - LIGHTING_DYNAMIC_INCLUSION,
@@ -24,3 +24,4 @@ if ( rectangle_in_rectangle( bbox_left, bbox_top,
 } else {
     on_screen = false;
 }
+*/

@@ -16,4 +16,3 @@ lighting_caster_add_geometry( _l, _t,   _r, _t ); //Top
 lighting_caster_add_geometry( _r, _t,   _r, _b ); //Right
 lighting_caster_add_geometry( _r, _b,   _l, _b ); //Bottom
 lighting_caster_add_geometry( _l, _b,   _l, _t ); //Left
-

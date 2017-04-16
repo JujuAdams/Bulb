@@ -1,6 +1,6 @@
 ///Step
 
-//--- Input handling...
+//Player input
 var _x = 0;
 var _y = 0;
 
@@ -12,17 +12,17 @@ if ( keyboard_check( vk_right ) ) or ( keyboard_check( ord( "D" ) ) ) _x += 5;
 repeat( abs( _x ) ) if ( !place_meeting( x + sign( _x ), y, obj_par_block ) ) x += sign( _x ) else break;
 repeat( abs( _y ) ) if ( !place_meeting( x, y + sign( _y ), obj_par_block ) ) y += sign( _y ) else break;
 
-//--- Misc. controls
+//Other controls
 if ( keyboard_check_pressed( vk_escape ) ) game_end();
 if ( keyboard_check_pressed( vk_f1 ) ) show_debug = !show_debug;
+if ( keyboard_check_pressed( ord( "L" ) ) ) instance_create_depth( x, y, 0, obj_light_discoooo );
 
 if ( show_debug ) {
     if ( keyboard_check_pressed( ord( "1" ) ) ) with( obj_light_discoooo ) visible = !visible;
     if ( keyboard_check_pressed( ord( "2" ) ) ) lighting_self_lighting = !lighting_self_lighting;
 }
 
-//--- Shooting
-//Note the use of an alarm to control the rate of fire.
+//Shooting
 if ( mouse_check_button( mb_left ) ) and ( alarm[0] < 0 ) {
     
     alarm[0] = 6;
@@ -33,5 +33,5 @@ if ( mouse_check_button( mb_left ) ) and ( alarm[0] < 0 ) {
     
 }
 
-__view_set( e__VW.XView, LIGHTING_VIEW, round( x - __view_get( e__VW.WView, LIGHTING_VIEW ) * 0.5 ) );
-__view_set( e__VW.YView, LIGHTING_VIEW, round( y - __view_get( e__VW.HView, LIGHTING_VIEW ) * 0.5 ) );
+//Update camera position
+camera_set_view_pos( camera, round( x - 0.5*camera_get_view_width( camera ) ), round( y - 0.5*camera_get_view_height( camera ) ) );

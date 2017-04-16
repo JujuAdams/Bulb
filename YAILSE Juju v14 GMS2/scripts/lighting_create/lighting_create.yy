@@ -1,8 +1,8 @@
 {
-    "id": "3cb0eee4-5036-4064-9c5c-27286614e513",
+    "id": "15d4d447-942e-4749-bcf5-9f8fb334e23a",
     "modelName": "GMScript",
     "mvc": "1.0",
-    "name": "lighting_light_step",
+    "name": "lighting_create",
     "IsCompatibility": false,
     "IsDnD": false
 }
