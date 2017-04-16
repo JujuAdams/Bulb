@@ -31,14 +31,6 @@
     },
     "resources": [
         {
-            "Key": "03345f45-2baa-4fc8-8259-12f7b1bfa205",
-            "Value": {
-                "id": "b5585607-84fc-4e1a-8b3a-b8b7291b23e6",
-                "resourcePath": "views\\03345f45-2baa-4fc8-8259-12f7b1bfa205.yy",
-                "resourceType": "GMFolder"
-            }
-        },
-        {
             "Key": "04206aee-be52-4ba3-afc7-743513cd88e9",
             "Value": {
                 "id": "df1a8fee-4974-4765-b9cc-9340cb5140c2",
@@ -163,14 +155,6 @@
             "Value": {
                 "id": "e0c166d0-46bd-4b51-9dce-35c3d6724220",
                 "resourcePath": "scripts\\lighting_light_create\\lighting_light_create.yy",
-                "resourceType": "GMScript"
-            }
-        },
-        {
-            "Key": "23b1cc28-9d85-4391-b4c6-b11cdf58fa56",
-            "Value": {
-                "id": "155126ae-391b-4a3a-89a4-749a051b137f",
-                "resourcePath": "scripts\\@draw_set_blend_mode\\draw_set_blend_mode.yy",
                 "resourceType": "GMScript"
             }
         },
@@ -447,14 +431,6 @@
             }
         },
         {
-            "Key": "af9cce76-5749-494f-8f54-e841dc0d3221",
-            "Value": {
-                "id": "0e732055-8416-4f98-83b3-feed7fe2c111",
-                "resourcePath": "scripts\\@draw_set_blend_mode_ext\\draw_set_blend_mode_ext.yy",
-                "resourceType": "GMScript"
-            }
-        },
-        {
             "Key": "b100b7e3-c261-4ba7-b8b7-6a8b94dedbe1",
             "Value": {
                 "id": "b6bcd699-cc4f-4446-ba7a-a93524fe5322",
@@ -659,8 +635,6 @@
         "66e6591a-3967-4243-b85a-88051cc913cb",
         "c9f02a2d-0cc0-4617-9f30-a60c457fe7ad",
         "1a7e7d68-8628-44e3-a8ae-2b10872e9d07",
-        "23b1cc28-9d85-4391-b4c6-b11cdf58fa56",
-        "af9cce76-5749-494f-8f54-e841dc0d3221",
         "1b36001b-85f5-4d34-a58b-e78ff349fa98",
         "957eb891-a835-4dc8-ba97-167e76c8a265",
         "08ad3bac-921a-444c-bfee-1013463519cb",

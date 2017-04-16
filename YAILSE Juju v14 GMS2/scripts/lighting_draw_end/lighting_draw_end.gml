@@ -90,14 +90,14 @@ surface_set_target( srf_lighting );
     draw_clear( lighting_ambient_colour );
     
     //Use a cumulative blend mode to add lights together
-    draw_set_blend_mode( bm_max );
+    gpu_set_blendmode( bm_max );
     with ( obj_par_light ) if ( on_screen ) draw_surface( srf_light, x - light_w_half - __view_get( e__VW.XView, LIGHTING_VIEW ), y - light_h_half - __view_get( e__VW.YView, LIGHTING_VIEW ) );
-    draw_set_blend_mode( bm_normal );
+    gpu_set_blendmode( bm_normal );
 
 surface_reset_target();
 
 
 
-draw_set_blend_mode_ext( bm_dest_color, bm_zero );
+gpu_set_blendmode_ext( bm_dest_color, bm_zero );
 draw_surface( srf_lighting, __view_get( e__VW.XView, LIGHTING_VIEW ), __view_get( e__VW.YView, LIGHTING_VIEW ) );
-draw_set_blend_mode( bm_normal );
+gpu_set_blendmode( bm_normal );
