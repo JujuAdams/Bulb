@@ -2,7 +2,7 @@
     "id": "dfef772d-777d-45dd-9ad0-5e339471ff8c",
     "modelName": "GMObject",
     "mvc": "1.0",
-    "name": "obj_par_block",
+    "name": "obj_par_occluder",
     "eventList": [
         
     ],

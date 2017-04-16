@@ -11,7 +11,7 @@ view_set_camera( 0, camera );
 
 //Set up a vertex buffer for drawing the diffuse base texture for the walls
 vertexpre_start();
-vbf_static_block = vertexpre_create( obj_static_block, spr_static_block, 0 );
+vbf_static_block = vertexpre_create( obj_static_occluder, spr_static_block, 0 );
 
 //Start the lighting system
 lighting_create( camera, make_colour_rgb( 50, 50, 80 ), false );

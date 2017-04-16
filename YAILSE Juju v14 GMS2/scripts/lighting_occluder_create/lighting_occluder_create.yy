@@ -1,8 +1,8 @@
 {
-    "id": "200578fa-de67-4af7-85e6-7c348917b043",
+    "id": "9ad175cd-9135-4652-8bc7-bff3678cdd73",
     "modelName": "GMScript",
     "mvc": "1.0",
-    "name": "lighting_caster_add_geometry",
+    "name": "lighting_occluder_create",
     "IsCompatibility": false,
     "IsDnD": false
 }
