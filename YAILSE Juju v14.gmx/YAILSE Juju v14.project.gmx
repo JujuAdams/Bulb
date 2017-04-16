@@ -24,7 +24,7 @@
     </scripts>
     <scripts name="lighting">
       <script>scripts\lighting_start.gml</script>
-      <script>scripts\lighting_draw.gml</script>
+      <script>scripts\lighting_draw_end.gml</script>
       <script>scripts\_lighting_add_occlusion.gml</script>
       <script>scripts\lighting_destroy.gml</script>
       <script>scripts\lighting_caster_create.gml</script>

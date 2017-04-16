@@ -148,6 +148,56 @@ vertex_delete_buffer( vbf_static_block );
         </arguments>
       </action>
     </event>
+    <event eventtype="8" enumb="73">
+      <action>
+        <libid>1</libid>
+        <id>603</id>
+        <kind>7</kind>
+        <userelative>0</userelative>
+        <isquestion>0</isquestion>
+        <useapplyto>-1</useapplyto>
+        <exetype>2</exetype>
+        <functionname></functionname>
+        <codestring></codestring>
+        <whoName>self</whoName>
+        <relative>0</relative>
+        <isnot>0</isnot>
+        <arguments>
+          <argument>
+            <kind>1</kind>
+            <string>///Draw End
+
+lighting_draw_end( false );
+</string>
+          </argument>
+        </arguments>
+      </action>
+    </event>
+    <event eventtype="8" enumb="72">
+      <action>
+        <libid>1</libid>
+        <id>603</id>
+        <kind>7</kind>
+        <userelative>0</userelative>
+        <isquestion>0</isquestion>
+        <useapplyto>-1</useapplyto>
+        <exetype>2</exetype>
+        <functionname></functionname>
+        <codestring></codestring>
+        <whoName>self</whoName>
+        <relative>0</relative>
+        <isnot>0</isnot>
+        <arguments>
+          <argument>
+            <kind>1</kind>
+            <string>///Draw Begin
+
+vertex_submit( vbf_static_block, pr_trianglelist, sprite_get_texture( spr_static_block, 0 ) );
+</string>
+          </argument>
+        </arguments>
+      </action>
+    </event>
     <event eventtype="8" enumb="64">
       <action>
         <libid>1</libid>
@@ -240,11 +290,7 @@ draw_set_valign( fa_top );
             <kind>1</kind>
             <string>///Draw
 
-vertex_submit( vbf_static_block, pr_trianglelist, sprite_get_texture( spr_static_block, 0 ) );
-
 draw_sprite( sprite_index, image_index, x, y );
-
-lighting_draw( false );
 </string>
           </argument>
         </arguments>

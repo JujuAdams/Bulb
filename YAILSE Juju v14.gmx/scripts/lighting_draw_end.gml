@@ -1,4 +1,4 @@
-#define lighting_draw
+#define lighting_draw_end
 ///lighting_build( default culling )
 //
 //  Build shadow casting geometry and render lights, with their shadows, to a screen-space lighting surface.
@@ -97,6 +97,7 @@ surface_set_target( srf_lighting );
     draw_set_blend_mode( bm_normal );
 
 surface_reset_target();
+
 
 
 draw_set_blend_mode_ext( bm_dest_color, bm_zero );
