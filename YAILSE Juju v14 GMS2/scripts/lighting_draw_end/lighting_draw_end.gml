@@ -47,7 +47,7 @@ vertex_end( vbf_dynamic_shadows );
 
 
 
-d3d_set_culling( lighting_self_lighting );
+gpu_set_cullmode( lighting_self_lighting ? cull_counterclockwise : cull_noculling );
 //For each light on the screen...
 with ( obj_par_light ) {
     
@@ -64,25 +64,28 @@ with ( obj_par_light ) {
         draw_sprite_ext( sprite_index, image_index,    light_w_half, light_h_half,    image_xscale, image_yscale, image_angle,    merge_colour( c_black, image_blend, image_alpha ), 1 );
         
         //Magical projection!
-        //d3d_set_projection_perspective( x + light_w_half, y + light_h_half,   -light_w, -light_h,   180 );
-        
+		matrix_set( matrix_view, matrix_build_lookat( x,  y, light_w,
+		                                              x,  y,       0,
+										              0, -1,       0 ) );
+		matrix_set( matrix_projection, matrix_build_projection_perspective( 1, light_h/light_w, 1, 32000 ) );
+		
         //Tell the GPU to render the shadow geometry
-        //vertex_submit( other.vbf_static_shadows,  pr_trianglelist, -1 );
-        //vertex_submit( other.vbf_dynamic_shadows, pr_trianglelist, -1 );
+        vertex_submit( other.vbf_static_shadows,  pr_trianglelist, -1 );
+        vertex_submit( other.vbf_dynamic_shadows, pr_trianglelist, -1 );
         
         surface_reset_target();
         
     }
 }
 
-d3d_set_culling( argument0 );
+gpu_set_cullmode( argument0 );
 
 
 
 //Create composite lighting surface
 srf_lighting = surface_check( srf_lighting, __view_get( e__VW.WView, LIGHTING_VIEW ), __view_get( e__VW.HView, LIGHTING_VIEW ) );
 surface_set_target( srf_lighting );
-    
+	
     //Clear the surface with the ambient colour
     draw_clear( lighting_ambient_colour );
     
@@ -98,4 +101,3 @@ surface_reset_target();
 draw_set_blend_mode_ext( bm_dest_color, bm_zero );
 draw_surface( srf_lighting, __view_get( e__VW.XView, LIGHTING_VIEW ), __view_get( e__VW.YView, LIGHTING_VIEW ) );
 draw_set_blend_mode( bm_normal );
-

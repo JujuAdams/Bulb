@@ -18,20 +18,27 @@
 var _vbuff = argument0;
 
 //Set up basic transforms to turn relative coordinates in arr_shadowGeometry[] into world-space coordinates
-d3d_transform_set_scaling( image_xscale, image_yscale, 0 );
-d3d_transform_add_rotation_z( image_angle );
-d3d_transform_add_translation( round( x ), round( y ), 0 );
+
+var _matrix = matrix_build( 0, 0, 0,
+		                    0, 0, 0,
+							image_xscale, image_yscale, 1 );
+_matrix = matrix_multiply( _matrix, matrix_build( 0, 0, 0,
+		                                          0, 0, image_angle,
+												  1, 1, 1 ) );
+_matrix = matrix_multiply( _matrix, matrix_build( round( x ), round( y ), 0,
+		                                          0, 0, 0,
+												  1, 1, 1 ) );
 
 //Loop through every line segment, remembering that we're storing coordinate data sequentially: { Ax1, Ay1, Bx1, Bx1,   Ax2, Ay2, Bx2, Bx2, ... }
 for( var _i = 0; _i < shadow_geometry_size; _i += 4 ) {
     
     //Collect first coordinate pair and transform
-    var _array = d3d_transform_vertex( arr_shadow_geometry[_i  ], arr_shadow_geometry[_i+1], 0 );
+    var _array = matrix_transform_vertex( _matrix, arr_shadow_geometry[_i  ], arr_shadow_geometry[_i+1], 0 );
     var _ax = _array[0];
     var _ay = _array[1];
     
     //Collect second coordinate pair and transform
-    var _array = d3d_transform_vertex( arr_shadow_geometry[_i+2], arr_shadow_geometry[_i+3], 0 );
+    var _array = matrix_transform_vertex( _matrix, arr_shadow_geometry[_i+2], arr_shadow_geometry[_i+3], 0 );
     var _bx = _array[0];
     var _by = _array[1];
     
@@ -46,5 +53,3 @@ for( var _i = 0; _i < shadow_geometry_size; _i += 4 ) {
     vertex_position_3d( _vbuff,   _bx, _by, LIGHTING_Z_LIMIT ); vertex_colour( _vbuff,   c_black, 1 );
     
 }
-
-d3d_transform_set_identity();

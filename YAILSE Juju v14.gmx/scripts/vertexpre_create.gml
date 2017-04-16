@@ -30,18 +30,23 @@ if ( instance_number( _obj ) > 0 ) {
             var _rb = d3d_transform_vertex( sprite_get_width( _spr ), sprite_get_height( _spr ), 0 );
         d3d_transform_set_identity();
         
-        vertex_position( _vbuff,   _lt[0], _lt[1] ); vertex_texcoord( _vbuff,   _uvs[0], _uvs[1] );
-        vertex_position( _vbuff,   _rt[0], _rt[1] ); vertex_texcoord( _vbuff,   _uvs[2], _uvs[1] );
-        vertex_position( _vbuff,   _lb[0], _lb[1] ); vertex_texcoord( _vbuff,   _uvs[0], _uvs[3] );
+        vertex_position( _vbuff,   _lt[0], _lt[1] ); vertex_texcoord( _vbuff,   _uvs[0], _uvs[1] ); vertex_colour( _vbuff,   c_white, 1 );
+        vertex_position( _vbuff,   _rt[0], _rt[1] ); vertex_texcoord( _vbuff,   _uvs[2], _uvs[1] ); vertex_colour( _vbuff,   c_white, 1 );
+        vertex_position( _vbuff,   _lb[0], _lb[1] ); vertex_texcoord( _vbuff,   _uvs[0], _uvs[3] ); vertex_colour( _vbuff,   c_white, 1 );
         
-        vertex_position( _vbuff,   _rt[0], _rt[1] ); vertex_texcoord( _vbuff,   _uvs[2], _uvs[1] );
-        vertex_position( _vbuff,   _lb[0], _lb[1] ); vertex_texcoord( _vbuff,   _uvs[0], _uvs[3] );
-        vertex_position( _vbuff,   _rb[0], _rb[1] ); vertex_texcoord( _vbuff,   _uvs[2], _uvs[3] );
+        vertex_position( _vbuff,   _rt[0], _rt[1] ); vertex_texcoord( _vbuff,   _uvs[2], _uvs[1] ); vertex_colour( _vbuff,   c_white, 1 );
+        vertex_position( _vbuff,   _lb[0], _lb[1] ); vertex_texcoord( _vbuff,   _uvs[0], _uvs[3] ); vertex_colour( _vbuff,   c_white, 1 );
+        vertex_position( _vbuff,   _rb[0], _rb[1] ); vertex_texcoord( _vbuff,   _uvs[2], _uvs[3] ); vertex_colour( _vbuff,   c_white, 1 );
         
     }
     
     vertex_end( _vbuff );
-    vertex_freeze( _vbuff );
+    
+    var _buffer = buffer_create_from_vertex_buffer( _vbuff, buffer_fixed, 1 );
+    buffer_save( _buffer, "buffer GMS1.bin" );
+    buffer_delete( _buffer );
+    
+    //vertex_freeze( _vbuff );
     
     return _vbuff;
 

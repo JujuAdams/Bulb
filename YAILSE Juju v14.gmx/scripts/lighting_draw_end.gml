@@ -66,6 +66,8 @@ with ( obj_par_light ) {
         
         //Magical projection!
         d3d_set_projection_perspective( x + light_w_half, y + light_h_half,   -light_w, -light_h,   180 );
+        show_debug_message( "view: " + string( matrix_get( matrix_view ) ) );
+        show_debug_message( "proj: " + string( matrix_get( matrix_projection ) ) );
         
         //Use fogging to force the pixel colour to black (but doesn't force the alpha, giving us relatively smooth shadow borders)
         d3d_set_fog( true, c_black, 0, 0 );

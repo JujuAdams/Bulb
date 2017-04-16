@@ -51,6 +51,7 @@
   </objects>
   <rooms name="rooms">
     <room>rooms\rm_test</room>
+    <room>rooms\room1</room>
   </rooms>
   <constants number="3">
     <constant name="LIGHTING_VIEW">0</constant>

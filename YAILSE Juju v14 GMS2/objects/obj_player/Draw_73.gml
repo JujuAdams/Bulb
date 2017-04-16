@@ -1,3 +1,3 @@
 ///Draw End
 
-//lighting_draw_end( false );
+lighting_draw_end( cull_noculling );
