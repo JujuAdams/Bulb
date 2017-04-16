@@ -20,9 +20,9 @@ if ( keyboard_check_pressed( ord( "1" ) ) ) with( obj_light_discoooo ) visible =
 if ( keyboard_check_pressed( ord( "2" ) ) ) lighting_culling = ( lighting_culling == cull_noculling ) ? cull_counterclockwise : cull_noculling;
 
 //Shooting
-if ( mouse_check_button( mb_left ) ) and ( alarm[0] < 0 ) {
+if ( mouse_check_button( mb_left ) ) and ( alarm_get( 0 ) <= 0 ) {
     
-    alarm[0] = 6;
+    alarm_set( 0, 6 );
     
     var _inst = instance_create_depth( x, y, 0, obj_light_plasma );
     _inst.speed = 10;
@@ -32,3 +32,5 @@ if ( mouse_check_button( mb_left ) ) and ( alarm[0] < 0 ) {
 
 //Update camera position
 camera_set_view_pos( camera, round( x - 0.5*camera_get_view_width( camera ) ), round( y - 0.5*camera_get_view_height( camera ) ) );
+
+if ( alarm_get( 1 ) <= 0 ) smoothed_frame_time = lerp( smoothed_frame_time, 1000/fps_real, 0.01 );

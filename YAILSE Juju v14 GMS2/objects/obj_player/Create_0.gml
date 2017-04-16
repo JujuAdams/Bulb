@@ -2,6 +2,8 @@
 
 //Whether or not to show debug text
 show_debug = false;
+smoothed_frame_time = 1;
+alarm_set( 1, 30 );
 
 //Create a camera
 view_enabled = true;
