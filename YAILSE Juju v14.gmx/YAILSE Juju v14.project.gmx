@@ -25,8 +25,8 @@
     <scripts name="lighting">
       <script>scripts\lighting_start.gml</script>
       <script>scripts\lighting_draw.gml</script>
-      <script>scripts\lighting_end.gml</script>
       <script>scripts\_lighting_add_occlusion.gml</script>
+      <script>scripts\lighting_destroy.gml</script>
       <script>scripts\lighting_caster_create.gml</script>
       <script>scripts\lighting_caster_add_geometry.gml</script>
       <script>scripts\lighting_caster_dynamic_step.gml</script>
@@ -37,7 +37,7 @@
     <scripts name="vertexpre">
       <script>scripts\vertexpre_start.gml</script>
       <script>scripts\vertexpre_create.gml</script>
-      <script>scripts\vertexpre_end.gml</script>
+      <script>scripts\vertexpre_destroy.gml</script>
     </scripts>
   </scripts>
   <objects name="objects">

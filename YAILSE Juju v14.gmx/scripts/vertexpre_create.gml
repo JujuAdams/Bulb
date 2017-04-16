@@ -1,4 +1,11 @@
-///vertexpre_create( object, sprite, image  )
+///vertexpre_create( object, sprite, image )
+//  
+//  April 2017
+//  @jujuadams
+//  /u/jujuadam
+//  Juju on the GMC
+//  
+//  This code and engine are provided under the Creative Commons "Attribution - NonCommerical - ShareAlike" international license.
 
 var _obj = argument0;
 var _spr = argument1;

@@ -139,8 +139,8 @@ view_yview[LIGHTING_VIEW] = round( y - view_hview[LIGHTING_VIEW] * 0.5 );
             <kind>1</kind>
             <string>///Room End
 
-lighting_end();
-vertexpre_end();
+lighting_destroy();
+vertexpre_destroy();
 
 vertex_delete_buffer( vbf_static_block );
 </string>

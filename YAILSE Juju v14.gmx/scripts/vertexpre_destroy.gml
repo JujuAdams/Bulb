@@ -1,4 +1,4 @@
-///vertexpre_start()
+///vertexpre_end()
 //  
 //  April 2017
 //  @jujuadams
@@ -7,7 +7,4 @@
 //  
 //  This code and engine are provided under the Creative Commons "Attribution - NonCommerical - ShareAlike" international license.
 
-vertex_format_begin();
-vertex_format_add_position();
-vertex_format_add_textcoord();
-vft_vertexpre = vertex_format_end();
+vertex_format_delete( vft_vertexpre );
