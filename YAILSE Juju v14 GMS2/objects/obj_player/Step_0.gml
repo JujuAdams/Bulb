@@ -13,14 +13,11 @@ repeat( abs( _x ) ) if ( !place_meeting( x + sign( _x ), y, obj_par_block ) ) x 
 repeat( abs( _y ) ) if ( !place_meeting( x, y + sign( _y ), obj_par_block ) ) y += sign( _y ) else break;
 
 //Other controls
-if ( keyboard_check_pressed( vk_escape ) ) game_end();
-if ( keyboard_check_pressed( vk_f1 ) ) show_debug = !show_debug;
+if ( keyboard_check_pressed( vk_escape  ) ) game_end();
+if ( keyboard_check_pressed( vk_f1      ) ) show_debug = !show_debug;
 if ( keyboard_check_pressed( ord( "L" ) ) ) instance_create_depth( x, y, 0, obj_light_discoooo );
-
-if ( show_debug ) {
-    if ( keyboard_check_pressed( ord( "1" ) ) ) with( obj_light_discoooo ) visible = !visible;
-    if ( keyboard_check_pressed( ord( "2" ) ) ) lighting_self_lighting = !lighting_self_lighting;
-}
+if ( keyboard_check_pressed( ord( "1" ) ) ) with( obj_light_discoooo ) visible = !visible;
+if ( keyboard_check_pressed( ord( "2" ) ) ) lighting_culling = ( lighting_culling == cull_noculling ) ? cull_counterclockwise : cull_noculling;
 
 //Shooting
 if ( mouse_check_button( mb_left ) ) and ( alarm[0] < 0 ) {

@@ -23,6 +23,7 @@ if ( show_debug ) {
     draw_set_valign( fa_bottom );
     var _str = "1: Toggle lights";
     _str += "\n2: Toggle self-lighting";
+    _str += "\nL: Create new disco light";
     _str += "\nArrows/WASD: Move";
     _str += "\nLeft click: Fire plasma";
     draw_text( 5, window_get_height() - 5, _str );

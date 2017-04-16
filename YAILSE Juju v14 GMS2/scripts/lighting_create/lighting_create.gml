@@ -21,6 +21,9 @@
 #macro LIGHTING_Z_LIMIT 2000
 #macro LIGHTING_DYNAMIC_INCLUSION 256
 
+
+
+//Assign the camera used to draw the lights
 lighting_camera = argument0;
 
 //Assign the ambient colour used for the darkest areas of the screen. This can be changed on the fly.
@@ -28,16 +31,19 @@ lighting_ambient_colour = argument1;
 
 //If culling is switched on, shadows will only be cast from the rear faces of shadow casters.
 //This requires careful object placement as not to create weird graphical glitches.
-lighting_self_lighting = argument2;
+lighting_culling = argument2 ? cull_counterclockwise : cull_noculling;
 
 
-//--- Create vertex format for the shadow casting vertex buffers
+
+//Create vertex format for the shadow casting vertex buffers
 vertex_format_begin();
 vertex_format_add_position_3d();
 vertex_format_add_colour();
 vft_shadow_geometry = vertex_format_end();
 
-//--- Initialise variables used and updated in scr_lighting_build()
+
+
+//Initialise variables used and updated in scr_lighting_build()
 vbf_static_shadows = noone; //Vertex buffer describing the shadow casting geometry of the static objects.
 vbf_dynamic_shadows = noone; //As above but for dynamic shadow casters. This is updated every step.
 srf_lighting = noone; //Screen-space surface for final compositing of individual surfaces.

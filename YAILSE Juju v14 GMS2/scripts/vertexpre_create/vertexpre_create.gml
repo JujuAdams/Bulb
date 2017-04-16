@@ -49,12 +49,8 @@ if ( instance_number( _obj ) > 0 ) {
     }
 	
     vertex_end( _vbuff );
-    
-	var _buffer = buffer_create_from_vertex_buffer( _vbuff, buffer_fixed, 1 );
-	buffer_save( _buffer, "buffer.bin" );
-	buffer_delete( _buffer );
+    vertex_freeze( _vbuff );
 	
-    //vertex_freeze( _vbuff );
     return _vbuff;
 
 }
