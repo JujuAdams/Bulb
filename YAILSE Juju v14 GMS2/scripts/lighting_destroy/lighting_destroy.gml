@@ -1,5 +1,3 @@
-///lighting_end()
-//
 //  Free memory used by the lighting system.
 //  Don't forget to call this!
 //  

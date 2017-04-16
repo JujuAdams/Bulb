@@ -1,4 +1,4 @@
-///lighting_build( default culling )
+/// @param default_culling
 //
 //  Build shadow casting geometry and render lights, with their shadows, to a screen-space lighting surface.
 //  Should be called in one object per room, the same object that called scr_lighting_start().
@@ -54,7 +54,11 @@ vbf_dynamic_shadows = vertex_create_buffer();
 
 //Add dynamic shadow caster vertices to the relevant vertex buffer
 vertex_begin( vbf_dynamic_shadows, vft_shadow_geometry );
-with ( obj_dynamic_block ) if ( on_screen ) _lighting_add_occlusion( other.vbf_dynamic_shadows );
+with ( obj_dynamic_block ) {
+    on_screen = visible and rectangle_in_rectangle( bbox_left, bbox_top, bbox_right, bbox_bottom,
+								                    _camera_l, _camera_t, _camera_r, _camera_b );
+	if ( on_screen ) _lighting_add_occlusion( other.vbf_dynamic_shadows );
+}
 vertex_end( vbf_dynamic_shadows );
 
 

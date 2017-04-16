@@ -1,5 +1,3 @@
-///lighting_caster_create()
-//
 //  Initialises some variables and an array the describes the caster.
 //
 //  return: Nothing

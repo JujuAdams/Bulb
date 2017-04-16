@@ -1,4 +1,4 @@
-///lighting_add_occlusion( vertex buffer )
+/// @param vertex_buffer
 //
 //  Adds an object's pre-defined shadow casting geometry to a vertex buffer, after having been appropriately transformed.
 //  Should be called with() the shadow casting object.

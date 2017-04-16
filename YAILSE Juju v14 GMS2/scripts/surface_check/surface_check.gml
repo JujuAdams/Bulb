@@ -1,4 +1,6 @@
-///surface_check( surface, width, height )
+/// @param surface
+/// @param width
+/// @param height
 //
 //  Simple utility to check a surface and replace it if necessary.
 //  

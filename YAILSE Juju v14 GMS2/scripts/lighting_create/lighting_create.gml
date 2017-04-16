@@ -1,4 +1,5 @@
-///lighting_create( ambient colour, self-lighting )
+/// @param ambient_colour
+/// @param self_lighting
 //
 //  Initialises the necessary variables for a controller object to use the lighting system.
 //  Should be called in one object per room.

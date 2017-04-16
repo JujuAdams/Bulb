@@ -391,14 +391,6 @@
             }
         },
         {
-            "Key": "db2e6fb2-6708-4b50-bd8f-6b8f35972dba",
-            "Value": {
-                "id": "a18357d7-dd3d-417b-8426-e224873676bd",
-                "resourcePath": "scripts\\lighting_caster_step_dynamic\\lighting_caster_step_dynamic.yy",
-                "resourceType": "GMScript"
-            }
-        },
-        {
             "Key": "dfef772d-777d-45dd-9ad0-5e339471ff8c",
             "Value": {
                 "id": "2f1acd3d-86a0-47af-9c4e-1cd61b73f1ff",
@@ -466,7 +458,6 @@
         "17931eba-2f16-4a97-b39e-e961bf8f0102",
         "9ad175cd-9135-4652-8bc7-bff3678cdd73",
         "200578fa-de67-4af7-85e6-7c348917b043",
-        "db2e6fb2-6708-4b50-bd8f-6b8f35972dba",
         "21a8cd40-ca8c-4097-9855-01f5f2ccedbf",
         "709d2388-2ac8-45a9-ab30-982b4a70e0d6"
     ],

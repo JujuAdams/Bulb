@@ -1,5 +1,3 @@
-///vertexpre_start()
-//  
 //  April 2017
 //  @jujuadams
 //  /u/jujuadam

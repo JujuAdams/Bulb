@@ -1,5 +1,3 @@
-///lighting_light_destroy()
-//
 //  Free memory taken up by the light. Should be called in the Room End event and the Destroy event.
 //  
 //  return: Nothing.

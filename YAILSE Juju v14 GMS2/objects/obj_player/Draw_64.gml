@@ -52,4 +52,3 @@ draw_text( window_get_width() - 5, window_get_height() - 5, _str );
 
 draw_set_halign( fa_left );
 draw_set_valign( fa_top );
-

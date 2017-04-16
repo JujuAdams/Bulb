@@ -1,4 +1,6 @@
-///vertexpre_create( object, sprite, image )
+/// @param object
+/// @param sprite
+/// @param image
 //  
 //  April 2017
 //  @jujuadams

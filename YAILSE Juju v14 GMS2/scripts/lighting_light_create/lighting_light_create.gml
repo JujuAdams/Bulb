@@ -1,4 +1,5 @@
-///lighting_light_create( max xscale, max yscale )
+/// @param max_xscale
+/// @param max_yscale
 //
 //  Initialises the necessary variables for a light object to use the lighting system.
 //  Must be called before scr_lighting_light_step() and scr_lighting_light_destroy().

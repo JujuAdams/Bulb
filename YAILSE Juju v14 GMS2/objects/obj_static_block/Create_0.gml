@@ -30,4 +30,3 @@ if ( image_angle != 0 ) or ( image_xscale != 1 ) or ( image_yscale != 1 ) {
     if ( !position_meeting( x - 32, y, obj_static_block ) ) lighting_caster_add_geometry( _l, _b,   _l, _t ); //Left
     
 }
-
