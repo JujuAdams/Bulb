@@ -35,4 +35,3 @@ if ( mouse_check_button( mb_left ) ) and ( alarm[0] < 0 ) {
 
 __view_set( e__VW.XView, LIGHTING_VIEW, round( x - __view_get( e__VW.WView, LIGHTING_VIEW ) * 0.5 ) );
 __view_set( e__VW.YView, LIGHTING_VIEW, round( y - __view_get( e__VW.HView, LIGHTING_VIEW ) * 0.5 ) );
-
