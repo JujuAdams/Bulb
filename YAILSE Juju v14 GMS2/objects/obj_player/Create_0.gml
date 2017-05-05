@@ -17,3 +17,5 @@ vbf_static_block = vertexpre_create( obj_static_occluder, spr_static_block, 0 );
 
 //Start the lighting system
 lighting_create( camera, make_colour_rgb( 50, 50, 80 ), false );
+
+instance_create_layer( x, y, layer, obj_light_torch );

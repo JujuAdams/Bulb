@@ -1,6 +1,3 @@
-/// @param max_xscale
-/// @param max_yscale
-//
 //  Initialises the necessary variables for a light object to use the lighting system.
 //  Must be called before scr_lighting_light_step() and scr_lighting_light_destroy().
 //
@@ -17,11 +14,8 @@
 //  
 //  This code and engine are provided under the Creative Commons "Attribution - NonCommerical - ShareAlike" international license.
 
-if ( argument_count >= 1 ) light_max_xscale = argument[0] else light_max_xscale = image_xscale;
-if ( argument_count >= 2 ) light_max_yscale = argument[1] else light_max_yscale = image_yscale;
-
-light_w =  sprite_get_width( sprite_index ) * light_max_xscale;
-light_h = sprite_get_height( sprite_index ) * light_max_yscale;
+light_w =  sprite_get_width( sprite_index );
+light_h = sprite_get_height( sprite_index );
 light_w_half = 0.5*light_w;
 light_h_half = 0.5*light_h;
 
