@@ -72,7 +72,7 @@ vertex_end( vbf_dynamic_shadows );
 
 ///////////Render out lights and shadows for each light in the viewport
 gpu_set_cullmode( lighting_culling );
-with ( obj_par_light ) {
+with( obj_par_light ) {
 	
     on_screen = visible and rectangle_in_rectangle( x - light_w_half, y - light_h_half,
                                                     x + light_w_half, y + light_h_half,
@@ -82,14 +82,16 @@ with ( obj_par_light ) {
     if ( on_screen ) {
         
         surface_set_target( srf_light );
-        
+			
 	        //draw_clear() is expensive. Only clear if the light map sprite is maybe not going to cover the entire surface.
 	        if ( image_angle != 0 ) or ( abs( image_xscale ) < light_max_xscale ) or ( abs( image_yscale ) < light_max_yscale ) draw_clear( c_black );
         
 	        //Draw the light sprite
+			shader_set( shd_pass_through );
 	        draw_sprite_ext( sprite_index, image_index,    light_w_half, light_h_half,    image_xscale, image_yscale, image_angle,    merge_colour( c_black, image_blend, image_alpha ), 1 );
 			
 	        //Magical projection!
+			shader_set( shd_snap_vertex );
 			matrix_set( matrix_view, matrix_build_lookat( x, y, light_w,   x, y, 0,   0, -1, 0 ) );
 			matrix_set( matrix_projection, matrix_build_projection_perspective( 1, light_h/light_w, 1, 16000 ) );
 		
@@ -103,6 +105,7 @@ with ( obj_par_light ) {
 }
 
 gpu_set_cullmode( cull_noculling );
+shader_reset();
 
 
 
@@ -115,7 +118,7 @@ surface_set_target( srf_lighting );
     
     //Use a cumulative blend mode to add lights together
     gpu_set_blendmode( bm_max );
-    with ( obj_par_light ) if ( on_screen ) draw_surface( srf_light, x - light_w_half - _camera_l, y - light_h_half - _camera_t );
+    with ( obj_par_light ) if ( on_screen ) draw_surface( srf_light, floor( x - light_w_half - _camera_l + 0.5 ), floor( y - light_h_half - _camera_t + 0.5 ) );
     gpu_set_blendmode( bm_normal );
 
 surface_reset_target();

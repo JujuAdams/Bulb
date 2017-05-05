@@ -31,6 +31,14 @@
     },
     "resources": [
         {
+            "Key": "0276ca06-b114-4560-aa88-b45c1594054f",
+            "Value": {
+                "id": "05102246-5676-425b-8377-27085e8e2b8d",
+                "resourcePath": "shaders\\shd_snap_vertex\\shd_snap_vertex.yy",
+                "resourceType": "GMShader"
+            }
+        },
+        {
             "Key": "04206aee-be52-4ba3-afc7-743513cd88e9",
             "Value": {
                 "id": "df1a8fee-4974-4765-b9cc-9340cb5140c2",
@@ -92,6 +100,14 @@
                 "id": "fed9c5f5-5d5c-4f0c-a6fd-763d34fd0c77",
                 "resourcePath": "views\\17a062a6-55fb-4fbd-b154-6a2dc745eaf0.yy",
                 "resourceType": "GMFolder"
+            }
+        },
+        {
+            "Key": "1de0e764-530a-435d-bd6d-4e635af9c2cf",
+            "Value": {
+                "id": "bd3131a2-b758-40f6-ac80-20522c0000a3",
+                "resourcePath": "shaders\\shd_hlsl\\shd_hlsl.yy",
+                "resourceType": "GMShader"
             }
         },
         {
@@ -287,6 +303,14 @@
             }
         },
         {
+            "Key": "9d2d5b41-b6ee-4457-b362-28772f871feb",
+            "Value": {
+                "id": "3d9d615f-e4f0-4438-9a6c-10766f09c45d",
+                "resourcePath": "rooms\\rm_test\\rm_test.yy",
+                "resourceType": "GMRoom"
+            }
+        },
+        {
             "Key": "9e379d63-8b1f-4c1e-9f2a-2b041406eb0a",
             "Value": {
                 "id": "78097842-ae46-4f07-92d2-c0c40058537f",
@@ -308,14 +332,6 @@
                 "id": "889d7bad-0956-4974-b18a-6462e5a3b5e3",
                 "resourcePath": "views\\aa69fde9-e5ef-42fd-9e61-9dc1daf9bec3.yy",
                 "resourceType": "GMFolder"
-            }
-        },
-        {
-            "Key": "b100b7e3-c261-4ba7-b8b7-6a8b94dedbe1",
-            "Value": {
-                "id": "b6bcd699-cc4f-4446-ba7a-a93524fe5322",
-                "resourcePath": "rooms\\rm_test\\rm_test.yy",
-                "resourceType": "GMRoom"
             }
         },
         {
@@ -388,6 +404,14 @@
                 "id": "65a4b3bc-6f2f-4aa9-962f-c59e81a3cf74",
                 "resourcePath": "scripts\\_lighting_add_occlusion\\_lighting_add_occlusion.yy",
                 "resourceType": "GMScript"
+            }
+        },
+        {
+            "Key": "dc2cb6a7-d73f-4afd-9f6e-bc6bc4b9dc24",
+            "Value": {
+                "id": "23bf8167-4737-4afc-95ac-05a669774e1e",
+                "resourcePath": "shaders\\shd_pass_through\\shd_pass_through.yy",
+                "resourceType": "GMShader"
             }
         },
         {

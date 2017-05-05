@@ -18,16 +18,21 @@
 var _vbuff = argument0;
 
 //Set up basic transforms to turn relative coordinates in arr_shadowGeometry[] into world-space coordinates
-
+/*var _sin = dsin( image_angle );
+var _cos = dcos( image_angle );
+var _matrix = [ image_xscale*_cos, -image_xscale*_sin, 0, 0,
+                image_yscale*_sin,  image_yscale*_cos, 0, 0,
+				                0,                  0, 1, 0,
+				                x,                  y, 0, 1 ];
+*/
 var _matrix = matrix_build( 0, 0, 0,
 		                    0, 0, 0,
 							image_xscale, image_yscale, 1 );
-_matrix = matrix_multiply( _matrix, matrix_build( 0, 0, 0,
+_matrix = matrix_multiply( _matrix, matrix_build( x, y, 0,
 		                                          0, 0, image_angle,
 												  1, 1, 1 ) );
-_matrix = matrix_multiply( _matrix, matrix_build( round( x ), round( y ), 0,
-		                                          0, 0, 0,
-												  1, 1, 1 ) );
+
+
 
 //Loop through every line segment, remembering that we're storing coordinate data sequentially: { Ax1, Ay1, Bx1, Bx1,   Ax2, Ay2, Bx2, Bx2, ... }
 for( var _i = 0; _i < shadow_geometry_size; _i += 4 ) {

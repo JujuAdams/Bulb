@@ -6,10 +6,10 @@ image_index = 0;
 image_speed = 0;
 
 //The (-0.5,-0.5) offset is a bit of a hack to stop self-lighting being too obviously flickery
-var _l =  -sprite_get_width( sprite_index ) * 0.5 - 0.5;
-var _t = -sprite_get_height( sprite_index ) * 0.5 - 0.5;
-var _r =   sprite_get_width( sprite_index ) * 0.5 - 0.5;
-var _b =  sprite_get_height( sprite_index ) * 0.5 - 0.5;
+var _l =  -sprite_get_width( sprite_index ) * 0.5;
+var _t = -sprite_get_height( sprite_index ) * 0.5;
+var _r =   sprite_get_width( sprite_index ) * 0.5;
+var _b =  sprite_get_height( sprite_index ) * 0.5;
 
 if ( image_angle != 0 ) or ( image_xscale != 1 ) or ( image_yscale != 1 ) {
     
