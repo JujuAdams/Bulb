@@ -1,3 +1,3 @@
 ///Draw End
 
-lighting_draw_end_deferred();
+lighting_draw_end();

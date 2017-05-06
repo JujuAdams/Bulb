@@ -18,19 +18,12 @@
 var _vbuff = argument0;
 
 //Set up basic transforms to turn relative coordinates in arr_shadowGeometry[] into world-space coordinates
-/*var _sin = dsin( image_angle );
+var _sin = dsin( image_angle );
 var _cos = dcos( image_angle );
 var _matrix = [ image_xscale*_cos, -image_xscale*_sin, 0, 0,
                 image_yscale*_sin,  image_yscale*_cos, 0, 0,
 				                0,                  0, 1, 0,
 				                x,                  y, 0, 1 ];
-*/
-var _matrix = matrix_build( 0, 0, 0,
-		                    0, 0, 0,
-							image_xscale, image_yscale, 1 );
-_matrix = matrix_multiply( _matrix, matrix_build( x, y, 0,
-		                                          0, 0, image_angle,
-												  1, 1, 1 ) );
 
 
 
@@ -49,12 +42,12 @@ for( var _i = 0; _i < shadow_geometry_size; _i += 4 ) {
     
     //Deliberately create vertices the wrong way round (anticlockwise) to take advantage of culling, allowing light into but not out of a shape ("self-lighting")
     //This feature is off by default as it requires some conscientious design to avoid glitches
-    vertex_position_3d( _vbuff,   _ax, _ay, 0 );                vertex_colour( _vbuff,   c_black, 1 );
-    vertex_position_3d( _vbuff,   _bx, _by, LIGHTING_Z_LIMIT ); vertex_colour( _vbuff,   c_black, 1 );
-    vertex_position_3d( _vbuff,   _bx, _by, 0 );                vertex_colour( _vbuff,   c_black, 1 );
+    vertex_position_3d( _vbuff,   _ax, _ay, 0 );                vertex_colour( _vbuff,   c_black, 0 ); vertex_texcoord( _vbuff, 0, 0 );
+    vertex_position_3d( _vbuff,   _bx, _by, LIGHTING_Z_LIMIT ); vertex_colour( _vbuff,   c_black, 0 ); vertex_texcoord( _vbuff, 0, 0 );
+    vertex_position_3d( _vbuff,   _bx, _by, 0 );                vertex_colour( _vbuff,   c_black, 0 ); vertex_texcoord( _vbuff, 0, 0 );
     
-    vertex_position_3d( _vbuff,   _ax, _ay, 0 );                vertex_colour( _vbuff,   c_black, 1 );
-    vertex_position_3d( _vbuff,   _ax, _ay, LIGHTING_Z_LIMIT ); vertex_colour( _vbuff,   c_black, 1 );
-    vertex_position_3d( _vbuff,   _bx, _by, LIGHTING_Z_LIMIT ); vertex_colour( _vbuff,   c_black, 1 );
+    vertex_position_3d( _vbuff,   _ax, _ay, 0 );                vertex_colour( _vbuff,   c_black, 0 ); vertex_texcoord( _vbuff, 0, 0 );
+    vertex_position_3d( _vbuff,   _ax, _ay, LIGHTING_Z_LIMIT ); vertex_colour( _vbuff,   c_black, 0 ); vertex_texcoord( _vbuff, 0, 0 );
+    vertex_position_3d( _vbuff,   _bx, _by, LIGHTING_Z_LIMIT ); vertex_colour( _vbuff,   c_black, 0 ); vertex_texcoord( _vbuff, 0, 0 );
     
 }

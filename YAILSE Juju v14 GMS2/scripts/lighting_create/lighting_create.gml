@@ -40,6 +40,7 @@ lighting_culling = argument2 ? cull_counterclockwise : cull_noculling;
 vertex_format_begin();
 vertex_format_add_position_3d();
 vertex_format_add_colour();
+vertex_format_add_texcoord();
 vft_shadow_geometry = vertex_format_end();
 
 

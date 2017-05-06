@@ -1,8 +1,5 @@
 ///Create
 
-mask_index = sprite_index;
-sprite_index = spr_light_torch;
-//Call default light behaviour *after* setting the sprite
 event_inherited();
 
 image_yscale = 0.5;

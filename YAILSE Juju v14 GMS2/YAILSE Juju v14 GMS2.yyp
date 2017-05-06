@@ -47,6 +47,14 @@
             }
         },
         {
+            "Key": "052ccf3d-31d8-4466-9097-a59d8c26f4f2",
+            "Value": {
+                "id": "b0a0dadc-5d60-4afd-a5c8-d776bf804465",
+                "resourcePath": "shaders\\shd_lighting\\shd_lighting.yy",
+                "resourceType": "GMShader"
+            }
+        },
+        {
             "Key": "09a1b34e-5494-486e-868e-602b368cc0c6",
             "Value": {
                 "id": "8c8f4af1-cfca-4425-8b5c-3e26da16549d",
@@ -175,6 +183,14 @@
             }
         },
         {
+            "Key": "38610ab9-ebaa-40c4-9cd7-5da5b734c0e7",
+            "Value": {
+                "id": "96e6f1e1-e908-4477-8270-d2513573b6fc",
+                "resourcePath": "sprites\\spr_pixel\\spr_pixel.yy",
+                "resourceType": "GMSprite"
+            }
+        },
+        {
             "Key": "38e04c64-df4c-4814-ae64-95a90a81b9fd",
             "Value": {
                 "id": "9298ec7c-0fc6-4e23-9411-00fc425ffcb5",
@@ -260,6 +276,14 @@
                 "id": "127ff75d-4c68-486a-bd42-e6b9040827ce",
                 "resourcePath": "scripts\\lighting_light_destroy\\lighting_light_destroy.yy",
                 "resourceType": "GMScript"
+            }
+        },
+        {
+            "Key": "7349bd57-8957-4e06-b9d5-fb770d2aff01",
+            "Value": {
+                "id": "973f17f2-8d81-48ad-8a52-e36bd8deca74",
+                "resourcePath": "rooms\\rm_test_1\\rm_test_1.yy",
+                "resourceType": "GMRoom"
             }
         },
         {
