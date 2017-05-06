@@ -42,12 +42,12 @@ for( var _i = 0; _i < shadow_geometry_size; _i += 4 ) {
     
     //Deliberately create vertices the wrong way round (anticlockwise) to take advantage of culling, allowing light into but not out of a shape ("self-lighting")
     //This feature is off by default as it requires some conscientious design to avoid glitches
-    vertex_position_3d( _vbuff,   _ax, _ay, 0 );                vertex_colour( _vbuff,   c_black, 1 ); vertex_texcoord( _vbuff, global.lighting_black_u, global.lighting_black_v );
-    vertex_position_3d( _vbuff,   _bx, _by, LIGHTING_Z_LIMIT ); vertex_colour( _vbuff,   c_black, 1 ); vertex_texcoord( _vbuff, global.lighting_black_u, global.lighting_black_v );
-    vertex_position_3d( _vbuff,   _bx, _by, 0 );                vertex_colour( _vbuff,   c_black, 1 ); vertex_texcoord( _vbuff, global.lighting_black_u, global.lighting_black_v );
+    vertex_position_3d( _vbuff,   _ax, _ay, 0 );                vertex_colour( _vbuff,   c_black, 1 );
+    vertex_position_3d( _vbuff,   _bx, _by, LIGHTING_Z_LIMIT ); vertex_colour( _vbuff,   c_black, 1 );
+    vertex_position_3d( _vbuff,   _bx, _by, 0 );                vertex_colour( _vbuff,   c_black, 1 );
     
-    vertex_position_3d( _vbuff,   _ax, _ay, 0 );                vertex_colour( _vbuff,   c_black, 1 ); vertex_texcoord( _vbuff, global.lighting_black_u, global.lighting_black_v );
-    vertex_position_3d( _vbuff,   _ax, _ay, LIGHTING_Z_LIMIT ); vertex_colour( _vbuff,   c_black, 1 ); vertex_texcoord( _vbuff, global.lighting_black_u, global.lighting_black_v );
-    vertex_position_3d( _vbuff,   _bx, _by, LIGHTING_Z_LIMIT ); vertex_colour( _vbuff,   c_black, 1 ); vertex_texcoord( _vbuff, global.lighting_black_u, global.lighting_black_v );
+    vertex_position_3d( _vbuff,   _ax, _ay, 0 );                vertex_colour( _vbuff,   c_black, 1 );
+    vertex_position_3d( _vbuff,   _ax, _ay, LIGHTING_Z_LIMIT ); vertex_colour( _vbuff,   c_black, 1 );
+    vertex_position_3d( _vbuff,   _bx, _by, LIGHTING_Z_LIMIT ); vertex_colour( _vbuff,   c_black, 1 );
     
 }

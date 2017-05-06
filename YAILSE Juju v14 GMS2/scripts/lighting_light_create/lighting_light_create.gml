@@ -19,5 +19,5 @@ light_h = sprite_get_height( sprite_index );
 light_w_half = 0.5*light_w;
 light_h_half = 0.5*light_h;
 
-if ( LIGHTING_DEFERRED ) srf_light = surface_create( light_w, light_h );
+if ( !LIGHTING_NEVER_DEFERRED ) srf_light = surface_create( light_w, light_h );
 on_screen = true;

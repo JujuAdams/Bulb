@@ -42,7 +42,7 @@ if ( vbf_static_shadows == noone ) {
     
     //Add static shadow caster vertices to the relevant vertex buffer
     vertex_begin( vbf_static_shadows, vft_shadow_geometry );
-    with ( obj_static_occluder ) _lighting_add_occlusion( other.vbf_static_shadows );
+    with ( obj_static_occluder ) _lighting_add_occlusion_deferred( other.vbf_static_shadows );
     vertex_end( vbf_static_shadows );
     
     //Freeze this buffer for speed boosts later on (though only if we have vertices in this buffer)
@@ -53,7 +53,7 @@ if ( vbf_static_shadows == noone ) {
 
 
 ///////////Refresh the dynamic geometry
-//This is really slow so try to keep dynamic objects limited.
+//Try to keep dynamic objects limited.
 if ( vbf_dynamic_shadows != noone ) vertex_delete_buffer( vbf_dynamic_shadows );
 vbf_dynamic_shadows = vertex_create_buffer();
 
@@ -64,7 +64,7 @@ with ( obj_dynamic_occluder ) {
 	                                                bbox_right, bbox_bottom,
 								                    _camera_exp_l, _camera_exp_t,
 													_camera_exp_r, _camera_exp_b );
-	if ( on_screen ) _lighting_add_occlusion( other.vbf_dynamic_shadows );
+	if ( on_screen ) _lighting_add_occlusion_deferred( other.vbf_dynamic_shadows );
 }
 vertex_end( vbf_dynamic_shadows );
 

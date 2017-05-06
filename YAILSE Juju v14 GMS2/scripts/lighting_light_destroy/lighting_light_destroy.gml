@@ -11,4 +11,4 @@
 //  
 //  This code and engine are provided under the Creative Commons "Attribution - NonCommerical - ShareAlike" international license.
 
-if ( LIGHTING_DEFERRED ) surface_free( srf_light );
+if ( !LIGHTING_NEVER_DEFERRED ) surface_free( srf_light );

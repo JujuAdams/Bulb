@@ -24,7 +24,7 @@
 #macro LIGHTING_ZFAR 16000
 #macro LIGHTING_Z_LIMIT 2000
 #macro LIGHTING_DYNAMIC_INCLUSION 256
-#macro LIGHTING_DEFERRED false
+#macro LIGHTING_NEVER_DEFERRED false
 
 
 
@@ -38,6 +38,16 @@ lighting_ambient_colour = argument1;
 //This requires careful object placement as not to create weird graphical glitches.
 lighting_culling = argument2 ? cull_counterclockwise : cull_noculling;
 
+//Switches from z-stencilling to deferred rendering.
+lighting_deferred = argument3;
+
+
+
+global.lighting_black_texture = sprite_get_texture( spr_lighting_black, 0 );
+var _uvs = sprite_get_uvs( spr_lighting_black, 0 );
+global.lighting_black_u = 0.5*( _uvs[0] + _uvs[2] );
+global.lighting_black_v = 0.5*( _uvs[1] + _uvs[3] );
+
 
 
 //Create vertex format for the shadow casting vertex buffers
@@ -45,6 +55,12 @@ vertex_format_begin();
 vertex_format_add_position_3d();
 vertex_format_add_colour();
 vft_shadow_geometry = vertex_format_end();
+
+vertex_format_begin();
+vertex_format_add_position_3d();
+vertex_format_add_colour();
+vertex_format_add_texcoord();
+vft_3d_textured = vertex_format_end();
 
 
 
