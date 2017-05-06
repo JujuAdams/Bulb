@@ -50,7 +50,7 @@
             "Key": "052ccf3d-31d8-4466-9097-a59d8c26f4f2",
             "Value": {
                 "id": "b0a0dadc-5d60-4afd-a5c8-d776bf804465",
-                "resourcePath": "shaders\\shd_lighting\\shd_lighting.yy",
+                "resourcePath": "shaders\\shd_shadow\\shd_shadow.yy",
                 "resourceType": "GMShader"
             }
         },
@@ -108,14 +108,6 @@
                 "id": "fed9c5f5-5d5c-4f0c-a6fd-763d34fd0c77",
                 "resourcePath": "views\\17a062a6-55fb-4fbd-b154-6a2dc745eaf0.yy",
                 "resourceType": "GMFolder"
-            }
-        },
-        {
-            "Key": "1de0e764-530a-435d-bd6d-4e635af9c2cf",
-            "Value": {
-                "id": "bd3131a2-b758-40f6-ac80-20522c0000a3",
-                "resourcePath": "shaders\\shd_hlsl\\shd_hlsl.yy",
-                "resourceType": "GMShader"
             }
         },
         {
@@ -180,14 +172,6 @@
                 "id": "2b04bae7-2178-4cc0-b292-e29c8b39abcd",
                 "resourcePath": "scripts\\lighting_draw_end\\lighting_draw_end.yy",
                 "resourceType": "GMScript"
-            }
-        },
-        {
-            "Key": "2f77dc0f-9b24-4ce5-a136-78f23e8bcab6",
-            "Value": {
-                "id": "94dbf9aa-9550-473f-bf03-2e669d906592",
-                "resourcePath": "shaders\\shd_lighting_1\\shd_lighting_1.yy",
-                "resourceType": "GMShader"
             }
         },
         {
@@ -290,7 +274,7 @@
             "Key": "7349bd57-8957-4e06-b9d5-fb770d2aff01",
             "Value": {
                 "id": "973f17f2-8d81-48ad-8a52-e36bd8deca74",
-                "resourcePath": "rooms\\rm_test_1\\rm_test_1.yy",
+                "resourcePath": "rooms\\rm_test\\rm_test.yy",
                 "resourceType": "GMRoom"
             }
         },
@@ -340,14 +324,6 @@
                 "id": "84502f27-9d2a-4ee2-9be3-18b5a24aa1cc",
                 "resourcePath": "views\\9c2442cf-8693-4485-a6db-f3675995b473.yy",
                 "resourceType": "GMFolder"
-            }
-        },
-        {
-            "Key": "9d2d5b41-b6ee-4457-b362-28772f871feb",
-            "Value": {
-                "id": "3d9d615f-e4f0-4438-9a6c-10766f09c45d",
-                "resourcePath": "rooms\\rm_test\\rm_test.yy",
-                "resourceType": "GMRoom"
             }
         },
         {

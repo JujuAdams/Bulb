@@ -1,5 +1,7 @@
 /// @param ambient_colour
 /// @param self_lighting
+/// @param culling
+/// @param deferred
 //
 //  Initialises the necessary variables for a controller object to use the lighting system.
 //  Should be called in one object per room.
@@ -21,6 +23,7 @@
 
 #macro LIGHTING_Z_LIMIT 2000
 #macro LIGHTING_DYNAMIC_INCLUSION 256
+#macro LIGHTING_DEFERRED false
 
 
 
@@ -47,4 +50,5 @@ vft_shadow_geometry = vertex_format_end();
 //Initialise variables used and updated in scr_lighting_build()
 vbf_static_shadows = noone; //Vertex buffer describing the shadow casting geometry of the static objects.
 vbf_dynamic_shadows = noone; //As above but for dynamic shadow casters. This is updated every step.
+vbf_zbuffer_reset = noone; //This vertex buffer is used to reset the z-buffer for non-deferred rendering.
 srf_lighting = noone; //Screen-space surface for final compositing of individual surfaces.

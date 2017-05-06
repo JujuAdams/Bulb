@@ -21,7 +21,7 @@ if ( instance_number( _obj ) > 0 ) {
     with( _obj ) {
         
         var _uvs = sprite_get_uvs( _spr, _img );
-        
+		
 		var _matrix = matrix_build( -sprite_get_xoffset( _spr ), -sprite_get_yoffset( _spr ), 0,
 		                            0, 0, 0,
 									1, 1, 1 );

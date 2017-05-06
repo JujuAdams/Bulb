@@ -9,13 +9,8 @@ if ( keyboard_check( vk_down  ) ) or ( keyboard_check( ord( "S" ) ) ) _y += 5;
 if ( keyboard_check( vk_left  ) ) or ( keyboard_check( ord( "A" ) ) ) _x -= 5;
 if ( keyboard_check( vk_right ) ) or ( keyboard_check( ord( "D" ) ) ) _x += 5;
 
-x += _x;
-y += _y;
-
-/*
 repeat( abs( _x ) ) if ( !place_meeting( x + sign( _x ), y, obj_par_occluder ) ) x += sign( _x ) else break;
 repeat( abs( _y ) ) if ( !place_meeting( x, y + sign( _y ), obj_par_occluder ) ) y += sign( _y ) else break;
-*/
 
 //Other controls
 if ( keyboard_check_pressed( vk_escape  ) ) game_end();
@@ -27,7 +22,7 @@ if ( keyboard_check_pressed( ord( "2" ) ) ) lighting_culling = ( lighting_cullin
 //Shooting
 if ( mouse_check_button( mb_left ) ) and ( alarm_get( 0 ) <= 0 ) {
     
-    alarm_set( 0, 3 );
+    alarm_set( 0, 6 );
     
     var _inst = instance_create_depth( x, y, 0, obj_light_plasma );
     _inst.speed = 10;
