@@ -9,7 +9,9 @@ void main() {
 	
 	vec4 pos = vec4( in_Position.xyz, 1.0 );
 	//pos.xy = floor( pos.xy );
-	gl_Position = gm_Matrices[MATRIX_WORLD_VIEW_PROJECTION]*pos;
+	gl_Position = gm_Matrices[MATRIX_PROJECTION]*gm_Matrices[MATRIX_VIEW]*pos;
+	gl_Position.z = 0.0;
+	gl_Position.xyz += u_vTranslate * gl_Position.w;
 	
 	v_vColour = in_Colour;
 	
