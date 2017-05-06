@@ -21,6 +21,7 @@
 //  This code and engine are provided under the Creative Commons "Attribution - NonCommerical - ShareAlike" international license.
 //  https://creativecommons.org/licenses/by-nc-sa/4.0/
 
+#macro LIGHTING_ZFAR 16000
 #macro LIGHTING_Z_LIMIT 2000
 #macro LIGHTING_DYNAMIC_INCLUSION 256
 #macro LIGHTING_DEFERRED false
