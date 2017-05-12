@@ -74,8 +74,12 @@ if ( vbf_static_shadows == noone ) {
 
 ///////////Refresh the dynamic geometry
 //Try to keep dynamic objects limited.
-if ( vbf_dynamic_shadows != noone ) vertex_delete_buffer( vbf_dynamic_shadows );
-vbf_dynamic_shadows = vertex_create_buffer();
+if ( LIGHTING_REUSE_DYNAMIC_BUFFER ) {
+	if ( vbf_dynamic_shadows == noone ) vbf_dynamic_shadows = vertex_create_buffer();
+} else {
+	if ( vbf_dynamic_shadows != noone ) vertex_delete_buffer( vbf_dynamic_shadows );
+	vbf_dynamic_shadows = vertex_create_buffer();
+}
 
 //Add dynamic shadow caster vertices to the relevant vertex buffer
 vertex_begin( vbf_dynamic_shadows, vft_3d_textured );
@@ -102,7 +106,7 @@ surface_set_target( srf_lighting );
     draw_clear( lighting_ambient_colour );
 	
     //Use a cumulative blend mode to add lights together
-    gpu_set_blendmode( bm_max );
+    gpu_set_blendmode( LIGHTING_BLEND_MODE );
 	gpu_set_cullmode( lighting_culling );
 	gpu_set_ztestenable( true );
 	gpu_set_zwriteenable( true );
