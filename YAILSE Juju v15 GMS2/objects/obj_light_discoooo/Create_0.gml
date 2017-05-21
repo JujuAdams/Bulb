@@ -4,7 +4,7 @@ sprite_index = spr_light;
 //Call default light behaviour *after* setting the sprite
 event_inherited();
 
-//speed = random_range( 3, 6 );
+speed = 1;
 direction = random( 360 );
 
 blend_cycle_speed = random_range( 0.1, 1 );

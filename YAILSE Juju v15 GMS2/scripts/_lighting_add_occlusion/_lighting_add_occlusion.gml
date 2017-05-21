@@ -1,11 +1,11 @@
 /// @param vertex_buffer
 //
-//  Adds an object's pre-defined shadow casting geometry to a vertex buffer, after having been appropriately transformed.
+//  Adds an object's occluder geometry to a vertex buffer, after having been appropriately transformed.
 //  Should be called with() the shadow casting object.
 //
 //  return: Nothing
 //  
-//  April 2017
+//  May 2017
 //  @jujuadams
 //  /u/jujuadam
 //  Juju on the GMC
@@ -42,11 +42,11 @@ for( var _i = 0; _i < shadow_geometry_size; _i += 4 ) {
 	var _new_by = y - _old_bx*_x_sin + _old_by*_y_cos;
 	
 	//Using textures (rather than untextureed) saves on shader_set() overhead... likely a trade-off depending on the GPU
-    vertex_position_3d( _vbuff,   _new_ax, _new_ay, 0 );                vertex_colour( _vbuff,   c_black, 1 ); vertex_texcoord( _vbuff, global.lighting_black_u, global.lighting_black_v );
+    vertex_position_3d( _vbuff,   _new_ax, _new_ay, 0 );             vertex_colour( _vbuff,   c_black, 1 ); vertex_texcoord( _vbuff, global.lighting_black_u, global.lighting_black_v );
     vertex_position_3d( _vbuff,   _new_bx, _new_by, LIGHTING_ZFAR ); vertex_colour( _vbuff,   c_black, 1 ); vertex_texcoord( _vbuff, global.lighting_black_u, global.lighting_black_v );
-    vertex_position_3d( _vbuff,   _new_bx, _new_by, 0 );                vertex_colour( _vbuff,   c_black, 1 ); vertex_texcoord( _vbuff, global.lighting_black_u, global.lighting_black_v );
+    vertex_position_3d( _vbuff,   _new_bx, _new_by, 0 );             vertex_colour( _vbuff,   c_black, 1 ); vertex_texcoord( _vbuff, global.lighting_black_u, global.lighting_black_v );
     
-    vertex_position_3d( _vbuff,   _new_ax, _new_ay, 0 );                vertex_colour( _vbuff,   c_black, 1 ); vertex_texcoord( _vbuff, global.lighting_black_u, global.lighting_black_v );
+    vertex_position_3d( _vbuff,   _new_ax, _new_ay, 0 );             vertex_colour( _vbuff,   c_black, 1 ); vertex_texcoord( _vbuff, global.lighting_black_u, global.lighting_black_v );
     vertex_position_3d( _vbuff,   _new_ax, _new_ay, LIGHTING_ZFAR ); vertex_colour( _vbuff,   c_black, 1 ); vertex_texcoord( _vbuff, global.lighting_black_u, global.lighting_black_v );
     vertex_position_3d( _vbuff,   _new_bx, _new_by, LIGHTING_ZFAR ); vertex_colour( _vbuff,   c_black, 1 ); vertex_texcoord( _vbuff, global.lighting_black_u, global.lighting_black_v );
     

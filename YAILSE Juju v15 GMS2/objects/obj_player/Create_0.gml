@@ -21,5 +21,5 @@ vbf_static_block = vertexpre_create( obj_static_occluder, spr_static_block, 0 );
 //Some debug values
 show_debug = false;
 smoothed_frame_time = 1;
-smoothed_fps = 800;
+smoothed_fps = 1000;
 alarm_set( 1, 30 );

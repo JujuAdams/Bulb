@@ -586,8 +586,8 @@
                     "m_originalParentID": "00000000-0000-0000-0000-000000000000",
                     "m_serialiseFrozen": false,
                     "name": "inst_1C9E5E16",
-                    "x": 1952,
-                    "y": 1312,
+                    "x": 1847,
+                    "y": 1780,
                     "IsDnD": false,
                     "colour": {
                         "Value": 4294967295
@@ -731,8 +731,8 @@
                     "m_originalParentID": "00000000-0000-0000-0000-000000000000",
                     "m_serialiseFrozen": false,
                     "name": "inst_2471C1B4",
-                    "x": 1762,
-                    "y": 1794,
+                    "x": 1851,
+                    "y": 1719,
                     "IsDnD": false,
                     "colour": {
                         "Value": 4294967295
@@ -755,8 +755,8 @@
                     "m_originalParentID": "00000000-0000-0000-0000-000000000000",
                     "m_serialiseFrozen": false,
                     "name": "inst_503B1B61",
-                    "x": 2067,
-                    "y": 1697,
+                    "x": 2231,
+                    "y": 2147,
                     "IsDnD": false,
                     "colour": {
                         "Value": 4294967295
@@ -779,8 +779,8 @@
                     "m_originalParentID": "00000000-0000-0000-0000-000000000000",
                     "m_serialiseFrozen": false,
                     "name": "inst_28641F6C",
-                    "x": 1989,
-                    "y": 1541,
+                    "x": 1750,
+                    "y": 2275,
                     "IsDnD": false,
                     "colour": {
                         "Value": 4294967295
@@ -803,8 +803,8 @@
                     "m_originalParentID": "00000000-0000-0000-0000-000000000000",
                     "m_serialiseFrozen": false,
                     "name": "inst_3ECDE99",
-                    "x": 1793,
-                    "y": 1542,
+                    "x": 2112,
+                    "y": 1363,
                     "IsDnD": false,
                     "colour": {
                         "Value": 4294967295
@@ -851,8 +851,8 @@
                     "m_originalParentID": "00000000-0000-0000-0000-000000000000",
                     "m_serialiseFrozen": false,
                     "name": "inst_435ACC28",
-                    "x": 1984,
-                    "y": 1792,
+                    "x": 2545,
+                    "y": 1257,
                     "IsDnD": false,
                     "colour": {
                         "Value": 4294967295
@@ -875,8 +875,8 @@
                     "m_originalParentID": "00000000-0000-0000-0000-000000000000",
                     "m_serialiseFrozen": false,
                     "name": "inst_1CDD8FEB",
-                    "x": 1707,
-                    "y": 1734,
+                    "x": 1254,
+                    "y": 1558,
                     "IsDnD": false,
                     "colour": {
                         "Value": 4294967295
@@ -899,8 +899,8 @@
                     "m_originalParentID": "00000000-0000-0000-0000-000000000000",
                     "m_serialiseFrozen": false,
                     "name": "inst_6EA6DA76",
-                    "x": 1543,
-                    "y": 1784,
+                    "x": 1251,
+                    "y": 1848,
                     "IsDnD": false,
                     "colour": {
                         "Value": 4294967295
@@ -971,8 +971,8 @@
                     "m_originalParentID": "00000000-0000-0000-0000-000000000000",
                     "m_serialiseFrozen": false,
                     "name": "inst_7FB2E033",
-                    "x": 1965,
-                    "y": 1725,
+                    "x": 1950,
+                    "y": 1177,
                     "IsDnD": false,
                     "colour": {
                         "Value": 4294967295

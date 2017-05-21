@@ -6,6 +6,13 @@
 /// @param y2u
 /// @param x2r
 /// @param y2d
+//  
+//  May 2017
+//  @Mordwaith
+//  /u/mordwaith
+//  
+//  This code and engine are provided under the Creative Commons "Attribution - NonCommerical - ShareAlike" international license.
+//  https://creativecommons.org/licenses/by-nc-sa/4.0/
 
 return !( ( argument4 > argument2 ) or
           ( argument6 < argument0 ) or

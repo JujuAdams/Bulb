@@ -1,11 +1,11 @@
-//  Build shadow casting geometry and render lights, with their shadows, to a screen-space lighting surface.
+//  Build occluder geometry and render lights, with their shadows, to a screen-space lighting surface.
 //  Should be called in one object per room, the same object that called scr_lighting_start().
 //  This script changes the d3d_set_culling() internal value!
 //  
 //  argument0: Culling value to be set after the script has ended.
 //  return: Nothing
 //  
-//  April 2017
+//  May 2017
 //  @jujuadams
 //  /u/jujuadam
 //  Juju on the GMC
@@ -17,6 +17,7 @@
 
 
 
+///////////Discover camera variables
 var _camera_l  = camera_get_view_x( lighting_camera );
 var _camera_t  = camera_get_view_y( lighting_camera );
 var _camera_w  = camera_get_view_width( lighting_camera );
@@ -51,7 +52,7 @@ if ( vbf_zbuffer_reset == noone ) {
 
 
 
-///////////One-time construction of the static shadow-casting geometry
+///////////One-time construction of the static occluder geometry
 if ( vbf_static_shadows == noone ) {
 	
     //Create a new vertex buffer
@@ -69,7 +70,7 @@ if ( vbf_static_shadows == noone ) {
 
 
 
-///////////Refresh the dynamic geometry
+///////////Refresh the dynamic occluder geometry
 //Try to keep dynamic objects limited.
 if ( LIGHTING_REUSE_DYNAMIC_BUFFER ) {
 	if ( vbf_dynamic_shadows == noone ) vbf_dynamic_shadows = vertex_create_buffer();
@@ -168,8 +169,6 @@ surface_set_target( srf_lighting );
 		}
 		
 	}
-	
-	
 	
 //Reset GPU properties
 gpu_set_cullmode( cull_noculling );

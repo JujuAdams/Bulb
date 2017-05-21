@@ -2,7 +2,7 @@
 //
 //  return: Nothing
 //  
-//  April 2017
+//  May 2017
 //  @jujuadams
 //  /u/jujuadam
 //  Juju on the GMC
@@ -12,6 +12,6 @@
 //  This code and engine are provided under the Creative Commons "Attribution - NonCommerical - ShareAlike" international license.
 //  https://creativecommons.org/licenses/by-nc-sa/4.0/
 
-shadow_geometry_size = 0;
+shadow_geometry_size   = 0;
 arr_shadow_geometry[0] = 0;
-on_screen = true;
+on_screen              = true;

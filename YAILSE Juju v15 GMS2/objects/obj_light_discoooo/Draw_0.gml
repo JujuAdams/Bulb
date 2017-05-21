@@ -1,1 +1,2 @@
-//Draw nothing!
+//Usually you'd want to draw nothing...
+if ( obj_player.show_debug ) draw_sprite_ext( spr_white_mask, 0, x, y, 1, 1, 0, image_blend, 1 );
