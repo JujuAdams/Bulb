@@ -87,6 +87,14 @@
             }
         },
         {
+            "Key": "15c0f0fc-3411-408a-9e81-e8eaeb3357a3",
+            "Value": {
+                "id": "b57c2a76-e569-44e6-8745-d87ae889d487",
+                "resourcePath": "scripts\\rectangle_in_rectangle_custom\\rectangle_in_rectangle_custom.yy",
+                "resourceType": "GMScript"
+            }
+        },
+        {
             "Key": "15d4d447-942e-4749-bcf5-9f8fb334e23a",
             "Value": {
                 "id": "1a4d43dd-254c-4ace-a6c7-144958586ac7",
@@ -521,6 +529,7 @@
     ],
     "script_order": [
         "d03c849b-300b-483a-8627-14d729d3e8a5",
+        "15c0f0fc-3411-408a-9e81-e8eaeb3357a3",
         "803393fd-2078-4c89-9334-51d7f2330543",
         "4239537d-e8f5-408d-bf31-9af742584905",
         "41e830c9-544a-42fe-a3b6-eeca8aae28cc",

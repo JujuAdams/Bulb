@@ -39,14 +39,15 @@ if ( vbf_zbuffer_reset == noone ) {
     vbf_zbuffer_reset = vertex_create_buffer();
     vertex_begin( vbf_zbuffer_reset, vft_3d_textured );
 	
-	vertex_position_3d( vbf_zbuffer_reset,         0,         0, LIGHTING_ZFAR-1 ); vertex_colour( vbf_zbuffer_reset, c_black, 0 ); vertex_texcoord( vbf_zbuffer_reset, global.lighting_black_u, global.lighting_black_v );
-	vertex_position_3d( vbf_zbuffer_reset, _camera_w,         0, LIGHTING_ZFAR-1 ); vertex_colour( vbf_zbuffer_reset, c_black, 0 ); vertex_texcoord( vbf_zbuffer_reset, global.lighting_black_u, global.lighting_black_v );
-	vertex_position_3d( vbf_zbuffer_reset,         0, _camera_h, LIGHTING_ZFAR-1 ); vertex_colour( vbf_zbuffer_reset, c_black, 0 ); vertex_texcoord( vbf_zbuffer_reset, global.lighting_black_u, global.lighting_black_v );
-	
-	vertex_position_3d( vbf_zbuffer_reset, _camera_w,         0, LIGHTING_ZFAR-1 ); vertex_colour( vbf_zbuffer_reset, c_black, 0 ); vertex_texcoord( vbf_zbuffer_reset, global.lighting_black_u, global.lighting_black_v );
-	vertex_position_3d( vbf_zbuffer_reset, _camera_w, _camera_h, LIGHTING_ZFAR-1 ); vertex_colour( vbf_zbuffer_reset, c_black, 0 ); vertex_texcoord( vbf_zbuffer_reset, global.lighting_black_u, global.lighting_black_v );
-	vertex_position_3d( vbf_zbuffer_reset,         0, _camera_h, LIGHTING_ZFAR-1 ); vertex_colour( vbf_zbuffer_reset, c_black, 0 ); vertex_texcoord( vbf_zbuffer_reset, global.lighting_black_u, global.lighting_black_v );
-	
+	vertex_position_3d( vbf_zbuffer_reset,           0,           0, LIGHTING_ZFAR-1 ); vertex_colour( vbf_zbuffer_reset, c_black, 1 ); vertex_texcoord( vbf_zbuffer_reset, global.lighting_black_u, global.lighting_black_v );
+	vertex_position_3d( vbf_zbuffer_reset, 2*_camera_w,           0, LIGHTING_ZFAR-1 ); vertex_colour( vbf_zbuffer_reset, c_black, 1 ); vertex_texcoord( vbf_zbuffer_reset, global.lighting_black_u, global.lighting_black_v );
+	vertex_position_3d( vbf_zbuffer_reset,           0, 2*_camera_h, LIGHTING_ZFAR-1 ); vertex_colour( vbf_zbuffer_reset, c_black, 1 ); vertex_texcoord( vbf_zbuffer_reset, global.lighting_black_u, global.lighting_black_v );
+	/*
+	//Unnecessary?
+	vertex_position_3d( vbf_zbuffer_reset, _camera_w,         0, LIGHTING_ZFAR-1 ); vertex_colour( vbf_zbuffer_reset, c_black, 1 ); vertex_texcoord( vbf_zbuffer_reset, global.lighting_black_u, global.lighting_black_v );
+	vertex_position_3d( vbf_zbuffer_reset, _camera_w, _camera_h, LIGHTING_ZFAR-1 ); vertex_colour( vbf_zbuffer_reset, c_black, 1 ); vertex_texcoord( vbf_zbuffer_reset, global.lighting_black_u, global.lighting_black_v );
+	vertex_position_3d( vbf_zbuffer_reset,         0, _camera_h, LIGHTING_ZFAR-1 ); vertex_colour( vbf_zbuffer_reset, c_black, 1 ); vertex_texcoord( vbf_zbuffer_reset, global.lighting_black_u, global.lighting_black_v );
+	*/
     vertex_end( vbf_zbuffer_reset );
 	vertex_freeze( vbf_zbuffer_reset );
 	
@@ -84,10 +85,10 @@ if ( LIGHTING_REUSE_DYNAMIC_BUFFER ) {
 //Add dynamic shadow caster vertices to the relevant vertex buffer
 vertex_begin( vbf_dynamic_shadows, vft_3d_textured );
 with ( obj_dynamic_occluder ) {
-    on_screen = visible and rectangle_in_rectangle( bbox_left, bbox_top,
-	                                                bbox_right, bbox_bottom,
-								                    _camera_exp_l, _camera_exp_t,
-													_camera_exp_r, _camera_exp_b );
+    on_screen = visible and rectangle_in_rectangle_custom( bbox_left, bbox_top,
+	                                                       bbox_right, bbox_bottom,
+								                           _camera_exp_l, _camera_exp_t,
+													       _camera_exp_r, _camera_exp_b );
 	if ( on_screen ) _lighting_add_occlusion( other.vbf_dynamic_shadows );
 }
 vertex_end( vbf_dynamic_shadows );
@@ -98,50 +99,57 @@ vertex_end( vbf_dynamic_shadows );
 srf_lighting = surface_check( srf_lighting, _camera_w, _camera_h );
 surface_set_target( srf_lighting );
 	
-	//Grab the default view/projection matrices for use later
-	var _surface_view_matrix = matrix_get( matrix_view );
-	var _surface_proj_matrix = matrix_get( matrix_projection );
-	
     //Clear the surface with the ambient colour
-    draw_clear( lighting_ambient_colour );
+    draw_clear_alpha( lighting_ambient_colour, 0 );
+	
+	
+	
+	//Grab the default view*projection matrix for use later
+	var _surface_vp_matrix = matrix_multiply( matrix_get( matrix_view ), matrix_get( matrix_projection ) );
+	
+	//We set the view matrix to the identity to allow us to build a custom projection matrix
+	matrix_set( matrix_view, matrix_build_identity() );
+	
+	//Calculate some transform coefficients
+	var _inv_camera_w = 2/_camera_w;
+	var _inv_camera_h = 2/_camera_h;
+	var _transformed_cam_x = _camera_cx*_inv_camera_w;
+	var _transformed_cam_y = _camera_cy*_inv_camera_h;
+	
+	//Pre-build a custom projection matrix
+	//[8] and [9] are set per light
+	var _proj_matrix = [      _inv_camera_w,                  0, 0,  0,
+				                          0,     -_inv_camera_h, 0,  0,
+							              0,                  0, 0, -1,
+						-_transformed_cam_x, _transformed_cam_y, 0,  1 ];
+	
+	
 	
     //Use a cumulative blend mode to add lights together
-    gpu_set_blendmode( LIGHTING_BLEND_MODE );
+    gpu_set_blendmode( bm_add );
 	gpu_set_cullmode( lighting_culling );
 	gpu_set_ztestenable( true );
 	gpu_set_zwriteenable( true );
 	shader_set( shd_pass_through );
 	
-	//Build our shadow-casting projection matrix
-	var _camera_proj_matrix = matrix_build_projection_perspective( _camera_w, _camera_h, 1, LIGHTING_ZFAR );
-	
-	//Build our transform matrix to put shadows back into screen-space
-	//Indexes 12+13 are set per light. Index 10 sets shadow shapes to the foreground of the scene
-	var _transform_matrix = [ 1, 0, 0, 0,
-				              0, 1, 0, 0,
-							  0, 0, 0, 0,
-							  0, 0, 0, 1 ];
-	
     with ( obj_par_light ) {
 		
-	    on_screen = visible and rectangle_in_rectangle( x - light_w_half, y - light_h_half,
-	                                                    x + light_w_half, y + light_h_half,
-									                    _camera_l, _camera_t, _camera_r, _camera_b );
+	    on_screen = visible and rectangle_in_rectangle_custom( x - light_w_half, y - light_h_half,
+	                                                           x + light_w_half, y + light_h_half,
+									                           _camera_l, _camera_t, _camera_r, _camera_b );
 		
 		if ( on_screen ) {
 			
+			//Using textures saves on shader_set() overhead... likely a trade-off depending on GPU
 			//shader_set( shd_shadow );
 			gpu_set_zfunc( cmpfunc_always );
 			gpu_set_colorwriteenable( false, false, false, false );
 				
 				vertex_submit( other.vbf_zbuffer_reset, pr_trianglelist, global.lighting_black_texture ); //Reset the zbuffer
 				
-				//This is actually a view*projection matrix.
-				//Combining this into one place (given that the world matrix is an identity) reduces matrix_set() calls
-				matrix_set( matrix_view, matrix_multiply( matrix_build_lookat( x, y, 1,   x, y, 0,   0, -1, 0 ), _camera_proj_matrix ) );
-				_transform_matrix[12] =  ( x - _camera_cx ) / ( 0.5*_camera_w );
-				_transform_matrix[13] = -( y - _camera_cy ) / ( 0.5*_camera_h );
-				matrix_set( matrix_projection, _transform_matrix ); //Transform from light-space to screen-space
+				_proj_matrix[8] = -x*_inv_camera_w + _transformed_cam_x;
+				_proj_matrix[9] =  y*_inv_camera_h - _transformed_cam_y;
+				matrix_set( matrix_projection, _proj_matrix );
 				
 				vertex_submit( other.vbf_static_shadows,  pr_trianglelist, global.lighting_black_texture );
 				vertex_submit( other.vbf_dynamic_shadows, pr_trianglelist, global.lighting_black_texture );
@@ -149,10 +157,11 @@ surface_set_target( srf_lighting );
 			//shader_set( shd_pass_through );
 			gpu_set_zfunc( cmpfunc_lessequal );
 			gpu_set_colorwriteenable( true, true, true, true );
-				matrix_set( matrix_view, _surface_view_matrix );
-				matrix_set( matrix_projection, _surface_proj_matrix );
-				draw_sprite_ext( sprite_index, image_index, x - _camera_l, y - _camera_t, image_xscale, image_yscale, image_angle, image_blend, image_alpha );
-				
+				matrix_set( matrix_projection, _surface_vp_matrix );
+				draw_sprite_ext( sprite_index, image_index,
+				                 x - _camera_l, y - _camera_t,
+								 image_xscale, image_yscale, image_angle,
+								 image_blend, image_alpha );
 		}
 	}
 	
@@ -162,7 +171,7 @@ surface_set_target( srf_lighting );
 	gpu_set_cullmode( cull_noculling );
 	gpu_set_ztestenable( false );
 	gpu_set_zwriteenable( false );
-
+	
 surface_reset_target();
 
 

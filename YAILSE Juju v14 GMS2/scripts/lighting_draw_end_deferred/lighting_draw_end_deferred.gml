@@ -64,10 +64,10 @@ if ( LIGHTING_REUSE_DYNAMIC_BUFFER ) {
 //Add dynamic shadow caster vertices to the relevant vertex buffer
 vertex_begin( vbf_dynamic_shadows, vft_shadow_geometry );
 with ( obj_dynamic_occluder ) {
-    on_screen = visible and rectangle_in_rectangle( bbox_left, bbox_top,
-	                                                bbox_right, bbox_bottom,
-								                    _camera_exp_l, _camera_exp_t,
-													_camera_exp_r, _camera_exp_b );
+    on_screen = visible and rectangle_in_rectangle_custom( bbox_left, bbox_top,
+	                                                       bbox_right, bbox_bottom,
+								                           _camera_exp_l, _camera_exp_t,
+													       _camera_exp_r, _camera_exp_b );
 	if ( on_screen ) _lighting_add_occlusion_deferred( other.vbf_dynamic_shadows );
 }
 vertex_end( vbf_dynamic_shadows );
@@ -78,9 +78,9 @@ vertex_end( vbf_dynamic_shadows );
 gpu_set_cullmode( lighting_culling );
 with( obj_par_light ) {
 	
-    on_screen = visible and rectangle_in_rectangle( x - light_w_half, y - light_h_half,
-                                                    x + light_w_half, y + light_h_half,
-								                    _camera_l, _camera_t, _camera_r, _camera_b );
+    on_screen = visible and rectangle_in_rectangle_custom( x - light_w_half, y - light_h_half,
+                                                           x + light_w_half, y + light_h_half,
+								                           _camera_l, _camera_t, _camera_r, _camera_b );
 	
     //If this light is ready to be drawn...
     if ( on_screen ) {
