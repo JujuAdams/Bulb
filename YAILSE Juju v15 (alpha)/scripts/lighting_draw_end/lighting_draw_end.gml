@@ -97,10 +97,7 @@ gpu_set_blendmode( bm_add );
 gpu_set_cullmode( lighting_culling );
 gpu_set_ztestenable( true );
 gpu_set_zwriteenable( true );
-
-var _vbf_zbuffer_reset   = vbf_zbuffer_reset;
-var _vbf_static_shadows  = vbf_static_shadows;
-var _vbf_dynamic_shadows = vbf_dynamic_shadows;
+shader_set( shd_pass_through );
 
 //Create composite lighting surface
 srf_lighting = surface_check( srf_lighting, _camera_w, _camera_h );
@@ -147,14 +144,14 @@ surface_set_target( srf_lighting );
 			gpu_set_zfunc( cmpfunc_always );
 			gpu_set_colorwriteenable( false, false, false, false );
 				
-				vertex_submit( _vbf_zbuffer_reset, pr_trianglelist, global.lighting_black_texture ); //Reset the zbuffer
+				vertex_submit( other.vbf_zbuffer_reset, pr_trianglelist, global.lighting_black_texture ); //Reset the zbuffer
 				
 				_proj_matrix[8] = -x*_inv_camera_w + _transformed_cam_x;
 				_proj_matrix[9] =  y*_inv_camera_h - _transformed_cam_y;
 				matrix_set( matrix_projection, _proj_matrix );
 				
-				vertex_submit( _vbf_static_shadows,  pr_trianglelist, global.lighting_black_texture );
-				vertex_submit( _vbf_dynamic_shadows, pr_trianglelist, global.lighting_black_texture );
+				vertex_submit( other.vbf_static_shadows,  pr_trianglelist, global.lighting_black_texture );
+				vertex_submit( other.vbf_dynamic_shadows, pr_trianglelist, global.lighting_black_texture );
 				
 			//Draw light sprite
 			gpu_set_zfunc( cmpfunc_lessequal );
@@ -171,10 +168,11 @@ surface_set_target( srf_lighting );
 	
 	
 	
-//Reset GPU properties
+///////////Reset GPU properties
 gpu_set_cullmode( cull_noculling );
 gpu_set_ztestenable( false );
 gpu_set_zwriteenable( false );
+shader_reset();
 surface_reset_target();
 
 
