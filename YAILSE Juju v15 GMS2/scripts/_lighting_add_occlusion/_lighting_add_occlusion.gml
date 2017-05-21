@@ -41,14 +41,13 @@ for( var _i = 0; _i < shadow_geometry_size; _i += 4 ) {
 	var _new_bx = x + _old_bx*_x_cos + _old_by*_y_sin;
 	var _new_by = y - _old_bx*_x_sin + _old_by*_y_cos;
 	
-    //Deliberately create vertices the wrong way round (anticlockwise) to take advantage of culling, allowing light into but not out of a shape ("self-lighting")
-    //This feature is off by default as it requires some conscientious design to avoid glitches
+	//Using textures (rather than untextureed) saves on shader_set() overhead... likely a trade-off depending on the GPU
     vertex_position_3d( _vbuff,   _new_ax, _new_ay, 0 );                vertex_colour( _vbuff,   c_black, 1 ); vertex_texcoord( _vbuff, global.lighting_black_u, global.lighting_black_v );
-    vertex_position_3d( _vbuff,   _new_bx, _new_by, LIGHTING_Z_LIMIT ); vertex_colour( _vbuff,   c_black, 1 ); vertex_texcoord( _vbuff, global.lighting_black_u, global.lighting_black_v );
+    vertex_position_3d( _vbuff,   _new_bx, _new_by, LIGHTING_ZFAR ); vertex_colour( _vbuff,   c_black, 1 ); vertex_texcoord( _vbuff, global.lighting_black_u, global.lighting_black_v );
     vertex_position_3d( _vbuff,   _new_bx, _new_by, 0 );                vertex_colour( _vbuff,   c_black, 1 ); vertex_texcoord( _vbuff, global.lighting_black_u, global.lighting_black_v );
     
     vertex_position_3d( _vbuff,   _new_ax, _new_ay, 0 );                vertex_colour( _vbuff,   c_black, 1 ); vertex_texcoord( _vbuff, global.lighting_black_u, global.lighting_black_v );
-    vertex_position_3d( _vbuff,   _new_ax, _new_ay, LIGHTING_Z_LIMIT ); vertex_colour( _vbuff,   c_black, 1 ); vertex_texcoord( _vbuff, global.lighting_black_u, global.lighting_black_v );
-    vertex_position_3d( _vbuff,   _new_bx, _new_by, LIGHTING_Z_LIMIT ); vertex_colour( _vbuff,   c_black, 1 ); vertex_texcoord( _vbuff, global.lighting_black_u, global.lighting_black_v );
+    vertex_position_3d( _vbuff,   _new_ax, _new_ay, LIGHTING_ZFAR ); vertex_colour( _vbuff,   c_black, 1 ); vertex_texcoord( _vbuff, global.lighting_black_u, global.lighting_black_v );
+    vertex_position_3d( _vbuff,   _new_bx, _new_by, LIGHTING_ZFAR ); vertex_colour( _vbuff,   c_black, 1 ); vertex_texcoord( _vbuff, global.lighting_black_u, global.lighting_black_v );
     
 }

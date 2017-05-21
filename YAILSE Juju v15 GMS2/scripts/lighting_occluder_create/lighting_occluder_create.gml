@@ -1,4 +1,4 @@
-//  Initialises some variables and an array the describes the caster.
+//  Initialises some variables and an array that describes the occluder.
 //
 //  return: Nothing
 //  

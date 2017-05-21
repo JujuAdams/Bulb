@@ -1,5 +1,3 @@
-///Create
-
 mask_index = sprite_index;
 sprite_index = spr_light_small;
 //Call default light behaviour *after* setting the sprite

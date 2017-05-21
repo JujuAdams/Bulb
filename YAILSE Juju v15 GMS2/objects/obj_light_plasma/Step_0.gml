@@ -1,5 +1,3 @@
-///Step
-
 event_inherited();
 
 if ( destroying ) {

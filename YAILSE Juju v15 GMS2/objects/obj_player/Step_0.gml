@@ -1,5 +1,3 @@
-///Step
-
 //Player input
 var _x = 0;
 var _y = 0;
@@ -18,12 +16,11 @@ if ( keyboard_check_pressed( vk_f1      ) ) {
 if ( keyboard_check_pressed( ord( "L" ) ) ) instance_create_depth( x, y, 0, obj_light_discoooo );
 if ( keyboard_check_pressed( ord( "1" ) ) ) with( obj_light_discoooo ) visible = !visible;
 if ( keyboard_check_pressed( ord( "2" ) ) ) lighting_culling = ( lighting_culling == cull_noculling ) ? cull_counterclockwise : cull_noculling;
-if ( keyboard_check_pressed( ord( "3" ) ) ) lighting_deferred = !lighting_deferred;
 
 //Shooting
 if ( mouse_check_button( mb_left ) ) and ( alarm_get( 0 ) <= 0 ) {
     
-    alarm_set( 0, 5 );
+    alarm_set( 0, 12 );
     
     var _inst = instance_create_depth( x, y, 0, obj_light_plasma );
 	with( _inst ) {
@@ -37,5 +34,6 @@ if ( mouse_check_button( mb_left ) ) and ( alarm_get( 0 ) <= 0 ) {
 //Update camera position
 camera_set_view_pos( camera, round( x - 0.5*camera_get_view_width( camera ) ), round( y - 0.5*camera_get_view_height( camera ) ) );
 
+//Update debug timers
 if ( alarm_get( 1 ) < 0 ) smoothed_frame_time = lerp( smoothed_frame_time, 1000/fps_real, 0.005 );
 if ( alarm_get( 1 ) < 0 ) smoothed_fps = lerp( smoothed_fps, fps_real, 0.005 );

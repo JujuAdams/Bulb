@@ -26,15 +26,15 @@ var _camera_b  = _camera_t + _camera_h;
 var _camera_cx = _camera_l + 0.5*_camera_w;
 var _camera_cy = _camera_t + 0.5*_camera_h;
 
-var _camera_exp_l = _camera_l - LIGHTING_DYNAMIC_INCLUSION;
-var _camera_exp_t = _camera_t - LIGHTING_DYNAMIC_INCLUSION;
-var _camera_exp_r = _camera_r + LIGHTING_DYNAMIC_INCLUSION;
-var _camera_exp_b = _camera_b + LIGHTING_DYNAMIC_INCLUSION;
+var _camera_exp_l = _camera_l - LIGHTING_DYNAMIC_BORDER;
+var _camera_exp_t = _camera_t - LIGHTING_DYNAMIC_BORDER;
+var _camera_exp_r = _camera_r + LIGHTING_DYNAMIC_BORDER;
+var _camera_exp_b = _camera_b + LIGHTING_DYNAMIC_BORDER;
 
 
 
-///////////One-time construction of a rectangle to wipe the z-buffer
-//Using textures (rather than untexted) saves on shader_set() overhead... likely a trade-off depending on the GPU
+///////////One-time construction of a triangle to wipe the z-buffer
+//Using textures (rather than untextured) saves on shader_set() overhead... likely a trade-off depending on the GPU
 if ( vbf_zbuffer_reset == noone ) {
 	
     vbf_zbuffer_reset = vertex_create_buffer();
@@ -78,7 +78,7 @@ if ( LIGHTING_REUSE_DYNAMIC_BUFFER ) {
 	vbf_dynamic_shadows = vertex_create_buffer();
 }
 
-//Add dynamic shadow caster vertices to the relevant vertex buffer
+//Add dynamic occluder vertices to the relevant vertex buffer
 vertex_begin( vbf_dynamic_shadows, vft_3d_textured );
 with ( obj_dynamic_occluder ) {
     on_screen = visible and rectangle_in_rectangle_custom( bbox_left, bbox_top,
@@ -143,7 +143,7 @@ surface_set_target( srf_lighting );
 		if ( on_screen ) {
 			
 			//Draw shadow stencil
-			//Using textures (rather than untexted) saves on shader_set() overhead... likely a trade-off depending on the GPU
+			//Using textures (rather than untextured) saves on shader_set() overhead... likely a trade-off depending on the GPU
 			gpu_set_zfunc( cmpfunc_always );
 			gpu_set_colorwriteenable( false, false, false, false );
 				

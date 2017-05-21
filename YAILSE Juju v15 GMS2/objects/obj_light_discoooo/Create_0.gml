@@ -1,7 +1,6 @@
-///Create
-
 mask_index = sprite_index;
 sprite_index = spr_light;
+
 //Call default light behaviour *after* setting the sprite
 event_inherited();
 

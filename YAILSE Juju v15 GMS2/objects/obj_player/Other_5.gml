@@ -1,6 +1,4 @@
-///Room End
-
-//Destroy the camera. GMS2 is dumb sometimes
+//Destroy the camera we set up
 view_set_camera( 0, noone );
 camera_destroy( camera );
 

@@ -1,5 +1,3 @@
-///Create
-
 lighting_occluder_create();
 
 image_index = 0;
