@@ -35,5 +35,5 @@ if ( mouse_check_button( mb_left ) ) and ( alarm_get( 0 ) <= 0 ) {
 camera_set_view_pos( camera, round( x - 0.5*camera_get_view_width( camera ) ), round( y - 0.5*camera_get_view_height( camera ) ) );
 
 //Update debug timers
-if ( alarm_get( 1 ) < 0 ) smoothed_frame_time = lerp( smoothed_frame_time, 1000/fps_real, 0.005 );
-if ( alarm_get( 1 ) < 0 ) smoothed_fps = lerp( smoothed_fps, fps_real, 0.005 );
+if ( alarm_get( 1 ) < 0 ) smoothed_frame_time = lerp( smoothed_frame_time, 1000/fps_real, 0.01 );
+if ( alarm_get( 1 ) < 0 ) smoothed_fps = lerp( smoothed_fps, fps_real, 0.01 );
