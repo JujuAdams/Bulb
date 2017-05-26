@@ -287,6 +287,14 @@
             }
         },
         {
+            "Key": "91ec5d6e-eba3-4e55-9ca7-6b45c65d84ee",
+            "Value": {
+                "id": "3929db4c-781a-45b6-908c-438e49333aa0",
+                "resourcePath": "shaders\\shd_shadow\\shd_shadow.yy",
+                "resourceType": "GMShader"
+            }
+        },
+        {
             "Key": "931bd1fe-f04f-4fec-be5f-a465f41ef9c1",
             "Value": {
                 "id": "fc803fab-fde9-4e4d-aa8d-633375cdcd2c",

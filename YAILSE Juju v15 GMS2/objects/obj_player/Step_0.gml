@@ -14,6 +14,7 @@ if ( keyboard_check_pressed( vk_f1      ) ) {
 	show_debug_overlay( show_debug );
 }
 if ( keyboard_check_pressed( ord( "L" ) ) ) instance_create_depth( x, y, 0, obj_light_discoooo );
+if ( keyboard_check( ord( "T" ) ) ) and ( fps_real > 61 ) instance_create_depth( x, y, 0, obj_light_discoooo );
 if ( keyboard_check_pressed( ord( "1" ) ) ) with( obj_light_discoooo ) visible = !visible;
 if ( keyboard_check_pressed( ord( "2" ) ) ) lighting_culling = ( lighting_culling == cull_noculling ) ? cull_counterclockwise : cull_noculling;
 

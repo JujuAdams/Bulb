@@ -4,9 +4,9 @@ draw_set_color( c_white );
 if ( show_debug ) {
     
     var _visible_lights = 0;
-    with( obj_par_light ) if ( on_screen ) _visible_lights++;
+    with( obj_par_light ) if ( light_on_screen ) _visible_lights++;
     var _visible_dynamics = 0;
-    with( obj_dynamic_occluder ) if ( on_screen ) _visible_dynamics++;
+    with( obj_dynamic_occluder ) if ( light_on_screen ) _visible_dynamics++;
     
     draw_set_halign( fa_center );
     draw_text( display_get_gui_width()*0.5, 25, "smoothed frame time = " + string_format( smoothed_frame_time, 2, 2 ) + "ms\nFPS = " + string_format( smoothed_fps, 4, 0 ) + " (" + string_format( fps_real, 4, 0 ) + ")" );

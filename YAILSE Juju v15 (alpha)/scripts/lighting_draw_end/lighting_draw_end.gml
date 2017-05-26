@@ -93,7 +93,7 @@ vertex_end( vbf_dynamic_shadows );
 
 ///////////Set GPU properties
 //Use a cumulative blend mode to add lights together
-gpu_set_blendmode( bm_add );
+if ( LIGHTING_BM_MAX ) gpu_set_blendmode_ext_sepalpha( bm_one, bm_inv_src_colour, bm_zero, bm_one ) else gpu_set_blendmode( bm_add );
 gpu_set_cullmode( lighting_culling );
 gpu_set_ztestenable( true );
 gpu_set_zwriteenable( true );
@@ -106,7 +106,7 @@ surface_set_target( srf_lighting );
 	
 	
     //Clear the surface with the ambient colour
-    draw_clear_alpha( lighting_ambient_colour, 0 );
+    draw_clear( lighting_ambient_colour );
 	
 	//Grab the default view*projection matrix for use later
 	var _surface_vp_matrix = matrix_multiply( matrix_get( matrix_view ), matrix_get( matrix_projection ) );
@@ -161,7 +161,7 @@ surface_set_target( srf_lighting );
 				draw_sprite_ext( sprite_index, image_index,
 				                 x - _camera_l, y - _camera_t,
 								 image_xscale, image_yscale, image_angle,
-								 image_blend, image_alpha );
+								 merge_colour( c_black, image_blend, image_alpha ), image_alpha );
 		}
 		
 	}

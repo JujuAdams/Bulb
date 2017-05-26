@@ -82,11 +82,11 @@ if ( LIGHTING_REUSE_DYNAMIC_BUFFER ) {
 //Add dynamic occluder vertices to the relevant vertex buffer
 vertex_begin( vbf_dynamic_shadows, vft_3d_textured );
 with ( obj_dynamic_occluder ) {
-    on_screen = visible and rectangle_in_rectangle_custom( bbox_left, bbox_top,
-	                                                       bbox_right, bbox_bottom,
-								                           _camera_exp_l, _camera_exp_t,
-													       _camera_exp_r, _camera_exp_b );
-	if ( on_screen ) _lighting_add_occlusion( other.vbf_dynamic_shadows );
+    light_on_screen = visible and rectangle_in_rectangle_custom( bbox_left, bbox_top,
+	                                                             bbox_right, bbox_bottom,
+								                                 _camera_exp_l, _camera_exp_t,
+													             _camera_exp_r, _camera_exp_b );
+	if ( light_on_screen ) _lighting_add_occlusion( other.vbf_dynamic_shadows );
 }
 vertex_end( vbf_dynamic_shadows );
 
@@ -94,7 +94,7 @@ vertex_end( vbf_dynamic_shadows );
 
 ///////////Set GPU properties
 //Use a cumulative blend mode to add lights together
-gpu_set_blendmode( bm_add );
+if ( LIGHTING_BM_MAX ) gpu_set_blendmode_ext_sepalpha( bm_one, bm_inv_src_colour, bm_zero, bm_one ) else gpu_set_blendmode( bm_add );
 gpu_set_cullmode( lighting_culling );
 gpu_set_ztestenable( true );
 gpu_set_zwriteenable( true );
@@ -136,15 +136,16 @@ surface_set_target( srf_lighting );
 	///////////Iterate over all the lights...
     with ( obj_par_light ) {
 		
-	    on_screen = visible and rectangle_in_rectangle_custom( x - light_w_half, y - light_h_half,
-	                                                           x + light_w_half, y + light_h_half,
-									                           _camera_l, _camera_t, _camera_r, _camera_b );
+	    light_on_screen = visible and rectangle_in_rectangle_custom( x - light_w_half, y - light_h_half,
+	                                                                 x + light_w_half, y + light_h_half,
+									                                 _camera_l, _camera_t, _camera_r, _camera_b );
 															   
 		//If this light is active, do some drawing
-		if ( on_screen ) {
+		if ( light_on_screen ) {
 			
 			//Draw shadow stencil
 			//Using textures (rather than untextured) saves on shader_set() overhead... likely a trade-off depending on the GPU
+			shader_set( shd_shadow );
 			gpu_set_zfunc( cmpfunc_always );
 			gpu_set_colorwriteenable( false, false, false, false );
 				
@@ -158,12 +159,13 @@ surface_set_target( srf_lighting );
 				vertex_submit( _vbf_dynamic_shadows, pr_trianglelist, global.lighting_black_texture );
 				
 			//Draw light sprite
+			shader_reset();
 			gpu_set_zfunc( cmpfunc_lessequal );
 			gpu_set_colorwriteenable( true, true, true, true );
 				
 				matrix_set( matrix_projection, _surface_vp_matrix );
 				draw_sprite_ext( sprite_index, image_index,
-				                 x - _camera_l, y - _camera_t,
+				                 x-_camera_l, y-_camera_t,
 								 image_xscale, image_yscale, image_angle,
 								 image_blend, image_alpha );
 		}

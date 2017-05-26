@@ -14,4 +14,4 @@
 
 shadow_geometry_size   = 0;
 arr_shadow_geometry[0] = 0;
-on_screen              = true;
+light_on_screen        = true;
