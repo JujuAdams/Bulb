@@ -118,9 +118,13 @@ surface_set_target( srf_lighting );
     draw_clear( lighting_ambient_colour );
     
     //Use a cumulative blend mode to add lights together
+<<<<<<< HEAD
 	
 	if ( LIGHTING_BM_MAX ) gpu_set_blendmode( bm_max ) else gpu_set_blendmode( bm_add );
 	
+=======
+    gpu_set_blendmode( bm_add );
+>>>>>>> origin/master
     with ( obj_par_light ) {
 		if ( on_screen ) {
 			var _sin = -dsin( image_angle );
