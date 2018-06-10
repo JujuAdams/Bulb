@@ -13,5 +13,6 @@
 //  https://creativecommons.org/licenses/by-nc-sa/4.0/
 
 shadow_geometry_size   = 0;
+shadow_geometry_count  = 0;
 arr_shadow_geometry[0] = 0;
 light_on_screen        = true;

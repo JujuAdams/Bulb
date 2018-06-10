@@ -27,13 +27,15 @@ var _y_sin = image_yscale*_sin;
 var _y_cos = image_yscale*_cos;
 
 //Loop through every line segment, remembering that we're storing coordinate data sequentially: { Ax1, Ay1, Bx1, Bx1,   Ax2, Ay2, Bx2, Bx2, ... }
-for( var _i = 0; _i < shadow_geometry_size; _i += 4 ) {
+//for( var _i = 0; _i < shadow_geometry_size; _i += 4 ) {
+var _i = 0;
+repeat( shadow_geometry_count ) {
     
 	//Collect first coordinate pair
-	var _old_ax = arr_shadow_geometry[_i  ];
-	var _old_ay = arr_shadow_geometry[_i+1];
-	var _old_bx = arr_shadow_geometry[_i+2];
-	var _old_by = arr_shadow_geometry[_i+3];
+	var _old_ax = arr_shadow_geometry[_i++];
+	var _old_ay = arr_shadow_geometry[_i++];
+	var _old_bx = arr_shadow_geometry[_i++];
+	var _old_by = arr_shadow_geometry[_i++];
 	
 	//...and transform
 	var _new_ax = x + _old_ax*_x_cos + _old_ay*_y_sin;

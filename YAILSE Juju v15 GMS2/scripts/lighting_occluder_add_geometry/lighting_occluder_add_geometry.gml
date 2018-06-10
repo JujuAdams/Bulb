@@ -21,3 +21,4 @@ arr_shadow_geometry[ shadow_geometry_size ] = argument0; shadow_geometry_size++;
 arr_shadow_geometry[ shadow_geometry_size ] = argument1; shadow_geometry_size++;
 arr_shadow_geometry[ shadow_geometry_size ] = argument2; shadow_geometry_size++;
 arr_shadow_geometry[ shadow_geometry_size ] = argument3; shadow_geometry_size++;
+shadow_geometry_count++;

@@ -60,7 +60,7 @@ if ( vbf_static_shadows == noone ) {
     
     //Add static shadow caster vertices to the relevant vertex buffer
     vertex_begin( vbf_static_shadows, vft_3d_textured );
-    with ( obj_static_occluder ) _lighting_add_occlusion( other.vbf_static_shadows );
+    with ( obj_static_occluder ) __lighting_add_occlusion( other.vbf_static_shadows );
     vertex_end( vbf_static_shadows );
 	
     //Freeze this buffer for speed boosts later on (though only if we have vertices in this buffer)
@@ -86,7 +86,7 @@ with ( obj_dynamic_occluder ) {
 	                                                             bbox_right, bbox_bottom,
 								                                 _camera_exp_l, _camera_exp_t,
 													             _camera_exp_r, _camera_exp_b );
-	if ( light_on_screen ) _lighting_add_occlusion( other.vbf_dynamic_shadows );
+	if ( light_on_screen ) __lighting_add_occlusion( other.vbf_dynamic_shadows );
 }
 vertex_end( vbf_dynamic_shadows );
 
@@ -116,7 +116,7 @@ surface_set_target( srf_lighting );
 	var _surface_vp_matrix = matrix_multiply( matrix_get( matrix_view ), matrix_get( matrix_projection ) );
 	
 	//We set the view matrix to the identity to allow us to build a custom projection matrix
-	matrix_set( matrix_view, matrix_build_identity() );
+	matrix_set( matrix_view, [ 1,0,0,0,  0,1,0,0,  0,0,1,0,  0,0,0,1 ] );
 	
 	//Calculate some transform coefficients
 	var _inv_camera_w = 2/_camera_w;
