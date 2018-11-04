@@ -42,7 +42,7 @@ if ( vbf_static_shadows == noone ) {
     
     //Add static shadow caster vertices to the relevant vertex buffer
     vertex_begin( vbf_static_shadows, vft_shadow_geometry );
-    with ( obj_static_occluder ) _lighting_add_occlusion_deferred( other.vbf_static_shadows );
+    with ( obj_static_occluder ) __lighting_add_occlusion_deferred( other.vbf_static_shadows );
     vertex_end( vbf_static_shadows );
     
     //Freeze this buffer for speed boosts later on (though only if we have vertices in this buffer)
@@ -68,7 +68,7 @@ with ( obj_dynamic_occluder ) {
 	                                                       bbox_right, bbox_bottom,
 								                           _camera_exp_l, _camera_exp_t,
 													       _camera_exp_r, _camera_exp_b );
-	if ( on_screen ) _lighting_add_occlusion_deferred( other.vbf_dynamic_shadows );
+	if ( on_screen ) __lighting_add_occlusion_deferred( other.vbf_dynamic_shadows );
 }
 vertex_end( vbf_dynamic_shadows );
 
@@ -118,13 +118,7 @@ surface_set_target( srf_lighting );
     draw_clear( lighting_ambient_colour );
     
     //Use a cumulative blend mode to add lights together
-<<<<<<< HEAD
-	
 	if ( LIGHTING_BM_MAX ) gpu_set_blendmode( bm_max ) else gpu_set_blendmode( bm_add );
-	
-=======
-    gpu_set_blendmode( bm_add );
->>>>>>> origin/master
     with ( obj_par_light ) {
 		if ( on_screen ) {
 			var _sin = -dsin( image_angle );

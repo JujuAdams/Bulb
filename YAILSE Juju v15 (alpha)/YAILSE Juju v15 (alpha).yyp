@@ -258,7 +258,7 @@
             "Key": "4ee9a9cb-ab1f-4122-98e4-0389bf6d3e26",
             "Value": {
                 "id": "b7f1b1cd-dd9d-4d5a-9d69-579b29627c18",
-                "resourcePath": "scripts\\_lighting_add_occlusion\\_lighting_add_occlusion.yy",
+                "resourcePath": "scripts\\__lighting_add_occlusion\\__lighting_add_occlusion.yy",
                 "resourceType": "GMScript"
             }
         },
@@ -450,7 +450,7 @@
             "Key": "d709f13c-d9cb-42a6-9642-eee7d4ecb93f",
             "Value": {
                 "id": "65a4b3bc-6f2f-4aa9-962f-c59e81a3cf74",
-                "resourcePath": "scripts\\_lighting_add_occlusion_deferred\\_lighting_add_occlusion_deferred.yy",
+                "resourcePath": "scripts\\__lighting_add_occlusion_deferred\\__lighting_add_occlusion_deferred.yy",
                 "resourceType": "GMScript"
             }
         },

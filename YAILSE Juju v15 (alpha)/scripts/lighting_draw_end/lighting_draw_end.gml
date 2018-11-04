@@ -59,7 +59,7 @@ if ( vbf_static_shadows == noone ) {
     
     //Add static shadow caster vertices to the relevant vertex buffer
     vertex_begin( vbf_static_shadows, vft_3d_textured );
-    with ( obj_static_occluder ) _lighting_add_occlusion( other.vbf_static_shadows );
+    with ( obj_static_occluder ) __lighting_add_occlusion( other.vbf_static_shadows );
     vertex_end( vbf_static_shadows );
 	
     //Freeze this buffer for speed boosts later on (though only if we have vertices in this buffer)
@@ -85,7 +85,7 @@ with ( obj_dynamic_occluder ) {
 	                                                       bbox_right, bbox_bottom,
 								                           _camera_exp_l, _camera_exp_t,
 													       _camera_exp_r, _camera_exp_b );
-	if ( on_screen ) _lighting_add_occlusion( other.vbf_dynamic_shadows );
+	if ( on_screen ) __lighting_add_occlusion( other.vbf_dynamic_shadows );
 }
 vertex_end( vbf_dynamic_shadows );
 
