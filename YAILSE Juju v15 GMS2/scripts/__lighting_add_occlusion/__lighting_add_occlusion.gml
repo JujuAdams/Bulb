@@ -17,9 +17,7 @@
 
 var _vbuff = argument0;
 
-//Now includes 2 versions
-
-if (!LIGHTING_DYNAMIC_CACHING_ENABLED){
+if ( !LIGHTING_CACHE_DYNAMIC_OCCLUDERS ) {
 
 	//Set up basic transforms to turn relative coordinates in arr_shadowGeometry[] into world-space coordinates
 	var _sin = dsin( image_angle );
@@ -31,7 +29,6 @@ if (!LIGHTING_DYNAMIC_CACHING_ENABLED){
 	var _y_cos = image_yscale*_cos;
 
 	//Loop through every line segment, remembering that we're storing coordinate data sequentially: { Ax1, Ay1, Bx1, Bx1,   Ax2, Ay2, Bx2, Bx2, ... }
-	//for( var _i = 0; _i < shadow_geometry_size; _i += 4 ) {
 	var _i = 0;
 	repeat( shadow_geometry_count ) {
 		
@@ -57,16 +54,19 @@ if (!LIGHTING_DYNAMIC_CACHING_ENABLED){
 		vertex_position_3d( _vbuff,   _new_bx, _new_by, LIGHTING_ZFAR ); vertex_colour( _vbuff,   c_black, 1 ); vertex_texcoord( _vbuff, global.lighting_black_u, global.lighting_black_v );
 		
 	}
+    
 } else {
-	var light_occlusion_cache_needed = false;
+    
+	var _light_occlusion_cache_needed = false;
 
-	if (light_first_time_vertex_cache_perform_flag){
-		light_first_time_vertex_cache_perform_flag = false;
-		light_occlusion_cache_needed = true;
+	if ( light_vertex_cache_dirty ) {
+		light_vertex_cache_dirty = false;
+		_light_occlusion_cache_needed = true;
 	}
 
-	if (last_image_angle != image_angle or last_image_x_scale != image_xscale or last_image_y_scale!= image_yscale){
-		last_image_angle = image_angle;
+	if ( (last_image_angle != image_angle) or (last_image_x_scale != image_xscale) or (last_image_y_scale!= image_yscale) ) {
+        
+		last_image_angle   = image_angle;
 		last_image_x_scale = image_xscale;
 		last_image_y_scale = image_yscale;
 
@@ -78,7 +78,7 @@ if (!LIGHTING_DYNAMIC_CACHING_ENABLED){
 		last_y_sin = image_yscale*_sin;
 		last_y_cos = image_yscale*_cos;
 		
-		light_occlusion_cache_needed = true;
+		_light_occlusion_cache_needed = true;
 	}
 
 	var _x_sin = last_x_sin;
@@ -86,73 +86,66 @@ if (!LIGHTING_DYNAMIC_CACHING_ENABLED){
 	var _y_sin = last_y_sin;
 	var _y_cos = last_y_cos;
 
-	if (light_obstacle_old_x != x or light_obstacle_old_y != y){
+	if ( (light_obstacle_old_x != x) or (light_obstacle_old_y != y) ) {
 		light_obstacle_old_x = x;
 		light_obstacle_old_y = y;
-		light_occlusion_cache_needed = true;
+		_light_occlusion_cache_needed = true;
 	}
+    
 	//Loop through every line segment, remembering that we're storing coordinate data sequentially: { Ax1, Ay1, Bx1, Bx1,   Ax2, Ay2, Bx2, Bx2, ... }
-	//for( var _i = 0; _i < shadow_geometry_size; _i += 4 ) {
 	var _i = 0;
-	if (occlusion_ready){
-		//Log("Cache needed: "+string(light_occlusion_cache_needed));
-		if (light_occlusion_cache_needed){
-			repeat( shadow_geometry_count ) {
+	if ( _light_occlusion_cache_needed ) {
+        
+		repeat( shadow_geometry_count ) {
 		
-				//Collect first coordinate pair
-				var _old_ax = arr_shadow_geometry[_i++];
-				var _old_ay = arr_shadow_geometry[_i++];
-				var _old_bx = arr_shadow_geometry[_i++];
-				var _old_by = arr_shadow_geometry[_i++];
-		
-				//...and transform
-				var _new_ax = x + _old_ax*_x_cos + _old_ay*_y_sin;
-				var _new_ay = y - _old_ax*_x_sin + _old_ay*_y_cos;
-				var _new_bx = x + _old_bx*_x_cos + _old_by*_y_sin;
-				var _new_by = y - _old_bx*_x_sin + _old_by*_y_cos;
-		
-				light_obstacle_vertex_cache[_i - 4] = _new_ax;
-				light_obstacle_vertex_cache[_i - 3] = _new_ay;
-				light_obstacle_vertex_cache[_i - 2] = _new_bx;
-				light_obstacle_vertex_cache[_i - 1] = _new_by;
-		
-				/*
-				if (_i == 4){
-					//Log("ay: "+string(_new_ay)+" by: "+string(_new_by));
-					obj_player.debug_latest_ay = room_height - _new_ay;
-					obj_player.debug_latest_by = room_height - _new_by;
-				}
-				*/
-		
-				//Using textures (rather than untextureed) saves on shader_set() overhead... likely a trade-off depending on the GPU
-				vertex_position_3d( _vbuff,  _new_ax, _new_ay, 0 );             vertex_colour( _vbuff,   c_black, 1 ); vertex_texcoord( _vbuff, global.lighting_black_u,global.lighting_black_v );
-				vertex_position_3d( _vbuff,   _new_bx,_new_by, LIGHTING_ZFAR ); vertex_colour( _vbuff,   c_black, 1 ); vertex_texcoord( _vbuff, global.lighting_black_u,global.lighting_black_v );
-				vertex_position_3d( _vbuff,   _new_bx, _new_by, 0 );             vertex_colour( _vbuff,   c_black, 1 ); vertex_texcoord( _vbuff, global.lighting_black_u,global.lighting_black_v );
-		
-				vertex_position_3d( _vbuff,   _new_ax, _new_ay, 0 );             vertex_colour( _vbuff,   c_black, 1 ); vertex_texcoord( _vbuff,  global.lighting_black_u,global.lighting_black_v );
-				vertex_position_3d( _vbuff,   _new_ax, _new_ay, LIGHTING_ZFAR ); vertex_colour( _vbuff,   c_black, 1 ); vertex_texcoord( _vbuff, global.lighting_black_u, global.lighting_black_v );
-				vertex_position_3d( _vbuff,   _new_bx,   _new_by, LIGHTING_ZFAR ); vertex_colour( _vbuff,   c_black, 1 ); vertex_texcoord( _vbuff,  global.lighting_black_u, global.lighting_black_v );
-		
-			}
-		} else {
-			repeat( shadow_geometry_count ) {
-				
-				//load from cache
-				var _new_ax = light_obstacle_vertex_cache[_i]; _i++;
-				var _new_ay = light_obstacle_vertex_cache[_i]; _i++;
-				var _new_bx = light_obstacle_vertex_cache[_i]; _i++;
-				var _new_by = light_obstacle_vertex_cache[_i]; _i++;
-				
-				//Using textures (rather than untextureed) saves on shader_set() overhead... likely a trade-off depending on the GPU
-				vertex_position_3d( _vbuff,  _new_ax, _new_ay, 0 );             vertex_colour( _vbuff,   c_black, 1 ); vertex_texcoord( _vbuff, global.lighting_black_u,global.lighting_black_v );
-				vertex_position_3d( _vbuff,   _new_bx,_new_by, LIGHTING_ZFAR ); vertex_colour( _vbuff,   c_black, 1 ); vertex_texcoord( _vbuff, global.lighting_black_u,global.lighting_black_v );
-				vertex_position_3d( _vbuff,   _new_bx, _new_by, 0 );             vertex_colour( _vbuff,   c_black, 1 ); vertex_texcoord( _vbuff, global.lighting_black_u,global.lighting_black_v );
-		
-				vertex_position_3d( _vbuff,   _new_ax, _new_ay, 0 );             vertex_colour( _vbuff,   c_black, 1 ); vertex_texcoord( _vbuff,  global.lighting_black_u,global.lighting_black_v );
-				vertex_position_3d( _vbuff,   _new_ax, _new_ay, LIGHTING_ZFAR ); vertex_colour( _vbuff,   c_black, 1 ); vertex_texcoord( _vbuff, global.lighting_black_u, global.lighting_black_v );
-				vertex_position_3d( _vbuff,   _new_bx,   _new_by, LIGHTING_ZFAR ); vertex_colour( _vbuff,   c_black, 1 ); vertex_texcoord( _vbuff,  global.lighting_black_u, global.lighting_black_v );
-			}
+			//Collect first coordinate pair
+			var _old_ax = arr_shadow_geometry[_i++];
+			var _old_ay = arr_shadow_geometry[_i++];
+			var _old_bx = arr_shadow_geometry[_i++];
+			var _old_by = arr_shadow_geometry[_i++];
+		    
+			//...and transform
+			var _new_ax = x + _old_ax*_x_cos + _old_ay*_y_sin;
+			var _new_ay = y - _old_ax*_x_sin + _old_ay*_y_cos;
+			var _new_bx = x + _old_bx*_x_cos + _old_by*_y_sin;
+			var _new_by = y - _old_bx*_x_sin + _old_by*_y_cos;
+		    
+            //Store these values in the cache
+			light_vertex_cache[_i-4] = _new_ax;
+			light_vertex_cache[_i-3] = _new_ay;
+			light_vertex_cache[_i-2] = _new_bx;
+			light_vertex_cache[_i-1] = _new_by;
+		    
+			//Using textures (rather than untextureed) saves on shader_set() overhead... likely a trade-off depending on the GPU
+			vertex_position_3d( _vbuff,   _new_ax, _new_ay, 0 );             vertex_colour( _vbuff,   c_black, 1 ); vertex_texcoord( _vbuff, global.lighting_black_u, global.lighting_black_v );
+			vertex_position_3d( _vbuff,   _new_bx, _new_by, LIGHTING_ZFAR ); vertex_colour( _vbuff,   c_black, 1 ); vertex_texcoord( _vbuff, global.lighting_black_u, global.lighting_black_v );
+			vertex_position_3d( _vbuff,   _new_bx, _new_by, 0 );             vertex_colour( _vbuff,   c_black, 1 ); vertex_texcoord( _vbuff, global.lighting_black_u, global.lighting_black_v );
+		    
+			vertex_position_3d( _vbuff,   _new_ax, _new_ay, 0 );             vertex_colour( _vbuff,   c_black, 1 ); vertex_texcoord( _vbuff, global.lighting_black_u, global.lighting_black_v );
+			vertex_position_3d( _vbuff,   _new_ax, _new_ay, LIGHTING_ZFAR ); vertex_colour( _vbuff,   c_black, 1 ); vertex_texcoord( _vbuff, global.lighting_black_u, global.lighting_black_v );
+			vertex_position_3d( _vbuff,   _new_bx, _new_by, LIGHTING_ZFAR ); vertex_colour( _vbuff,   c_black, 1 ); vertex_texcoord( _vbuff, global.lighting_black_u, global.lighting_black_v );
+		    
+		}
+        
+	} else {
+        
+		repeat( shadow_geometry_count ) {
+			
+			//Build from cache
+			var _new_ax = light_vertex_cache[_i++];
+			var _new_ay = light_vertex_cache[_i++];
+			var _new_bx = light_vertex_cache[_i++];
+			var _new_by = light_vertex_cache[_i++];
+			
+			//Using textures (rather than untextureed) saves on shader_set() overhead... likely a trade-off depending on the GPU
+			vertex_position_3d( _vbuff,   _new_ax, _new_ay, 0 );             vertex_colour( _vbuff,   c_black, 1 ); vertex_texcoord( _vbuff, global.lighting_black_u, global.lighting_black_v );
+			vertex_position_3d( _vbuff,   _new_bx, _new_by, LIGHTING_ZFAR ); vertex_colour( _vbuff,   c_black, 1 ); vertex_texcoord( _vbuff, global.lighting_black_u, global.lighting_black_v );
+			vertex_position_3d( _vbuff,   _new_bx, _new_by, 0 );             vertex_colour( _vbuff,   c_black, 1 ); vertex_texcoord( _vbuff, global.lighting_black_u, global.lighting_black_v );
+		    
+			vertex_position_3d( _vbuff,   _new_ax, _new_ay, 0 );             vertex_colour( _vbuff,   c_black, 1 ); vertex_texcoord( _vbuff, global.lighting_black_u, global.lighting_black_v );
+			vertex_position_3d( _vbuff,   _new_ax, _new_ay, LIGHTING_ZFAR ); vertex_colour( _vbuff,   c_black, 1 ); vertex_texcoord( _vbuff, global.lighting_black_u, global.lighting_black_v );
+			vertex_position_3d( _vbuff,   _new_bx, _new_by, LIGHTING_ZFAR ); vertex_colour( _vbuff,   c_black, 1 ); vertex_texcoord( _vbuff, global.lighting_black_u, global.lighting_black_v );
+                
 		}
 	}
-
 }

@@ -20,11 +20,11 @@
 //  This code and engine are provided under the Creative Commons "Attribution - NonCommerical - ShareAlike" international license.
 //  https://creativecommons.org/licenses/by-nc-sa/4.0/
 
-#macro LIGHTING_ZFAR 16000
-#macro LIGHTING_DYNAMIC_BORDER 256
-#macro LIGHTING_REUSE_DYNAMIC_BUFFER true
-#macro LIGHTING_BM_MAX true
-#macro LIGHTING_DYNAMIC_CACHING_ENABLED true
+#macro LIGHTING_ZFAR                     16000
+#macro LIGHTING_DYNAMIC_BORDER             256
+#macro LIGHTING_REUSE_DYNAMIC_BUFFER      true
+#macro LIGHTING_BM_MAX                    true
+#macro LIGHTING_CACHE_DYNAMIC_OCCLUDERS   true
 
 
 

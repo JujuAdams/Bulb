@@ -17,8 +17,9 @@ shadow_geometry_count  = 0;
 arr_shadow_geometry[0] = 0;
 light_on_screen        = true;
 
-if (LIGHTING_DYNAMIC_CACHING_ENABLED) {
-    last_image_angle = image_angle;
+if ( LIGHTING_CACHE_DYNAMIC_OCCLUDERS ) {
+    
+    last_image_angle   = image_angle;
     last_image_x_scale = image_xscale;
     last_image_y_scale = image_yscale;
 
@@ -33,7 +34,8 @@ if (LIGHTING_DYNAMIC_CACHING_ENABLED) {
     light_obstacle_old_x = x;
     light_obstacle_old_y = y;
 
-    light_obstacle_vertex_cache = undefined;
+    light_vertex_cache = undefined;
 
-    light_first_time_vertex_cache_perform_flag = true;
+    light_vertex_cache_dirty = true;
+    
 }
