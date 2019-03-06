@@ -1,14 +1,7 @@
-
-YAILSE Juju v15 (alpha)/options/amazonfire/options_amazonfire.yy
-YAILSE Juju v15 (alpha)/options/android/options_android.yy
-YAILSE Juju v15 (alpha)/options/ios/options_ios.yy
-YAILSE Juju v15 (alpha)/options/ps4/options_ps4.yy
-YAILSE Juju v15 (alpha)/options/switch/options_switch.yy
-YAILSE Juju v15 (alpha)/options/windowsuap/options_windowsuap.yy
-YAILSE Juju v15 GMS2/options/amazonfire/options_amazonfire.yy
-YAILSE Juju v15 GMS2/options/android/options_android.yy
-YAILSE Juju v15 GMS2/options/ios/options_ios.yy
-YAILSE Juju v15 GMS2/options/ps4/options_ps4.yy
-YAILSE Juju v15 GMS2/options/switch/options_switch.yy
-YAILSE Juju v15 GMS2/options/windowsuap/options_windowsuap.yy
+options/amazonfire/options_amazonfire.yy
+options/android/options_android.yy
+options/ios/options_ios.yy
 options/ps4/options_ps4.yy
+options/switch/options_switch.yy
+options/windowsuap/options_windowsuap.yy
+options/switch/options_switch.yy
