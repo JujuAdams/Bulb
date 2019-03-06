@@ -57,13 +57,6 @@ if ( !LIGHTING_CACHE_DYNAMIC_OCCLUDERS ) {
     
 } else {
     
-	var _light_occlusion_cache_needed = false;
-
-	if ( light_vertex_cache_dirty ) {
-		light_vertex_cache_dirty = false;
-		_light_occlusion_cache_needed = true;
-	}
-
 	if ( (last_image_angle != image_angle) or (last_image_x_scale != image_xscale) or (last_image_y_scale!= image_yscale) ) {
         
 		last_image_angle   = image_angle;
@@ -78,7 +71,7 @@ if ( !LIGHTING_CACHE_DYNAMIC_OCCLUDERS ) {
 		last_y_sin = image_yscale*_sin;
 		last_y_cos = image_yscale*_cos;
 		
-		_light_occlusion_cache_needed = true;
+		light_vertex_cache_dirty = true;
 	}
 
 	var _x_sin = last_x_sin;
@@ -87,14 +80,18 @@ if ( !LIGHTING_CACHE_DYNAMIC_OCCLUDERS ) {
 	var _y_cos = last_y_cos;
 
 	if ( (light_obstacle_old_x != x) or (light_obstacle_old_y != y) ) {
+        
 		light_obstacle_old_x = x;
 		light_obstacle_old_y = y;
-		_light_occlusion_cache_needed = true;
+		light_vertex_cache_dirty = true;
+        
 	}
     
 	//Loop through every line segment, remembering that we're storing coordinate data sequentially: { Ax1, Ay1, Bx1, Bx1,   Ax2, Ay2, Bx2, Bx2, ... }
 	var _i = 0;
-	if ( _light_occlusion_cache_needed ) {
+	if ( light_vertex_cache_dirty ) {
+        
+        light_vertex_cache_dirty = false;
         
 		repeat( shadow_geometry_count ) {
 		
