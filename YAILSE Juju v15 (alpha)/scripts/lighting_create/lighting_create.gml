@@ -21,14 +21,15 @@
 //  This code and engine are provided under the Creative Commons "Attribution - NonCommerical - ShareAlike" international license.
 //  https://creativecommons.org/licenses/by-nc-sa/4.0/
 
-#macro LIGHTING_ZFAR 16000
-#macro LIGHTING_Z_LIMIT 2000
-#macro LIGHTING_DYNAMIC_INCLUSION 256
-#macro LIGHTING_NEVER_DEFERRED false
-#macro LIGHTING_REUSE_DYNAMIC_BUFFER true
-#macro LIGHTING_BM_MAX true
+#macro ON_OPENGL ((os_type != os_windows) and (os_type != os_xboxone) and (os_type != os_uwp) and (os_type != os_winphone) and (os_type != os_win8native))
 
-
+#macro LIGHTING_ZFAR                       16000
+#macro LIGHTING_Z_LIMIT                     2000
+#macro LIGHTING_DYNAMIC_INCLUSION            256
+#macro LIGHTING_NEVER_DEFERRED             false
+#macro LIGHTING_REUSE_DYNAMIC_BUFFER        true
+#macro LIGHTING_BM_MAX                      true
+#macro LIGHTING_FLIP_CAMERA_Y          ON_OPENGL
 
 //Assign the camera used to draw the lights
 lighting_camera = argument0;

@@ -116,15 +116,13 @@ surface_set_target( srf_lighting );
 	
 	//Calculate some transform coefficients
 	var _inv_camera_w = 2/_camera_w;
-	var _inv_camera_h = 0;
 	
-	if (os_type != os_windows and os_type != os_xboxone and os_type != os_uwp 
-	    and os_type != os_winphone and os_type != os_win8native) {
+	if ( LIGHTING_FLIP_CAMERA_Y ) {
 		// OpenGL (ES) version
-		_inv_camera_h = -2/_camera_h;
+		var _inv_camera_h = -2/_camera_h;
 	} else {
 		// DirectX version
-		_inv_camera_h = 2/_camera_h;
+		var _inv_camera_h = 2/_camera_h;
 	}
 
 	var _transformed_cam_x = _camera_cx*_inv_camera_w;
