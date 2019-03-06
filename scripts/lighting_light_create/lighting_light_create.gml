@@ -1,3 +1,5 @@
+/// @param deferred
+//
 //  Initialises the necessary variables for a light object to use the lighting system.
 //  Must be called before lighting_light_destroy().
 //  
@@ -16,8 +18,10 @@ light_w_half    = 0.5*light_w;
 light_h_half    = 0.5*light_h;
 light_on_screen = true;
 
-if ( LIGHTING_ENABLE_DEFERRED ) {
+if ( LIGHTING_ENABLE_DEFERRED && argument0 ) {
+    light_deferred = true;
     srf_light = surface_create( light_w, light_h );
 } else {
+    light_deferred = false;
     srf_light = -1;
 }

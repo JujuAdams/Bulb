@@ -17,7 +17,6 @@ if ( keyboard_check_pressed( ord( "L" ) ) ) instance_create_depth( x, y, 0, obj_
 if ( keyboard_check( ord( "T" ) ) ) and ( fps_real > 61 ) instance_create_depth( x, y, 0, obj_light_discoooo );
 if ( keyboard_check_pressed( ord( "1" ) ) ) with( obj_light_discoooo ) visible = !visible;
 if ( keyboard_check_pressed( ord( "2" ) ) ) lighting_culling = ( lighting_culling == cull_noculling ) ? cull_counterclockwise : cull_noculling;
-if ( keyboard_check_pressed( ord( "3" ) ) ) lighting_deferred = !lighting_deferred;
 
 //Shooting
 if ( mouse_check_button( mb_left ) ) and ( alarm_get( 0 ) <= 0 ) {

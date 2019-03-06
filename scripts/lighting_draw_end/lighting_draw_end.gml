@@ -90,6 +90,46 @@ vertex_end( vbf_dynamic_shadows );
 
 
 
+///////////Render out lights and shadows for each deferred light in the viewport
+if ( LIGHTING_ENABLE_DEFERRED ) {
+    
+    gpu_set_cullmode( lighting_culling );
+    with( obj_par_light ) {
+    	if ( !light_deferred ) continue;
+        
+        light_on_screen = visible and rectangle_in_rectangle_custom( x - light_w_half, y - light_h_half,
+                                                                     x + light_w_half, y + light_h_half,
+    								                                 _camera_l, _camera_t, _camera_r, _camera_b );
+	    
+        //If this light is ready to be drawn...
+        if ( light_on_screen ) {
+            
+            surface_set_target( srf_light );
+			    
+    	        //Draw the light sprite
+    			shader_set( shd_pass_through );
+    	        draw_sprite_ext( sprite_index, image_index,    light_w_half, light_h_half,    1, 1, 0,    merge_colour( c_black, image_blend, image_alpha ), 1 );
+			    
+    	        //Magical projection!
+    			shader_set( shd_snap_vertex );
+    			matrix_set( matrix_view, matrix_build_lookat( x, y, light_w,   x, y, 0,   dsin( -image_angle ), -dcos( -image_angle ), 0 ) );
+    			matrix_set( matrix_projection, matrix_build_projection_perspective( image_xscale, image_yscale, 1, 16000 ) );
+		        
+    	        //Tell the GPU to render the shadow geometry
+    	        vertex_submit( other.vbf_static_shadows,  pr_trianglelist, -1 );
+    	        vertex_submit( other.vbf_dynamic_shadows, pr_trianglelist, -1 );
+			    
+            surface_reset_target();
+            
+        }
+    }
+    
+    gpu_set_cullmode( cull_noculling );
+    shader_reset();
+}
+
+
+
 ///////////Set GPU properties
 //Use a cumulative blend mode to add lights together
 if ( LIGHTING_BM_MAX ) gpu_set_blendmode_ext_sepalpha( bm_one, bm_inv_src_colour, bm_zero, bm_one ) else gpu_set_blendmode( bm_add );
@@ -136,13 +176,14 @@ surface_set_target( srf_lighting );
 	
 	
 	
-	///////////Iterate over all the lights...
+	///////////Iterate over all non-deferred lights...
     with ( obj_par_light ) {
+    	if ( light_deferred ) continue;
 		
 	    light_on_screen = visible and rectangle_in_rectangle_custom( x - light_w_half, y - light_h_half,
 	                                                                 x + light_w_half, y + light_h_half,
 									                                 _camera_l, _camera_t, _camera_r, _camera_b );
-															   
+		
 		//If this light is active, do some drawing
 		if ( light_on_screen ) {
 			
@@ -179,6 +220,29 @@ surface_set_target( srf_lighting );
 gpu_set_cullmode( cull_noculling );
 gpu_set_ztestenable( false );
 gpu_set_zwriteenable( false );
+
+
+
+///////////Add deferred lights to composite lighting surface
+if ( LIGHTING_ENABLE_DEFERRED ) {
+    
+    //Use a cumulative blend mode to add lights together
+	if ( LIGHTING_BM_MAX ) gpu_set_blendmode( bm_max ) else gpu_set_blendmode( bm_add );
+    with ( obj_par_light ) {
+    	if ( !light_deferred ) continue;
+        
+		if ( light_on_screen ) {
+			var _sin = -dsin( image_angle );
+			var _cos =  dcos( image_angle );
+			var _x = image_xscale*light_w_half*_cos - image_yscale*light_h_half*_sin;
+			var _y = image_xscale*light_w_half*_sin + image_yscale*light_h_half*_cos;
+			draw_surface_ext( srf_light, floor( x - _x - _camera_l + 0.5 ), floor( y - _y - _camera_t + 0.5 ), image_xscale, image_yscale, image_angle, c_white, 1 );
+		}
+	}
+    gpu_set_blendmode( bm_normal );
+    
+}
+
 surface_reset_target();
 
 

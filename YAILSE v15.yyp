@@ -154,7 +154,7 @@
             "Key": "2b6f30f3-53c7-47fe-8c60-2adf82245713",
             "Value": {
                 "id": "07585a27-34b8-4427-9105-112a912e7b57",
-                "resourcePath": "sprites\\spr_white_mask\\spr_white_mask.yy",
+                "resourcePath": "sprites\\spr_light_debug\\spr_light_debug.yy",
                 "resourceType": "GMSprite"
             }
         },
@@ -300,14 +300,6 @@
                 "id": "03793064-938c-42bd-8c5c-b6c3c58f101d",
                 "resourcePath": "rooms\\rm_init\\rm_init.yy",
                 "resourceType": "GMRoom"
-            }
-        },
-        {
-            "Key": "7c9fbe84-ba8c-4dac-a715-0882c08e2273",
-            "Value": {
-                "id": "c5965057-a9c1-41d7-abbe-b2a59ff0c241",
-                "resourcePath": "scripts\\lighting_draw_end_deferred\\lighting_draw_end_deferred.yy",
-                "resourceType": "GMScript"
             }
         },
         {
@@ -560,7 +552,6 @@
         "15d4d447-942e-4749-bcf5-9f8fb334e23a",
         "17931eba-2f16-4a97-b39e-e961bf8f0102",
         "2e83005c-3da8-4a07-b8b3-abcb89c8aa54",
-        "7c9fbe84-ba8c-4dac-a715-0882c08e2273",
         "4ee9a9cb-ab1f-4122-98e4-0389bf6d3e26",
         "9ad175cd-9135-4652-8bc7-bff3678cdd73",
         "200578fa-de67-4af7-85e6-7c348917b043",

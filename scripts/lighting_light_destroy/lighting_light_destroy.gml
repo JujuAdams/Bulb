@@ -10,4 +10,4 @@
 //  This code and engine are provided under the Creative Commons "Attribution - NonCommerical - ShareAlike" international license.
 //  https://creativecommons.org/licenses/by-nc-sa/4.0/
 
-if ( LIGHTING_ENABLE_DEFERRED && surface_exists( srf_light ) ) surface_free( srf_light );
+if ( surface_exists( srf_light ) ) surface_free( srf_light );

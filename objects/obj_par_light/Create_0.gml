@@ -1,1 +1,1 @@
-lighting_light_create();
+lighting_light_create( choose( true, false ) );

@@ -39,9 +39,6 @@ lighting_ambient_colour = argument1;
 //This requires careful object placement as not to create weird graphical glitches.
 lighting_culling = argument2 ? cull_counterclockwise : cull_noculling;
 
-//Switches between (global) deferred lighting and single-surface lighting
-lighting_deferred = false;
-
 
 
 global.lighting_black_texture = sprite_get_texture( spr_lighting_black, 0 );
