@@ -103,6 +103,14 @@
             }
         },
         {
+            "Key": "19819335-e2c8-4e2d-9bf3-83b9dc570a56",
+            "Value": {
+                "id": "9a8d8861-a9f3-4ecc-8a36-196110f5239c",
+                "resourcePath": "scripts\\lighting_light_destroy\\lighting_light_destroy.yy",
+                "resourceType": "GMScript"
+            }
+        },
+        {
             "Key": "1dea0146-1b2d-4d3c-9259-a5d0b4f45455",
             "Value": {
                 "id": "21f89bb9-88f1-42b2-accd-1a95c89bee64",
@@ -556,7 +564,8 @@
         "4ee9a9cb-ab1f-4122-98e4-0389bf6d3e26",
         "9ad175cd-9135-4652-8bc7-bff3678cdd73",
         "200578fa-de67-4af7-85e6-7c348917b043",
-        "21a8cd40-ca8c-4097-9855-01f5f2ccedbf"
+        "21a8cd40-ca8c-4097-9855-01f5f2ccedbf",
+        "19819335-e2c8-4e2d-9bf3-83b9dc570a56"
     ],
     "tutorial": ""
 }
