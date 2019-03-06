@@ -19,6 +19,7 @@ vertexpre_start();
 vbf_static_block = vertexpre_create( obj_static_occluder, spr_static_block, 0 );
 
 //Some debug values
+allow_deferred = false;
 show_debug = false;
 smoothed_frame_time = 1;
 smoothed_fps = 1000;
