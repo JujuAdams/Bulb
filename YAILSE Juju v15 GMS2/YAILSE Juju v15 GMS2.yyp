@@ -151,6 +151,14 @@
             }
         },
         {
+            "Key": "2c0907d6-41c8-4d57-9ddf-cda619322583",
+            "Value": {
+                "id": "ab9b2c09-d93e-41ad-80fb-f9b828a3fa56",
+                "resourcePath": "shaders\\shd_snap_vertex\\shd_snap_vertex.yy",
+                "resourceType": "GMShader"
+            }
+        },
+        {
             "Key": "2cff63a2-570d-41ab-b200-2bc145c8f9cc",
             "Value": {
                 "id": "6b4698b5-e504-4ea9-96cf-74b0a659d1e9",
@@ -287,6 +295,14 @@
             }
         },
         {
+            "Key": "7c9fbe84-ba8c-4dac-a715-0882c08e2273",
+            "Value": {
+                "id": "c5965057-a9c1-41d7-abbe-b2a59ff0c241",
+                "resourcePath": "scripts\\lighting_draw_end_deferred\\lighting_draw_end_deferred.yy",
+                "resourceType": "GMScript"
+            }
+        },
+        {
             "Key": "7e093a2a-e51c-4a1e-9a53-f9080d38730b",
             "Value": {
                 "id": "96a374da-7ebb-4cfa-b147-79f983cd718d",
@@ -380,6 +396,14 @@
                 "id": "488051ff-a03b-410f-94e6-fa60d07021ea",
                 "resourcePath": "sprites\\spr_light_mask\\spr_light_mask.yy",
                 "resourceType": "GMSprite"
+            }
+        },
+        {
+            "Key": "bc281150-cd8f-481d-93c4-ffb379bce8f7",
+            "Value": {
+                "id": "f90083e8-e4a1-4126-b54c-f0bd181abc96",
+                "resourcePath": "shaders\\shd_pass_through\\shd_pass_through.yy",
+                "resourceType": "GMShader"
             }
         },
         {
@@ -528,6 +552,7 @@
         "15d4d447-942e-4749-bcf5-9f8fb334e23a",
         "17931eba-2f16-4a97-b39e-e961bf8f0102",
         "2e83005c-3da8-4a07-b8b3-abcb89c8aa54",
+        "7c9fbe84-ba8c-4dac-a715-0882c08e2273",
         "4ee9a9cb-ab1f-4122-98e4-0389bf6d3e26",
         "9ad175cd-9135-4652-8bc7-bff3678cdd73",
         "200578fa-de67-4af7-85e6-7c348917b043",

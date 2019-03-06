@@ -19,3 +19,4 @@ light_w_half    = 0.5*light_w;
 light_h_half    = 0.5*light_h;
 light_on_screen = true;
 
+if ( LIGHTING_ENABLE_DEFERRED ) srf_light = surface_create( light_w, light_h );

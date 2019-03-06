@@ -15,11 +15,13 @@ if ( show_debug ) {
     var _str = "dynamic lights = " + string( instance_number( obj_par_light ) ) + " / visible = " + string( _visible_lights );
     _str += "\nstatic occluders = " + string( instance_number( obj_static_occluder ) );
     _str += "\ndynamic occluders = " + string( instance_number( obj_dynamic_occluder ) ) + " / visible = " + string( _visible_dynamics );
+    _str += "\n" + (lighting_deferred? "deferred light rendering" : "single-surface light rendering");
     draw_text( 5, 25, _str );
     
     draw_set_valign( fa_bottom );
     var _str = "1: Toggle lights";
     _str += "\n2: Toggle self-lighting";
+    _str += "\n3: Toggle deferred light rendering";
     _str += "\nL: Create new disco light";
     _str += "\nArrows/WASD: Move";
     _str += "\nLeft click: Fire plasma";
