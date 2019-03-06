@@ -116,12 +116,9 @@ surface_set_target( srf_lighting );
 	
 	//Calculate some transform coefficients
 	var _inv_camera_w = 2/_camera_w;
-	
 	if ( LIGHTING_FLIP_CAMERA_Y ) {
-		// OpenGL (ES) version
 		var _inv_camera_h = -2/_camera_h;
 	} else {
-		// DirectX version
 		var _inv_camera_h = 2/_camera_h;
 	}
 
