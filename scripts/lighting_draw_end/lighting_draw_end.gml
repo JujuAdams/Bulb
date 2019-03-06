@@ -1,8 +1,7 @@
 //  Build occluder geometry and render lights, with their shadows, to a screen-space lighting surface.
 //  Should be called in one object per room, the same object that called lighting_start().
-//  This script changes the d3d_set_culling() internal value!
+//  This script changes the gpu_set_cullmode() / gpu_set_zwriteenable() / gpu_set_ztestenable() render states!
 //  
-//  argument0: Culling value to be set after the script has ended.
 //  return: Nothing
 //  
 //  March 2019
@@ -229,9 +228,7 @@ if ( LIGHTING_ENABLE_DEFERRED ) {
     //Use a cumulative blend mode to add lights together
 	if ( LIGHTING_BM_MAX ) gpu_set_blendmode( bm_max ) else gpu_set_blendmode( bm_add );
     with ( obj_par_light ) {
-    	if ( !light_deferred ) continue;
-        
-		if ( light_on_screen ) {
+		if ( light_deferred && light_on_screen ) {
 			var _sin = -dsin( image_angle );
 			var _cos =  dcos( image_angle );
 			var _x = image_xscale*light_w_half*_cos - image_yscale*light_h_half*_sin;
