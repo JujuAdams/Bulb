@@ -4,17 +4,14 @@
 //
 //  Initialises the necessary variables for a controller object to use the lighting system.
 //  Should be called in one object per room.
-//  Must be called before scr_lighting_build(), scr_lighting_draw(), and scr_lighting_end().
+//  Must be called before lighting_build(), lighting_draw(), and lighting_end().
 //
 //  argument0: The ambient colour. Defaults to black. [Optional]
 //  argument1: Whether or not to use self-lighting.   [Optional]
 //  return: Nothing.
 //  
-//  May 2017
+//  March 2019
 //  @jujuadams
-//  /u/jujuadam
-//  Juju on the GMC
-//
 //  Based on the YAILSE system by xot (John Leffingwell) of gmlscripts.com
 //  
 //  This code and engine are provided under the Creative Commons "Attribution - NonCommerical - ShareAlike" international license.
@@ -42,6 +39,7 @@ lighting_ambient_colour = argument1;
 //This requires careful object placement as not to create weird graphical glitches.
 lighting_culling = argument2 ? cull_counterclockwise : cull_noculling;
 
+//Switches between (global) deferred lighting and single-surface lighting
 lighting_deferred = false;
 
 
@@ -62,7 +60,7 @@ vft_3d_textured = vertex_format_end();
 
 
 
-//Initialise variables used and updated in scr_lighting_build()
+//Initialise variables used and updated in lighting_build()
 vbf_static_shadows  = noone; //Vertex buffer describing the geometry of static occluder objects.
 vbf_dynamic_shadows = noone; //As above but for dynamic shadow occluders. This is updated every step.
 vbf_zbuffer_reset   = noone; //This vertex buffer is used to reset the z-buffer during compositing.

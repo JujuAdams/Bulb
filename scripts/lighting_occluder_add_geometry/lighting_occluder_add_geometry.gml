@@ -7,11 +7,8 @@
 //
 //  return: Nothing
 //  
-//  May 2017
+//  March 2019
 //  @jujuadams
-//  /u/jujuadam
-//  Juju on the GMC
-//
 //  Based on the YAILSE system by xot (John Leffingwell) of gmlscripts.com
 //  
 //  This code and engine are provided under the Creative Commons "Attribution - NonCommerical - ShareAlike" international license.

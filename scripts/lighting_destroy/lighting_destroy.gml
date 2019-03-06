@@ -3,10 +3,9 @@
 //  
 //  return: Nothing.
 //  
-//  May 2017
+//  March 2019
 //  @jujuadams
-//  /u/jujuadam
-//  Juju on the GMC
+//  Based on the YAILSE system by xot (John Leffingwell) of gmlscripts.com
 //
 //  Based on the YAILSE system by xot (John Leffingwell) of gmlscripts.com
 //  

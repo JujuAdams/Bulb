@@ -1,16 +1,14 @@
 //  Build occluder geometry and render lights, with their shadows, to a screen-space lighting surface.
-//  Should be called in one object per room, the same object that called scr_lighting_start().
+//  Should be called in one object per room, the same object that called lighting_start().
 //  This script changes the d3d_set_culling() internal value!
 //  
 //  argument0: Culling value to be set after the script has ended.
 //  return: Nothing
 //  
-//  May 2017
+//  March 2019
 //  @jujuadams
-//  /u/jujuadam
-//  Juju on the GMC
-//
 //  Based on the YAILSE system by xot (John Leffingwell) of gmlscripts.com
+//  Additional contributions from Alexey Mihailov (@LexPest)
 //  
 //  This code and engine are provided under the Creative Commons "Attribution - NonCommerical - ShareAlike" international license.
 //  https://creativecommons.org/licenses/by-nc-sa/4.0/
