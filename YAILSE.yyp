@@ -183,14 +183,6 @@
             }
         },
         {
-            "Key": "33520806-5faa-4505-b0df-77e1c6f368e5",
-            "Value": {
-                "id": "ab70a58c-c824-4775-bb42-7bdb0e7ef68c",
-                "resourcePath": "sprites\\spr_lighting_black\\spr_lighting_black.yy",
-                "resourceType": "GMSprite"
-            }
-        },
-        {
             "Key": "34f4b501-9937-470a-9925-c67ba14b9389",
             "Value": {
                 "id": "72c12fb4-e8fa-4e7e-bfb7-8f34ffbe61c7",
@@ -346,15 +338,7 @@
             "Key": "8e71b46a-c8bb-42f0-a7dc-c9b34237f7a2",
             "Value": {
                 "id": "40e0ab29-2527-4a91-a5d8-7526175540bc",
-                "resourcePath": "shaders\\shd_shadow_directx\\shd_shadow_directx.yy",
-                "resourceType": "GMShader"
-            }
-        },
-        {
-            "Key": "91ec5d6e-eba3-4e55-9ca7-6b45c65d84ee",
-            "Value": {
-                "id": "3929db4c-781a-45b6-908c-438e49333aa0",
-                "resourcePath": "shaders\\shd_shadow_opengl\\shd_shadow_opengl.yy",
+                "resourcePath": "shaders\\shd_shadow\\shd_shadow.yy",
                 "resourceType": "GMShader"
             }
         },

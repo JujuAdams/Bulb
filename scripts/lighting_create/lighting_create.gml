@@ -26,7 +26,6 @@
 #macro LIGHTING_CACHE_DYNAMIC_OCCLUDERS       false
 #macro LIGHTING_ENABLE_DEFERRED                true
 #macro LIGHTING_FLIP_CAMERA_Y            ON_DIRECTX
-#macro LIGHTING_STENCIL_SHADER           (LIGHTING_FLIP_CAMERA_Y? shd_shadow_directx : shd_shadow_opengl)
 
 
 
@@ -40,13 +39,6 @@ lighting_ambient_colour = argument1;
 //This requires careful object placement as not to create weird graphical glitches.
 lighting_culling = argument2 ? cull_counterclockwise : cull_noculling;
 
-
-
-global.lighting_black_texture = sprite_get_texture( spr_lighting_black, 0 );
-var _uvs = sprite_get_uvs( spr_lighting_black, 0 );
-global.lighting_black_u = 0.5*( _uvs[0] + _uvs[2] );
-global.lighting_black_v = 0.5*( _uvs[1] + _uvs[3] );
-global.lighting_shader_uniform = shader_get_uniform( LIGHTING_STENCIL_SHADER, "u_iTexture" );
 
 
 //Create a standard vertex format

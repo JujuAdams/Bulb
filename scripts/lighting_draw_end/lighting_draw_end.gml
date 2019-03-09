@@ -179,10 +179,6 @@ surface_set_target( srf_lighting );
                                     -1,           -1, 1, 1 ];
     }
     
-    var _view_matrix = matrix_build_lookat( _camera_w/2, _camera_h/2, -16000,   _camera_w/2, _camera_h/2, 0,   0, 1, 0 );
-    var _proj_matrix =  matrix_build_projection_ortho( _camera_w, -_camera_h, 1, 32000 );
-    var _vp_matrix = matrix_multiply( _view_matrix, _proj_matrix );
-    
     //We set the view matrix to identity to allow us to use our custom projection matrix
     matrix_set( matrix_view, [1,0,0,0,  0,1,0,0,  0,0,1,0,  0,0,0,1] );
     matrix_set( matrix_projection, _vp_matrix );
@@ -193,6 +189,7 @@ surface_set_target( srf_lighting );
     //Calculate some transform coefficients
     var _inv_camera_w = 2/_camera_w;
     var _inv_camera_h = 2/_camera_h;
+    if (LIGHTING_FLIP_CAMERA_Y) _inv_camera_h = -_inv_camera_h;
     
     var _transformed_cam_x = _camera_cx*_inv_camera_w;
     var _transformed_cam_y = _camera_cy*_inv_camera_h;
@@ -223,7 +220,7 @@ surface_set_target( srf_lighting );
         if ( light_on_screen )
         {
             //Draw shadow stencil
-            shader_set( LIGHTING_STENCIL_SHADER );
+            shader_set( shd_shadow );
             gpu_set_zfunc( cmpfunc_always );
             gpu_set_colorwriteenable( false, false, false, false );
             
