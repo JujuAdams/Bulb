@@ -25,7 +25,7 @@ if ( show_debug ) {
     _str += "\nL: Create new disco light";
     _str += "\nArrows/WASD: Move";
     _str += "\nLeft click: Fire plasma";
-	_str += "\nRight click: Toggle torch";
+    _str += "\nRight click: Toggle torch";
     draw_text( 5, display_get_gui_height() - 5, _str );
 
 } else {

@@ -10,8 +10,8 @@ if ( keyboard_check( vk_right ) ) or ( keyboard_check( ord( "D" ) ) ) x += 5;
 //Other controls
 if ( keyboard_check_pressed( vk_escape  ) ) game_end();
 if ( keyboard_check_pressed( vk_f1      ) ) {
-	show_debug = !show_debug;
-	show_debug_overlay( show_debug );
+    show_debug = !show_debug;
+    show_debug_overlay( show_debug );
 }
 
 if ( keyboard_check_pressed( ord( "L" ) ) ) instance_create_depth( x, y, 0, obj_light_discoooo );
@@ -33,11 +33,11 @@ if ( mouse_check_button( mb_left ) ) and ( alarm_get( 0 ) <= 0 ) {
     alarm_set( 0, 12 );
     
     var _inst = instance_create_depth( x, y, 0, obj_light_plasma );
-	with( _inst ) {
-		speed = 10;
-		direction = point_direction( x, y, mouse_x, mouse_y ) + random_range( -5, 5 );
-		image_angle = direction;
-	}
+    with( _inst ) {
+        speed = 10;
+        direction = point_direction( x, y, mouse_x, mouse_y ) + random_range( -5, 5 );
+        image_angle = direction;
+    }
     
 }
 
