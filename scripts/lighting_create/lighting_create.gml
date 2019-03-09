@@ -17,7 +17,7 @@
 //  This code and engine are provided under the Creative Commons "Attribution - NonCommerical - ShareAlike" international license.
 //  https://creativecommons.org/licenses/by-nc-sa/4.0/
 
-#macro ON_OPENGL ((os_type != os_windows) and (os_type != os_xboxone) and (os_type != os_uwp) and (os_type != os_winphone) and (os_type != os_win8native))
+#macro ON_DIRECTX ((os_type == os_windows) || (os_type == os_xboxone) || (os_type == os_uwp) || (os_type == os_winphone) || (os_type == os_win8native))
 
 #macro LIGHTING_ZFAR                          16000
 #macro LIGHTING_DYNAMIC_BORDER                  256
@@ -25,7 +25,8 @@
 #macro LIGHTING_BM_MAX                         true
 #macro LIGHTING_CACHE_DYNAMIC_OCCLUDERS       false
 #macro LIGHTING_ENABLE_DEFERRED                true
-#macro LIGHTING_FLIP_CAMERA_Y             ON_OPENGL
+#macro LIGHTING_FLIP_CAMERA_Y            ON_DIRECTX
+#macro LIGHTING_STENCIL_SHADER           (LIGHTING_FLIP_CAMERA_Y? shd_shadow_directx : shd_shadow_opengl)
 
 
 
@@ -45,7 +46,7 @@ global.lighting_black_texture = sprite_get_texture( spr_lighting_black, 0 );
 var _uvs = sprite_get_uvs( spr_lighting_black, 0 );
 global.lighting_black_u = 0.5*( _uvs[0] + _uvs[2] );
 global.lighting_black_v = 0.5*( _uvs[1] + _uvs[3] );
-
+global.lighting_shader_uniform = shader_get_uniform( LIGHTING_STENCIL_SHADER, "u_iTexture" );
 
 
 //Create a standard vertex format
@@ -54,6 +55,11 @@ vertex_format_add_position_3d();
 vertex_format_add_colour();
 vertex_format_add_texcoord();
 vft_3d_textured = vertex_format_end();
+
+vertex_format_begin();
+vertex_format_add_position_3d();
+vertex_format_add_colour();
+vft_3d = vertex_format_end();
 
 
 

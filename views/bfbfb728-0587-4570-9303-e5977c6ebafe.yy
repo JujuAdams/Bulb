@@ -17,7 +17,7 @@
         "709d2388-2ac8-45a9-ab30-982b4a70e0d6"
     ],
     "filterType": "GMScript",
-    "folderName": "lighting",
+    "folderName": "Lighting",
     "isDefaultView": false,
     "localisedFolderName": ""
 }
