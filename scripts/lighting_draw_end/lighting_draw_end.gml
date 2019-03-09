@@ -33,25 +33,24 @@ var _camera_exp_b = _camera_b + LIGHTING_DYNAMIC_BORDER;
 
 ///////////One-time construction of a triangle to wipe the z-buffer
 //Using textures (rather than untextured) saves on shader_set() overhead... likely a trade-off depending on the GPU
-if ( vbf_zbuffer_reset == noone ) {
-    
+if ( vbf_zbuffer_reset == noone )
+{
     vbf_zbuffer_reset = vertex_create_buffer();
     vertex_begin( vbf_zbuffer_reset, vft_3d );
     
     vertex_position_3d( vbf_zbuffer_reset,           0,           0, 0 ); vertex_colour( vbf_zbuffer_reset, c_black, 1 );
-    vertex_position_3d( vbf_zbuffer_reset, 4*_camera_w,           0, 0 ); vertex_colour( vbf_zbuffer_reset, c_black, 1 );
-    vertex_position_3d( vbf_zbuffer_reset,           0, 4*_camera_h, 0 ); vertex_colour( vbf_zbuffer_reset, c_black, 1 );
+    vertex_position_3d( vbf_zbuffer_reset, 2*_camera_w,           0, 0 ); vertex_colour( vbf_zbuffer_reset, c_black, 1 );
+    vertex_position_3d( vbf_zbuffer_reset,           0, 2*_camera_h, 0 ); vertex_colour( vbf_zbuffer_reset, c_black, 1 );
     
     vertex_end( vbf_zbuffer_reset );
     vertex_freeze( vbf_zbuffer_reset );
-    
 }
 
 
 
 ///////////One-time construction of the static occluder geometry
-if ( vbf_static_shadows == noone ) {
-    
+if ( vbf_static_shadows == noone )
+{
     //Create a new vertex buffer
     vbf_static_shadows = vertex_create_buffer();
     
@@ -62,7 +61,6 @@ if ( vbf_static_shadows == noone ) {
     
     //Freeze this buffer for speed boosts later on (though only if we have vertices in this buffer)
     if ( vertex_get_number( vbf_static_shadows ) > 0 ) vertex_freeze( vbf_static_shadows );
-    
 }
 
 
@@ -131,7 +129,17 @@ if ( LIGHTING_ENABLE_DEFERRED )
 ///////////Set GPU properties
 //Use a cumulative blend mode to add lights together
 //if (LIGHTING_BM_MAX) gpu_set_blendmode_ext_sepalpha( bm_one, bm_inv_src_colour, bm_zero, bm_one ) else gpu_set_blendmode( bm_add );
-if (LIGHTING_BM_MAX) gpu_set_blendmode_ext( bm_one, bm_inv_src_colour ) else gpu_set_blendmode( bm_add );
+if (LIGHTING_BM_MAX)
+{
+    gpu_set_blendmode( bm_max );
+    var _reset_shader = shd_premultiply_alpha;
+}
+else
+{
+    gpu_set_blendmode( bm_add );
+    var _reset_shader = -1;
+}
+
 gpu_set_cullmode( lighting_culling );
 gpu_set_ztestenable( true );
 gpu_set_zwriteenable( true );
@@ -234,7 +242,7 @@ surface_set_target( srf_lighting );
             vertex_submit( _vbf_dynamic_shadows, pr_trianglelist, -1 );
                 
             //Draw light sprite
-            shader_reset();
+            shader_set( _reset_shader );
             gpu_set_zfunc( cmpfunc_lessequal );
             gpu_set_colorwriteenable( true, true, true, false );
             matrix_set( matrix_projection, _vp_matrix );
@@ -249,6 +257,7 @@ surface_set_target( srf_lighting );
     #endregion
     
     //Reset GPU properties
+    if (LIGHTING_BM_MAX) shader_reset();
     gpu_set_colorwriteenable( true, true, true, true );
     gpu_set_cullmode( cull_noculling );
     gpu_set_ztestenable( false );
@@ -260,7 +269,6 @@ surface_set_target( srf_lighting );
     if ( LIGHTING_ENABLE_DEFERRED )
     {
         //Use a cumulative blend mode to add lights together
-        if ( LIGHTING_BM_MAX ) gpu_set_blendmode( bm_max ) else gpu_set_blendmode( bm_add );
         with ( obj_par_light )
         {
             if ( light_deferred && light_on_screen )
@@ -272,7 +280,6 @@ surface_set_target( srf_lighting );
                 draw_surface_ext( srf_light, floor( x - _x - _camera_l + 0.5 ), floor( y - _y - _camera_t + 0.5 ), image_xscale, image_yscale, image_angle, c_white, 1 );
             }
         }
-        gpu_set_blendmode( bm_normal );
     }
     
 surface_reset_target();
