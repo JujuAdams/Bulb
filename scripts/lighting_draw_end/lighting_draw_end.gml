@@ -79,10 +79,10 @@ if ( LIGHTING_REUSE_DYNAMIC_BUFFER ) {
 //Add dynamic occluder vertices to the relevant vertex buffer
 vertex_begin( vbf_dynamic_shadows, vft_3d );
 with ( obj_dynamic_occluder ) {
-    light_on_screen = visible and rectangle_in_rectangle_custom( bbox_left, bbox_top,
-                                                                 bbox_right, bbox_bottom,
-                                                                 _camera_exp_l, _camera_exp_t,
-                                                                 _camera_exp_r, _camera_exp_b );
+    light_on_screen = visible && rectangle_in_rectangle_custom( bbox_left, bbox_top,
+                                                                bbox_right, bbox_bottom,
+                                                                _camera_exp_l, _camera_exp_t,
+                                                                _camera_exp_r, _camera_exp_b );
     if ( light_on_screen ) __lighting_add_occlusion( other.vbf_dynamic_shadows );
 }
 vertex_end( vbf_dynamic_shadows );
@@ -96,9 +96,9 @@ if ( LIGHTING_ENABLE_DEFERRED )
     with( obj_par_light ) {
         if ( !light_deferred ) continue;
         
-        light_on_screen = visible and rectangle_in_rectangle_custom( x - light_w_half, y - light_h_half,
-                                                                     x + light_w_half, y + light_h_half,
-                                                                     _camera_l, _camera_t, _camera_r, _camera_b );
+        light_on_screen = visible && rectangle_in_rectangle_custom( x - light_w_half, y - light_h_half,
+                                                                    x + light_w_half, y + light_h_half,
+                                                                    _camera_l, _camera_t, _camera_r, _camera_b );
         
         //If this light is ready to be drawn...
         if ( light_on_screen )
@@ -106,7 +106,6 @@ if ( LIGHTING_ENABLE_DEFERRED )
             surface_set_target( srf_light );
                 
                 //Draw the light sprite
-                shader_set( shd_pass_through );
                 draw_sprite_ext( sprite_index, image_index,    light_w_half, light_h_half,    1, 1, 0,    merge_colour( c_black, image_blend, image_alpha ), 1 );
                 
                 //Magical projection!
@@ -117,6 +116,7 @@ if ( LIGHTING_ENABLE_DEFERRED )
                 //Tell the GPU to render the shadow geometry
                 vertex_submit( other.vbf_static_shadows,  pr_trianglelist, -1 );
                 vertex_submit( other.vbf_dynamic_shadows, pr_trianglelist, -1 );
+                shader_reset();
                 
             surface_reset_target();
         }
@@ -130,7 +130,8 @@ if ( LIGHTING_ENABLE_DEFERRED )
 
 ///////////Set GPU properties
 //Use a cumulative blend mode to add lights together
-if ( LIGHTING_BM_MAX ) gpu_set_blendmode_ext_sepalpha( bm_one, bm_inv_src_colour, bm_zero, bm_one ) else gpu_set_blendmode( bm_add );
+//if (LIGHTING_BM_MAX) gpu_set_blendmode_ext_sepalpha( bm_one, bm_inv_src_colour, bm_zero, bm_one ) else gpu_set_blendmode( bm_add );
+if (LIGHTING_BM_MAX) gpu_set_blendmode_ext( bm_one, bm_inv_src_colour ) else gpu_set_blendmode( bm_add );
 gpu_set_cullmode( lighting_culling );
 gpu_set_ztestenable( true );
 gpu_set_zwriteenable( true );
@@ -178,14 +179,16 @@ surface_set_target( srf_lighting );
                                     -1,           -1, 1, 1 ];
     }
     
-    //var _vp_matrix = matrix_multiply( matrix_get( matrix_view ), matrix_get( matrix_projection ) );
+    var _view_matrix = matrix_build_lookat( _camera_w/2, _camera_h/2, -16000,   _camera_w/2, _camera_h/2, 0,   0, 1, 0 );
+    var _proj_matrix =  matrix_build_projection_ortho( _camera_w, -_camera_h, 1, 32000 );
+    var _vp_matrix = matrix_multiply( _view_matrix, _proj_matrix );
     
     //We set the view matrix to identity to allow us to use our custom projection matrix
     matrix_set( matrix_view, [1,0,0,0,  0,1,0,0,  0,0,1,0,  0,0,0,1] );
     matrix_set( matrix_projection, _vp_matrix );
     
     //Clear the surface with the ambient colour
-    draw_clear_alpha( lighting_ambient_colour, 0 );
+    draw_clear( lighting_ambient_colour );
     
     //Calculate some transform coefficients
     var _inv_camera_w = 2/_camera_w;
@@ -195,7 +198,7 @@ surface_set_target( srf_lighting );
     var _transformed_cam_y = _camera_cy*_inv_camera_h;
     
     //Pre-build a custom projection matrix
-    //[8] [9] [14] are set per light
+    //[8] [9] are set per light
     var _proj_matrix = [      _inv_camera_w,                   0, 0,  0,
                                           0,       _inv_camera_h, 0,  0,
                                   undefined,           undefined, 0, -1,
@@ -204,10 +207,6 @@ surface_set_target( srf_lighting );
     // xOut = (x - z*(camX - lightX) - camX) / camW
     // yOut = (y - z*(camY - lightY) - camY) / camH
     // zOut = 0
-    //
-    // Perspective correction:
-    // xOut /= 1-z
-    // yOut /= 1-z
     
     ///////////Iterate over all non-deferred lights...
     #region Old method
@@ -216,9 +215,9 @@ surface_set_target( srf_lighting );
     {
         if ( light_deferred ) continue;
         
-        light_on_screen = visible and rectangle_in_rectangle_custom( x - light_w_half, y - light_h_half,
-                                                                     x + light_w_half, y + light_h_half,
-                                                                     _camera_l, _camera_t, _camera_r, _camera_b );
+        light_on_screen = visible && rectangle_in_rectangle_custom( x - light_w_half, y - light_h_half,
+                                                                    x + light_w_half, y + light_h_half,
+                                                                    _camera_l, _camera_t, _camera_r, _camera_b );
         
         //If this light is active, do some drawing
         if ( light_on_screen )
@@ -227,32 +226,33 @@ surface_set_target( srf_lighting );
             shader_set( LIGHTING_STENCIL_SHADER );
             gpu_set_zfunc( cmpfunc_always );
             gpu_set_colorwriteenable( false, false, false, false );
-                
-                vertex_submit( _vbf_zbuffer_reset, pr_trianglelist, global.lighting_black_texture ); //Reset the zbuffer
-                
-                _proj_matrix[8] = _transformed_cam_x - x*_inv_camera_w;
-                _proj_matrix[9] = _transformed_cam_y - y*_inv_camera_h;
-                matrix_set( matrix_projection, _proj_matrix );
-                
-                vertex_submit( _vbf_static_shadows,  pr_trianglelist, global.lighting_black_texture );
-                vertex_submit( _vbf_dynamic_shadows, pr_trianglelist, global.lighting_black_texture );
+            
+            vertex_submit( _vbf_zbuffer_reset, pr_trianglelist, -1 ); //Reset the zbuffer
+            
+            _proj_matrix[8] = _transformed_cam_x - x*_inv_camera_w;
+            _proj_matrix[9] = _transformed_cam_y - y*_inv_camera_h;
+            matrix_set( matrix_projection, _proj_matrix );
+            
+            vertex_submit( _vbf_static_shadows,  pr_trianglelist, -1 );
+            vertex_submit( _vbf_dynamic_shadows, pr_trianglelist, -1 );
                 
             //Draw light sprite
             shader_reset();
             gpu_set_zfunc( cmpfunc_lessequal );
-            gpu_set_colorwriteenable( true, true, true, true );
-                
-                matrix_set( matrix_projection, _vp_matrix );
-                draw_sprite_ext( sprite_index, image_index,
-                                 x - _camera_l, y - _camera_t,
-                                 image_xscale, image_yscale, image_angle,
-                                 image_blend, image_alpha );
+            gpu_set_colorwriteenable( true, true, true, false );
+            matrix_set( matrix_projection, _vp_matrix );
+            
+            draw_sprite_ext( sprite_index, image_index,
+                             x - _camera_l, y - _camera_t,
+                             image_xscale, image_yscale, image_angle,
+                             image_blend, image_alpha );
         }
     }
     
     #endregion
     
     //Reset GPU properties
+    gpu_set_colorwriteenable( true, true, true, true );
     gpu_set_cullmode( cull_noculling );
     gpu_set_ztestenable( false );
     gpu_set_zwriteenable( false );
@@ -260,12 +260,14 @@ surface_set_target( srf_lighting );
     
     
     ///////////Add deferred lights to composite lighting surface
-    if ( LIGHTING_ENABLE_DEFERRED ) {
-    
+    if ( LIGHTING_ENABLE_DEFERRED )
+    {
         //Use a cumulative blend mode to add lights together
         if ( LIGHTING_BM_MAX ) gpu_set_blendmode( bm_max ) else gpu_set_blendmode( bm_add );
-        with ( obj_par_light ) {
-            if ( light_deferred && light_on_screen ) {
+        with ( obj_par_light )
+        {
+            if ( light_deferred && light_on_screen )
+            {
                 var _sin = -dsin( image_angle );
                 var _cos =  dcos( image_angle );
                 var _x = image_xscale*light_w_half*_cos - image_yscale*light_h_half*_sin;
@@ -274,7 +276,6 @@ surface_set_target( srf_lighting );
             }
         }
         gpu_set_blendmode( bm_normal );
-    
     }
     
 surface_reset_target();
