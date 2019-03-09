@@ -43,13 +43,13 @@ if ( !LIGHTING_CACHE_DYNAMIC_OCCLUDERS ) {
 		var _new_by = y - _old_bx*_x_sin + _old_by*_y_cos;
 		
 		//Using textures (rather than untextureed) saves on shader_set() overhead... likely a trade-off depending on the GPU
-		vertex_position_3d( _vbuff,   _new_ax, _new_ay, 0 );             vertex_colour( _vbuff,   c_black, 1 ); vertex_texcoord( _vbuff, global.lighting_black_u, global.lighting_black_v );
-		vertex_position_3d( _vbuff,   _new_bx, _new_by, LIGHTING_ZFAR ); vertex_colour( _vbuff,   c_black, 1 ); vertex_texcoord( _vbuff, global.lighting_black_u, global.lighting_black_v );
-		vertex_position_3d( _vbuff,   _new_bx, _new_by, 0 );             vertex_colour( _vbuff,   c_black, 1 ); vertex_texcoord( _vbuff, global.lighting_black_u, global.lighting_black_v );
+		vertex_position_3d( _vbuff,   _new_ax, _new_ay, 0 );             vertex_colour( _vbuff,   c_black, 1 );
+		vertex_position_3d( _vbuff,   _new_bx, _new_by, LIGHTING_ZFAR ); vertex_colour( _vbuff,   c_black, 1 );
+		vertex_position_3d( _vbuff,   _new_bx, _new_by, 0 );             vertex_colour( _vbuff,   c_black, 1 );
 		
-		vertex_position_3d( _vbuff,   _new_ax, _new_ay, 0 );             vertex_colour( _vbuff,   c_black, 1 ); vertex_texcoord( _vbuff, global.lighting_black_u, global.lighting_black_v );
-		vertex_position_3d( _vbuff,   _new_ax, _new_ay, LIGHTING_ZFAR ); vertex_colour( _vbuff,   c_black, 1 ); vertex_texcoord( _vbuff, global.lighting_black_u, global.lighting_black_v );
-		vertex_position_3d( _vbuff,   _new_bx, _new_by, LIGHTING_ZFAR ); vertex_colour( _vbuff,   c_black, 1 ); vertex_texcoord( _vbuff, global.lighting_black_u, global.lighting_black_v );
+		vertex_position_3d( _vbuff,   _new_ax, _new_ay, 0 );             vertex_colour( _vbuff,   c_black, 1 );
+		vertex_position_3d( _vbuff,   _new_ax, _new_ay, LIGHTING_ZFAR ); vertex_colour( _vbuff,   c_black, 1 );
+		vertex_position_3d( _vbuff,   _new_bx, _new_by, LIGHTING_ZFAR ); vertex_colour( _vbuff,   c_black, 1 );
 		
 	}
     
@@ -112,13 +112,13 @@ if ( !LIGHTING_CACHE_DYNAMIC_OCCLUDERS ) {
 			light_vertex_cache[_i-1] = _new_by;
 		    
 			//Using textures (rather than untextureed) saves on shader_set() overhead... likely a trade-off depending on the GPU
-			vertex_position_3d( _vbuff,   _new_ax, _new_ay, 0 );             vertex_colour( _vbuff,   c_black, 1 ); vertex_texcoord( _vbuff, global.lighting_black_u, global.lighting_black_v );
-			vertex_position_3d( _vbuff,   _new_bx, _new_by, LIGHTING_ZFAR ); vertex_colour( _vbuff,   c_black, 1 ); vertex_texcoord( _vbuff, global.lighting_black_u, global.lighting_black_v );
-			vertex_position_3d( _vbuff,   _new_bx, _new_by, 0 );             vertex_colour( _vbuff,   c_black, 1 ); vertex_texcoord( _vbuff, global.lighting_black_u, global.lighting_black_v );
+			vertex_position_3d( _vbuff,   _new_ax, _new_ay, 0 );             vertex_colour( _vbuff,   c_black, 1 );
+			vertex_position_3d( _vbuff,   _new_bx, _new_by, LIGHTING_ZFAR ); vertex_colour( _vbuff,   c_black, 1 );
+			vertex_position_3d( _vbuff,   _new_bx, _new_by, 0 );             vertex_colour( _vbuff,   c_black, 1 );
 		    
-			vertex_position_3d( _vbuff,   _new_ax, _new_ay, 0 );             vertex_colour( _vbuff,   c_black, 1 ); vertex_texcoord( _vbuff, global.lighting_black_u, global.lighting_black_v );
-			vertex_position_3d( _vbuff,   _new_ax, _new_ay, LIGHTING_ZFAR ); vertex_colour( _vbuff,   c_black, 1 ); vertex_texcoord( _vbuff, global.lighting_black_u, global.lighting_black_v );
-			vertex_position_3d( _vbuff,   _new_bx, _new_by, LIGHTING_ZFAR ); vertex_colour( _vbuff,   c_black, 1 ); vertex_texcoord( _vbuff, global.lighting_black_u, global.lighting_black_v );
+			vertex_position_3d( _vbuff,   _new_ax, _new_ay, 0 );             vertex_colour( _vbuff,   c_black, 1 );
+			vertex_position_3d( _vbuff,   _new_ax, _new_ay, LIGHTING_ZFAR ); vertex_colour( _vbuff,   c_black, 1 );
+			vertex_position_3d( _vbuff,   _new_bx, _new_by, LIGHTING_ZFAR ); vertex_colour( _vbuff,   c_black, 1 );
 		    
 		}
         
@@ -133,13 +133,13 @@ if ( !LIGHTING_CACHE_DYNAMIC_OCCLUDERS ) {
 			var _new_by = light_vertex_cache[_i++];
 			
 			//Using textures (rather than untextureed) saves on shader_set() overhead... likely a trade-off depending on the GPU
-			vertex_position_3d( _vbuff,   _new_ax, _new_ay, 0 );             vertex_colour( _vbuff,   c_black, 1 ); vertex_texcoord( _vbuff, global.lighting_black_u, global.lighting_black_v );
-			vertex_position_3d( _vbuff,   _new_bx, _new_by, LIGHTING_ZFAR ); vertex_colour( _vbuff,   c_black, 1 ); vertex_texcoord( _vbuff, global.lighting_black_u, global.lighting_black_v );
-			vertex_position_3d( _vbuff,   _new_bx, _new_by, 0 );             vertex_colour( _vbuff,   c_black, 1 ); vertex_texcoord( _vbuff, global.lighting_black_u, global.lighting_black_v );
+			vertex_position_3d( _vbuff,   _new_ax, _new_ay, 0 );             vertex_colour( _vbuff,   c_black, 1 );
+			vertex_position_3d( _vbuff,   _new_bx, _new_by, LIGHTING_ZFAR ); vertex_colour( _vbuff,   c_black, 1 );
+			vertex_position_3d( _vbuff,   _new_bx, _new_by, 0 );             vertex_colour( _vbuff,   c_black, 1 );
 		    
-			vertex_position_3d( _vbuff,   _new_ax, _new_ay, 0 );             vertex_colour( _vbuff,   c_black, 1 ); vertex_texcoord( _vbuff, global.lighting_black_u, global.lighting_black_v );
-			vertex_position_3d( _vbuff,   _new_ax, _new_ay, LIGHTING_ZFAR ); vertex_colour( _vbuff,   c_black, 1 ); vertex_texcoord( _vbuff, global.lighting_black_u, global.lighting_black_v );
-			vertex_position_3d( _vbuff,   _new_bx, _new_by, LIGHTING_ZFAR ); vertex_colour( _vbuff,   c_black, 1 ); vertex_texcoord( _vbuff, global.lighting_black_u, global.lighting_black_v );
+			vertex_position_3d( _vbuff,   _new_ax, _new_ay, 0 );             vertex_colour( _vbuff,   c_black, 1 );
+			vertex_position_3d( _vbuff,   _new_ax, _new_ay, LIGHTING_ZFAR ); vertex_colour( _vbuff,   c_black, 1 );
+			vertex_position_3d( _vbuff,   _new_bx, _new_by, LIGHTING_ZFAR ); vertex_colour( _vbuff,   c_black, 1 );
                 
 		}
 	}

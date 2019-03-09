@@ -36,11 +36,11 @@ var _camera_exp_b = _camera_b + LIGHTING_DYNAMIC_BORDER;
 if ( vbf_zbuffer_reset == noone ) {
 	
     vbf_zbuffer_reset = vertex_create_buffer();
-    vertex_begin( vbf_zbuffer_reset, vft_3d_textured );
+    vertex_begin( vbf_zbuffer_reset, vft_3d );
 	
-	vertex_position_3d( vbf_zbuffer_reset,           0,           0, 0 ); vertex_colour( vbf_zbuffer_reset, c_black, 1 ); vertex_texcoord( vbf_zbuffer_reset, global.lighting_black_u, global.lighting_black_v );
-	vertex_position_3d( vbf_zbuffer_reset, 2*_camera_w,           0, 0 ); vertex_colour( vbf_zbuffer_reset, c_black, 1 ); vertex_texcoord( vbf_zbuffer_reset, global.lighting_black_u, global.lighting_black_v );
-	vertex_position_3d( vbf_zbuffer_reset,           0, 2*_camera_h, 0 ); vertex_colour( vbf_zbuffer_reset, c_black, 1 ); vertex_texcoord( vbf_zbuffer_reset, global.lighting_black_u, global.lighting_black_v );
+	vertex_position_3d( vbf_zbuffer_reset,           0,           0, 0 ); vertex_colour( vbf_zbuffer_reset, c_black, 1 );
+	vertex_position_3d( vbf_zbuffer_reset, 2*_camera_w,           0, 0 ); vertex_colour( vbf_zbuffer_reset, c_black, 1 );
+	vertex_position_3d( vbf_zbuffer_reset,           0, 2*_camera_h, 0 ); vertex_colour( vbf_zbuffer_reset, c_black, 1 );
 	
     vertex_end( vbf_zbuffer_reset );
 	vertex_freeze( vbf_zbuffer_reset );
@@ -56,7 +56,7 @@ if ( vbf_static_shadows == noone ) {
     vbf_static_shadows = vertex_create_buffer();
     
     //Add static shadow caster vertices to the relevant vertex buffer
-    vertex_begin( vbf_static_shadows, vft_3d_textured );
+    vertex_begin( vbf_static_shadows, vft_3d );
     with ( obj_static_occluder ) __lighting_add_occlusion( other.vbf_static_shadows );
     vertex_end( vbf_static_shadows );
 	
@@ -77,7 +77,7 @@ if ( LIGHTING_REUSE_DYNAMIC_BUFFER ) {
 }
 
 //Add dynamic occluder vertices to the relevant vertex buffer
-vertex_begin( vbf_dynamic_shadows, vft_3d_textured );
+vertex_begin( vbf_dynamic_shadows, vft_3d );
 with ( obj_dynamic_occluder ) {
     light_on_screen = visible and rectangle_in_rectangle_custom( bbox_left, bbox_top,
 	                                                             bbox_right, bbox_bottom,
@@ -90,8 +90,8 @@ vertex_end( vbf_dynamic_shadows );
 
 
 ///////////Render out lights and shadows for each deferred light in the viewport
-if ( LIGHTING_ENABLE_DEFERRED ) {
-    
+if ( LIGHTING_ENABLE_DEFERRED )
+{
     gpu_set_cullmode( lighting_culling );
     with( obj_par_light ) {
     	if ( !light_deferred ) continue;
@@ -101,8 +101,8 @@ if ( LIGHTING_ENABLE_DEFERRED ) {
     								                                 _camera_l, _camera_t, _camera_r, _camera_b );
 	    
         //If this light is ready to be drawn...
-        if ( light_on_screen ) {
-            
+        if ( light_on_screen )
+        {
             surface_set_target( srf_light );
 			    
     	        //Draw the light sprite
@@ -119,7 +119,6 @@ if ( LIGHTING_ENABLE_DEFERRED ) {
     	        vertex_submit( other.vbf_dynamic_shadows, pr_trianglelist, -1 );
 			    
             surface_reset_target();
-            
         }
     }
     
@@ -162,7 +161,8 @@ surface_set_target( srf_lighting );
     //                             0,           0,     1/31999, 0,                  //             0,            0,                    1/(z_far-z_near), 0,
     //                            -1,           1, 15999/31999, 1 ];                //            -1,            1, (-camera_z - z_near)/(z_far-z_near), 1 ]
     
-    //Ultimately, we can use the following projection matrix, with a bit of a fiddle for the z-axis:
+    //Ultimately, we can use the following projection matrix
+    //Note that the
     if (LIGHTING_FLIP_CAMERA_Y)
     {
         //DirectX platforms want the Y-axis flipped
@@ -237,28 +237,41 @@ surface_set_target( srf_lighting );
                 shader_set( LIGHTING_STENCIL_SHADER );
 				    
     				vertex_submit( _vbf_zbuffer_reset, pr_trianglelist, global.lighting_black_texture ); //Reset the zbuffer
-                    if ( keyboard_check_pressed( ord( "J" ) ) ) show_debug_message( matrix_transform_vertex( _vp_matrix, 0, 0, 0 ) );
+                    if ( keyboard_check_pressed( ord( "J" ) ) )
+                    {
+                        show_debug_message( "triangle=" );
+                        show_debug_message( matrix_transform_vertex( _vp_matrix, 0, 0, 0 ) );
+                    }
                 
     			_proj_matrix[8] = _transformed_cam_x - x*_inv_camera_w;
     			_proj_matrix[9] = _transformed_cam_y - y*_inv_camera_h;
                 
                 if ( keyboard_check_pressed( ord( "J" ) ) )
                 {
-                    show_debug_message( matrix_transform_vertex( _proj_matrix, mouse_x, mouse_y, 0 ) );
-                    show_debug_message( matrix_transform_vertex_full( _proj_matrix, mouse_x, mouse_y, 3, 1 ) );
+                    var _vertex = matrix_transform_vertex_full( _proj_matrix, mouse_x, mouse_y, 3, 1 );
+                    _vertex[2] *= _vertex[3];
+                    show_debug_message( "shadow=" );
+                    show_debug_message( _vertex );
                 }
                 
     			matrix_set( matrix_projection, _proj_matrix );
-    			gpu_set_zfunc( cmpfunc_lessequal );
 				    
     				vertex_submit( _vbf_static_shadows,  pr_trianglelist, global.lighting_black_texture );
     				vertex_submit( _vbf_dynamic_shadows, pr_trianglelist, global.lighting_black_texture );
 				    
     			//Draw light sprite
     			gpu_set_zfunc( cmpfunc_lessequal );
-    			gpu_set_colorwriteenable( true, true, true, true );
+    			gpu_set_colorwriteenable( true, true, true, false );
                 shader_reset();
 				matrix_set( matrix_projection, _vp_matrix );
+                
+                if ( keyboard_check_pressed( ord( "J" ) ) )
+                {
+                    var _vertex = matrix_transform_vertex_full( _vp_matrix, x - _camera_l, y - _camera_t, -200346, 1 );
+                    _vertex[2] *= _vertex[3];
+                    show_debug_message( "light=" );
+                    show_debug_message( _vertex );
+                }
                 
     				draw_sprite_ext( sprite_index, image_index,
     				                 x - _camera_l, y - _camera_t,
