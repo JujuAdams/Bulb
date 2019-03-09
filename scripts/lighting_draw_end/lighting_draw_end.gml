@@ -194,11 +194,11 @@ surface_set_target( srf_lighting );
 	var _transformed_cam_y = _camera_cy*_inv_camera_h;
 	
 	//Pre-build a custom projection matrix
-	//[8] and [9] are set per light
-	var _proj_matrix = [      _inv_camera_w,                   0, 0,  0,
-				                          0,       _inv_camera_h, 0,  0,
-							      undefined,           undefined, 0, -1,
-						-_transformed_cam_x, -_transformed_cam_y, 0,  1 ];
+	//[8] [9] [14] are set per light
+	var _proj_matrix = [      _inv_camera_w,                   0,  0,  0,
+				                          0,       _inv_camera_h,  0,  0,
+							      undefined,           undefined,  0, -1,
+						-_transformed_cam_x, -_transformed_cam_y, -1,  1 ];
 	
     // xOut = (x - z*(camX - lightX) - camX) / camW
     // yOut = (y - z*(camY - lightY) - camY) / camH
@@ -209,122 +209,47 @@ surface_set_target( srf_lighting );
     // yOut /= 1-z
     
 	///////////Iterate over all non-deferred lights...
-    if ( true )
+    #region Old method
+    
+    with ( obj_par_light )
     {
-    	gpu_set_zfunc( cmpfunc_always );
-    	gpu_set_colorwriteenable( false, false, false, false );
-    	vertex_submit( _vbf_zbuffer_reset, pr_trianglelist, global.lighting_black_texture ); //Reset the zbuffer
-        
-        if ( keyboard_check_pressed( ord( "J" ) ) )
-        {
-            show_debug_message( "clear triangle=" + string( matrix_transform_vertex( _vp_matrix, 0, 0, 0 ) ) );
-        }
-        
-        with ( obj_par_light )
-        {
-        	if ( light_deferred ) continue;
-		    
-    	    light_on_screen = visible && rectangle_in_rectangle_custom( x - light_w_half, y - light_h_half,
+        if ( light_deferred ) continue;
+		
+    	light_on_screen = visible and rectangle_in_rectangle_custom( x - light_w_half, y - light_h_half,
     	                                                                x + light_w_half, y + light_h_half,
     									                                _camera_l, _camera_t, _camera_r, _camera_b );
-		    
-    		//If this light is active, do some drawing
-    		if ( light_on_screen )
-            {
-    			//Draw shadow stencil
-    			gpu_set_zfunc( cmpfunc_always );
-    			gpu_set_colorwriteenable( false, false, false, false );
-                shader_set( LIGHTING_STENCIL_SHADER );
-				    
-    				vertex_submit( _vbf_zbuffer_reset, pr_trianglelist, global.lighting_black_texture ); //Reset the zbuffer
-                    if ( keyboard_check_pressed( ord( "J" ) ) )
-                    {
-                        show_debug_message( "triangle=" );
-                        show_debug_message( matrix_transform_vertex( _vp_matrix, 0, 0, 0 ) );
-                    }
-                
-    			_proj_matrix[8] = _transformed_cam_x - x*_inv_camera_w;
-    			_proj_matrix[9] = _transformed_cam_y - y*_inv_camera_h;
-                
-                if ( keyboard_check_pressed( ord( "J" ) ) )
-                {
-                    var _vertex = matrix_transform_vertex_full( _proj_matrix, mouse_x, mouse_y, 3, 1 );
-                    _vertex[2] *= _vertex[3];
-                    show_debug_message( "shadow=" );
-                    show_debug_message( _vertex );
-                }
-                
-    			matrix_set( matrix_projection, _proj_matrix );
-				    
-    				vertex_submit( _vbf_static_shadows,  pr_trianglelist, global.lighting_black_texture );
-    				vertex_submit( _vbf_dynamic_shadows, pr_trianglelist, global.lighting_black_texture );
-				    
-    			//Draw light sprite
-    			gpu_set_zfunc( cmpfunc_lessequal );
-    			gpu_set_colorwriteenable( true, true, true, false );
-                shader_reset();
-				matrix_set( matrix_projection, _vp_matrix );
-                
-                if ( keyboard_check_pressed( ord( "J" ) ) )
-                {
-                    var _vertex = matrix_transform_vertex_full( _vp_matrix, x - _camera_l, y - _camera_t, -200346, 1 );
-                    _vertex[2] *= _vertex[3];
-                    show_debug_message( "light=" );
-                    show_debug_message( _vertex );
-                }
-                
-    				draw_sprite_ext( sprite_index, image_index,
-    				                 x - _camera_l, y - _camera_t,
-    								 image_xscale, image_yscale, image_angle,
-    								 image_blend, image_alpha );
-    		}
-    	}
-    	shader_reset();
-    }
-    else
-    {
-        #region Old method
-        
-        with ( obj_par_light )
+		
+    	//If this light is active, do some drawing
+    	if ( light_on_screen )
         {
-        	if ( light_deferred ) continue;
-		    
-    	    light_on_screen = visible and rectangle_in_rectangle_custom( x - light_w_half, y - light_h_half,
-    	                                                                 x + light_w_half, y + light_h_half,
-    									                                 _camera_l, _camera_t, _camera_r, _camera_b );
-		    
-    		//If this light is active, do some drawing
-    		if ( light_on_screen )
-            {
-    			//Draw shadow stencil
-    			shader_set( shd_shadow );
-    			gpu_set_zfunc( cmpfunc_always );
-    			gpu_set_colorwriteenable( false, false, false, false );
-				    
-    				vertex_submit( _vbf_zbuffer_reset, pr_trianglelist, global.lighting_black_texture ); //Reset the zbuffer
-                    
-    				_proj_matrix[8] = -x*_inv_camera_w + _transformed_cam_x;
-    				_proj_matrix[9] =  y*_inv_camera_h - _transformed_cam_y;
-    				matrix_set( matrix_projection, _proj_matrix );
-				    
-    				vertex_submit( _vbf_static_shadows,  pr_trianglelist, global.lighting_black_texture );
-    				vertex_submit( _vbf_dynamic_shadows, pr_trianglelist, global.lighting_black_texture );
-				    
-    			//Draw light sprite
-    			shader_reset();
-    			gpu_set_zfunc( cmpfunc_lessequal );
-    			gpu_set_colorwriteenable( true, true, true, true );
-				    
-    				matrix_set( matrix_projection, _vp_matrix );
-    				draw_sprite_ext( sprite_index, image_index,
-    				                 x - _camera_l, y - _camera_t,
-    								 image_xscale, image_yscale, image_angle,
-    								 image_blend, image_alpha );
-    		}
+    		//Draw shadow stencil
+    		shader_set( LIGHTING_STENCIL_SHADER );
+    		gpu_set_zfunc( cmpfunc_always );
+    		gpu_set_colorwriteenable( false, false, false, false );
+				
+    			vertex_submit( _vbf_zbuffer_reset, pr_trianglelist, global.lighting_black_texture ); //Reset the zbuffer
+                
+    			_proj_matrix[8] = -x*_inv_camera_w + _transformed_cam_x;
+    			_proj_matrix[9] =  y*_inv_camera_h - _transformed_cam_y;
+    			matrix_set( matrix_projection, _proj_matrix );
+				
+    			vertex_submit( _vbf_static_shadows,  pr_trianglelist, global.lighting_black_texture );
+    			vertex_submit( _vbf_dynamic_shadows, pr_trianglelist, global.lighting_black_texture );
+				
+    		//Draw light sprite
+    		shader_reset();
+    		gpu_set_zfunc( cmpfunc_lessequal );
+    		gpu_set_colorwriteenable( true, true, true, true );
+				
+    			matrix_set( matrix_projection, _vp_matrix );
+    			draw_sprite_ext( sprite_index, image_index,
+    				                x - _camera_l, y - _camera_t,
+    								image_xscale, image_yscale, image_angle,
+    								image_blend, image_alpha );
     	}
-        
-        #endregion
     }
+    
+    #endregion
 	
     //Reset GPU properties
     gpu_set_cullmode( cull_noculling );
