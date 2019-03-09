@@ -12,7 +12,6 @@
 //  This code and engine are provided under the Creative Commons "Attribution - NonCommerical - ShareAlike" international license.
 //  https://creativecommons.org/licenses/by-nc-sa/4.0/
 
-vertex_format_delete( vft_3d_textured );
 vertex_format_delete( vft_3d );
 if ( vbf_static_shadows  != noone ) vertex_delete_buffer( vbf_static_shadows );
 if ( vbf_dynamic_shadows != noone ) vertex_delete_buffer( vbf_dynamic_shadows );
