@@ -39,8 +39,8 @@ if ( vbf_zbuffer_reset == noone ) {
     vertex_begin( vbf_zbuffer_reset, vft_3d );
     
     vertex_position_3d( vbf_zbuffer_reset,           0,           0, 0 ); vertex_colour( vbf_zbuffer_reset, c_black, 1 );
-    vertex_position_3d( vbf_zbuffer_reset, 2*_camera_w,           0, 0 ); vertex_colour( vbf_zbuffer_reset, c_black, 1 );
-    vertex_position_3d( vbf_zbuffer_reset,           0, 2*_camera_h, 0 ); vertex_colour( vbf_zbuffer_reset, c_black, 1 );
+    vertex_position_3d( vbf_zbuffer_reset, 4*_camera_w,           0, 0 ); vertex_colour( vbf_zbuffer_reset, c_black, 1 );
+    vertex_position_3d( vbf_zbuffer_reset,           0, 4*_camera_h, 0 ); vertex_colour( vbf_zbuffer_reset, c_black, 1 );
     
     vertex_end( vbf_zbuffer_reset );
     vertex_freeze( vbf_zbuffer_reset );
@@ -162,7 +162,6 @@ surface_set_target( srf_lighting );
     //                            -1,           1, 15999/31999, 1 ];                //            -1,            1, (-camera_z - z_near)/(z_far-z_near), 1 ]
     
     //Ultimately, we can use the following projection matrix
-    //Note that the
     if (LIGHTING_FLIP_CAMERA_Y)
     {
         //DirectX platforms want the Y-axis flipped
@@ -178,6 +177,8 @@ surface_set_target( srf_lighting );
                                      0,            0, 0, 0,
                                     -1,           -1, 1, 1 ];
     }
+    
+    //var _vp_matrix = matrix_multiply( matrix_get( matrix_view ), matrix_get( matrix_projection ) );
     
     //We set the view matrix to identity to allow us to use our custom projection matrix
     matrix_set( matrix_view, [1,0,0,0,  0,1,0,0,  0,0,1,0,  0,0,0,1] );
@@ -195,10 +196,10 @@ surface_set_target( srf_lighting );
     
     //Pre-build a custom projection matrix
     //[8] [9] [14] are set per light
-    var _proj_matrix = [      _inv_camera_w,                   0,  0,  0,
-                                          0,       _inv_camera_h,  0,  0,
-                                  undefined,           undefined,  0, -1,
-                        -_transformed_cam_x, -_transformed_cam_y, -1,  1 ];
+    var _proj_matrix = [      _inv_camera_w,                   0, 0,  0,
+                                          0,       _inv_camera_h, 0,  0,
+                                  undefined,           undefined, 0, -1,
+                        -_transformed_cam_x, -_transformed_cam_y, 0,  1 ];
     
     // xOut = (x - z*(camX - lightX) - camX) / camW
     // yOut = (y - z*(camY - lightY) - camY) / camH
@@ -216,8 +217,8 @@ surface_set_target( srf_lighting );
         if ( light_deferred ) continue;
         
         light_on_screen = visible and rectangle_in_rectangle_custom( x - light_w_half, y - light_h_half,
-                                                                        x + light_w_half, y + light_h_half,
-                                                                        _camera_l, _camera_t, _camera_r, _camera_b );
+                                                                     x + light_w_half, y + light_h_half,
+                                                                     _camera_l, _camera_t, _camera_r, _camera_b );
         
         //If this light is active, do some drawing
         if ( light_on_screen )
@@ -229,8 +230,8 @@ surface_set_target( srf_lighting );
                 
                 vertex_submit( _vbf_zbuffer_reset, pr_trianglelist, global.lighting_black_texture ); //Reset the zbuffer
                 
-                _proj_matrix[8] = -x*_inv_camera_w + _transformed_cam_x;
-                _proj_matrix[9] =  y*_inv_camera_h - _transformed_cam_y;
+                _proj_matrix[8] = _transformed_cam_x - x*_inv_camera_w;
+                _proj_matrix[9] = _transformed_cam_y - y*_inv_camera_h;
                 matrix_set( matrix_projection, _proj_matrix );
                 
                 vertex_submit( _vbf_static_shadows,  pr_trianglelist, global.lighting_black_texture );
