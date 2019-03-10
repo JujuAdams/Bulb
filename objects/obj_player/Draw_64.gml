@@ -1,4 +1,4 @@
-draw_set_color( c_white );
+draw_set_color( c_black );
 
 //If we're showing help text...
 if ( show_debug ) {

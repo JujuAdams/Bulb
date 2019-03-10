@@ -103,14 +103,6 @@
             }
         },
         {
-            "Key": "17e3b740-6ee2-4553-83b9-930b2eeaa765",
-            "Value": {
-                "id": "f02e5da3-809a-4cde-85f2-4844a579fd68",
-                "resourcePath": "shaders\\shd_1d_pack\\shd_1d_pack.yy",
-                "resourceType": "GMShader"
-            }
-        },
-        {
             "Key": "19819335-e2c8-4e2d-9bf3-83b9dc570a56",
             "Value": {
                 "id": "9a8d8861-a9f3-4ecc-8a36-196110f5239c",
@@ -279,27 +271,11 @@
             }
         },
         {
-            "Key": "47d21137-f38d-48e7-99bb-0562f96756bc",
-            "Value": {
-                "id": "04d909dc-9d22-4903-b0c1-edb15f611780",
-                "resourcePath": "scripts\\lighting_raycast_draw\\lighting_raycast_draw.yy",
-                "resourceType": "GMScript"
-            }
-        },
-        {
             "Key": "4ee9a9cb-ab1f-4122-98e4-0389bf6d3e26",
             "Value": {
                 "id": "b7f1b1cd-dd9d-4d5a-9d69-579b29627c18",
                 "resourcePath": "scripts\\__lighting_add_occlusion\\__lighting_add_occlusion.yy",
                 "resourceType": "GMScript"
-            }
-        },
-        {
-            "Key": "51d9f699-4ebc-4c13-8d65-cbd24335fbb1",
-            "Value": {
-                "id": "cbc5a167-9436-4a7d-80d7-473e2a55b87e",
-                "resourcePath": "shaders\\shd_1d_unpack\\shd_1d_unpack.yy",
-                "resourceType": "GMShader"
             }
         },
         {
@@ -324,22 +300,6 @@
                 "id": "00db69da-efc4-4a38-9286-ab9e857188a0",
                 "resourcePath": "views\\5928d085-0a36-4244-8d98-7a47ecbd1924.yy",
                 "resourceType": "GMFolder"
-            }
-        },
-        {
-            "Key": "69c3ec73-1cf0-4a2d-a3d3-989a813f7c88",
-            "Value": {
-                "id": "7eaaa03b-b5f4-418e-8039-4873b77b6f69",
-                "resourcePath": "scripts\\vertexpre_add_line\\vertexpre_add_line.yy",
-                "resourceType": "GMScript"
-            }
-        },
-        {
-            "Key": "6d4c217c-0fdf-4059-a91f-3c548a6b796e",
-            "Value": {
-                "id": "ca88f8d2-a514-4b7e-821b-506abada71f5",
-                "resourcePath": "rooms\\rm_test1\\rm_test1.yy",
-                "resourceType": "GMRoom"
             }
         },
         {
@@ -591,14 +551,6 @@
             }
         },
         {
-            "Key": "f62cf6e1-8dcb-4a1b-a9da-44396080511a",
-            "Value": {
-                "id": "c62e4091-2aca-4bd6-b078-8fe8b334847a",
-                "resourcePath": "scripts\\vertexpre_add_points\\vertexpre_add_points.yy",
-                "resourceType": "GMScript"
-            }
-        },
-        {
             "Key": "f90028b3-6351-4eea-a23a-99c632f24634",
             "Value": {
                 "id": "74332c24-3a61-4973-ae13-fc2bee26ed90",
@@ -621,8 +573,6 @@
         "803393fd-2078-4c89-9334-51d7f2330543",
         "4239537d-e8f5-408d-bf31-9af742584905",
         "41e830c9-544a-42fe-a3b6-eeca8aae28cc",
-        "69c3ec73-1cf0-4a2d-a3d3-989a813f7c88",
-        "f62cf6e1-8dcb-4a1b-a9da-44396080511a",
         "34f4b501-9937-470a-9925-c67ba14b9389",
         "15d4d447-942e-4749-bcf5-9f8fb334e23a",
         "17931eba-2f16-4a97-b39e-e961bf8f0102",
@@ -631,8 +581,7 @@
         "9ad175cd-9135-4652-8bc7-bff3678cdd73",
         "200578fa-de67-4af7-85e6-7c348917b043",
         "21a8cd40-ca8c-4097-9855-01f5f2ccedbf",
-        "19819335-e2c8-4e2d-9bf3-83b9dc570a56",
-        "47d21137-f38d-48e7-99bb-0562f96756bc"
+        "19819335-e2c8-4e2d-9bf3-83b9dc570a56"
     ],
     "tutorial": ""
 }

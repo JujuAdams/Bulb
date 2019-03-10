@@ -22,11 +22,16 @@
 #macro LIGHTING_ZFAR                          16000
 #macro LIGHTING_DYNAMIC_BORDER                  256
 #macro LIGHTING_REUSE_DYNAMIC_BUFFER           true
-#macro LIGHTING_BM_MAX                         true
 #macro LIGHTING_CACHE_DYNAMIC_OCCLUDERS       false
 #macro LIGHTING_ENABLE_DEFERRED                true
 #macro LIGHTING_FLIP_CAMERA_Y            ON_DIRECTX
 
+enum E_LIGHTING_MODE
+{
+    HARD_BM_ADD, //Basic hard shadows with z-buffer stenciling, using the typical bm_add blend mode
+    HARD_BM_MAX, //As above, but using bm_max
+    SOFT_BM_ADD
+}
 
 
 //Assign the camera used to draw the lights
@@ -38,6 +43,9 @@ lighting_ambient_colour = argument1;
 //If culling is switched on, shadows will only be cast from the rear faces of occluders.
 //This requires careful object placement as not to create weird graphical glitches.
 lighting_culling = argument2 ? cull_counterclockwise : cull_noculling;
+
+lighting_mode = E_LIGHTING_MODE.SOFT_BM_ADD;
+
 
 
 
