@@ -34,10 +34,10 @@ if ( instance_number( _obj ) > 0 ) {
                                                           0, 0, 0,
                                                           1, 1, 1 ) );
         
-        _lt = matrix_transform_vertex( _matrix,                        0,                         0, 0 );
-        _rt = matrix_transform_vertex( _matrix, sprite_get_width( _spr ),                         0, 0 );
-        _lb = matrix_transform_vertex( _matrix,                        0, sprite_get_height( _spr ), 0 );
-        _rb = matrix_transform_vertex( _matrix, sprite_get_width( _spr ), sprite_get_height( _spr ), 0 );
+        var _lt = matrix_transform_vertex( _matrix,                        0,                         0, 0 );
+        var _rt = matrix_transform_vertex( _matrix, sprite_get_width( _spr ),                         0, 0 );
+        var _lb = matrix_transform_vertex( _matrix,                        0, sprite_get_height( _spr ), 0 );
+        var _rb = matrix_transform_vertex( _matrix, sprite_get_width( _spr ), sprite_get_height( _spr ), 0 );
         
         vertex_position( _vbuff,   _lt[0], _lt[1] ); vertex_texcoord( _vbuff,   _uvs[0], _uvs[1] ); vertex_colour( _vbuff,   c_white, 1 );
         vertex_position( _vbuff,   _rt[0], _rt[1] ); vertex_texcoord( _vbuff,   _uvs[2], _uvs[1] ); vertex_colour( _vbuff,   c_white, 1 );
