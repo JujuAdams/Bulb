@@ -35,17 +35,17 @@ var _penumbra_texture = sprite_get_texture( spr_penumbra, 0 );
 
 ///////////One-time construction of a triangle to wipe the z-buffer
 //Using textures (rather than untextured) saves on shader_set() overhead... likely a trade-off depending on the GPU
-if (vbf_zbuffer_reset == noone)
+if (vbf_wipe == noone)
 {
-    vbf_zbuffer_reset = vertex_create_buffer();
-    vertex_begin( vbf_zbuffer_reset, vft_3d_colour );
+    vbf_wipe = vertex_create_buffer();
+    vertex_begin( vbf_wipe, vft_3d_colour );
     
-    vertex_position_3d( vbf_zbuffer_reset,           0,           0, 0 ); vertex_colour( vbf_zbuffer_reset, c_black, 1 );
-    vertex_position_3d( vbf_zbuffer_reset, 2*_camera_w,           0, 0 ); vertex_colour( vbf_zbuffer_reset, c_black, 1 );
-    vertex_position_3d( vbf_zbuffer_reset,           0, 2*_camera_h, 0 ); vertex_colour( vbf_zbuffer_reset, c_black, 1 );
+    vertex_position_3d( vbf_wipe,           0,           0, 0 ); vertex_colour( vbf_wipe, c_black, 1 );
+    vertex_position_3d( vbf_wipe, 2*_camera_w,           0, 0 ); vertex_colour( vbf_wipe, c_black, 1 );
+    vertex_position_3d( vbf_wipe,           0, 2*_camera_h, 0 ); vertex_colour( vbf_wipe, c_black, 1 );
     
-    vertex_end( vbf_zbuffer_reset );
-    vertex_freeze( vbf_zbuffer_reset );
+    vertex_end( vbf_wipe );
+    vertex_freeze( vbf_wipe );
 }
 
 
@@ -133,7 +133,7 @@ if (LIGHTING_ENABLE_DEFERRED)
 
 
 ///////////Set GPU properties
-var _vbf_zbuffer_reset   = vbf_zbuffer_reset;
+var _vbf_zbuffer_reset   = vbf_wipe;
 var _vbf_static_shadows  = vbf_static_shadows;
 var _vbf_dynamic_shadows = vbf_dynamic_shadows;
 

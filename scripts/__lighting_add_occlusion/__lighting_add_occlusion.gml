@@ -56,7 +56,7 @@ if ( !LIGHTING_CACHE_DYNAMIC_OCCLUDERS )
         vertex_position_3d( _vbuff,   _new_ax, _new_ay,  LIGHTING_ZFAR ); vertex_texcoord( _vbuff,  0, 0 );
         vertex_position_3d( _vbuff,   _new_ax, _new_ay,  0 );             vertex_texcoord( _vbuff,  0, 1 );
         
-        vertex_position_3d( _vbuff,   _new_ax, _new_ay, -LIGHTING_ZFAR ); vertex_texcoord( _vbuff,  0, 0 );
+        vertex_position_3d( _vbuff,   _new_ax, _new_ay, -LIGHTING_ZFAR ); vertex_texcoord( _vbuff,  0, 0 ); //Bit of a hack. We interpret this in shd_shadow_soft
         vertex_position_3d( _vbuff,   _new_ax, _new_ay,  LIGHTING_ZFAR ); vertex_texcoord( _vbuff,  1, 0 );
         vertex_position_3d( _vbuff,   _new_ax, _new_ay,  0 );             vertex_texcoord( _vbuff,  0, 1 );
     }

@@ -15,5 +15,5 @@
 vertex_format_delete( vft_3d_colour );
 if ( vbf_static_shadows  != noone ) vertex_delete_buffer( vbf_static_shadows );
 if ( vbf_dynamic_shadows != noone ) vertex_delete_buffer( vbf_dynamic_shadows );
-if ( vbf_zbuffer_reset   != noone ) vertex_delete_buffer( vbf_zbuffer_reset );
+if ( vbf_wipe   != noone ) vertex_delete_buffer( vbf_wipe );
 if ( surface_exists( srf_lighting ) ) surface_free( srf_lighting );
