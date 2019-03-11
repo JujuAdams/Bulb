@@ -399,6 +399,14 @@
             }
         },
         {
+            "Key": "a2f89a93-303c-411e-9945-5e165c86236b",
+            "Value": {
+                "id": "38e24d71-6815-4ccd-9da9-be9d2a552ff0",
+                "resourcePath": "rooms\\rm_test1\\rm_test1.yy",
+                "resourceType": "GMRoom"
+            }
+        },
+        {
             "Key": "a9188620-a624-4a5a-83ae-a1b53faf038b",
             "Value": {
                 "id": "be0d6744-c380-498f-b638-011abc7c8aaf",
@@ -500,6 +508,14 @@
                 "id": "2f1acd3d-86a0-47af-9c4e-1cd61b73f1ff",
                 "resourcePath": "objects\\obj_par_occluder\\obj_par_occluder.yy",
                 "resourceType": "GMObject"
+            }
+        },
+        {
+            "Key": "e425749e-c272-4351-9c2c-2e4b71fd29d7",
+            "Value": {
+                "id": "ae92f452-dc53-44b9-aff5-7375f138a23d",
+                "resourcePath": "shaders\\shd_shadow_soft\\shd_shadow_soft.yy",
+                "resourceType": "GMShader"
             }
         },
         {

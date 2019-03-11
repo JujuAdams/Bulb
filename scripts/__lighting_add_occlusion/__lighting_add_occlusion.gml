@@ -15,8 +15,8 @@
 
 var _vbuff = argument0;
 
-if ( !LIGHTING_CACHE_DYNAMIC_OCCLUDERS ) {
-
+if ( !LIGHTING_CACHE_DYNAMIC_OCCLUDERS )
+{
     //Set up basic transforms to turn relative coordinates in arr_shadowGeometry[] into world-space coordinates
     var _sin = dsin( image_angle );
     var _cos = dcos( image_angle );
@@ -28,8 +28,8 @@ if ( !LIGHTING_CACHE_DYNAMIC_OCCLUDERS ) {
 
     //Loop through every line segment, remembering that we're storing coordinate data sequentially: { Ax1, Ay1, Bx1, Bx1,   Ax2, Ay2, Bx2, Bx2, ... }
     var _i = 0;
-    repeat( shadow_geometry_count ) {
-        
+    repeat( shadow_geometry_count )
+    {
         //Collect first coordinate pair
         var _old_ax = arr_shadow_geometry[_i++];
         var _old_ay = arr_shadow_geometry[_i++];
@@ -42,7 +42,7 @@ if ( !LIGHTING_CACHE_DYNAMIC_OCCLUDERS ) {
         var _new_bx = x + _old_bx*_x_cos + _old_by*_y_sin;
         var _new_by = y - _old_bx*_x_sin + _old_by*_y_cos;
         
-        //Using textures (rather than untextureed) saves on shader_set() overhead... likely a trade-off depending on the GPU
+        //Add to the vertex buffer
         vertex_position_3d( _vbuff,   _new_ax, _new_ay, 0 );             vertex_colour( _vbuff,   c_black, 1 );
         vertex_position_3d( _vbuff,   _new_bx, _new_by, LIGHTING_ZFAR ); vertex_colour( _vbuff,   c_black, 1 );
         vertex_position_3d( _vbuff,   _new_bx, _new_by, 0 );             vertex_colour( _vbuff,   c_black, 1 );
@@ -51,12 +51,20 @@ if ( !LIGHTING_CACHE_DYNAMIC_OCCLUDERS ) {
         vertex_position_3d( _vbuff,   _new_ax, _new_ay, LIGHTING_ZFAR ); vertex_colour( _vbuff,   c_black, 1 );
         vertex_position_3d( _vbuff,   _new_bx, _new_by, LIGHTING_ZFAR ); vertex_colour( _vbuff,   c_black, 1 );
         
-    }
-    
-} else {
-    
-    if ( (last_image_angle != image_angle) or (last_image_x_scale != image_xscale) or (last_image_y_scale!= image_yscale) ) {
+        //Add data for the soft shadows
+        vertex_position_3d( _vbuff,   _new_ax, _new_ay, 0 );             vertex_colour( _vbuff,   c_black, 1 );
+        vertex_position_3d( _vbuff,   _new_ax, _new_ay, LIGHTING_ZFAR ); vertex_colour( _vbuff,   c_red, 0 );
+        vertex_position_3d( _vbuff,   _new_ax, _new_ay, LIGHTING_ZFAR ); vertex_colour( _vbuff,   c_black, 1 );
         
+        vertex_position_3d( _vbuff,   _new_ax, _new_ay, 0 );             vertex_colour( _vbuff,   c_black, 1 );
+        vertex_position_3d( _vbuff,   _new_ax, _new_ay, LIGHTING_ZFAR ); vertex_colour( _vbuff,   c_black, 1 );
+        vertex_position_3d( _vbuff,   _new_ax, _new_ay, LIGHTING_ZFAR ); vertex_colour( _vbuff,   c_lime, 0 );
+    }
+}
+else
+{
+    if ( (last_image_angle != image_angle) or (last_image_x_scale != image_xscale) or (last_image_y_scale!= image_yscale) )
+    {
         last_image_angle   = image_angle;
         last_image_x_scale = image_xscale;
         last_image_y_scale = image_yscale;
@@ -77,7 +85,8 @@ if ( !LIGHTING_CACHE_DYNAMIC_OCCLUDERS ) {
     var _y_sin = last_y_sin;
     var _y_cos = last_y_cos;
 
-    if ( (light_obstacle_old_x != x) or (light_obstacle_old_y != y) ) {
+    if ( (light_obstacle_old_x != x) or (light_obstacle_old_y != y) )
+    {
         
         light_obstacle_old_x = x;
         light_obstacle_old_y = y;
@@ -87,12 +96,12 @@ if ( !LIGHTING_CACHE_DYNAMIC_OCCLUDERS ) {
     
     //Loop through every line segment, remembering that we're storing coordinate data sequentially: { Ax1, Ay1, Bx1, Bx1,   Ax2, Ay2, Bx2, Bx2, ... }
     var _i = 0;
-    if ( light_vertex_cache_dirty ) {
-        
+    if ( light_vertex_cache_dirty )
+    {
         light_vertex_cache_dirty = false;
         
-        repeat( shadow_geometry_count ) {
-        
+        repeat( shadow_geometry_count )
+        {
             //Collect first coordinate pair
             var _old_ax = arr_shadow_geometry[_i++];
             var _old_ay = arr_shadow_geometry[_i++];
@@ -119,13 +128,12 @@ if ( !LIGHTING_CACHE_DYNAMIC_OCCLUDERS ) {
             vertex_position_3d( _vbuff,   _new_ax, _new_ay, 0 );             vertex_colour( _vbuff,   c_black, 1 );
             vertex_position_3d( _vbuff,   _new_ax, _new_ay, LIGHTING_ZFAR ); vertex_colour( _vbuff,   c_black, 1 );
             vertex_position_3d( _vbuff,   _new_bx, _new_by, LIGHTING_ZFAR ); vertex_colour( _vbuff,   c_black, 1 );
-            
         }
-        
-    } else {
-        
-        repeat( shadow_geometry_count ) {
-            
+    }
+    else
+    {
+        repeat( shadow_geometry_count )
+        {
             //Build from cache
             var _new_ax = light_vertex_cache[_i++];
             var _new_ay = light_vertex_cache[_i++];
@@ -139,8 +147,7 @@ if ( !LIGHTING_CACHE_DYNAMIC_OCCLUDERS ) {
             
             vertex_position_3d( _vbuff,   _new_ax, _new_ay, 0 );             vertex_colour( _vbuff,   c_black, 1 );
             vertex_position_3d( _vbuff,   _new_ax, _new_ay, LIGHTING_ZFAR ); vertex_colour( _vbuff,   c_black, 1 );
-            vertex_position_3d( _vbuff,   _new_bx, _new_by, LIGHTING_ZFAR ); vertex_colour( _vbuff,   c_black, 1 );
-                
+            vertex_position_3d( _vbuff,   _new_bx, _new_by, LIGHTING_ZFAR ); vertex_colour( _vbuff,   c_black, 1 ); 
         }
     }
 }

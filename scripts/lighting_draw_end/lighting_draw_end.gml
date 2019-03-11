@@ -203,11 +203,11 @@ surface_set_target( srf_lighting );
         var _transformed_cam_y = _camera_cy*_inv_camera_h;
         
         //Pre-build a custom projection matrix
-        //[8] [9] are set per light
-        var _proj_matrix = [      _inv_camera_w,                   0, 0,  0,
-                                              0,       _inv_camera_h, 0,  0,
-                                      undefined,           undefined, 0, -1,
-                            -_transformed_cam_x, -_transformed_cam_y, 0,  1 ];
+        //[8] [9] [10] are set per light
+        var _proj_matrix = [      _inv_camera_w,                   0,          0,  0,
+                                              0,       _inv_camera_h,          0,  0,
+                                      undefined,           undefined,  undefined, -1,
+                            -_transformed_cam_x, -_transformed_cam_y,  undefined,  1 ];
         
         // xOut = (x - z*(camX - lightX) - camX) / camW
         // yOut = (y - z*(camY - lightY) - camY) / camH
@@ -229,15 +229,17 @@ surface_set_target( srf_lighting );
             if ( light_on_screen )
             {
                 gpu_set_colorwriteenable( false, false, false, true );
-                gpu_set_blendmode_ext( bm_one, bm_zero );
                 
                 //Clear alpha channel
+                gpu_set_blendmode( bm_subtract );
                 vertex_submit( _vbf_zbuffer_reset, pr_trianglelist, -1 );
                 
                 //Render shadows
-                shader_set( shd_shadow );
-                _proj_matrix[8] = _transformed_cam_x - x*_inv_camera_w;
-                _proj_matrix[9] = _transformed_cam_y - y*_inv_camera_h;
+                shader_set( shd_shadow_soft );
+                gpu_set_blendmode( bm_add );
+                _proj_matrix[ 8] = x;
+                _proj_matrix[ 9] = y;
+                _proj_matrix[10] = 10;
                 matrix_set( matrix_projection, _proj_matrix );
                 vertex_submit( _vbf_static_shadows,  pr_trianglelist, -1 );
                 vertex_submit( _vbf_dynamic_shadows, pr_trianglelist, -1 );
@@ -245,7 +247,7 @@ surface_set_target( srf_lighting );
                 //Draw light sprite
                 shader_reset();
                 gpu_set_colorwriteenable( true, true, true, false );
-                gpu_set_blendmode_ext( bm_dest_alpha, bm_one );
+                gpu_set_blendmode_ext( bm_inv_dest_alpha, bm_one );
                 matrix_set( matrix_projection, _vp_matrix );
                 
                 draw_sprite_ext( sprite_index, image_index,
