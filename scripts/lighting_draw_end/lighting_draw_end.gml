@@ -38,7 +38,7 @@ var _penumbra_texture = sprite_get_texture( spr_penumbra, 0 );
 if (vbf_zbuffer_reset == noone)
 {
     vbf_zbuffer_reset = vertex_create_buffer();
-    vertex_begin( vbf_zbuffer_reset, vft_3d );
+    vertex_begin( vbf_zbuffer_reset, vft_3d_colour );
     
     vertex_position_3d( vbf_zbuffer_reset,           0,           0, 0 ); vertex_colour( vbf_zbuffer_reset, c_black, 1 );
     vertex_position_3d( vbf_zbuffer_reset, 2*_camera_w,           0, 0 ); vertex_colour( vbf_zbuffer_reset, c_black, 1 );
@@ -57,7 +57,7 @@ if (vbf_static_shadows == noone)
     vbf_static_shadows = vertex_create_buffer();
     
     //Add static shadow caster vertices to the relevant vertex buffer
-    vertex_begin( vbf_static_shadows, vft_3d_textured );
+    vertex_begin( vbf_static_shadows, vft_3d_texture );
     with ( obj_static_occluder ) __lighting_add_occlusion( other.vbf_static_shadows );
     vertex_end( vbf_static_shadows );
     
@@ -80,7 +80,7 @@ else
 }
 
 //Add dynamic occluder vertices to the relevant vertex buffer
-vertex_begin( vbf_dynamic_shadows, vft_3d_textured );
+vertex_begin( vbf_dynamic_shadows, vft_3d_texture );
 with ( obj_dynamic_occluder )
 {
     light_on_screen = visible && rectangle_in_rectangle_custom( bbox_left, bbox_top,
@@ -209,7 +209,7 @@ surface_set_target( srf_lighting );
         var _proj_matrix = [      _inv_camera_w,                   0,          0,  0,
                                               0,       _inv_camera_h,          0,  0,
                                       undefined,           undefined,  undefined, -1,
-                            -_transformed_cam_x, -_transformed_cam_y,  undefined,  1 ];
+                            -_transformed_cam_x, -_transformed_cam_y,          0,  1 ];
         
         // xOut = (x - z*(camX - lightX) - camX) / camW
         // yOut = (y - z*(camY - lightY) - camY) / camH

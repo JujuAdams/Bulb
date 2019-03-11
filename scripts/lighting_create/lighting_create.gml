@@ -53,14 +53,13 @@ lighting_mode = E_LIGHTING_MODE.SOFT_BM_ADD;
 vertex_format_begin();
 vertex_format_add_position_3d();
 vertex_format_add_colour();
-vft_3d = vertex_format_end();
+vft_3d_colour = vertex_format_end();
 
 //Create a standard vertex format
 vertex_format_begin();
 vertex_format_add_position_3d();
-vertex_format_add_colour();
 vertex_format_add_texcoord();
-vft_3d_textured = vertex_format_end();
+vft_3d_texture = vertex_format_end();
 
 
 
