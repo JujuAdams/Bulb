@@ -80,16 +80,16 @@ else
 }
 
 //Add dynamic occluder vertices to the relevant vertex buffer
-//vertex_begin( vbf_dynamic_shadows, vft_3d );
-//with ( obj_dynamic_occluder )
-//{
-//    light_on_screen = visible && rectangle_in_rectangle_custom( bbox_left, bbox_top,
-//                                                                bbox_right, bbox_bottom,
-//                                                                _camera_exp_l, _camera_exp_t,
-//                                                                _camera_exp_r, _camera_exp_b );
-//    if ( light_on_screen ) __lighting_add_occlusion( other.vbf_dynamic_shadows );
-//}
-//vertex_end( vbf_dynamic_shadows );
+vertex_begin( vbf_dynamic_shadows, vft_3d_textured );
+with ( obj_dynamic_occluder )
+{
+    light_on_screen = visible && rectangle_in_rectangle_custom( bbox_left, bbox_top,
+                                                                bbox_right, bbox_bottom,
+                                                                _camera_exp_l, _camera_exp_t,
+                                                                _camera_exp_r, _camera_exp_b );
+    if ( light_on_screen ) __lighting_add_occlusion( other.vbf_dynamic_shadows );
+}
+vertex_end( vbf_dynamic_shadows );
 
 
 
@@ -244,7 +244,7 @@ surface_set_target( srf_lighting );
                 _proj_matrix[10] = 10;
                 matrix_set( matrix_projection, _proj_matrix );
                 vertex_submit( _vbf_static_shadows,  pr_trianglelist, _penumbra_texture );
-                //vertex_submit( _vbf_dynamic_shadows, pr_trianglelist, _penumbra_texture );
+                vertex_submit( _vbf_dynamic_shadows, pr_trianglelist, _penumbra_texture );
                 
                 //Draw light sprite
                 shader_reset();
