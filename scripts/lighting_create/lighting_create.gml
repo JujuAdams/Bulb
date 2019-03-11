@@ -66,5 +66,5 @@ vft_3d_texture = vertex_format_end();
 //Initialise variables used and updated in lighting_build()
 vbf_static_shadows  = noone; //Vertex buffer describing the geometry of static occluder objects.
 vbf_dynamic_shadows = noone; //As above but for dynamic shadow occluders. This is updated every step.
-vbf_wipe   = noone; //This vertex buffer is used to reset the z-buffer during compositing.
+vbf_wipe            = noone; //This vertex buffer is used to reset the z-buffer during compositing.
 srf_lighting        = noone; //Screen-space surface for final compositing of individual surfaces.

@@ -29,8 +29,6 @@ var _camera_exp_t = _camera_t - LIGHTING_DYNAMIC_BORDER;
 var _camera_exp_r = _camera_r + LIGHTING_DYNAMIC_BORDER;
 var _camera_exp_b = _camera_b + LIGHTING_DYNAMIC_BORDER;
 
-var _penumbra_texture = sprite_get_texture( spr_penumbra, 0 );
-
 
 
 ///////////One-time construction of a triangle to wipe the z-buffer
@@ -241,8 +239,8 @@ surface_set_target( srf_lighting );
                 _proj_matrix[ 9] = y;  //Light y
                 _proj_matrix[10] = 20; //Light radius
                 matrix_set( matrix_projection, _proj_matrix );
-                vertex_submit( _vbf_static_shadows,  pr_trianglelist, _penumbra_texture );
-                vertex_submit( _vbf_dynamic_shadows, pr_trianglelist, _penumbra_texture );
+                vertex_submit( _vbf_static_shadows,  pr_trianglelist, -1 );
+                vertex_submit( _vbf_dynamic_shadows, pr_trianglelist, -1 );
                 
                 //Draw light sprite
                 shader_reset();
