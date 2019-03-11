@@ -217,8 +217,6 @@ surface_set_target( srf_lighting );
         
         #endregion
         
-        gpu_set_blendmode( bm_add );
-        
         with ( obj_par_light )
         {
             if ( light_deferred ) continue;
@@ -239,9 +237,9 @@ surface_set_target( srf_lighting );
                 //Render shadows
                 shader_set( shd_shadow_soft );
                 gpu_set_blendmode( bm_add );
-                _proj_matrix[ 8] = x;
-                _proj_matrix[ 9] = y;
-                _proj_matrix[10] = 10;
+                _proj_matrix[ 8] = x;  //Light x
+                _proj_matrix[ 9] = y;  //Light y
+                _proj_matrix[10] = 20; //Light radius
                 matrix_set( matrix_projection, _proj_matrix );
                 vertex_submit( _vbf_static_shadows,  pr_trianglelist, _penumbra_texture );
                 vertex_submit( _vbf_dynamic_shadows, pr_trianglelist, _penumbra_texture );
