@@ -407,6 +407,14 @@
             }
         },
         {
+            "Key": "a60f25bb-a148-4676-9867-7b19c7a43c5e",
+            "Value": {
+                "id": "df7eca62-4528-457a-860e-012f8fcb73e3",
+                "resourcePath": "sprites\\spr_penumbra\\spr_penumbra.yy",
+                "resourceType": "GMSprite"
+            }
+        },
+        {
             "Key": "a9188620-a624-4a5a-83ae-a1b53faf038b",
             "Value": {
                 "id": "be0d6744-c380-498f-b638-011abc7c8aaf",

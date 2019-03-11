@@ -1,6 +1,8 @@
 attribute vec3 in_Position;
 attribute vec4 in_Colour;
+attribute vec2 in_TextureCoord;
 
+varying vec2 v_vTexcoord;
 varying vec4 v_vColour;
 
 void main()
@@ -34,7 +36,6 @@ void main()
     matrix[2][2] = 0.0;
     gl_Position = matrix * vec4( in_Position.xyz, 1.0 );
     
-    //v_vColour = vec4( 0.0, 0.0, 0.0, in_Colour.a );
     v_vColour = in_Colour;
-    //if ( in_Colour.r == 0.0 ) v_vColour.a = 0.0;
+    v_vTexcoord = in_TextureCoord;
 }

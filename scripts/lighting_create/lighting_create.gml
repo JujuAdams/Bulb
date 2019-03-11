@@ -55,6 +55,13 @@ vertex_format_add_position_3d();
 vertex_format_add_colour();
 vft_3d = vertex_format_end();
 
+//Create a standard vertex format
+vertex_format_begin();
+vertex_format_add_position_3d();
+vertex_format_add_colour();
+vertex_format_add_texcoord();
+vft_3d_textured = vertex_format_end();
+
 
 
 //Initialise variables used and updated in lighting_build()

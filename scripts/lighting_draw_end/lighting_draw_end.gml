@@ -29,11 +29,13 @@ var _camera_exp_t = _camera_t - LIGHTING_DYNAMIC_BORDER;
 var _camera_exp_r = _camera_r + LIGHTING_DYNAMIC_BORDER;
 var _camera_exp_b = _camera_b + LIGHTING_DYNAMIC_BORDER;
 
+var _penumbra_texture = sprite_get_texture( spr_penumbra, 0 );
+
 
 
 ///////////One-time construction of a triangle to wipe the z-buffer
 //Using textures (rather than untextured) saves on shader_set() overhead... likely a trade-off depending on the GPU
-if ( vbf_zbuffer_reset == noone )
+if (vbf_zbuffer_reset == noone)
 {
     vbf_zbuffer_reset = vertex_create_buffer();
     vertex_begin( vbf_zbuffer_reset, vft_3d );
@@ -49,13 +51,13 @@ if ( vbf_zbuffer_reset == noone )
 
 
 ///////////One-time construction of the static occluder geometry
-if ( vbf_static_shadows == noone )
+if (vbf_static_shadows == noone)
 {
     //Create a new vertex buffer
     vbf_static_shadows = vertex_create_buffer();
     
     //Add static shadow caster vertices to the relevant vertex buffer
-    vertex_begin( vbf_static_shadows, vft_3d );
+    vertex_begin( vbf_static_shadows, vft_3d_textured );
     with ( obj_static_occluder ) __lighting_add_occlusion( other.vbf_static_shadows );
     vertex_end( vbf_static_shadows );
     
@@ -67,7 +69,7 @@ if ( vbf_static_shadows == noone )
 
 ///////////Refresh the dynamic occluder geometry
 //Try to keep dynamic objects limited.
-if ( LIGHTING_REUSE_DYNAMIC_BUFFER )
+if (LIGHTING_REUSE_DYNAMIC_BUFFER)
 {
     if ( vbf_dynamic_shadows == noone ) vbf_dynamic_shadows = vertex_create_buffer();
 }
@@ -78,21 +80,21 @@ else
 }
 
 //Add dynamic occluder vertices to the relevant vertex buffer
-vertex_begin( vbf_dynamic_shadows, vft_3d );
-with ( obj_dynamic_occluder )
-{
-    light_on_screen = visible && rectangle_in_rectangle_custom( bbox_left, bbox_top,
-                                                                bbox_right, bbox_bottom,
-                                                                _camera_exp_l, _camera_exp_t,
-                                                                _camera_exp_r, _camera_exp_b );
-    if ( light_on_screen ) __lighting_add_occlusion( other.vbf_dynamic_shadows );
-}
-vertex_end( vbf_dynamic_shadows );
+//vertex_begin( vbf_dynamic_shadows, vft_3d );
+//with ( obj_dynamic_occluder )
+//{
+//    light_on_screen = visible && rectangle_in_rectangle_custom( bbox_left, bbox_top,
+//                                                                bbox_right, bbox_bottom,
+//                                                                _camera_exp_l, _camera_exp_t,
+//                                                                _camera_exp_r, _camera_exp_b );
+//    if ( light_on_screen ) __lighting_add_occlusion( other.vbf_dynamic_shadows );
+//}
+//vertex_end( vbf_dynamic_shadows );
 
 
 
 ///////////Render out lights and shadows for each deferred light in the viewport
-if ( LIGHTING_ENABLE_DEFERRED )
+if (LIGHTING_ENABLE_DEFERRED)
 {
     gpu_set_cullmode( lighting_culling );
     with( obj_par_light ) {
@@ -241,8 +243,8 @@ surface_set_target( srf_lighting );
                 _proj_matrix[ 9] = y;
                 _proj_matrix[10] = 10;
                 matrix_set( matrix_projection, _proj_matrix );
-                vertex_submit( _vbf_static_shadows,  pr_trianglelist, -1 );
-                vertex_submit( _vbf_dynamic_shadows, pr_trianglelist, -1 );
+                vertex_submit( _vbf_static_shadows,  pr_trianglelist, _penumbra_texture );
+                //vertex_submit( _vbf_dynamic_shadows, pr_trianglelist, _penumbra_texture );
                 
                 //Draw light sprite
                 shader_reset();
@@ -323,8 +325,8 @@ surface_set_target( srf_lighting );
                 _proj_matrix[8] = _transformed_cam_x - x*_inv_camera_w;
                 _proj_matrix[9] = _transformed_cam_y - y*_inv_camera_h;
                 matrix_set( matrix_projection, _proj_matrix );
-                vertex_submit( _vbf_static_shadows,  pr_trianglelist, -1 );
-                vertex_submit( _vbf_dynamic_shadows, pr_trianglelist, -1 );
+                vertex_submit( _vbf_static_shadows,  pr_trianglelist, _penumbra_texture );
+                //vertex_submit( _vbf_dynamic_shadows, pr_trianglelist, _penumbra_texture );
                 
                 //Draw light sprite
                 shader_set( _reset_shader );

@@ -43,22 +43,22 @@ if ( !LIGHTING_CACHE_DYNAMIC_OCCLUDERS )
         var _new_by = y - _old_bx*_x_sin + _old_by*_y_cos;
         
         //Add to the vertex buffer
-        vertex_position_3d( _vbuff,   _new_ax, _new_ay, 0 );             vertex_colour( _vbuff,   c_black, 1 );
-        vertex_position_3d( _vbuff,   _new_bx, _new_by, LIGHTING_ZFAR ); vertex_colour( _vbuff,   c_black, 1 );
-        vertex_position_3d( _vbuff,   _new_bx, _new_by, 0 );             vertex_colour( _vbuff,   c_black, 1 );
+        vertex_position_3d( _vbuff,   _new_ax, _new_ay, 0 );             vertex_colour( _vbuff,   c_black, 1 ); vertex_texcoord( _vbuff,  1, 1 );
+        vertex_position_3d( _vbuff,   _new_bx, _new_by, LIGHTING_ZFAR ); vertex_colour( _vbuff,   c_black, 1 ); vertex_texcoord( _vbuff,  1, 1 );
+        vertex_position_3d( _vbuff,   _new_bx, _new_by, 0 );             vertex_colour( _vbuff,   c_black, 1 ); vertex_texcoord( _vbuff,  1, 1 );
         
-        vertex_position_3d( _vbuff,   _new_ax, _new_ay, 0 );             vertex_colour( _vbuff,   c_black, 1 );
-        vertex_position_3d( _vbuff,   _new_ax, _new_ay, LIGHTING_ZFAR ); vertex_colour( _vbuff,   c_black, 1 );
-        vertex_position_3d( _vbuff,   _new_bx, _new_by, LIGHTING_ZFAR ); vertex_colour( _vbuff,   c_black, 1 );
+        vertex_position_3d( _vbuff,   _new_ax, _new_ay, 0 );             vertex_colour( _vbuff,   c_black, 1 ); vertex_texcoord( _vbuff,  1, 1 );
+        vertex_position_3d( _vbuff,   _new_ax, _new_ay, LIGHTING_ZFAR ); vertex_colour( _vbuff,   c_black, 1 ); vertex_texcoord( _vbuff,  1, 1 );
+        vertex_position_3d( _vbuff,   _new_bx, _new_by, LIGHTING_ZFAR ); vertex_colour( _vbuff,   c_black, 1 ); vertex_texcoord( _vbuff,  1, 1 );
         
         //Add data for the soft shadows
-        vertex_position_3d( _vbuff,   _new_ax, _new_ay, 0 );             vertex_colour( _vbuff,   c_black, 1 );
-        vertex_position_3d( _vbuff,   _new_ax, _new_ay, LIGHTING_ZFAR ); vertex_colour( _vbuff,   c_red, 0 );
-        vertex_position_3d( _vbuff,   _new_ax, _new_ay, LIGHTING_ZFAR ); vertex_colour( _vbuff,   c_black, 1 );
+        vertex_position_3d( _vbuff,   _new_ax, _new_ay, LIGHTING_ZFAR ); vertex_colour( _vbuff,   c_black, 1 ); vertex_texcoord( _vbuff,  1, 0 );
+        vertex_position_3d( _vbuff,   _new_ax, _new_ay, LIGHTING_ZFAR ); vertex_colour( _vbuff,   c_red  , 0 ); vertex_texcoord( _vbuff,  0, 0 );
+        vertex_position_3d( _vbuff,   _new_ax, _new_ay, 0 );             vertex_colour( _vbuff,   c_black, 1 ); vertex_texcoord( _vbuff,  0, 1 );
         
-        vertex_position_3d( _vbuff,   _new_ax, _new_ay, 0 );             vertex_colour( _vbuff,   c_black, 1 );
-        vertex_position_3d( _vbuff,   _new_ax, _new_ay, LIGHTING_ZFAR ); vertex_colour( _vbuff,   c_black, 1 );
-        vertex_position_3d( _vbuff,   _new_ax, _new_ay, LIGHTING_ZFAR ); vertex_colour( _vbuff,   c_lime, 0 );
+        vertex_position_3d( _vbuff,   _new_ax, _new_ay, LIGHTING_ZFAR ); vertex_colour( _vbuff,   c_lime , 0 ); vertex_texcoord( _vbuff,  0, 0 );
+        vertex_position_3d( _vbuff,   _new_ax, _new_ay, LIGHTING_ZFAR ); vertex_colour( _vbuff,   c_black, 1 ); vertex_texcoord( _vbuff,  1, 0 );
+        vertex_position_3d( _vbuff,   _new_ax, _new_ay, 0 );             vertex_colour( _vbuff,   c_black, 1 ); vertex_texcoord( _vbuff,  0, 1 );
     }
 }
 else
