@@ -92,7 +92,7 @@ vertex_end( vbf_dynamic_shadows );
 
 
 ///////////Render out lights and shadows for each deferred light in the viewport
-if (LIGHTING_ENABLE_DEFERRED)
+if (LIGHTING_ALLOW_DEFERRED)
 {
     gpu_set_cullmode( lighting_culling );
     with( obj_par_light ) {
@@ -134,6 +134,7 @@ if (LIGHTING_ENABLE_DEFERRED)
 var _vbf_zbuffer_reset   = vbf_wipe;
 var _vbf_static_shadows  = vbf_static_shadows;
 var _vbf_dynamic_shadows = vbf_dynamic_shadows;
+var _partial_clear       = lighting_partial_clear;
 
 //Create composite lighting surface
 srf_lighting = surface_check( srf_lighting, _camera_w, _camera_h );
@@ -230,10 +231,21 @@ surface_set_target( srf_lighting );
                 
                 //Clear alpha channel
                 gpu_set_blendmode( bm_subtract );
-                vertex_submit( _vbf_zbuffer_reset, pr_trianglelist, -1 );
+                
+                if ( _partial_clear )
+                {
+                    draw_sprite_ext( sprite_index, image_index,
+                                     x - _camera_l, y - _camera_t,
+                                     image_xscale, image_yscale, image_angle,
+                                     c_black, 1 );
+                }
+                else
+                {
+                    vertex_submit( _vbf_zbuffer_reset, pr_trianglelist, -1 );
+                }
                 
                 //Render shadows
-                shader_set( shd_shadow_soft );
+                shader_set( shd_lighting_soft_shadows );
                 gpu_set_blendmode( bm_add );
                 _proj_matrix[ 8] = x;  //Light x
                 _proj_matrix[ 9] = y;  //Light y
@@ -314,15 +326,26 @@ surface_set_target( srf_lighting );
                 gpu_set_colorwriteenable( false, false, false, false );
                 
                 //Reset zbuffer
-                shader_set( shd_shadow );
-                vertex_submit( _vbf_zbuffer_reset, pr_trianglelist, -1 );
+                if ( _partial_clear )
+                {
+                    draw_sprite_ext( sprite_index, image_index,
+                                     x - _camera_l, y - _camera_t,
+                                     image_xscale, image_yscale, image_angle,
+                                     c_black, 1 );
+                    shader_set( shd_lighting_hard_shadows );
+                }
+                else
+                {
+                    shader_set( shd_lighting_hard_shadows );
+                    vertex_submit( _vbf_zbuffer_reset, pr_trianglelist, -1 );
+                }
                 
                 //Render shadows
                 _proj_matrix[8] = _transformed_cam_x - x*_inv_camera_w;
                 _proj_matrix[9] = _transformed_cam_y - y*_inv_camera_h;
                 matrix_set( matrix_projection, _proj_matrix );
-                vertex_submit( _vbf_static_shadows,  pr_trianglelist, _penumbra_texture );
-                //vertex_submit( _vbf_dynamic_shadows, pr_trianglelist, _penumbra_texture );
+                vertex_submit( _vbf_static_shadows,  pr_trianglelist, -1 );
+                vertex_submit( _vbf_dynamic_shadows, pr_trianglelist, -1 );
                 
                 //Draw light sprite
                 shader_set( _reset_shader );
@@ -344,14 +367,14 @@ surface_set_target( srf_lighting );
     }
     
     //Reset GPU properties
-    if (lighting_mode == E_LIGHTING_MODE.HARD_BM_MAX) shader_reset();
+    shader_reset();
     gpu_set_colorwriteenable( true, true, true, true );
     gpu_set_cullmode( cull_noculling );
     
     
     
     ///////////Add deferred lights to composite lighting surface
-    if ( LIGHTING_ENABLE_DEFERRED )
+    if ( LIGHTING_ALLOW_DEFERRED )
     {
         //Use a cumulative blend mode to add lights together
         with ( obj_par_light )

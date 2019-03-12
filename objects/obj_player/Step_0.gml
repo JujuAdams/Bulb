@@ -2,34 +2,45 @@
 var _x = 0;
 var _y = 0;
 
-if ( keyboard_check( vk_up    ) ) or ( keyboard_check( ord( "W" ) ) ) y -= 5;
-if ( keyboard_check( vk_down  ) ) or ( keyboard_check( ord( "S" ) ) ) y += 5;
-if ( keyboard_check( vk_left  ) ) or ( keyboard_check( ord( "A" ) ) ) x -= 5;
-if ( keyboard_check( vk_right ) ) or ( keyboard_check( ord( "D" ) ) ) x += 5;
+if ( keyboard_check( vk_up    ) ) || ( keyboard_check( ord( "W" ) ) ) y -= 5;
+if ( keyboard_check( vk_down  ) ) || ( keyboard_check( ord( "S" ) ) ) y += 5;
+if ( keyboard_check( vk_left  ) ) || ( keyboard_check( ord( "A" ) ) ) x -= 5;
+if ( keyboard_check( vk_right ) ) || ( keyboard_check( ord( "D" ) ) ) x += 5;
 
 //Other controls
 if ( keyboard_check_pressed( vk_escape  ) ) game_end();
-if ( keyboard_check_pressed( vk_f1      ) ) {
+if ( keyboard_check_pressed( vk_f1      ) )
+{
     show_debug = !show_debug;
     show_debug_overlay( show_debug );
 }
 
-if ( keyboard_check_pressed( ord( "L" ) ) ) instance_create_depth( x, y, 0, obj_light_discoooo );
-if ( keyboard_check( ord( "T" ) ) ) and ( fps_real > 61 ) instance_create_depth( x, y, 0, obj_light_discoooo );
-if ( keyboard_check_pressed( ord( "1" ) ) ) with( obj_light_discoooo ) visible = !visible;
-if ( keyboard_check_pressed( ord( "2" ) ) ) lighting_culling = ( lighting_culling == cull_noculling ) ? cull_counterclockwise : cull_noculling;
-if ( keyboard_check_pressed( ord( "3" ) ) ) {
-    allow_deferred = !allow_deferred;
-    if ( allow_deferred ) {
-        with( obj_par_light ) light_deferred = demo_is_deferred;
-    } else {
-        with( obj_par_light ) light_deferred = false;
+if ( keyboard_check_pressed( ord("L") ) ) instance_create_depth( x, y, 0, obj_light_discoooo );
+if ( keyboard_check( ord("T") ) ) && ( fps_real > 61 ) instance_create_depth( x, y, 0, obj_light_discoooo );
+if ( keyboard_check_pressed( ord("1") ) ) with( obj_light_discoooo ) visible = !visible;
+if ( keyboard_check_pressed( ord("2") ) ) lighting_culling = ( lighting_culling == cull_noculling ) ? cull_counterclockwise : cull_noculling;
+if ( keyboard_check_pressed( ord("3") ) )
+{
+    switch( lighting_mode )
+    {
+        case E_LIGHTING_MODE.HARD_BM_ADD: lighting_mode = E_LIGHTING_MODE.HARD_BM_MAX; break
+        case E_LIGHTING_MODE.HARD_BM_MAX: lighting_mode = E_LIGHTING_MODE.SOFT_BM_ADD; break;
+        case E_LIGHTING_MODE.SOFT_BM_ADD: lighting_mode = E_LIGHTING_MODE.HARD_BM_ADD; break;
     }
 }
+if ( keyboard_check_pressed( ord("4" ) ) ) lighting_partial_clear = !lighting_partial_clear;
+//if ( keyboard_check_pressed( ord( "4" ) ) ) {
+//    allow_deferred = !allow_deferred;
+//    if ( allow_deferred ) {
+//        with( obj_par_light ) light_deferred = demo_is_deferred;
+//    } else {
+//        with( obj_par_light ) light_deferred = false;
+//    }
+//}
 
 //Shooting
-if ( mouse_check_button( mb_left ) ) and ( alarm_get( 0 ) <= 0 ) {
-    
+if ( mouse_check_button( mb_left ) ) and ( alarm_get(0) <= 0 )
+{
     alarm_set( 0, 12 );
     
     var _inst = instance_create_depth( x, y, 0, obj_light_plasma );
@@ -38,7 +49,6 @@ if ( mouse_check_button( mb_left ) ) and ( alarm_get( 0 ) <= 0 ) {
         direction = point_direction( x, y, mouse_x, mouse_y ) + random_range( -5, 5 );
         image_angle = direction;
     }
-    
 }
 
 //Update camera position
@@ -49,4 +59,5 @@ if ( alarm_get(1) < 0 )
 {
     smoothed_frame_time = lerp( smoothed_frame_time, 1000/fps_real, 0.005 );
     smoothed_fps = lerp( smoothed_fps, fps_real, 0.005 );
+    smoothed_draw_end_time = lerp( smoothed_draw_end_time, draw_end_time, 0.005 );
 }

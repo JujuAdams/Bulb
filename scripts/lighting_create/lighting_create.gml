@@ -1,14 +1,12 @@
-/// @param ambient_colour
-/// @param self_lighting
-/// @param culling
+/// @param camera
+/// @param ambientColour
+/// @param selfLighting
+/// @param mode
+/// @param partialClear
 //
 //  Initialises the necessary variables for a controller object to use the lighting system.
 //  Should be called in one object per room.
 //  Must be called before lighting_build(), lighting_draw(), and lighting_end().
-//
-//  argument0: The ambient colour. Defaults to black. [Optional]
-//  argument1: Whether or not to use self-lighting.   [Optional]
-//  return: Nothing.
 //  
 //  March 2019
 //  @jujuadams
@@ -23,7 +21,8 @@
 #macro LIGHTING_DYNAMIC_BORDER                  256
 #macro LIGHTING_REUSE_DYNAMIC_BUFFER           true
 #macro LIGHTING_CACHE_DYNAMIC_OCCLUDERS       false
-#macro LIGHTING_ENABLE_DEFERRED                true
+#macro LIGHTING_ALLOW_DEFERRED                 true
+#macro LIGHTING_ALLOW_SOFT_SHADOWS            false
 #macro LIGHTING_FLIP_CAMERA_Y            ON_DIRECTX
 
 enum E_LIGHTING_MODE
@@ -44,12 +43,14 @@ lighting_ambient_colour = argument1;
 //This requires careful object placement as not to create weird graphical glitches.
 lighting_culling = argument2 ? cull_counterclockwise : cull_noculling;
 
-lighting_mode = E_LIGHTING_MODE.SOFT_BM_ADD;
+lighting_mode = argument3;
+
+lighting_partial_clear = argument4;
 
 
 
 
-//Create a standard vertex format
+//Create a couple vertex formats
 vertex_format_begin();
 vertex_format_add_position_3d();
 vertex_format_add_colour();

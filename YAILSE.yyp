@@ -354,7 +354,7 @@
             "Key": "8e71b46a-c8bb-42f0-a7dc-c9b34237f7a2",
             "Value": {
                 "id": "40e0ab29-2527-4a91-a5d8-7526175540bc",
-                "resourcePath": "shaders\\shd_shadow\\shd_shadow.yy",
+                "resourcePath": "shaders\\shd_lighting_hard_shadows\\shd_lighting_hard_shadows.yy",
                 "resourceType": "GMShader"
             }
         },
@@ -396,14 +396,6 @@
                 "id": "c6a3d909-11ba-4a30-9590-90f7a8786ab9",
                 "resourcePath": "options\\amazonfire\\options_amazonfire.yy",
                 "resourceType": "GMAmazonFireOptions"
-            }
-        },
-        {
-            "Key": "a2f89a93-303c-411e-9945-5e165c86236b",
-            "Value": {
-                "id": "38e24d71-6815-4ccd-9da9-be9d2a552ff0",
-                "resourcePath": "rooms\\rm_test1\\rm_test1.yy",
-                "resourceType": "GMRoom"
             }
         },
         {
@@ -514,7 +506,7 @@
             "Key": "e425749e-c272-4351-9c2c-2e4b71fd29d7",
             "Value": {
                 "id": "ae92f452-dc53-44b9-aff5-7375f138a23d",
-                "resourcePath": "shaders\\shd_shadow_soft\\shd_shadow_soft.yy",
+                "resourcePath": "shaders\\shd_lighting_soft_shadows\\shd_lighting_soft_shadows.yy",
                 "resourceType": "GMShader"
             }
         },
