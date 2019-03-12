@@ -22,7 +22,6 @@
 #macro LIGHTING_REUSE_DYNAMIC_BUFFER           true
 #macro LIGHTING_CACHE_DYNAMIC_OCCLUDERS       false
 #macro LIGHTING_ALLOW_DEFERRED                 true
-#macro LIGHTING_ALLOW_SOFT_SHADOWS            false
 #macro LIGHTING_FLIP_CAMERA_Y            ON_DIRECTX
 
 enum E_LIGHTING_MODE
