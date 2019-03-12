@@ -27,8 +27,11 @@ if ( keyboard_check_pressed( ord("3") ) )
         case E_LIGHTING_MODE.HARD_BM_MAX: lighting_mode = E_LIGHTING_MODE.SOFT_BM_ADD; break;
         case E_LIGHTING_MODE.SOFT_BM_ADD: lighting_mode = E_LIGHTING_MODE.HARD_BM_ADD; break;
     }
+    lighting_refresh_vertex_buffers();
 }
-if ( keyboard_check_pressed( ord("4" ) ) ) lighting_partial_clear = !lighting_partial_clear;
+if ( keyboard_check_pressed( ord("4") ) ) lighting_partial_clear = !lighting_partial_clear;
+if ( keyboard_check_pressed( ord("5") ) ) lighting_force_deferred = !lighting_force_deferred;
+
 //if ( keyboard_check_pressed( ord( "4" ) ) ) {
 //    allow_deferred = !allow_deferred;
 //    if ( allow_deferred ) {

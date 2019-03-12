@@ -49,14 +49,22 @@ if (vbf_wipe == noone)
 
 
 ///////////One-time construction of the static occluder geometry
-if (vbf_static_shadows == noone)
+if (vbf_static_shadows < 0)
 {
     //Create a new vertex buffer
     vbf_static_shadows = vertex_create_buffer();
     
     //Add static shadow caster vertices to the relevant vertex buffer
-    vertex_begin( vbf_static_shadows, vft_3d_texture );
-    with ( obj_static_occluder ) __lighting_add_occlusion( other.vbf_static_shadows );
+    if (lighting_mode == E_LIGHTING_MODE.SOFT_BM_ADD)
+    {
+        vertex_begin( vbf_static_shadows, vft_3d_texture );
+        with ( obj_static_occluder ) __lighting_add_occlusion_soft( other.vbf_static_shadows );
+    }
+    else
+    {
+        vertex_begin( vbf_static_shadows, vft_3d_colour );
+        with ( obj_static_occluder ) __lighting_add_occlusion_hard( other.vbf_static_shadows );
+    }
     vertex_end( vbf_static_shadows );
     
     //Freeze this buffer for speed boosts later on (though only if we have vertices in this buffer)
@@ -69,34 +77,58 @@ if (vbf_static_shadows == noone)
 //Try to keep dynamic objects limited.
 if (LIGHTING_REUSE_DYNAMIC_BUFFER)
 {
-    if ( vbf_dynamic_shadows == noone ) vbf_dynamic_shadows = vertex_create_buffer();
+    if ( vbf_dynamic_shadows < 0 ) vbf_dynamic_shadows = vertex_create_buffer();
 }
 else
 {
-    if ( vbf_dynamic_shadows != noone ) vertex_delete_buffer( vbf_dynamic_shadows );
+    if ( vbf_dynamic_shadows >= 0 ) vertex_delete_buffer( vbf_dynamic_shadows );
     vbf_dynamic_shadows = vertex_create_buffer();
 }
 
 //Add dynamic occluder vertices to the relevant vertex buffer
-vertex_begin( vbf_dynamic_shadows, vft_3d_texture );
-with ( obj_dynamic_occluder )
+if (lighting_mode == E_LIGHTING_MODE.SOFT_BM_ADD)
 {
-    light_on_screen = visible && rectangle_in_rectangle_custom( bbox_left, bbox_top,
-                                                                bbox_right, bbox_bottom,
-                                                                _camera_exp_l, _camera_exp_t,
-                                                                _camera_exp_r, _camera_exp_b );
-    if ( light_on_screen ) __lighting_add_occlusion( other.vbf_dynamic_shadows );
+    vertex_begin( vbf_dynamic_shadows, vft_3d_texture );
+    with ( obj_dynamic_occluder )
+    {
+        light_on_screen = visible && rectangle_in_rectangle_custom( bbox_left, bbox_top,
+                                                                    bbox_right, bbox_bottom,
+                                                                    _camera_exp_l, _camera_exp_t,
+                                                                    _camera_exp_r, _camera_exp_b );
+        if ( light_on_screen ) __lighting_add_occlusion_soft( other.vbf_dynamic_shadows );
+    }
+}
+else
+{
+    vertex_begin( vbf_dynamic_shadows, vft_3d_colour );
+    with ( obj_dynamic_occluder )
+    {
+        light_on_screen = visible && rectangle_in_rectangle_custom( bbox_left, bbox_top,
+                                                                    bbox_right, bbox_bottom,
+                                                                    _camera_exp_l, _camera_exp_t,
+                                                                    _camera_exp_r, _camera_exp_b );
+        if ( light_on_screen ) __lighting_add_occlusion_hard( other.vbf_dynamic_shadows );
+    }
 }
 vertex_end( vbf_dynamic_shadows );
 
 
 
+var _vbf_zbuffer_reset   = vbf_wipe;
+var _vbf_static_shadows  = vbf_static_shadows;
+var _vbf_dynamic_shadows = vbf_dynamic_shadows;
+var _partial_clear       = lighting_partial_clear;
+var _force_deferred      = lighting_force_deferred;
+
 ///////////Render out lights and shadows for each deferred light in the viewport
 if (LIGHTING_ALLOW_DEFERRED)
 {
+    var _sign = LIGHTING_FLIP_CAMERA_Y? 1 : -1;
+    
     gpu_set_cullmode( lighting_culling );
-    with( obj_par_light ) {
-        if ( !light_deferred ) continue;
+    with( obj_par_light )
+    {
+        if ( !light_deferred && !_force_deferred ) continue;
         
         light_on_screen = visible && rectangle_in_rectangle_custom( x - light_w_half, y - light_h_half,
                                                                     x + light_w_half, y + light_h_half,
@@ -112,12 +144,35 @@ if (LIGHTING_ALLOW_DEFERRED)
                 
                 //Magical projection!
                 shader_set( shd_snap_vertex );
+                
+                #region Linear algebra
+                
+                //var _view_matrix = matrix_build_lookat( _camera_w/2, _camera_h/2, -16000,   _camera_w/2, _camera_h/2, 0,   0, 1, 0 );
+                //var _view_matrix = [            1,            0,     0, 0,                   // [            1,            0,         0, 0, 
+                //                                0,            1,     0, 0,                   //              0,            1,         0, 0, 
+                //                                0,            0,     1, 0,                   //              0,            0,         1, 0, 
+                //                     -_camera_w/2, -_camera_h/2, 16000, 1 ];                 //   -_camera_w/2, -_camera_h/2, -camera_z, 1 ]
+                
+                //var _proj_matrix =  matrix_build_projection_ortho( _camera_w, -_camera_h, 1, 32000 );
+                //var _proj_matrix = [ 2/_camera_w,           0,           0,  0,             // [ 2/_camera_w,           0,                      0, 0,
+                //                               0, 2/_camera_h,           0,  0,             //             0, 2/_camera_h,                      0, 0,
+                //                               0,           0,  1/(32000-1), 0,             //             0,           0,       1/(z_far-z_near), 0,
+                //                               0,           0, -1/(32000-1), 1 ];           //             0,           0, -z_near/(z_far-z_near), 1 ]
+                
+                //var _vp_matrix = matrix_multiply( _new_view, _new_proj );
+                //var _vp_matrix = [ 2/_camera_w,           0,           0, 0,                  // [ 2/_camera_w,            0,                                   0, 0,
+                //                             0, 2/_camera_h,           0, 0,                  //             0, -2/_camera_h,                                   0, 0,
+                //                             0,           0,     1/31999, 0,                  //             0,            0,                    1/(z_far-z_near), 0,
+                //                            -1,           1, 15999/31999, 1 ];                //            -1,            1, (-camera_z - z_near)/(z_far-z_near), 1 ]
+                
                 matrix_set( matrix_view, matrix_build_lookat( x, y, light_w,   x, y, 0,   dsin( -image_angle ), -dcos( -image_angle ), 0 ) );
-                matrix_set( matrix_projection, matrix_build_projection_perspective( image_xscale, image_yscale, 1, 16000 ) );
+                matrix_set( matrix_projection, matrix_build_projection_perspective( image_xscale, image_yscale*_sign, 1, 32000 ) );
+                
+                #endregion
                 
                 //Tell the GPU to render the shadow geometry
-                vertex_submit( other.vbf_static_shadows,  pr_trianglelist, -1 );
-                vertex_submit( other.vbf_dynamic_shadows, pr_trianglelist, -1 );
+                vertex_submit( _vbf_static_shadows,  pr_trianglelist, -1 );
+                vertex_submit( _vbf_dynamic_shadows, pr_trianglelist, -1 );
                 shader_reset();
                 
             surface_reset_target();
@@ -131,11 +186,6 @@ if (LIGHTING_ALLOW_DEFERRED)
 
 
 ///////////Set GPU properties
-var _vbf_zbuffer_reset   = vbf_wipe;
-var _vbf_static_shadows  = vbf_static_shadows;
-var _vbf_dynamic_shadows = vbf_dynamic_shadows;
-var _partial_clear       = lighting_partial_clear;
-
 //Create composite lighting surface
 srf_lighting = surface_check( srf_lighting, _camera_w, _camera_h );
 surface_set_target( srf_lighting );
@@ -143,6 +193,8 @@ surface_set_target( srf_lighting );
     //Clear the surface with the ambient colour
     draw_clear( lighting_ambient_colour );
     
+    if ( !_force_deferred )
+    {
     #region Linear algebra
     
     //var _view_matrix = matrix_build_lookat( _camera_w/2, _camera_h/2, -16000,   _camera_w/2, _camera_h/2, 0,   0, 1, 0 );
@@ -218,7 +270,7 @@ surface_set_target( srf_lighting );
         
         with ( obj_par_light )
         {
-            if ( light_deferred ) continue;
+            if ( light_deferred && LIGHTING_ALLOW_DEFERRED ) continue;
         
             light_on_screen = visible && rectangle_in_rectangle_custom( x - light_w_half, y - light_h_half,
                                                                         x + light_w_half, y + light_h_half,
@@ -312,7 +364,7 @@ surface_set_target( srf_lighting );
         
         with ( obj_par_light )
         {
-            if ( light_deferred ) continue;
+            if ( light_deferred && LIGHTING_ALLOW_DEFERRED ) continue;
         
             light_on_screen = visible && rectangle_in_rectangle_custom( x - light_w_half, y - light_h_half,
                                                                         x + light_w_half, y + light_h_half,
@@ -370,16 +422,26 @@ surface_set_target( srf_lighting );
     shader_reset();
     gpu_set_colorwriteenable( true, true, true, true );
     gpu_set_cullmode( cull_noculling );
+    }
     
+    #region Add deferred lights to composite lighting surface
     
-    
-    ///////////Add deferred lights to composite lighting surface
-    if ( LIGHTING_ALLOW_DEFERRED )
+    if (LIGHTING_ALLOW_DEFERRED)
     {
+        if (_force_deferred)
+        {
+            switch( lighting_mode )
+            {
+                case E_LIGHTING_MODE.HARD_BM_ADD: gpu_set_blendmode( bm_add ); break
+                case E_LIGHTING_MODE.HARD_BM_MAX: gpu_set_blendmode( bm_max ); break;
+                case E_LIGHTING_MODE.SOFT_BM_ADD: gpu_set_blendmode( bm_add ); break;
+            }
+        }
+        
         //Use a cumulative blend mode to add lights together
         with ( obj_par_light )
         {
-            if ( light_deferred && light_on_screen )
+            if ( (light_deferred || _force_deferred) && light_on_screen )
             {
                 var _sin = -dsin( image_angle );
                 var _cos =  dcos( image_angle );
@@ -389,6 +451,8 @@ surface_set_target( srf_lighting );
             }
         }
     }
+    
+    #endregion
     
 surface_reset_target();
 

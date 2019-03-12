@@ -14,7 +14,7 @@ if ( show_debug ) {
     draw_set_halign( fa_left );
     var _str = "dynamic lights = " + string( _visible_lights ) + " (total=" + string( instance_number( obj_par_light ) ) + ")";
     _str += "\nstatic occluders = " + string( instance_number( obj_static_occluder ) );
-    _str += "\ndynamic occluders = " + string( _visible_dynamics ) + " (total=" + string( instance_number( obj_dynamic_occluder ) ) + ")";
+    _str += "\ndynamic occluders = " + string( _visible_dynamics ) + " (total=" + string( instance_number( obj_dynamic_occluder ) ) + ")\n";
     
     switch( lighting_mode )
     {
@@ -23,14 +23,17 @@ if ( show_debug ) {
         case E_LIGHTING_MODE.SOFT_BM_ADD: _str += "\nrender mode = Alpha-clip, bm_add"; break;
     }
     
-    if ( lighting_partial_clear ) _str += "\nPartial clear enabled";
+    if ( lighting_partial_clear ) _str += "\npartial clear enabled";
+    if ( lighting_force_deferred ) _str += "\ndeferred forced";
     
     draw_text( 5, 25, _str );
     
     draw_set_valign( fa_bottom );
     var _str = "1: Toggle lights";
     _str += "\n2: Toggle self-lighting";
-    _str += "\n3: Change render mode";
+    _str += "\n3: Cycle render mode";
+    _str += "\n4: Toggle partial clear";
+    _str += "\n5: Toggle force deferred";
     _str += "\nL: Create new disco light";
     _str += "\nArrows/WASD: Move";
     _str += "\nLeft click: Fire plasma";

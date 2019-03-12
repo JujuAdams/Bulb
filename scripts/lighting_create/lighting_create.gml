@@ -17,7 +17,7 @@
 
 #macro ON_DIRECTX ((os_type == os_windows) || (os_type == os_xboxone) || (os_type == os_uwp) || (os_type == os_winphone) || (os_type == os_win8native))
 
-#macro LIGHTING_ZFAR                              1
+#macro LIGHTING_ZFAR                          16000
 #macro LIGHTING_DYNAMIC_BORDER                  256
 #macro LIGHTING_REUSE_DYNAMIC_BUFFER           true
 #macro LIGHTING_CACHE_DYNAMIC_OCCLUDERS       false
@@ -46,6 +46,8 @@ lighting_culling = argument2 ? cull_counterclockwise : cull_noculling;
 lighting_mode = argument3;
 
 lighting_partial_clear = argument4;
+
+lighting_force_deferred = false;
 
 
 
