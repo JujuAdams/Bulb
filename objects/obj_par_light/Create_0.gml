@@ -1,2 +1,2 @@
-lighting_light_create( false );
+lighting_light_create( true );
 light_deferred = false;

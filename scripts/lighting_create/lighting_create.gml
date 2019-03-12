@@ -2,7 +2,6 @@
 /// @param ambientColour
 /// @param selfLighting
 /// @param mode
-/// @param partialClear
 //
 //  Initialises the necessary variables for a controller object to use the lighting system.
 //  Should be called in one object per room.
@@ -44,9 +43,9 @@ lighting_culling = argument2 ? cull_counterclockwise : cull_noculling;
 
 lighting_mode = argument3;
 
-lighting_partial_clear = argument4;
+lighting_partial_clear = true;
 
-lighting_force_deferred = false;
+lighting_force_deferred = true;
 
 
 

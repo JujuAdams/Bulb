@@ -5,7 +5,7 @@ camera = camera_create_view( x - 640, y - 360,   1280, 720, 0,   noone, 0, 0, 0,
 view_set_camera( 0, camera );
 
 //Start the lighting system
-lighting_create( camera, make_colour_rgb( 50, 50, 80 ), false, E_LIGHTING_MODE.HARD_BM_ADD, true );
+lighting_create( camera, make_colour_rgb( 50, 50, 80 ), false, E_LIGHTING_MODE.HARD_BM_ADD );
 
 //Create a light attached to the player
 instance_create_layer( x, y, layer, obj_light_torch );
