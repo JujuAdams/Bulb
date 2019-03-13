@@ -1,3 +1,5 @@
+precision highp float;
+
 varying vec2 v_vTexcoord;
 
 void main()
