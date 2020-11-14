@@ -63,7 +63,7 @@ if ( show_debug ) {
 
 //Always credit properly :)
 draw_set_halign( fa_right );
-var _str = "v17.0.1 WIP   March 2019";
+var _str = "v17.0.2 WIP   March 2019";
 _str += "\nJuju Adams - @jujuadams";
 _str += "\nAfter work by xot / John Leffingwell";
 _str += "\nThanks to @Mordwaith and Alexey Mihailov (@LexPest)";
