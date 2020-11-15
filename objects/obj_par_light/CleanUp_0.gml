@@ -1,1 +1,1 @@
-lighting_light_destroy();
+bulb_light_free();

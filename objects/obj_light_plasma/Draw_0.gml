@@ -1,2 +1,2 @@
 //Usually you'd want to draw nothing...
-if ( obj_player.show_debug ) draw_sprite_ext( spr_light_debug, light_deferred, x, y, 1, 1, 0, image_blend, 1 );
+if (obj_player.show_debug) draw_sprite_ext(spr_light_debug, light_deferred, x, y, 1, 1, 0, image_blend, 1);
