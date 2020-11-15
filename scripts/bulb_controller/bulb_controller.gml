@@ -81,7 +81,7 @@ function bulb_controller(_camera, _ambient_colour, _self_lighting, _mode) constr
         //Accumulate all deferred lights
         if (BULB_ALLOW_DEFERRED || force_deferred)
         {
-            accumulate_deferred_lights();
+            accumulate_deferred_lights(_camera_l, _camera_t);
         }
         
         surface_reset_target();
@@ -516,6 +516,11 @@ function bulb_controller(_camera, _ambient_colour, _self_lighting, _mode) constr
             //If this light is ready to be drawn...
             if (light_on_screen)
             {
+                if ((light_surface == undefined) || !surface_exists(light_surface))
+                {
+                    light_surface = surface_create(light_w, light_h);
+                }
+                
                 surface_set_target(light_surface);
                     
                 //Draw the light sprite
@@ -558,7 +563,7 @@ function bulb_controller(_camera, _ambient_colour, _self_lighting, _mode) constr
         shader_reset();
     }
     
-    accumulate_deferred_lights = function()
+    accumulate_deferred_lights = function(_camera_l, _camera_t)
     {
         var _force_deferred = force_deferred;
         
