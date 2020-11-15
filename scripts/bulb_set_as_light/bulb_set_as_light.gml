@@ -1,5 +1,5 @@
 /// Initialises the necessary variables for a light object to use the lighting system.
-/// Must be called before lighting_light_free().
+/// Must be called before bulb_light_free().
 /// 
 /// return: Nothing
 /// 
@@ -8,7 +8,7 @@
 ///
 /// @param deferred
 
-function lighting_set_as_light(_deferred)
+function bulb_set_as_light(_deferred)
 {
     light_w             = sprite_get_width( sprite_index);
     light_h             = sprite_get_height(sprite_index);
@@ -17,9 +17,9 @@ function lighting_set_as_light(_deferred)
     light_on_screen     = true;
     light_deferred      = false;
     light_surface       = undefined;
-    light_penumbra_size = LIGHTING_PENUMBRA_SIZE;
+    light_penumbra_size = BULB_PENUMBRA_SIZE;
     
-    if (LIGHTING_ALLOW_DEFERRED && _deferred)
+    if (BULB_ALLOW_DEFERRED && _deferred)
     {
         light_deferred = true;
         light_surface  = surface_create(light_w, light_h);

@@ -13,7 +13,7 @@ function debug_overlay()
         with(obj_dynamic_occluder) if (light_on_screen) _visible_dynamics++;
         
         draw_set_halign(fa_center);
-        draw_text(display_get_gui_width()*0.5, 25, "FPS = " + string_format(fps_real, 4, 0) + "," + string_format(smoothed_frame_time, 2, 2) + "us / lighting_draw_end() = " + string_format(smoothed_draw_end_time, 4, 0) + "us");
+        draw_text(display_get_gui_width()*0.5, 25, "FPS = " + string_format(fps_real, 4, 0) + "," + string_format(smoothed_frame_time, 2, 2) + "us / bulb_draw_end() = " + string_format(smoothed_draw_end_time, 4, 0) + "us");
         
         draw_set_halign(fa_left);
         var _str = "dynamic lights = " + string(_visible_lights) + " (total=" + string(instance_number(obj_par_light)) + ")";
@@ -22,9 +22,9 @@ function debug_overlay()
         
         switch(lighting.mode)
         {
-            case LIGHTING_MODE.HARD_BM_ADD: _str += "\nrender mode = Hard z-clip, bm_add"; break
-            case LIGHTING_MODE.HARD_BM_MAX: _str += "\nrender mode = Hard z-clip, bm_max"; break;
-            case LIGHTING_MODE.SOFT_BM_ADD: _str += "\nrender mode = Soft alpha-clip, bm_add"; break;
+            case BULB_MODE.HARD_BM_ADD: _str += "\nrender mode = Hard z-clip, bm_add"; break
+            case BULB_MODE.HARD_BM_MAX: _str += "\nrender mode = Hard z-clip, bm_max"; break;
+            case BULB_MODE.SOFT_BM_ADD: _str += "\nrender mode = Soft alpha-clip, bm_add"; break;
         }
         
         if (lighting.partial_clear) _str += "\npartial clear enabled";
@@ -48,9 +48,9 @@ function debug_overlay()
     {
         switch(lighting.mode)
         {
-            case LIGHTING_MODE.HARD_BM_ADD: var _mode = "Hard z-clip, bm_add"; break
-            case LIGHTING_MODE.HARD_BM_MAX: var _mode = "Hard z-clip, bm_max"; break;
-            case LIGHTING_MODE.SOFT_BM_ADD: var _mode = "Soft alpha-clip, bm_add"; break;
+            case BULB_MODE.HARD_BM_ADD: var _mode = "Hard z-clip, bm_add"; break
+            case BULB_MODE.HARD_BM_MAX: var _mode = "Hard z-clip, bm_max"; break;
+            case BULB_MODE.SOFT_BM_ADD: var _mode = "Soft alpha-clip, bm_add"; break;
         }
         
         draw_set_halign(fa_center);

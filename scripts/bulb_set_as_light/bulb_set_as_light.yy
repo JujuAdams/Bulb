@@ -2,11 +2,11 @@
   "isDnD": false,
   "isCompatibility": false,
   "parent": {
-    "name": "Lighting",
-    "path": "folders/Lighting.yy",
+    "name": "Bulb",
+    "path": "folders/Bulb.yy",
   },
   "resourceVersion": "1.0",
-  "name": "__lighting_config",
+  "name": "bulb_set_as_light",
   "tags": [],
   "resourceType": "GMScript",
 }

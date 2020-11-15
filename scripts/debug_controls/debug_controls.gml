@@ -18,7 +18,7 @@ function debug_controls()
     
     if (keyboard_check_pressed(ord("3")))
     {
-        lighting.mode = (lighting.mode + 1) mod LIGHTING_MODE.__SIZE;
+        lighting.mode = (lighting.mode + 1) mod BULB_MODE.__SIZE;
         lighting.free_vertex_buffers();
     }
     

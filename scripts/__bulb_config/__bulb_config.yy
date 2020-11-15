@@ -2,11 +2,11 @@
   "isDnD": false,
   "isCompatibility": false,
   "parent": {
-    "name": "Lighting",
-    "path": "folders/Lighting.yy",
+    "name": "Bulb",
+    "path": "folders/Bulb.yy",
   },
   "resourceVersion": "1.0",
-  "name": "lighting_occluder_add_geometry",
+  "name": "__bulb_config",
   "tags": [],
   "resourceType": "GMScript",
 }

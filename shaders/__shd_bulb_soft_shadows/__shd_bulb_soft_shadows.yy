@@ -1,11 +1,11 @@
 {
   "type": 1,
   "parent": {
-    "name": "Example",
-    "path": "folders/Example.yy",
+    "name": "(System)",
+    "path": "folders/Bulb/(System).yy",
   },
   "resourceVersion": "1.0",
-  "name": "shd_premultiply_alpha",
+  "name": "__shd_bulb_soft_shadows",
   "tags": [],
   "resourceType": "GMShader",
 }

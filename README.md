@@ -1,5 +1,5 @@
-# YAILSE v16.0.0
-### @jujuadams, after work by @xotmatrix.
+# Bulb v16.0.0
+### @jujuadams, after work by @xotmatrix
 
 *Additional contributions from Alexey Mihailov (@LexPest)*
 

@@ -1,2 +1,2 @@
-lighting_set_as_light(true);
+bulb_set_as_light(true);
 light_deferred = false;

@@ -1,5 +1,5 @@
 /// @jujuadams
-/// Based on the YAILSE system by xot (John Leffingwell) of gmlscripts.com
+/// Based on work by xot (John Leffingwell) of gmlscripts.com
 /// 
 /// This code and engine are provided under the Creative Commons "Attribution - NonCommerical - ShareAlike" international license.
 /// https://creativecommons.org/licenses/by-nc-sa/4.0
@@ -9,7 +9,7 @@
 /// @param selfLighting
 /// @param mode
 
-enum LIGHTING_MODE
+enum BULB_MODE
 {
     HARD_BM_ADD, //Basic hard shadows with z-buffer stenciling, using the typical bm_add blend mode
     HARD_BM_MAX, //As above, but using bm_max to reduce bloom
@@ -17,7 +17,7 @@ enum LIGHTING_MODE
     __SIZE
 }
 
-function lighting_controller(_camera, _ambient_colour, _self_lighting, _mode) constructor
+function bulb_controller(_camera, _ambient_colour, _self_lighting, _mode) constructor
 {
     //Assign the camera used to draw the lights
     camera = _camera;
@@ -35,7 +35,7 @@ function lighting_controller(_camera, _ambient_colour, _self_lighting, _mode) co
     
     force_deferred = false;
     
-    //Initialise variables used and updated in lighting_build()
+    //Initialise variables used and updated in bulb_build()
     static_vbuffer  = undefined; //Vertex buffer describing the geometry of static occluder objects
     dynamic_vbuffer = undefined; //As above but for dynamic shadow occluders. This is updated every step
     wipe_vbuffer    = undefined; //This vertex buffer is used to reset the z-buffer during accumulation of non-deferred lights
@@ -59,7 +59,7 @@ function lighting_controller(_camera, _ambient_colour, _self_lighting, _mode) co
         update_vertex_buffers();
         
         //Go through all deferred lights and update their surfaces
-        if (LIGHTING_ALLOW_DEFERRED)
+        if (BULB_ALLOW_DEFERRED)
         {
             update_deferred_lights(_camera_l, _camera_t, _camera_r, _camera_b);
         }
@@ -82,7 +82,7 @@ function lighting_controller(_camera, _ambient_colour, _self_lighting, _mode) co
         }
         
         //Accumulate all deferred lights
-        if (LIGHTING_ALLOW_DEFERRED || force_deferred)
+        if (BULB_ALLOW_DEFERRED || force_deferred)
         {
             accumulate_deferred_lights();
         }
@@ -154,17 +154,17 @@ function lighting_controller(_camera, _ambient_colour, _self_lighting, _mode) co
         var _camera_r  = _camera_l + _camera_w;
         var _camera_b  = _camera_t + _camera_h;
         
-        var _camera_exp_l = _camera_l - LIGHTING_DYNAMIC_BORDER;
-        var _camera_exp_t = _camera_t - LIGHTING_DYNAMIC_BORDER;
-        var _camera_exp_r = _camera_r + LIGHTING_DYNAMIC_BORDER;
-        var _camera_exp_b = _camera_b + LIGHTING_DYNAMIC_BORDER;
+        var _camera_exp_l = _camera_l - BULB_DYNAMIC_BORDER;
+        var _camera_exp_t = _camera_t - BULB_DYNAMIC_BORDER;
+        var _camera_exp_r = _camera_r + BULB_DYNAMIC_BORDER;
+        var _camera_exp_b = _camera_b + BULB_DYNAMIC_BORDER;
         
         ///////////One-time construction of a triangle to wipe the z-buffer
         //Using textures (rather than untextured) saves on shader_set() overhead... likely a trade-off depending on the GPU
         if (wipe_vbuffer == undefined)
         {
             wipe_vbuffer = vertex_create_buffer();
-            vertex_begin(wipe_vbuffer, global.__lighting_format_3d_colour);
+            vertex_begin(wipe_vbuffer, global.__bulb_format_3d_colour);
             
             vertex_position_3d(wipe_vbuffer,           0,           0, 0); vertex_colour(wipe_vbuffer, c_black, 1);
             vertex_position_3d(wipe_vbuffer, 2*_camera_w,           0, 0); vertex_colour(wipe_vbuffer, c_black, 1);
@@ -182,15 +182,15 @@ function lighting_controller(_camera, _ambient_colour, _self_lighting, _mode) co
             var _static_vbuffer = static_vbuffer;
             
             //Add static shadow caster vertices to the relevant vertex buffer
-            if (mode == LIGHTING_MODE.SOFT_BM_ADD)
+            if (mode == BULB_MODE.SOFT_BM_ADD)
             {
-                vertex_begin(static_vbuffer, global.__lighting_format_3d_texture);
-                with (obj_static_occluder) __lighting_add_occlusion_soft(_static_vbuffer);
+                vertex_begin(static_vbuffer, global.__bulb_format_3d_texture);
+                with (obj_static_occluder) __bulb_add_occlusion_soft(_static_vbuffer);
             }
             else
             {
-                vertex_begin(static_vbuffer, global.__lighting_format_3d_colour);
-                with (obj_static_occluder) __lighting_add_occlusion_hard(_static_vbuffer);
+                vertex_begin(static_vbuffer, global.__bulb_format_3d_colour);
+                with (obj_static_occluder) __bulb_add_occlusion_hard(_static_vbuffer);
             }
             
             vertex_end(static_vbuffer);
@@ -201,7 +201,7 @@ function lighting_controller(_camera, _ambient_colour, _self_lighting, _mode) co
         
         ///////////Refresh the dynamic occluder geometry
         //Try to keep dynamic objects limited.
-        if (LIGHTING_REUSE_DYNAMIC_BUFFER)
+        if (BULB_REUSE_DYNAMIC_BUFFER)
         {
             if (dynamic_vbuffer == undefined) dynamic_vbuffer = vertex_create_buffer();
         }
@@ -214,28 +214,28 @@ function lighting_controller(_camera, _ambient_colour, _self_lighting, _mode) co
         var _dynamic_vbuffer = dynamic_vbuffer;
         
         //Add dynamic occluder vertices to the relevant vertex buffer
-        if (mode == LIGHTING_MODE.SOFT_BM_ADD)
+        if (mode == BULB_MODE.SOFT_BM_ADD)
         {
-            vertex_begin(_dynamic_vbuffer, global.__lighting_format_3d_texture);
+            vertex_begin(_dynamic_vbuffer, global.__bulb_format_3d_texture);
             with (obj_dynamic_occluder)
             {
-                light_on_screen = visible && __lighting_rect_in_rect(bbox_left, bbox_top,
+                light_on_screen = visible && __bulb_rect_in_rect(bbox_left, bbox_top,
                                                                      bbox_right, bbox_bottom,
                                                                      _camera_exp_l, _camera_exp_t,
                                                                      _camera_exp_r, _camera_exp_b);
-                if (light_on_screen) __lighting_add_occlusion_soft(_dynamic_vbuffer);
+                if (light_on_screen) __bulb_add_occlusion_soft(_dynamic_vbuffer);
             }
         }
         else
         {
-            vertex_begin(_dynamic_vbuffer, global.__lighting_format_3d_colour);
+            vertex_begin(_dynamic_vbuffer, global.__bulb_format_3d_colour);
             with (obj_dynamic_occluder)
             {
-                light_on_screen = visible && __lighting_rect_in_rect(bbox_left, bbox_top,
+                light_on_screen = visible && __bulb_rect_in_rect(bbox_left, bbox_top,
                                                                      bbox_right, bbox_bottom,
                                                                      _camera_exp_l, _camera_exp_t,
                                                                      _camera_exp_r, _camera_exp_b);
-                if (light_on_screen) __lighting_add_occlusion_hard(_dynamic_vbuffer);
+                if (light_on_screen) __bulb_add_occlusion_hard(_dynamic_vbuffer);
             }
         }
         
@@ -270,7 +270,7 @@ function lighting_controller(_camera, _ambient_colour, _self_lighting, _mode) co
         #endregion
         
         //Ultimately, we can use the following projection matrix
-        if (LIGHTING_FLIP_CAMERA_Y)
+        if (BULB_FLIP_CAMERA_Y)
         {
             //DirectX platforms want the Y-axis flipped
             var _vp_matrix = [2/_camera_w,            0, 0, 0,
@@ -295,7 +295,7 @@ function lighting_controller(_camera, _ambient_colour, _self_lighting, _mode) co
         gpu_set_cullmode(self_lighting? cull_counterclockwise : cull_noculling);
             
         ///////////Iterate over all non-deferred lights...
-        if (mode == LIGHTING_MODE.SOFT_BM_ADD)
+        if (mode == BULB_MODE.SOFT_BM_ADD)
         {
             accumulate_nondeferred_soft_lights(_camera_l, _camera_t, _camera_r, _camera_b, _camera_cx, _camera_cy, _camera_w, _camera_h, _vp_matrix);
         }
@@ -320,7 +320,7 @@ function lighting_controller(_camera, _ambient_colour, _self_lighting, _mode) co
         //Calculate some transform coefficients
         var _inv_camera_w = 2/_camera_w;
         var _inv_camera_h = 2/_camera_h;
-        if (LIGHTING_FLIP_CAMERA_Y) _inv_camera_h = -_inv_camera_h;
+        if (BULB_FLIP_CAMERA_Y) _inv_camera_h = -_inv_camera_h;
         
         var _transformed_cam_x = _camera_cx*_inv_camera_w;
         var _transformed_cam_y = _camera_cy*_inv_camera_h;
@@ -338,9 +338,9 @@ function lighting_controller(_camera, _ambient_colour, _self_lighting, _mode) co
         
         with (obj_par_light)
         {
-            if (light_deferred && LIGHTING_ALLOW_DEFERRED) continue;
+            if (light_deferred && BULB_ALLOW_DEFERRED) continue;
             
-            light_on_screen = visible && __lighting_rect_in_rect(x - light_w_half, y - light_h_half,
+            light_on_screen = visible && __bulb_rect_in_rect(x - light_w_half, y - light_h_half,
                                                                  x + light_w_half, y + light_h_half,
                                                                  _camera_l, _camera_t, _camera_r, _camera_b);
             
@@ -365,7 +365,7 @@ function lighting_controller(_camera, _ambient_colour, _self_lighting, _mode) co
                 }
                 
                 //Render shadows
-                shader_set(shd_lighting_soft_shadows);
+                shader_set(__shd_bulb_soft_shadows);
                 gpu_set_blendmode(bm_add);
                 _proj_matrix[@  8] = x;
                 _proj_matrix[@  9] = y;
@@ -376,9 +376,20 @@ function lighting_controller(_camera, _ambient_colour, _self_lighting, _mode) co
                 
                 //Draw light sprite
                 shader_reset();
+                matrix_set(matrix_projection, _vp_matrix);
+                
+                if (image_alpha < 1.0)
+                {
+                    //If this light is fading out, adjust the destination alpha channel
+                    gpu_set_blendmode_ext(bm_src_alpha, bm_one);
+                    draw_sprite_ext(sprite_index, image_index,
+                                    x - _camera_l, y - _camera_t,
+                                    image_xscale, image_yscale, image_angle,
+                                    image_blend, 1.0 - image_alpha);
+                }
+                
                 gpu_set_colorwriteenable(true, true, true, false);
                 gpu_set_blendmode_ext(bm_inv_dest_alpha, bm_one);
-                matrix_set(matrix_projection, _vp_matrix);
                 
                 draw_sprite_ext(sprite_index, image_index,
                                 x - _camera_l, y - _camera_t,
@@ -398,7 +409,7 @@ function lighting_controller(_camera, _ambient_colour, _self_lighting, _mode) co
         //Calculate some transform coefficients
         var _inv_camera_w = 2/_camera_w;
         var _inv_camera_h = 2/_camera_h;
-        if (LIGHTING_FLIP_CAMERA_Y) _inv_camera_h = -_inv_camera_h;
+        if (BULB_FLIP_CAMERA_Y) _inv_camera_h = -_inv_camera_h;
         
         var _transformed_cam_x = _camera_cx*_inv_camera_w;
         var _transformed_cam_y = _camera_cy*_inv_camera_h;
@@ -417,24 +428,24 @@ function lighting_controller(_camera, _ambient_colour, _self_lighting, _mode) co
         gpu_set_ztestenable(true);
         gpu_set_zwriteenable(true);
         
-        if (mode == LIGHTING_MODE.HARD_BM_MAX)
+        if (mode == BULB_MODE.HARD_BM_MAX)
         {
             gpu_set_blendmode(bm_max);
-            var _reset_shader = shd_premultiply_alpha;
+            var _reset_shader = __shd_bulb_premultiply_alpha;
         }
         else
         {
             gpu_set_blendmode(bm_add);
-            var _reset_shader = shd_pass_through;
+            var _reset_shader = __shd_bulb_pass_through;
         }
         
         with (obj_par_light)
         {
-            if (light_deferred && LIGHTING_ALLOW_DEFERRED) continue;
+            if (light_deferred && BULB_ALLOW_DEFERRED) continue;
             
-            light_on_screen = visible && __lighting_rect_in_rect(x - light_w_half, y - light_h_half,
-                                                                 x + light_w_half, y + light_h_half,
-                                                                 _camera_l, _camera_t, _camera_r, _camera_b);
+            light_on_screen = visible && __bulb_rect_in_rect(x - light_w_half, y - light_h_half,
+                                                             x + light_w_half, y + light_h_half,
+                                                             _camera_l, _camera_t, _camera_r, _camera_b);
             
             //If this light is active, do some drawing
             if (light_on_screen)
@@ -450,11 +461,11 @@ function lighting_controller(_camera, _ambient_colour, _self_lighting, _mode) co
                                     x - _camera_l, y - _camera_t,
                                     image_xscale, image_yscale, image_angle,
                                     c_black, 1);
-                    shader_set(shd_lighting_hard_shadows);
+                    shader_set(__shd_bulb_hard_shadows);
                 }
                 else
                 {
-                    shader_set(shd_lighting_hard_shadows);
+                    shader_set(__shd_bulb_hard_shadows);
                     vertex_submit(_wipe_vbuffer, pr_trianglelist, -1);
                 }
                  
@@ -489,7 +500,7 @@ function lighting_controller(_camera, _ambient_colour, _self_lighting, _mode) co
         var _force_deferred  = force_deferred;
         
         ///////////Render out lights and shadows for each deferred light in the viewport
-        var _sign = LIGHTING_FLIP_CAMERA_Y? 1 : -1;
+        var _sign = BULB_FLIP_CAMERA_Y? 1 : -1;
         
         //If culling is switched on, shadows will only be cast from the rear faces of occluders
         //This requires careful object placement as not to create weird graphical glitches
@@ -499,10 +510,10 @@ function lighting_controller(_camera, _ambient_colour, _self_lighting, _mode) co
         {
             if (!light_deferred && !_force_deferred) continue;
             
-            light_on_screen = visible && __lighting_rect_in_rect(x - light_w_half, y - light_h_half,
-                                                                 x + light_w_half, y + light_h_half,
-                                                                 _camera_l, _camera_t,
-                                                                 _camera_r, _camera_b);
+            light_on_screen = visible && __bulb_rect_in_rect(x - light_w_half, y - light_h_half,
+                                                             x + light_w_half, y + light_h_half,
+                                                             _camera_l, _camera_t,
+                                                             _camera_r, _camera_b);
             
             //If this light is ready to be drawn...
             if (light_on_screen)
@@ -513,7 +524,7 @@ function lighting_controller(_camera, _ambient_colour, _self_lighting, _mode) co
                 draw_sprite_ext(sprite_index, image_index,    light_w_half, light_h_half,    1, 1, 0,    merge_colour(c_black, image_blend, image_alpha), 1);
                     
                 //Magical projection!
-                shader_set(shd_snap_vertex);
+                shader_set(__shd_bulb_snap_vertex);
                     
                 //var _view_matrix = matrix_build_lookat(_camera_w/2, _camera_h/2, -16000,   _camera_w/2, _camera_h/2, 0,   0, 1, 0);
                 //var _view_matrix = [            1,            0,     0, 0,                   // [            1,            0,         0, 0, 
@@ -558,9 +569,9 @@ function lighting_controller(_camera, _ambient_colour, _self_lighting, _mode) co
         {
             switch(mode)
             {
-                case LIGHTING_MODE.HARD_BM_ADD: gpu_set_blendmode(bm_add); break
-                case LIGHTING_MODE.HARD_BM_MAX: gpu_set_blendmode(bm_max); break;
-                case LIGHTING_MODE.SOFT_BM_ADD: gpu_set_blendmode(bm_add); break;
+                case BULB_MODE.HARD_BM_ADD: gpu_set_blendmode(bm_add); break
+                case BULB_MODE.HARD_BM_MAX: gpu_set_blendmode(bm_max); break;
+                case BULB_MODE.SOFT_BM_ADD: gpu_set_blendmode(bm_add); break;
             }
         }
         
@@ -589,13 +600,13 @@ function lighting_controller(_camera, _ambient_colour, _self_lighting, _mode) co
 vertex_format_begin();
 vertex_format_add_position_3d();
 vertex_format_add_colour();
-global.__lighting_format_3d_colour = vertex_format_end();
+global.__bulb_format_3d_colour = vertex_format_end();
 
 //Create a standard vertex format
 vertex_format_begin();
 vertex_format_add_position_3d();
 vertex_format_add_texcoord();
-global.__lighting_format_3d_texture = vertex_format_end();
+global.__bulb_format_3d_texture = vertex_format_end();
 
 #endregion
 
@@ -603,9 +614,9 @@ global.__lighting_format_3d_texture = vertex_format_end();
 
 #region Internal Helper Functions
 
-function __lighting_add_occlusion_hard(_vbuff)
+function __bulb_add_occlusion_hard(_vbuff)
 {
-    if (!LIGHTING_CACHE_DYNAMIC_OCCLUDERS)
+    if (!BULB_CACHE_DYNAMIC_OCCLUDERS)
     {
         //Set up basic transforms to turn relative coordinates in arr_shadowGeometry[] into world-space coordinates
         var _sin = dsin(image_angle);
@@ -634,12 +645,12 @@ function __lighting_add_occlusion_hard(_vbuff)
             
             //Add to the vertex buffer
             vertex_position_3d(_vbuff,   _new_ax, _new_ay,  0);             vertex_colour(_vbuff,   c_black, 1);
-            vertex_position_3d(_vbuff,   _new_bx, _new_by,  LIGHTING_ZFAR); vertex_colour(_vbuff,   c_black, 1);
+            vertex_position_3d(_vbuff,   _new_bx, _new_by,  BULB_ZFAR); vertex_colour(_vbuff,   c_black, 1);
             vertex_position_3d(_vbuff,   _new_bx, _new_by,  0);             vertex_colour(_vbuff,   c_black, 1);
             
             vertex_position_3d(_vbuff,   _new_ax, _new_ay,  0);             vertex_colour(_vbuff,   c_black, 1);
-            vertex_position_3d(_vbuff,   _new_ax, _new_ay,  LIGHTING_ZFAR); vertex_colour(_vbuff,   c_black, 1);
-            vertex_position_3d(_vbuff,   _new_bx, _new_by,  LIGHTING_ZFAR); vertex_colour(_vbuff,   c_black, 1);
+            vertex_position_3d(_vbuff,   _new_ax, _new_ay,  BULB_ZFAR); vertex_colour(_vbuff,   c_black, 1);
+            vertex_position_3d(_vbuff,   _new_bx, _new_by,  BULB_ZFAR); vertex_colour(_vbuff,   c_black, 1);
         }
     }
     else
@@ -702,12 +713,12 @@ function __lighting_add_occlusion_hard(_vbuff)
                 
                 //Using textures (rather than untextureed) saves on shader_set() overhead... likely a trade-off depending on the GPU
                 vertex_position_3d(_vbuff,   _new_ax, _new_ay, 0);             vertex_colour(_vbuff,   c_black, 1);
-                vertex_position_3d(_vbuff,   _new_bx, _new_by, LIGHTING_ZFAR); vertex_colour(_vbuff,   c_black, 1);
+                vertex_position_3d(_vbuff,   _new_bx, _new_by, BULB_ZFAR); vertex_colour(_vbuff,   c_black, 1);
                 vertex_position_3d(_vbuff,   _new_bx, _new_by, 0);             vertex_colour(_vbuff,   c_black, 1);
                 
                 vertex_position_3d(_vbuff,   _new_ax, _new_ay, 0);             vertex_colour(_vbuff,   c_black, 1);
-                vertex_position_3d(_vbuff,   _new_ax, _new_ay, LIGHTING_ZFAR); vertex_colour(_vbuff,   c_black, 1);
-                vertex_position_3d(_vbuff,   _new_bx, _new_by, LIGHTING_ZFAR); vertex_colour(_vbuff,   c_black, 1);
+                vertex_position_3d(_vbuff,   _new_ax, _new_ay, BULB_ZFAR); vertex_colour(_vbuff,   c_black, 1);
+                vertex_position_3d(_vbuff,   _new_bx, _new_by, BULB_ZFAR); vertex_colour(_vbuff,   c_black, 1);
             }
         }
         else
@@ -722,20 +733,20 @@ function __lighting_add_occlusion_hard(_vbuff)
                 
                 //Using textures (rather than untextureed) saves on shader_set() overhead... likely a trade-off depending on the GPU
                 vertex_position_3d(_vbuff,   _new_ax, _new_ay, 0);             vertex_colour(_vbuff,   c_black, 1);
-                vertex_position_3d(_vbuff,   _new_bx, _new_by, LIGHTING_ZFAR); vertex_colour(_vbuff,   c_black, 1);
+                vertex_position_3d(_vbuff,   _new_bx, _new_by, BULB_ZFAR); vertex_colour(_vbuff,   c_black, 1);
                 vertex_position_3d(_vbuff,   _new_bx, _new_by, 0);             vertex_colour(_vbuff,   c_black, 1);
                 
                 vertex_position_3d(_vbuff,   _new_ax, _new_ay, 0);             vertex_colour(_vbuff,   c_black, 1);
-                vertex_position_3d(_vbuff,   _new_ax, _new_ay, LIGHTING_ZFAR); vertex_colour(_vbuff,   c_black, 1);
-                vertex_position_3d(_vbuff,   _new_bx, _new_by, LIGHTING_ZFAR); vertex_colour(_vbuff,   c_black, 1); 
+                vertex_position_3d(_vbuff,   _new_ax, _new_ay, BULB_ZFAR); vertex_colour(_vbuff,   c_black, 1);
+                vertex_position_3d(_vbuff,   _new_bx, _new_by, BULB_ZFAR); vertex_colour(_vbuff,   c_black, 1); 
             }
         }
     }
 }
 
-function __lighting_add_occlusion_soft(_vbuff)
+function __bulb_add_occlusion_soft(_vbuff)
 {
-    if (!LIGHTING_CACHE_DYNAMIC_OCCLUDERS)
+    if (!BULB_CACHE_DYNAMIC_OCCLUDERS)
     {
         //Set up basic transforms to turn relative coordinates in arr_shadowGeometry[] into world-space coordinates
         var _sin = dsin(image_angle);
@@ -764,21 +775,21 @@ function __lighting_add_occlusion_soft(_vbuff)
             
             //Add to the vertex buffer
             vertex_position_3d(_vbuff,   _new_ax, _new_ay,  0);             vertex_texcoord(_vbuff,  1, 1);
-            vertex_position_3d(_vbuff,   _new_bx, _new_by,  LIGHTING_ZFAR); vertex_texcoord(_vbuff,  1, 1);
+            vertex_position_3d(_vbuff,   _new_bx, _new_by,  BULB_ZFAR); vertex_texcoord(_vbuff,  1, 1);
             vertex_position_3d(_vbuff,   _new_bx, _new_by,  0);             vertex_texcoord(_vbuff,  1, 1);
             
             vertex_position_3d(_vbuff,   _new_ax, _new_ay,  0);             vertex_texcoord(_vbuff,  1, 1);
-            vertex_position_3d(_vbuff,   _new_ax, _new_ay,  LIGHTING_ZFAR); vertex_texcoord(_vbuff,  1, 1);
-            vertex_position_3d(_vbuff,   _new_bx, _new_by,  LIGHTING_ZFAR); vertex_texcoord(_vbuff,  1, 1);
+            vertex_position_3d(_vbuff,   _new_ax, _new_ay,  BULB_ZFAR); vertex_texcoord(_vbuff,  1, 1);
+            vertex_position_3d(_vbuff,   _new_bx, _new_by,  BULB_ZFAR); vertex_texcoord(_vbuff,  1, 1);
             
             //Add data for the soft shadows
-            vertex_position_3d(_vbuff,   _new_ax, _new_ay,  LIGHTING_ZFAR); vertex_texcoord(_vbuff,  1, 0);
+            vertex_position_3d(_vbuff,   _new_ax, _new_ay,  BULB_ZFAR); vertex_texcoord(_vbuff,  1, 0);
             vertex_position_3d(_vbuff,   _new_ax, _new_ay,  0);             vertex_texcoord(_vbuff,  0, 1);
-            vertex_position_3d(_vbuff,   _new_ax, _new_ay,  LIGHTING_ZFAR); vertex_texcoord(_vbuff,  0, 0);
+            vertex_position_3d(_vbuff,   _new_ax, _new_ay,  BULB_ZFAR); vertex_texcoord(_vbuff,  0, 0);
             
-            vertex_position_3d(_vbuff,   _new_ax, _new_ay, -LIGHTING_ZFAR); vertex_texcoord(_vbuff,  0, 0); //Bit of a hack. We interpret this in shd_lighting_soft_shadows
+            vertex_position_3d(_vbuff,   _new_ax, _new_ay, -BULB_ZFAR); vertex_texcoord(_vbuff,  0, 0); //Bit of a hack. We interpret this in __shd_bulb_soft_shadows
             vertex_position_3d(_vbuff,   _new_ax, _new_ay,  0);             vertex_texcoord(_vbuff,  0, 1);
-            vertex_position_3d(_vbuff,   _new_ax, _new_ay,  LIGHTING_ZFAR); vertex_texcoord(_vbuff,  1, 0);
+            vertex_position_3d(_vbuff,   _new_ax, _new_ay,  BULB_ZFAR); vertex_texcoord(_vbuff,  1, 0);
         }
     }
     else
@@ -842,12 +853,12 @@ function __lighting_add_occlusion_soft(_vbuff)
                 
                 //Using textures (rather than untextureed) saves on shader_set() overhead... likely a trade-off depending on the GPU
                 vertex_position_3d(_vbuff,   _new_ax, _new_ay, 0);             vertex_colour(_vbuff,   c_black, 1);
-                vertex_position_3d(_vbuff,   _new_bx, _new_by, LIGHTING_ZFAR); vertex_colour(_vbuff,   c_black, 1);
+                vertex_position_3d(_vbuff,   _new_bx, _new_by, BULB_ZFAR); vertex_colour(_vbuff,   c_black, 1);
                 vertex_position_3d(_vbuff,   _new_bx, _new_by, 0);             vertex_colour(_vbuff,   c_black, 1);
                 
                 vertex_position_3d(_vbuff,   _new_ax, _new_ay, 0);             vertex_colour(_vbuff,   c_black, 1);
-                vertex_position_3d(_vbuff,   _new_ax, _new_ay, LIGHTING_ZFAR); vertex_colour(_vbuff,   c_black, 1);
-                vertex_position_3d(_vbuff,   _new_bx, _new_by, LIGHTING_ZFAR); vertex_colour(_vbuff,   c_black, 1);
+                vertex_position_3d(_vbuff,   _new_ax, _new_ay, BULB_ZFAR); vertex_colour(_vbuff,   c_black, 1);
+                vertex_position_3d(_vbuff,   _new_bx, _new_by, BULB_ZFAR); vertex_colour(_vbuff,   c_black, 1);
             }
         }
         else
@@ -862,18 +873,18 @@ function __lighting_add_occlusion_soft(_vbuff)
                 
                 //Using textures (rather than untextureed) saves on shader_set() overhead... likely a trade-off depending on the GPU
                 vertex_position_3d(_vbuff,   _new_ax, _new_ay, 0);             vertex_colour(_vbuff,   c_black, 1);
-                vertex_position_3d(_vbuff,   _new_bx, _new_by, LIGHTING_ZFAR); vertex_colour(_vbuff,   c_black, 1);
+                vertex_position_3d(_vbuff,   _new_bx, _new_by, BULB_ZFAR); vertex_colour(_vbuff,   c_black, 1);
                 vertex_position_3d(_vbuff,   _new_bx, _new_by, 0);             vertex_colour(_vbuff,   c_black, 1);
                 
                 vertex_position_3d(_vbuff,   _new_ax, _new_ay, 0);             vertex_colour(_vbuff,   c_black, 1);
-                vertex_position_3d(_vbuff,   _new_ax, _new_ay, LIGHTING_ZFAR); vertex_colour(_vbuff,   c_black, 1);
-                vertex_position_3d(_vbuff,   _new_bx, _new_by, LIGHTING_ZFAR); vertex_colour(_vbuff,   c_black, 1); 
+                vertex_position_3d(_vbuff,   _new_ax, _new_ay, BULB_ZFAR); vertex_colour(_vbuff,   c_black, 1);
+                vertex_position_3d(_vbuff,   _new_bx, _new_by, BULB_ZFAR); vertex_colour(_vbuff,   c_black, 1); 
             }
         }
     }
 }
 
-function __lighting_rect_in_rect(_ax1, _ay1, _ax2, _ay2, _bx1, _by1, _bx2, _by2)
+function __bulb_rect_in_rect(_ax1, _ay1, _ax2, _ay2, _bx1, _by1, _bx2, _by2)
 {
     return !((_bx1 > _ax2) || (_bx2 < _ax1) || (_by1 > _ay2) || (_by2 < _ay1));
 }

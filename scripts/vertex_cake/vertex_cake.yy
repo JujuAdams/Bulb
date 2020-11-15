@@ -2,8 +2,8 @@
   "isDnD": false,
   "isCompatibility": false,
   "parent": {
-    "name": "YAILSE",
-    "path": "YAILSE.yyp",
+    "name": "Bulb",
+    "path": "Bulb.yyp",
   },
   "resourceVersion": "1.0",
   "name": "vertex_cake",

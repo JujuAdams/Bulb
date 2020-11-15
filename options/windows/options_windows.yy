@@ -1,10 +1,10 @@
 {
-  "option_windows_display_name": "YAILSE v17.0.0",
+  "option_windows_display_name": "Bulb",
   "option_windows_executable_name": "${project_name}",
   "option_windows_version": "17.0.0.0",
   "option_windows_company_info": "Juju Adams",
-  "option_windows_product_info": "YAILSE v17.0.0",
-  "option_windows_copyright_info": "@jujuadams 2019 03 12",
+  "option_windows_product_info": "Bulb",
+  "option_windows_copyright_info": "@jujuadams 2020",
   "option_windows_description_info": "",
   "option_windows_display_cursor": true,
   "option_windows_icon": "${options_dir}/windows/runner_icon.ico",

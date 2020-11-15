@@ -10,7 +10,7 @@
 /// @param x2
 /// @param y2
 
-function lighting_occluder_add_geometry(_x1, _y1, _x2, _y2)
+function bulb_occluder_add_geometry(_x1, _y1, _x2, _y2)
 {
     arr_shadow_geometry[shadow_geometry_size] = _x1; shadow_geometry_size++;
     arr_shadow_geometry[shadow_geometry_size] = _y1; shadow_geometry_size++;
