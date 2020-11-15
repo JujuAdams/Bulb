@@ -22,14 +22,14 @@ void main()
         pos.z = -pos.z;
     }
     
-    vec2 lightPos = vec2( matrix[2][0], matrix[2][1] );
+    vec2 lightPos = vec2(matrix[2][0], matrix[2][1]);
     vec2 direction = normalize(in_Position.xy - lightPos);
-    lightPos -= lightRadius*vec2( direction.y, -direction.x );
+    lightPos -= lightRadius*vec2(direction.y, -direction.x);
     
     matrix[2][0] = -matrix[3][0] - lightPos.x*matrix[0][0];
     matrix[2][1] = -matrix[3][1] - lightPos.y*matrix[1][1];
     matrix[2][2] = 0.0;
-    gl_Position = matrix * vec4( pos, 1.0 );
+    gl_Position = matrix * vec4(pos, 1.0);
     
     v_vTexcoord = in_TextureCoord;
 }

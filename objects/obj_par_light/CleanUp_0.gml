@@ -1,1 +1,1 @@
-lighting_light_destroy();
+lighting_light_free();

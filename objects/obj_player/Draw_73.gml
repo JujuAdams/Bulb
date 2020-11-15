@@ -1,3 +1,6 @@
 var _t = get_timer();
-lighting_draw_end();
+
+lighting.update();
+lighting.draw();
+
 draw_end_time = get_timer() - _t;
