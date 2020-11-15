@@ -15,13 +15,7 @@ function bulb_set_as_light(_deferred)
     light_w_half        = 0.5*light_w;
     light_h_half        = 0.5*light_h;
     light_on_screen     = true;
-    light_deferred      = false;
+    light_deferred      = _deferred;
     light_surface       = undefined;
     light_penumbra_size = BULB_PENUMBRA_SIZE;
-    
-    if (BULB_ALLOW_DEFERRED && _deferred)
-    {
-        light_deferred = true;
-        light_surface  = surface_create(light_w, light_h);
-    }
 }

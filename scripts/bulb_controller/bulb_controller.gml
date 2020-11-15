@@ -1,8 +1,5 @@
 /// @jujuadams
 /// Based on work by xot (John Leffingwell) of gmlscripts.com
-/// 
-/// This code and engine are provided under the Creative Commons "Attribution - NonCommerical - ShareAlike" international license.
-/// https://creativecommons.org/licenses/by-nc-sa/4.0
 ///
 /// @param camera
 /// @param ambientColour
@@ -84,7 +81,7 @@ function bulb_controller(_camera, _ambient_colour, _self_lighting, _mode) constr
         //Accumulate all deferred lights
         if (BULB_ALLOW_DEFERRED || force_deferred)
         {
-            accumulate_deferred_lights();
+            accumulate_deferred_lights(_camera_l, _camera_t);
         }
         
         surface_reset_target();
@@ -381,6 +378,7 @@ function bulb_controller(_camera, _ambient_colour, _self_lighting, _mode) constr
                 if (image_alpha < 1.0)
                 {
                     //If this light is fading out, adjust the destination alpha channel
+                    //TODO - Do this earlier during the wipe phase and before shadow casting
                     gpu_set_blendmode_ext(bm_src_alpha, bm_one);
                     draw_sprite_ext(sprite_index, image_index,
                                     x - _camera_l, y - _camera_t,
@@ -518,6 +516,11 @@ function bulb_controller(_camera, _ambient_colour, _self_lighting, _mode) constr
             //If this light is ready to be drawn...
             if (light_on_screen)
             {
+                if ((light_surface == undefined) || !surface_exists(light_surface))
+                {
+                    light_surface = surface_create(light_w, light_h);
+                }
+                
                 surface_set_target(light_surface);
                     
                 //Draw the light sprite
@@ -560,7 +563,7 @@ function bulb_controller(_camera, _ambient_colour, _self_lighting, _mode) constr
         shader_reset();
     }
     
-    accumulate_deferred_lights = function()
+    accumulate_deferred_lights = function(_camera_l, _camera_t)
     {
         var _force_deferred = force_deferred;
         
@@ -644,11 +647,11 @@ function __bulb_add_occlusion_hard(_vbuff)
             var _new_by = y - _old_bx*_x_sin + _old_by*_y_cos;
             
             //Add to the vertex buffer
-            vertex_position_3d(_vbuff,   _new_ax, _new_ay,  0);             vertex_colour(_vbuff,   c_black, 1);
+            vertex_position_3d(_vbuff,   _new_ax, _new_ay,  0);         vertex_colour(_vbuff,   c_black, 1);
             vertex_position_3d(_vbuff,   _new_bx, _new_by,  BULB_ZFAR); vertex_colour(_vbuff,   c_black, 1);
-            vertex_position_3d(_vbuff,   _new_bx, _new_by,  0);             vertex_colour(_vbuff,   c_black, 1);
+            vertex_position_3d(_vbuff,   _new_bx, _new_by,  0);         vertex_colour(_vbuff,   c_black, 1);
             
-            vertex_position_3d(_vbuff,   _new_ax, _new_ay,  0);             vertex_colour(_vbuff,   c_black, 1);
+            vertex_position_3d(_vbuff,   _new_ax, _new_ay,  0);         vertex_colour(_vbuff,   c_black, 1);
             vertex_position_3d(_vbuff,   _new_ax, _new_ay,  BULB_ZFAR); vertex_colour(_vbuff,   c_black, 1);
             vertex_position_3d(_vbuff,   _new_bx, _new_by,  BULB_ZFAR); vertex_colour(_vbuff,   c_black, 1);
         }
@@ -712,11 +715,11 @@ function __bulb_add_occlusion_hard(_vbuff)
                 light_vertex_cache[_i-1] = _new_by;
                 
                 //Using textures (rather than untextureed) saves on shader_set() overhead... likely a trade-off depending on the GPU
-                vertex_position_3d(_vbuff,   _new_ax, _new_ay, 0);             vertex_colour(_vbuff,   c_black, 1);
+                vertex_position_3d(_vbuff,   _new_ax, _new_ay, 0);         vertex_colour(_vbuff,   c_black, 1);
                 vertex_position_3d(_vbuff,   _new_bx, _new_by, BULB_ZFAR); vertex_colour(_vbuff,   c_black, 1);
-                vertex_position_3d(_vbuff,   _new_bx, _new_by, 0);             vertex_colour(_vbuff,   c_black, 1);
+                vertex_position_3d(_vbuff,   _new_bx, _new_by, 0);         vertex_colour(_vbuff,   c_black, 1);
                 
-                vertex_position_3d(_vbuff,   _new_ax, _new_ay, 0);             vertex_colour(_vbuff,   c_black, 1);
+                vertex_position_3d(_vbuff,   _new_ax, _new_ay, 0);         vertex_colour(_vbuff,   c_black, 1);
                 vertex_position_3d(_vbuff,   _new_ax, _new_ay, BULB_ZFAR); vertex_colour(_vbuff,   c_black, 1);
                 vertex_position_3d(_vbuff,   _new_bx, _new_by, BULB_ZFAR); vertex_colour(_vbuff,   c_black, 1);
             }
@@ -732,11 +735,11 @@ function __bulb_add_occlusion_hard(_vbuff)
                 var _new_by = light_vertex_cache[_i++];
                 
                 //Using textures (rather than untextureed) saves on shader_set() overhead... likely a trade-off depending on the GPU
-                vertex_position_3d(_vbuff,   _new_ax, _new_ay, 0);             vertex_colour(_vbuff,   c_black, 1);
+                vertex_position_3d(_vbuff,   _new_ax, _new_ay, 0);         vertex_colour(_vbuff,   c_black, 1);
                 vertex_position_3d(_vbuff,   _new_bx, _new_by, BULB_ZFAR); vertex_colour(_vbuff,   c_black, 1);
-                vertex_position_3d(_vbuff,   _new_bx, _new_by, 0);             vertex_colour(_vbuff,   c_black, 1);
+                vertex_position_3d(_vbuff,   _new_bx, _new_by, 0);         vertex_colour(_vbuff,   c_black, 1);
                 
-                vertex_position_3d(_vbuff,   _new_ax, _new_ay, 0);             vertex_colour(_vbuff,   c_black, 1);
+                vertex_position_3d(_vbuff,   _new_ax, _new_ay, 0);         vertex_colour(_vbuff,   c_black, 1);
                 vertex_position_3d(_vbuff,   _new_ax, _new_ay, BULB_ZFAR); vertex_colour(_vbuff,   c_black, 1);
                 vertex_position_3d(_vbuff,   _new_bx, _new_by, BULB_ZFAR); vertex_colour(_vbuff,   c_black, 1); 
             }
@@ -774,21 +777,21 @@ function __bulb_add_occlusion_soft(_vbuff)
             var _new_by = y - _old_bx*_x_sin + _old_by*_y_cos;
             
             //Add to the vertex buffer
-            vertex_position_3d(_vbuff,   _new_ax, _new_ay,  0);             vertex_texcoord(_vbuff,  1, 1);
+            vertex_position_3d(_vbuff,   _new_ax, _new_ay,  0);         vertex_texcoord(_vbuff,  1, 1);
             vertex_position_3d(_vbuff,   _new_bx, _new_by,  BULB_ZFAR); vertex_texcoord(_vbuff,  1, 1);
-            vertex_position_3d(_vbuff,   _new_bx, _new_by,  0);             vertex_texcoord(_vbuff,  1, 1);
+            vertex_position_3d(_vbuff,   _new_bx, _new_by,  0);         vertex_texcoord(_vbuff,  1, 1);
             
-            vertex_position_3d(_vbuff,   _new_ax, _new_ay,  0);             vertex_texcoord(_vbuff,  1, 1);
+            vertex_position_3d(_vbuff,   _new_ax, _new_ay,  0);         vertex_texcoord(_vbuff,  1, 1);
             vertex_position_3d(_vbuff,   _new_ax, _new_ay,  BULB_ZFAR); vertex_texcoord(_vbuff,  1, 1);
             vertex_position_3d(_vbuff,   _new_bx, _new_by,  BULB_ZFAR); vertex_texcoord(_vbuff,  1, 1);
             
             //Add data for the soft shadows
             vertex_position_3d(_vbuff,   _new_ax, _new_ay,  BULB_ZFAR); vertex_texcoord(_vbuff,  1, 0);
-            vertex_position_3d(_vbuff,   _new_ax, _new_ay,  0);             vertex_texcoord(_vbuff,  0, 1);
+            vertex_position_3d(_vbuff,   _new_ax, _new_ay,  0);         vertex_texcoord(_vbuff,  0, 1);
             vertex_position_3d(_vbuff,   _new_ax, _new_ay,  BULB_ZFAR); vertex_texcoord(_vbuff,  0, 0);
             
             vertex_position_3d(_vbuff,   _new_ax, _new_ay, -BULB_ZFAR); vertex_texcoord(_vbuff,  0, 0); //Bit of a hack. We interpret this in __shd_bulb_soft_shadows
-            vertex_position_3d(_vbuff,   _new_ax, _new_ay,  0);             vertex_texcoord(_vbuff,  0, 1);
+            vertex_position_3d(_vbuff,   _new_ax, _new_ay,  0);         vertex_texcoord(_vbuff,  0, 1);
             vertex_position_3d(_vbuff,   _new_ax, _new_ay,  BULB_ZFAR); vertex_texcoord(_vbuff,  1, 0);
         }
     }
@@ -852,11 +855,11 @@ function __bulb_add_occlusion_soft(_vbuff)
                 light_vertex_cache[_i-1] = _new_by;
                 
                 //Using textures (rather than untextureed) saves on shader_set() overhead... likely a trade-off depending on the GPU
-                vertex_position_3d(_vbuff,   _new_ax, _new_ay, 0);             vertex_colour(_vbuff,   c_black, 1);
+                vertex_position_3d(_vbuff,   _new_ax, _new_ay, 0);         vertex_colour(_vbuff,   c_black, 1);
                 vertex_position_3d(_vbuff,   _new_bx, _new_by, BULB_ZFAR); vertex_colour(_vbuff,   c_black, 1);
-                vertex_position_3d(_vbuff,   _new_bx, _new_by, 0);             vertex_colour(_vbuff,   c_black, 1);
+                vertex_position_3d(_vbuff,   _new_bx, _new_by, 0);         vertex_colour(_vbuff,   c_black, 1);
                 
-                vertex_position_3d(_vbuff,   _new_ax, _new_ay, 0);             vertex_colour(_vbuff,   c_black, 1);
+                vertex_position_3d(_vbuff,   _new_ax, _new_ay, 0);         vertex_colour(_vbuff,   c_black, 1);
                 vertex_position_3d(_vbuff,   _new_ax, _new_ay, BULB_ZFAR); vertex_colour(_vbuff,   c_black, 1);
                 vertex_position_3d(_vbuff,   _new_bx, _new_by, BULB_ZFAR); vertex_colour(_vbuff,   c_black, 1);
             }
@@ -872,11 +875,11 @@ function __bulb_add_occlusion_soft(_vbuff)
                 var _new_by = light_vertex_cache[_i++];
                 
                 //Using textures (rather than untextureed) saves on shader_set() overhead... likely a trade-off depending on the GPU
-                vertex_position_3d(_vbuff,   _new_ax, _new_ay, 0);             vertex_colour(_vbuff,   c_black, 1);
+                vertex_position_3d(_vbuff,   _new_ax, _new_ay, 0);         vertex_colour(_vbuff,   c_black, 1);
                 vertex_position_3d(_vbuff,   _new_bx, _new_by, BULB_ZFAR); vertex_colour(_vbuff,   c_black, 1);
-                vertex_position_3d(_vbuff,   _new_bx, _new_by, 0);             vertex_colour(_vbuff,   c_black, 1);
+                vertex_position_3d(_vbuff,   _new_bx, _new_by, 0);         vertex_colour(_vbuff,   c_black, 1);
                 
-                vertex_position_3d(_vbuff,   _new_ax, _new_ay, 0);             vertex_colour(_vbuff,   c_black, 1);
+                vertex_position_3d(_vbuff,   _new_ax, _new_ay, 0);         vertex_colour(_vbuff,   c_black, 1);
                 vertex_position_3d(_vbuff,   _new_ax, _new_ay, BULB_ZFAR); vertex_colour(_vbuff,   c_black, 1);
                 vertex_position_3d(_vbuff,   _new_bx, _new_by, BULB_ZFAR); vertex_colour(_vbuff,   c_black, 1); 
             }
