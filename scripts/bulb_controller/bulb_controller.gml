@@ -29,7 +29,7 @@ function bulb_controller(_camera, _ambient_colour, _self_lighting, _mode) constr
     mode = _mode;
     
     partial_clear = true;
-    
+    freed = false;
     force_deferred = false;
     
     //Initialise variables used and updated in bulb_build()
@@ -42,6 +42,8 @@ function bulb_controller(_camera, _ambient_colour, _self_lighting, _mode) constr
     
     update = function()
     {
+        if (freed) return undefined;
+        
         ///////////Discover camera variables
         var _camera_l  = camera_get_view_x(camera);
         var _camera_t  = camera_get_view_y(camera);
@@ -96,6 +98,8 @@ function bulb_controller(_camera, _ambient_colour, _self_lighting, _mode) constr
     /// @param y
     draw_at = function(_x, _y)
     {
+        if (freed) return undefined;
+        
         if ((surface != undefined) && surface_exists(surface))
         {
             gpu_set_blendmode_ext(bm_dest_color, bm_zero);
@@ -127,7 +131,7 @@ function bulb_controller(_camera, _ambient_colour, _self_lighting, _mode) constr
     
     free_surface = function()
     {
-        if (surface_exists(surface))
+        if ((surface != undefined) && surface_exists(surface))
         {
             surface_free(surface);
             surface = undefined;
@@ -138,10 +142,14 @@ function bulb_controller(_camera, _ambient_colour, _self_lighting, _mode) constr
     {
         free_vertex_buffers();
         free_surface();
+        
+        freed = true;
     }
     
     update_vertex_buffers = function()
     {
+        if (freed) return undefined;
+        
         ///////////Discover camera variables
         var _camera_w  = camera_get_view_width(camera);
         var _camera_h  = camera_get_view_height(camera);
@@ -241,6 +249,8 @@ function bulb_controller(_camera, _ambient_colour, _self_lighting, _mode) constr
     
     accumulate_nondeferred_lights = function(_camera_l, _camera_t, _camera_r, _camera_b, _camera_cx, _camera_cy, _camera_w, _camera_h)
     {
+        if (freed) return undefined;
+        
         #region Linear algebra
         
         //var _view_matrix = matrix_build_lookat(_camera_w/2, _camera_h/2, -16000,   _camera_w/2, _camera_h/2, 0,   0, 1, 0);
@@ -309,6 +319,8 @@ function bulb_controller(_camera, _ambient_colour, _self_lighting, _mode) constr
     
     accumulate_nondeferred_soft_lights = function(_camera_l, _camera_t, _camera_r, _camera_b, _camera_cx, _camera_cy, _camera_w, _camera_h, _vp_matrix)
     {
+        if (freed) return undefined;
+        
         var _wipe_vbuffer    = wipe_vbuffer;
         var _static_vbuffer  = static_vbuffer;
         var _dynamic_vbuffer = dynamic_vbuffer;
@@ -399,6 +411,8 @@ function bulb_controller(_camera, _ambient_colour, _self_lighting, _mode) constr
     
     accumulate_nondeferred_hard_lights = function(_camera_l, _camera_t, _camera_r, _camera_b, _camera_cx, _camera_cy, _camera_w, _camera_h, _vp_matrix)
     {
+        if (freed) return undefined;
+        
         var _wipe_vbuffer    = wipe_vbuffer;
         var _static_vbuffer  = static_vbuffer;
         var _dynamic_vbuffer = dynamic_vbuffer;
@@ -493,6 +507,8 @@ function bulb_controller(_camera, _ambient_colour, _self_lighting, _mode) constr
     
     update_deferred_lights = function(_camera_l, _camera_t, _camera_r, _camera_b)
     {
+        if (freed) return undefined;
+        
         var _static_vbuffer  = static_vbuffer;
         var _dynamic_vbuffer = dynamic_vbuffer;
         var _force_deferred  = force_deferred;
@@ -565,6 +581,8 @@ function bulb_controller(_camera, _ambient_colour, _self_lighting, _mode) constr
     
     accumulate_deferred_lights = function(_camera_l, _camera_t)
     {
+        if (freed) return undefined;
+        
         var _force_deferred = force_deferred;
         
         //Use a cumulative blend mode to add lights together
