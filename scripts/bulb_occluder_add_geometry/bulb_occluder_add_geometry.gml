@@ -12,9 +12,13 @@
 
 function bulb_occluder_add_geometry(_x1, _y1, _x2, _y2)
 {
-    arr_shadow_geometry[shadow_geometry_size] = _x1; shadow_geometry_size++;
-    arr_shadow_geometry[shadow_geometry_size] = _y1; shadow_geometry_size++;
-    arr_shadow_geometry[shadow_geometry_size] = _x2; shadow_geometry_size++;
-    arr_shadow_geometry[shadow_geometry_size] = _y2; shadow_geometry_size++;
-    shadow_geometry_count++;
+    var _size = 4*__bulb_vertex_count;
+    array_resize(__bulb_vertex_array, _size + 4);
+    
+    __bulb_vertex_array[@ _size    ] = _x1;
+    __bulb_vertex_array[@ _size + 1] = _y1;
+    __bulb_vertex_array[@ _size + 2] = _x2;
+    __bulb_vertex_array[@ _size + 3] = _y2;
+    
+    __bulb_vertex_count++;
 }

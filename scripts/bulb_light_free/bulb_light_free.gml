@@ -8,8 +8,8 @@
 
 function bulb_light_free()
 {
-    if ((light_surface != undefined) && surface_exists(light_surface))
+    if ((__bulb_light_surface != undefined) && surface_exists(__bulb_light_surface))
     {
-        surface_free(light_surface);
+        surface_free(__bulb_light_surface);
     }
 }

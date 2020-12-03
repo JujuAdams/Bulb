@@ -4,4 +4,4 @@
 #macro BULB_CACHE_DYNAMIC_OCCLUDERS       false
 #macro BULB_ALLOW_DEFERRED                 true
 #macro BULB_FLIP_CAMERA_Y            ON_DIRECTX
-#macro BULB_PENUMBRA_SIZE                    20
+#macro BULB_PENUMBRA_SIZE                    30
