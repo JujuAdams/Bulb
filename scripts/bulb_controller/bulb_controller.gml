@@ -1,6 +1,3 @@
-/// @jujuadams
-/// Based on work by xot (John Leffingwell) of gmlscripts.com
-///
 /// @param camera
 /// @param ambientColour
 /// @param selfLighting
@@ -31,10 +28,7 @@ function bulb_controller(_camera, _ambient_colour, _self_lighting, _mode) constr
     self_lighting = _self_lighting;
     
     mode = _mode;
-    
-    partial_clear = true;
     freed = false;
-    force_deferred = false;
     
     //Initialise variables used and updated in bulb_build()
     static_vbuffer  = undefined; //Vertex buffer describing the geometry of static occluder objects
@@ -50,7 +44,7 @@ function bulb_controller(_camera, _ambient_colour, _self_lighting, _mode) constr
     {
         if (freed) return undefined;
         
-        ///////////Discover camera variables
+        //Discover camera variables
         var _camera_l  = camera_get_view_x(camera);
         var _camera_t  = camera_get_view_y(camera);
         var _camera_w  = camera_get_view_width(camera);
@@ -62,12 +56,6 @@ function bulb_controller(_camera, _ambient_colour, _self_lighting, _mode) constr
         
         //Construct our wipe/static/dynamic vertex buffers
         update_vertex_buffers();
-        
-        //Go through all deferred lights and update their surfaces
-        if (BULB_ALLOW_DEFERRED)
-        {
-            update_deferred_lights(_camera_l, _camera_t, _camera_r, _camera_b);
-        }
         
         //Create accumulating lighting surface
         if ((surface == undefined)|| !surface_exists(surface))
@@ -81,16 +69,7 @@ function bulb_controller(_camera, _ambient_colour, _self_lighting, _mode) constr
         draw_clear(ambient_colour);
         
         //If we're not forcing deferred rendering everywhere, update those lights
-        if (!force_deferred)
-        {
-            accumulate_nondeferred_lights(_camera_l, _camera_t, _camera_r, _camera_b, _camera_cx, _camera_cy, _camera_w, _camera_h);
-        }
-        
-        //Accumulate all deferred lights
-        if (BULB_ALLOW_DEFERRED || force_deferred)
-        {
-            accumulate_deferred_lights(_camera_l, _camera_t);
-        }
+        accumulate_lights(_camera_l, _camera_t, _camera_r, _camera_b, _camera_cx, _camera_cy, _camera_w, _camera_h);
         
         surface_reset_target();
     }
@@ -169,12 +148,12 @@ function bulb_controller(_camera, _ambient_colour, _self_lighting, _mode) constr
         var _camera_r  = _camera_l + _camera_w;
         var _camera_b  = _camera_t + _camera_h;
         
-        var _camera_exp_l = _camera_l - BULB_DYNAMIC_BORDER;
-        var _camera_exp_t = _camera_t - BULB_DYNAMIC_BORDER;
-        var _camera_exp_r = _camera_r + BULB_DYNAMIC_BORDER;
-        var _camera_exp_b = _camera_b + BULB_DYNAMIC_BORDER;
+        var _camera_exp_l = _camera_l - BULB_DYNAMIC_OCCLUDER_RANGE;
+        var _camera_exp_t = _camera_t - BULB_DYNAMIC_OCCLUDER_RANGE;
+        var _camera_exp_r = _camera_r + BULB_DYNAMIC_OCCLUDER_RANGE;
+        var _camera_exp_b = _camera_b + BULB_DYNAMIC_OCCLUDER_RANGE;
         
-        ///////////One-time construction of a triangle to wipe the z-buffer
+        //One-time construction of a triangle to wipe the z-buffer
         //Using textures (rather than untextured) saves on shader_set() overhead... likely a trade-off depending on the GPU
         if (wipe_vbuffer == undefined)
         {
@@ -189,7 +168,7 @@ function bulb_controller(_camera, _ambient_colour, _self_lighting, _mode) constr
             vertex_freeze(wipe_vbuffer);
         }
         
-        ///////////One-time construction of the static occluder geometry
+        //One-time construction of the static occluder geometry
         if (static_vbuffer == undefined)
         {
             //Create a new vertex buffer
@@ -214,18 +193,8 @@ function bulb_controller(_camera, _ambient_colour, _self_lighting, _mode) constr
             if (vertex_get_number(static_vbuffer) > 0) vertex_freeze(static_vbuffer);
         }
         
-        ///////////Refresh the dynamic occluder geometry
-        //Try to keep dynamic objects limited.
-        if (BULB_REUSE_DYNAMIC_BUFFER)
-        {
-            if (dynamic_vbuffer == undefined) dynamic_vbuffer = vertex_create_buffer();
-        }
-        else
-        {
-            if (dynamic_vbuffer != undefined) vertex_delete_buffer(dynamic_vbuffer);
-            dynamic_vbuffer = vertex_create_buffer();
-        }
-        
+        //Refresh the dynamic occluder geometry
+        if (dynamic_vbuffer == undefined) dynamic_vbuffer = vertex_create_buffer();
         var _dynamic_vbuffer = dynamic_vbuffer;
         
         //Add dynamic occluder vertices to the relevant vertex buffer
@@ -235,9 +204,9 @@ function bulb_controller(_camera, _ambient_colour, _self_lighting, _mode) constr
             with (obj_dynamic_occluder)
             {
                 __bulb_on_screen = visible && __bulb_rect_in_rect(bbox_left, bbox_top,
-                                                                     bbox_right, bbox_bottom,
-                                                                     _camera_exp_l, _camera_exp_t,
-                                                                     _camera_exp_r, _camera_exp_b);
+                                                                  bbox_right, bbox_bottom,
+                                                                  _camera_exp_l, _camera_exp_t,
+                                                                  _camera_exp_r, _camera_exp_b);
                 if (__bulb_on_screen) __bulb_add_occlusion_soft(_dynamic_vbuffer);
             }
         }
@@ -247,9 +216,9 @@ function bulb_controller(_camera, _ambient_colour, _self_lighting, _mode) constr
             with (obj_dynamic_occluder)
             {
                 __bulb_on_screen = visible && __bulb_rect_in_rect(bbox_left, bbox_top,
-                                                                     bbox_right, bbox_bottom,
-                                                                     _camera_exp_l, _camera_exp_t,
-                                                                     _camera_exp_r, _camera_exp_b);
+                                                                  bbox_right, bbox_bottom,
+                                                                  _camera_exp_l, _camera_exp_t,
+                                                                  _camera_exp_r, _camera_exp_b);
                 if (__bulb_on_screen) __bulb_add_occlusion_hard(_dynamic_vbuffer);
             }
         }
@@ -259,9 +228,9 @@ function bulb_controller(_camera, _ambient_colour, _self_lighting, _mode) constr
     
     #endregion
     
-    #region Accumulate nondeferred lights
+    #region Accumulate lights
     
-    accumulate_nondeferred_lights = function(_camera_l, _camera_t, _camera_r, _camera_b, _camera_cx, _camera_cy, _camera_w, _camera_h)
+    accumulate_lights = function(_camera_l, _camera_t, _camera_r, _camera_b, _camera_cx, _camera_cy, _camera_w, _camera_h)
     {
         if (freed) return undefined;
         
@@ -291,7 +260,7 @@ function bulb_controller(_camera, _ambient_colour, _self_lighting, _mode) constr
         #endregion
         
         //Ultimately, we can use the following projection matrix
-        if (BULB_FLIP_CAMERA_Y)
+        if (__BULB_FLIP_CAMERA_Y)
         {
             //DirectX platforms want the Y-axis flipped
             var _vp_matrix = [2/_camera_w,            0, 0, 0,
@@ -301,10 +270,10 @@ function bulb_controller(_camera, _ambient_colour, _self_lighting, _mode) constr
         }
         else
         {
-            var _vp_matrix = [2/_camera_w,            0, 0, 0,
-                                        0,  2/_camera_h, 0, 0,
-                                        0,            0, 0, 0,
-                                       -1,           -1, 1, 1];
+            var _vp_matrix = [2/_camera_w,           0, 0, 0,
+                                        0, 2/_camera_h, 0, 0,
+                                        0,           0, 0, 0,
+                                       -1,          -1, 1, 1];
         }
         
         //We set the view matrix to identity to allow us to use our custom projection matrix
@@ -318,11 +287,11 @@ function bulb_controller(_camera, _ambient_colour, _self_lighting, _mode) constr
         ///////////Iterate over all non-deferred lights...
         if (mode == BULB_MODE.SOFT_BM_ADD)
         {
-            accumulate_nondeferred_soft_lights(_camera_l, _camera_t, _camera_r, _camera_b, _camera_cx, _camera_cy, _camera_w, _camera_h, _vp_matrix);
+            accumulate_soft_lights(_camera_l, _camera_t, _camera_r, _camera_b, _camera_cx, _camera_cy, _camera_w, _camera_h, _vp_matrix);
         }
         else
         {
-            accumulate_nondeferred_hard_lights(_camera_l, _camera_t, _camera_r, _camera_b, _camera_cx, _camera_cy, _camera_w, _camera_h, _vp_matrix);
+            accumulate_hard_lights(_camera_l, _camera_t, _camera_r, _camera_b, _camera_cx, _camera_cy, _camera_w, _camera_h, _vp_matrix);
         }
             
         //Reset GPU properties
@@ -333,21 +302,20 @@ function bulb_controller(_camera, _ambient_colour, _self_lighting, _mode) constr
     
     #endregion
     
-    #region Accumulate nondeferred soft lights
+    #region Accumulate soft lights
     
-    accumulate_nondeferred_soft_lights = function(_camera_l, _camera_t, _camera_r, _camera_b, _camera_cx, _camera_cy, _camera_w, _camera_h, _vp_matrix)
+    accumulate_soft_lights = function(_camera_l, _camera_t, _camera_r, _camera_b, _camera_cx, _camera_cy, _camera_w, _camera_h, _vp_matrix)
     {
         if (freed) return undefined;
         
         var _wipe_vbuffer    = wipe_vbuffer;
         var _static_vbuffer  = static_vbuffer;
         var _dynamic_vbuffer = dynamic_vbuffer;
-        var _partial_clear   = partial_clear;
         
         //Calculate some transform coefficients
         var _inv_camera_w = 2/_camera_w;
         var _inv_camera_h = 2/_camera_h;
-        if (BULB_FLIP_CAMERA_Y) _inv_camera_h = -_inv_camera_h;
+        if (__BULB_FLIP_CAMERA_Y) _inv_camera_h = -_inv_camera_h;
         
         var _transformed_cam_x = _camera_cx*_inv_camera_w;
         var _transformed_cam_y = _camera_cy*_inv_camera_h;
@@ -365,8 +333,6 @@ function bulb_controller(_camera, _ambient_colour, _self_lighting, _mode) constr
         
         with (obj_par_light)
         {
-            if (__bulb_light_deferred && BULB_ALLOW_DEFERRED) continue;
-            
             __bulb_on_screen = visible && __bulb_rect_in_rect(x - __bulb_light_width_half, y - __bulb_light_height_half,
                                                               x + __bulb_light_width_half, y + __bulb_light_height_half,
                                                               _camera_l, _camera_t, _camera_r, _camera_b);
@@ -379,7 +345,7 @@ function bulb_controller(_camera, _ambient_colour, _self_lighting, _mode) constr
                 //Clear alpha channel
                 gpu_set_blendmode(bm_subtract);
                 
-                if (_partial_clear)
+                if (__BULB_PARTIAL_CLEAR)
                 {
                     draw_sprite_ext(sprite_index, image_index,
                                     x - _camera_l, y - _camera_t,
@@ -429,21 +395,20 @@ function bulb_controller(_camera, _ambient_colour, _self_lighting, _mode) constr
     
     #endregion
     
-    #region Accumulate nondeferred hard lights
+    #region Accumulate hard lights
     
-    accumulate_nondeferred_hard_lights = function(_camera_l, _camera_t, _camera_r, _camera_b, _camera_cx, _camera_cy, _camera_w, _camera_h, _vp_matrix)
+    accumulate_hard_lights = function(_camera_l, _camera_t, _camera_r, _camera_b, _camera_cx, _camera_cy, _camera_w, _camera_h, _vp_matrix)
     {
         if (freed) return undefined;
         
         var _wipe_vbuffer    = wipe_vbuffer;
         var _static_vbuffer  = static_vbuffer;
         var _dynamic_vbuffer = dynamic_vbuffer;
-        var _partial_clear   = partial_clear;
         
         //Calculate some transform coefficients
         var _inv_camera_w = 2/_camera_w;
         var _inv_camera_h = 2/_camera_h;
-        if (BULB_FLIP_CAMERA_Y) _inv_camera_h = -_inv_camera_h;
+        if (__BULB_FLIP_CAMERA_Y) _inv_camera_h = -_inv_camera_h;
         
         var _transformed_cam_x = _camera_cx*_inv_camera_w;
         var _transformed_cam_y = _camera_cy*_inv_camera_h;
@@ -475,8 +440,6 @@ function bulb_controller(_camera, _ambient_colour, _self_lighting, _mode) constr
         
         with (obj_par_light)
         {
-            if (__bulb_light_deferred && BULB_ALLOW_DEFERRED) continue;
-            
             __bulb_on_screen = visible && __bulb_rect_in_rect(x - __bulb_light_width_half, y - __bulb_light_height_half,
                                                               x + __bulb_light_width_half, y + __bulb_light_height_half,
                                                               _camera_l, _camera_t, _camera_r, _camera_b);
@@ -489,7 +452,7 @@ function bulb_controller(_camera, _ambient_colour, _self_lighting, _mode) constr
                 gpu_set_colorwriteenable(false, false, false, false);
                 
                 //Reset zbuffer
-                if (_partial_clear)
+                if (__BULB_PARTIAL_CLEAR)
                 {
                     draw_sprite_ext(sprite_index, image_index,
                                     x - _camera_l, y - _camera_t,
@@ -528,119 +491,6 @@ function bulb_controller(_camera, _ambient_colour, _self_lighting, _mode) constr
     }
     
     #endregion
-    
-    #region Update deferred lights
-    
-    update_deferred_lights = function(_camera_l, _camera_t, _camera_r, _camera_b)
-    {
-        if (freed) return undefined;
-        
-        var _static_vbuffer  = static_vbuffer;
-        var _dynamic_vbuffer = dynamic_vbuffer;
-        var _force_deferred  = force_deferred;
-        
-        ///////////Render out lights and shadows for each deferred light in the viewport
-        var _sign = BULB_FLIP_CAMERA_Y? 1 : -1;
-        
-        //If culling is switched on, shadows will only be cast from the rear faces of occluders
-        //This requires careful object placement as not to create weird graphical glitches
-        gpu_set_cullmode(self_lighting? cull_counterclockwise : cull_noculling);
-        
-        with(obj_par_light)
-        {
-            if (!__bulb_light_deferred && !_force_deferred) continue;
-            
-            __bulb_on_screen = visible && __bulb_rect_in_rect(x - __bulb_light_width_half, y - __bulb_light_height_half,
-                                                              x + __bulb_light_width_half, y + __bulb_light_height_half,
-                                                              _camera_l, _camera_t,
-                                                              _camera_r, _camera_b);
-            
-            //If this light is ready to be drawn...
-            if (__bulb_on_screen)
-            {
-                if ((__bulb_light_surface == undefined) || !surface_exists(__bulb_light_surface))
-                {
-                    __bulb_light_surface = surface_create(__bulb_light_width, __bulb_light_height);
-                }
-                
-                surface_set_target(__bulb_light_surface);
-                    
-                //Draw the light sprite
-                draw_sprite_ext(sprite_index, image_index,    __bulb_light_width_half, __bulb_light_height_half,    1, 1, 0,    merge_colour(c_black, image_blend, image_alpha), 1);
-                    
-                //Magical projection!
-                shader_set(__shd_bulb_snap_vertex);
-                    
-                //var _view_matrix = matrix_build_lookat(_camera_w/2, _camera_h/2, -16000,   _camera_w/2, _camera_h/2, 0,   0, 1, 0);
-                //var _view_matrix = [            1,            0,     0, 0,                   // [            1,            0,         0, 0, 
-                //                                0,            1,     0, 0,                   //              0,            1,         0, 0, 
-                //                                0,            0,     1, 0,                   //              0,            0,         1, 0, 
-                //                     -_camera_w/2, -_camera_h/2, 16000, 1 ];                 //   -_camera_w/2, -_camera_h/2, -camera_z, 1 ]
-                    
-                //var _proj_matrix =  matrix_build_projection_ortho(_camera_w, -_camera_h, 1, 32000);
-                //var _proj_matrix = [ 2/_camera_w,           0,           0,  0,             // [ 2/_camera_w,           0,                      0, 0,
-                //                               0, 2/_camera_h,           0,  0,             //             0, 2/_camera_h,                      0, 0,
-                //                               0,           0,  1/(32000-1), 0,             //             0,           0,       1/(z_far-z_near), 0,
-                //                               0,           0, -1/(32000-1), 1 ];           //             0,           0, -z_near/(z_far-z_near), 1 ]
-                    
-                //var _vp_matrix = matrix_multiply(_new_view, _new_proj);
-                //var _vp_matrix = [ 2/_camera_w,           0,           0, 0,                  // [ 2/_camera_w,            0,                                   0, 0,
-                //                             0, 2/_camera_h,           0, 0,                  //             0, -2/_camera_h,                                   0, 0,
-                //                             0,           0,     1/31999, 0,                  //             0,            0,                    1/(z_far-z_near), 0,
-                //                            -1,           1, 15999/31999, 1 ];                //            -1,            1, (-camera_z - z_near)/(z_far-z_near), 1 ]
-                    
-                matrix_set(matrix_view, matrix_build_lookat(x, y, __bulb_light_width,   x, y, 0,   dsin(-image_angle), -dcos(-image_angle), 0));
-                matrix_set(matrix_projection, matrix_build_projection_perspective(image_xscale, image_yscale*_sign, 1, 32000));
-                    
-                //Tell the GPU to render the shadow geometry
-                vertex_submit(_static_vbuffer,  pr_trianglelist, -1);
-                vertex_submit(_dynamic_vbuffer, pr_trianglelist, -1);
-                shader_reset();
-                    
-                surface_reset_target();
-            }
-        }
-            
-        gpu_set_cullmode(cull_noculling);
-        shader_reset();
-    }
-    
-    #endregion
-    
-    #region Accumulate deferred lights
-    
-    accumulate_deferred_lights = function(_camera_l, _camera_t)
-    {
-        if (freed) return undefined;
-        
-        var _force_deferred = force_deferred;
-        
-        //Use a cumulative blend mode to add lights together
-        if (_force_deferred)
-        {
-            switch(mode)
-            {
-                case BULB_MODE.HARD_BM_ADD: gpu_set_blendmode(bm_add); break
-                case BULB_MODE.HARD_BM_MAX: gpu_set_blendmode(bm_max); break;
-                case BULB_MODE.SOFT_BM_ADD: gpu_set_blendmode(bm_add); break;
-            }
-        }
-        
-        with (obj_par_light)
-        {
-            if ((__bulb_light_deferred || _force_deferred) && __bulb_on_screen)
-            {
-                var _sin = -dsin(image_angle);
-                var _cos =  dcos(image_angle);
-                var _x = image_xscale*__bulb_light_width_half*_cos - image_yscale*__bulb_light_height_half*_sin;
-                var _y = image_xscale*__bulb_light_width_half*_sin + image_yscale*__bulb_light_height_half*_cos;
-                
-                draw_surface_ext(__bulb_light_surface, floor(x - _x - _camera_l + 0.5), floor(y - _y - _camera_t + 0.5), image_xscale, image_yscale, image_angle, c_white, 1);
-            }
-        }
-    }
-    
-    #endregion
 }
 
 #endregion
@@ -649,7 +499,10 @@ function bulb_controller(_camera, _ambient_colour, _self_lighting, _mode) constr
 
 #region Internal Macros + Helper Functions
 
-#macro ON_DIRECTX ((os_type == os_windows) || (os_type == os_xboxone) || (os_type == os_uwp) || (os_type == os_winphone) || (os_type == os_win8native))
+#macro __BULB_ON_DIRECTX      ((os_type == os_windows) || (os_type == os_xboxone) || (os_type == os_uwp) || (os_type == os_winphone) || (os_type == os_win8native))
+#macro __BULB_ZFAR            16000
+#macro __BULB_FLIP_CAMERA_Y   __BULB_ON_DIRECTX
+#macro __BULB_PARTIAL_CLEAR   true
 
 //Create a couple vertex formats
 vertex_format_begin();
@@ -662,5 +515,19 @@ vertex_format_begin();
 vertex_format_add_position_3d();
 vertex_format_add_texcoord();
 global.__bulb_format_3d_texture = vertex_format_end();
+
+function __bulb_trace()
+{
+    var _string = "";
+    
+    var _i = 0;
+    repeat(argument_count)
+    {
+        _string += string(argument[_i]);
+        ++_i;
+    }
+    
+    show_debug_message("Bulb: " + _string);
+}
 
 #endregion

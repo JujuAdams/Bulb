@@ -1,9 +1,4 @@
-/// Tool to quickly fill a squential array of lines.
-///
-/// return: Nothing
-/// 
-/// This code and engine are provided under the Creative Commons "Attribution - NonCommerical - ShareAlike" international license.
-/// https://creativecommons.org/licenses/by-nc-sa/4.0/
+/// Tool to quickly fill a squential array of lines
 ///
 /// @param x1
 /// @param y1

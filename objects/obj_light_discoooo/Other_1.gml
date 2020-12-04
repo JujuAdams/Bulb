@@ -1,3 +1,2 @@
-x = xprevious;
-y = yprevious;
-direction = random(360);
+//Destroy ourselves when we leave the room
+instance_destroy();

@@ -20,7 +20,6 @@
     {"id":{"name":"bulb_set_as_occluder","path":"scripts/bulb_set_as_occluder/bulb_set_as_occluder.yy",},"order":5,},
     {"id":{"name":"bulb_occluder_add_geometry","path":"scripts/bulb_occluder_add_geometry/bulb_occluder_add_geometry.yy",},"order":6,},
     {"id":{"name":"bulb_set_as_light","path":"scripts/bulb_set_as_light/bulb_set_as_light.yy",},"order":7,},
-    {"id":{"name":"bulb_light_free","path":"scripts/bulb_light_free/bulb_light_free.yy",},"order":8,},
     {"id":{"name":"__bulb_add_occlusion_hard","path":"scripts/__bulb_add_occlusion_hard/__bulb_add_occlusion_hard.yy",},"order":8,},
     {"id":{"name":"__shd_bulb_hard_shadows","path":"shaders/__shd_bulb_hard_shadows/__shd_bulb_hard_shadows.yy",},"order":3,},
     {"id":{"name":"spr_light_1024","path":"sprites/spr_light_1024/spr_light_1024.yy",},"order":2,},

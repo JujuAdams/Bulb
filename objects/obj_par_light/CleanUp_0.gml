@@ -1,1 +1,0 @@
-bulb_light_free();
