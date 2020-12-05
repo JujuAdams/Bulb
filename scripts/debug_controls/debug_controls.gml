@@ -21,8 +21,4 @@ function debug_controls()
         lighting.mode = (lighting.mode + 1) mod BULB_MODE.__SIZE;
         lighting.free_vertex_buffers();
     }
-    
-    if (keyboard_check_pressed(ord("4"))) lighting.partial_clear = !lighting.partial_clear;
-    
-    if (keyboard_check_pressed(ord("5"))) lighting.force_deferred = !lighting.force_deferred;
 }

@@ -6,7 +6,7 @@
     "path": "folders/Bulb.yy",
   },
   "resourceVersion": "1.0",
-  "name": "bulb_occluder_add_geometry",
+  "name": "bulb_occluder_add_edge",
   "tags": [],
   "resourceType": "GMScript",
 }

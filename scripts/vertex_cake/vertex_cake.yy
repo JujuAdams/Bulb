@@ -2,8 +2,8 @@
   "isDnD": false,
   "isCompatibility": false,
   "parent": {
-    "name": "Bulb",
-    "path": "Bulb.yyp",
+    "name": "Example",
+    "path": "folders/Example.yy",
   },
   "resourceVersion": "1.0",
   "name": "vertex_cake",

@@ -27,17 +27,12 @@ function debug_overlay()
             case BULB_MODE.SOFT_BM_ADD: _str += "\nrender mode = Soft alpha-clip, bm_add"; break;
         }
         
-        if (lighting.partial_clear) _str += "\npartial clear enabled";
-        if (lighting.force_deferred) _str += "\ndeferred forced";
-        
         draw_text(5, 25, _str);
         
         draw_set_valign(fa_bottom);
         var _str = "1: Toggle lights";
         _str += "\n2: Toggle self-lighting";
         _str += "\n3: Cycle render mode";
-        _str += "\n4: Toggle partial clear";
-        _str += "\n5: Toggle force deferred";
         _str += "\nL: Create new disco light";
         _str += "\nArrows/WASD: Move";
         _str += "\nLeft click: Fire plasma";
@@ -64,7 +59,7 @@ function debug_overlay()
     
     //Always credit properly :)
     draw_set_halign(fa_right);
-    var _str = "v18   November 2020";
+    var _str = "v19   December 2020";
     _str += "\nJuju Adams - @jujuadams";
     _str += "\nAfter work by xot / John Leffingwell";
     _str += "\nThanks to @Mordwaith and Alexey Mihailov (@LexPest)";

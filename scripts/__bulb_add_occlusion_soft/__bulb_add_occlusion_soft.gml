@@ -12,7 +12,7 @@ function __bulb_add_occlusion_soft(_vbuff)
     //Loop through every line segment, remembering that we're storing coordinate data sequentially: { Ax1, Ay1, Bx1, Bx1,   Ax2, Ay2, Bx2, Bx2, ... }
     var _vertex_array = __bulb_vertex_array;
     var _i = 0;
-    repeat(__bulb_vertex_count)
+    repeat(__bulb_edge_count)
     {
         //Collect first coordinate pair
         var _old_ax = _vertex_array[_i++];

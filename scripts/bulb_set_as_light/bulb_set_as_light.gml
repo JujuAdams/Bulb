@@ -1,6 +1,8 @@
-/// Initialises the necessary variables for a light object to use the lighting system
+/// Initialises some variables that describe a light emitter
+/// This function should be called in every instance/object that emits light. The colour/size/rotation of the light is derived from image_xscale, image_blend etc.
 ///
-/// @param [penumbraSize]
+/// @param [penumbraSize]   The penumbra size for the light emitter, 0 being no penumbra (effectively the "width" of the light)
+///                         This value should be smaller than the smallest occluding instance. Shadows penumbra will only be drawn in BULB_MODE.SOFT_BM_ADD mode
 
 function bulb_set_as_light()
 {

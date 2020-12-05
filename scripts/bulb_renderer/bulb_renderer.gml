@@ -1,21 +1,39 @@
-/// @param camera
-/// @param ambientColour
-/// @param selfLighting
-/// @param mode
+/// Constructor for a Bulb renderer - a struct that handles light/shadow rendering
+/// Bulb renderers are created using the new struct behaviour in GMS2.3 - https://www.yoyogames.com/blog/549/gamemaker-studio-2-3-new-gml-features
+/// A Bulb renderer creates a surface when created. Bulb renderers must be freed (using the free()) method to prevent memory leaks
+/// 
+/// A Bulb renderer has the following public methods:
+///   
+///   update()
+///     Updates the internal surface by rendering lights and shadows to the renderer's internal surfaces
+///     
+///   draw()
+///     Convenience function to draw lights/shadows at the camera's position in worldspace
+///     
+///   draw_at(x, y)
+///     Manual drawing function. Coordinates are in worldspace
+///     
+///   free()
+///     Frees memory associated with the renderer. This must be called to prevent memory leaks
+/// 
+/// @param camera          Camera to use as viewport for the lighting render
+/// @param ambientColour   Background "black" colour
+/// @param selfLighting    Whether to allow light into an occluder but not out. This lets occluding objects get lit up but still cast shadows
+/// @param mode            Rendering mode to use, from the BULB_MODE enum (see below)
 
 enum BULB_MODE
 {
     HARD_BM_ADD, //Basic hard shadows with z-buffer stenciling, using the typical bm_add blend mode
     HARD_BM_MAX, //As above, but using bm_max to reduce bloom
-    SOFT_BM_ADD, //Soft shadows using bm_add
+    SOFT_BM_ADD, //Soft shadows using bm_add. N.B. This isn't compatible with self lighting
     __SIZE
 }
 
 
 
-#region Controller class
+#region Renderer class
 
-function bulb_controller(_camera, _ambient_colour, _self_lighting, _mode) constructor
+function bulb_renderer(_camera, _ambient_colour, _self_lighting, _mode) constructor
 {
     //Assign the camera used to draw the lights
     camera = _camera;
@@ -38,9 +56,9 @@ function bulb_controller(_camera, _ambient_colour, _self_lighting, _mode) constr
     
     
     
-    #region Basic Methods
+    #region Public Methods
     
-    update = function()
+    static update = function()
     {
         if (freed) return undefined;
         
@@ -74,14 +92,14 @@ function bulb_controller(_camera, _ambient_colour, _self_lighting, _mode) constr
         surface_reset_target();
     }
     
-    draw = function()
+    static draw = function()
     {
         draw_at(camera_get_view_x(camera), camera_get_view_y(camera));
     }
     
     /// @param x
     /// @param y
-    draw_at = function(_x, _y)
+    static draw_at = function(_x, _y)
     {
         if (freed) return undefined;
         
@@ -93,7 +111,19 @@ function bulb_controller(_camera, _ambient_colour, _self_lighting, _mode) constr
         }
     }
     
-    free_vertex_buffers = function()
+    static free = function()
+    {
+        free_vertex_buffers();
+        free_surface();
+        
+        freed = true;
+    }
+    
+    #endregion
+    
+    #region Update vertex buffers
+    
+    static free_vertex_buffers = function()
     {
         if (wipe_vbuffer != undefined)
         {
@@ -114,7 +144,7 @@ function bulb_controller(_camera, _ambient_colour, _self_lighting, _mode) constr
         }
     }
     
-    free_surface = function()
+    static free_surface = function()
     {
         if ((surface != undefined) && surface_exists(surface))
         {
@@ -123,19 +153,7 @@ function bulb_controller(_camera, _ambient_colour, _self_lighting, _mode) constr
         }
     }
     
-    free = function()
-    {
-        free_vertex_buffers();
-        free_surface();
-        
-        freed = true;
-    }
-    
-    #endregion
-    
-    #region Update vertex buffers
-    
-    update_vertex_buffers = function()
+    static update_vertex_buffers = function()
     {
         if (freed) return undefined;
         
@@ -179,12 +197,12 @@ function bulb_controller(_camera, _ambient_colour, _self_lighting, _mode) constr
             if (mode == BULB_MODE.SOFT_BM_ADD)
             {
                 vertex_begin(static_vbuffer, global.__bulb_format_3d_texture);
-                with (obj_static_occluder) __bulb_add_occlusion_soft(_static_vbuffer);
+                with (BULB_STATIC_OCCLUDER_PARENT) __bulb_add_occlusion_soft(_static_vbuffer);
             }
             else
             {
                 vertex_begin(static_vbuffer, global.__bulb_format_3d_colour);
-                with (obj_static_occluder) __bulb_add_occlusion_hard(_static_vbuffer);
+                with (BULB_STATIC_OCCLUDER_PARENT) __bulb_add_occlusion_hard(_static_vbuffer);
             }
             
             vertex_end(static_vbuffer);
@@ -201,7 +219,7 @@ function bulb_controller(_camera, _ambient_colour, _self_lighting, _mode) constr
         if (mode == BULB_MODE.SOFT_BM_ADD)
         {
             vertex_begin(_dynamic_vbuffer, global.__bulb_format_3d_texture);
-            with (obj_dynamic_occluder)
+            with (BULB_DYNAMIC_OCCLUDER_PARENT)
             {
                 __bulb_on_screen = visible && __bulb_rect_in_rect(bbox_left, bbox_top,
                                                                   bbox_right, bbox_bottom,
@@ -213,7 +231,7 @@ function bulb_controller(_camera, _ambient_colour, _self_lighting, _mode) constr
         else
         {
             vertex_begin(_dynamic_vbuffer, global.__bulb_format_3d_colour);
-            with (obj_dynamic_occluder)
+            with (BULB_DYNAMIC_OCCLUDER_PARENT)
             {
                 __bulb_on_screen = visible && __bulb_rect_in_rect(bbox_left, bbox_top,
                                                                   bbox_right, bbox_bottom,
@@ -230,7 +248,7 @@ function bulb_controller(_camera, _ambient_colour, _self_lighting, _mode) constr
     
     #region Accumulate lights
     
-    accumulate_lights = function(_camera_l, _camera_t, _camera_r, _camera_b, _camera_cx, _camera_cy, _camera_w, _camera_h)
+    static accumulate_lights = function(_camera_l, _camera_t, _camera_r, _camera_b, _camera_cx, _camera_cy, _camera_w, _camera_h)
     {
         if (freed) return undefined;
         
@@ -304,7 +322,7 @@ function bulb_controller(_camera, _ambient_colour, _self_lighting, _mode) constr
     
     #region Accumulate soft lights
     
-    accumulate_soft_lights = function(_camera_l, _camera_t, _camera_r, _camera_b, _camera_cx, _camera_cy, _camera_w, _camera_h, _vp_matrix)
+    static accumulate_soft_lights = function(_camera_l, _camera_t, _camera_r, _camera_b, _camera_cx, _camera_cy, _camera_w, _camera_h, _vp_matrix)
     {
         if (freed) return undefined;
         
@@ -331,7 +349,7 @@ function bulb_controller(_camera, _ambient_colour, _self_lighting, _mode) constr
         // yOut = (y - z*(camY - lightY) - camY) / camH
         // zOut = 0
         
-        with (obj_par_light)
+        with (BULB_LIGHT_PARENT)
         {
             __bulb_on_screen = visible && __bulb_rect_in_rect(x - __bulb_light_width_half, y - __bulb_light_height_half,
                                                               x + __bulb_light_width_half, y + __bulb_light_height_half,
@@ -397,7 +415,7 @@ function bulb_controller(_camera, _ambient_colour, _self_lighting, _mode) constr
     
     #region Accumulate hard lights
     
-    accumulate_hard_lights = function(_camera_l, _camera_t, _camera_r, _camera_b, _camera_cx, _camera_cy, _camera_w, _camera_h, _vp_matrix)
+    static accumulate_hard_lights = function(_camera_l, _camera_t, _camera_r, _camera_b, _camera_cx, _camera_cy, _camera_w, _camera_h, _vp_matrix)
     {
         if (freed) return undefined;
         
@@ -438,7 +456,7 @@ function bulb_controller(_camera, _ambient_colour, _self_lighting, _mode) constr
             var _reset_shader = __shd_bulb_pass_through;
         }
         
-        with (obj_par_light)
+        with (BULB_LIGHT_PARENT)
         {
             __bulb_on_screen = visible && __bulb_rect_in_rect(x - __bulb_light_width_half, y - __bulb_light_height_half,
                                                               x + __bulb_light_width_half, y + __bulb_light_height_half,
