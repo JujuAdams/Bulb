@@ -1,21 +1,17 @@
-/// Initialises the necessary variables for a light object to use the lighting system.
-/// Must be called before bulb_light_free().
-/// 
-/// return: Nothing
-/// 
-/// This code and engine are provided under the Creative Commons "Attribution - NonCommerical - ShareAlike" international license.
-/// https://creativecommons.org/licenses/by-nc-sa/4.0/
+/// Initialises some variables that describe a light emitter
+/// This function should be called in every instance/object that emits light. The colour/size/rotation of the light is derived from image_xscale, image_blend etc.
 ///
-/// @param deferred
+/// @param [penumbraSize]   The penumbra size for the light emitter, 0 being no penumbra (effectively the "width" of the light)
+///                         This value should be smaller than the smallest occluding instance. Shadows penumbra will only be drawn in BULB_MODE.SOFT_BM_ADD mode
 
-function bulb_set_as_light(_deferred)
+function bulb_set_as_light()
 {
-    light_w             = sprite_get_width( sprite_index);
-    light_h             = sprite_get_height(sprite_index);
-    light_w_half        = 0.5*light_w;
-    light_h_half        = 0.5*light_h;
-    light_on_screen     = true;
-    light_deferred      = _deferred;
-    light_surface       = undefined;
-    light_penumbra_size = BULB_PENUMBRA_SIZE;
+    var _penumbra_size = ((argument_count > 0) && (argument[0] != undefined))? argument[0] : 0;
+    
+    __bulb_light_width         = sprite_get_width(sprite_index);
+    __bulb_light_height        = sprite_get_height(sprite_index);
+    __bulb_light_width_half    = 0.5*__bulb_light_width;
+    __bulb_light_height_half   = 0.5*__bulb_light_height;
+    __bulb_on_screen           = true;
+    __bulb_light_penumbra_size = _penumbra_size;
 }

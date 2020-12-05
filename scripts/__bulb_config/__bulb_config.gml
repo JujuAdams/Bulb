@@ -1,7 +1,4 @@
-#macro BULB_ZFAR                          16000
-#macro BULB_DYNAMIC_BORDER                  256
-#macro BULB_REUSE_DYNAMIC_BUFFER           true
-#macro BULB_CACHE_DYNAMIC_OCCLUDERS       false
-#macro BULB_ALLOW_DEFERRED                 true
-#macro BULB_FLIP_CAMERA_Y            ON_DIRECTX
-#macro BULB_PENUMBRA_SIZE                    20
+#macro BULB_DYNAMIC_OCCLUDER_RANGE   100                  //Distance around the edge of the camera (in pixels) to draw dynamic occluders. Increase this number if you have large dynamic occluders
+#macro BULB_LIGHT_PARENT             obj_par_light        //Parent object to use for light emitters
+#macro BULB_STATIC_OCCLUDER_PARENT   obj_static_occluder  //Parent object to use for static light occluders (i.e. shadow-casters)
+#macro BULB_DYNAMIC_OCCLUDER_PARENT  obj_dynamic_occluder //Parent object to use for dynamic light occluders (i.e. shadow-casters)

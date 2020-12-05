@@ -2,11 +2,11 @@
   "isDnD": false,
   "isCompatibility": false,
   "parent": {
-    "name": "Example",
-    "path": "folders/Example.yy",
+    "name": "(System)",
+    "path": "folders/Bulb/(System).yy",
   },
   "resourceVersion": "1.0",
-  "name": "vertex_cake",
+  "name": "__bulb_add_occlusion_hard",
   "tags": [],
   "resourceType": "GMScript",
 }

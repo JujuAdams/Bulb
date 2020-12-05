@@ -1,34 +1,9 @@
-/// Initialises some variables and an array that describes the occluder
-/// 
-/// This code and engine are provided under the Creative Commons "Attribution - NonCommerical - ShareAlike" international license.
-/// https://creativecommons.org/licenses/by-nc-sa/4.0/
+/// Initialises some variables and an array that describe a occluding (shadow-casting) instance
+/// This function should be called in every instance/object that occludes light
 
 function bulb_set_as_occluder()
 {
-    shadow_geometry_size   = 0;
-    shadow_geometry_count  = 0;
-    arr_shadow_geometry[0] = 0;
-    light_on_screen        = true;
-    
-    if (BULB_CACHE_DYNAMIC_OCCLUDERS)
-    {
-        last_image_angle   = image_angle;
-        last_image_x_scale = image_xscale;
-        last_image_y_scale = image_yscale;
-        
-        var _sin = dsin(image_angle);
-        var _cos = dcos(image_angle);
-        
-        last_x_sin = image_xscale*_sin;
-        last_x_cos = image_xscale*_cos;
-        last_y_sin = image_yscale*_sin;
-        last_y_cos = image_yscale*_cos;
-        
-        light_obstacle_old_x = x;
-        light_obstacle_old_y = y;
-        
-        light_vertex_cache = undefined;
-        
-        light_vertex_cache_dirty = true;
-    }
+    __bulb_edge_count = 0;
+    __bulb_vertex_array = [];
+    __bulb_on_screen    = true;
 }

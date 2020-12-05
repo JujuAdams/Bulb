@@ -2,11 +2,11 @@
   "isDnD": false,
   "isCompatibility": false,
   "parent": {
-    "name": "Bulb",
-    "path": "folders/Bulb.yy",
+    "name": "(System)",
+    "path": "folders/Bulb/(System).yy",
   },
   "resourceVersion": "1.0",
-  "name": "bulb_occluder_add_geometry",
+  "name": "__bulb_add_occlusion_soft",
   "tags": [],
   "resourceType": "GMScript",
 }

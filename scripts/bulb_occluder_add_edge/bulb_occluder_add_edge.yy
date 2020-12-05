@@ -2,11 +2,11 @@
   "isDnD": false,
   "isCompatibility": false,
   "parent": {
-    "name": "Example",
-    "path": "folders/Example.yy",
+    "name": "Bulb",
+    "path": "folders/Bulb.yy",
   },
   "resourceVersion": "1.0",
-  "name": "vertex_cake",
+  "name": "bulb_occluder_add_edge",
   "tags": [],
   "resourceType": "GMScript",
 }
