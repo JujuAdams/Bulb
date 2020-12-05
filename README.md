@@ -1,4 +1,4 @@
-<h1 align="center">Bulb 18.0.0</h1>
+<h1 align="center">Bulb 19.0.0</h1>
 
 <p align="center">2D lighting and shadows for GameMaker Studio 2.3.1 by <b>@jujuadams</b></p>
 
