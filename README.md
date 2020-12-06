@@ -4,7 +4,11 @@
 
 <p align="center">2D lighting and shadows for GameMaker Studio 2.3.1 by <b>@jujuadams</b></p>
 
-<p align="center"><a href="https://github.com/JujuAdams/Bulb/releases/tag/19.0.0">Download the .yymp</a></p>
+<p align="center"><i>Additional contributions from John Leffingwell (@xotmatrix) and Alexey Mihailov (@LexPest)</i></p>
+
+&nbsp;
+
+<p align="center"><a href="https://github.com/JujuAdams/Bulb/releases/tag/19.0.0">Download the .yymps</a></p>
 <p align="center">Chat about Bulb on the <a href="https://discord.gg/8krYCqr">Discord server</a></p>
 
 &nbsp;
