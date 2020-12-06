@@ -9,6 +9,7 @@
 
 &nbsp;
 
-*Additional contributions from John Leffingwell (@xotmatrix) and Alexey Mihailov (@LexPest)*
-
-An extremely efficient polygon-based lighting system, based off of the considerable innovation of John Leffingwell (xot) of GMLscripts.com. The method demonstrated here uses a projection matrix to extend shadow caster vertices to infinity from a focal point; by using a trick with the z-buffer, this can be used to stencil out shadows from a point light source.
+|[![About & Support](https://raw.githubusercontent.com/wiki/JujuAdams/scribble/images/aboutsupport.png)](https://github.com/JujuAdams/Bulb/wiki/About-&-Support)|[![Features](https://raw.githubusercontent.com/wiki/JujuAdams/scribble/images/features.png)](https://github.com/JujuAdams/Bulb/wiki/Features)|[![Setting Up](https://raw.githubusercontent.com/wiki/JujuAdams/scribble/images/settingup.png)](https://github.com/JujuAdams/Bulb/wiki/Setting-Up)|[![GML Functions](https://raw.githubusercontent.com/wiki/JujuAdams/scribble/images/functions.png)](https://github.com/JujuAdams/Bulb/wiki/GML-Functions)|
+|----------------------|----------------------|----------------------|----------------------|
+|<p align="center">[About & Support](https://github.com/JujuAdams/Bulb/wiki/About-&-Support)</p>|<p align="center">[Features](https://github.com/JujuAdams/Bulb/wiki/Features)</p>|<p align="center">[Setting Up](https://github.com/JujuAdams/Bulb/wiki/Setting-Up)</p>|<p align="center">[GML Functions](https://github.com/JujuAdams/Bulb/wiki/GML-Functions)</p>|
+|Who made Bulb and how to get help| Synopsis of Bulb's features | Basic setup guide for new users | Every Bulb method and function|
