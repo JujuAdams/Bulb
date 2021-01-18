@@ -1,7 +1,7 @@
 {
   "option_windows_display_name": "Bulb",
   "option_windows_executable_name": "${project_name}",
-  "option_windows_version": "19.0.0.0",
+  "option_windows_version": "19.2.0.0",
   "option_windows_company_info": "Juju Adams",
   "option_windows_product_info": "Bulb",
   "option_windows_copyright_info": "@jujuadams 2020",

@@ -1,6 +1,6 @@
 <p align="center"><img src="https://raw.githubusercontent.com/JujuAdams/Bulb/master/LOGO.png" style="display:block; margin:auto; width:300px"></p>
 
-<h1 align="center">19.0.0</h1>
+<h1 align="center">19.2.0</h1>
 
 <p align="center">2D lighting and shadows for GameMaker Studio 2.3.1 by <b>@jujuadams</b></p>
 
@@ -8,7 +8,7 @@
 
 &nbsp;
 
-<p align="center"><a href="https://github.com/JujuAdams/Bulb/releases/tag/19.0.0">Download the .yymps</a></p>
+<p align="center"><a href="https://github.com/JujuAdams/Bulb/releases/tag/19.2.0">Download the .yymps</a></p>
 <p align="center">Chat about Bulb on the <a href="https://discord.gg/8krYCqr">Discord server</a></p>
 
 &nbsp;

@@ -564,10 +564,14 @@ function bulb_renderer(_camera, _ambient_colour, _self_lighting, _smooth, _mode)
 
 #region Internal Macros + Helper Functions
 
-#macro __BULB_ON_DIRECTX      ((os_type == os_windows) || (os_type == os_xboxone) || (os_type == os_uwp) || (os_type == os_winphone) || (os_type == os_win8native))
-#macro __BULB_ZFAR            16000
-#macro __BULB_FLIP_CAMERA_Y   __BULB_ON_DIRECTX
-#macro __BULB_PARTIAL_CLEAR   true
+#macro __BULB_VERSION        "19.2.0"
+#macro __BULB_DATE           "2020-01-18"
+#macro __BULB_ON_DIRECTX     ((os_type == os_windows) || (os_type == os_xboxone) || (os_type == os_uwp) || (os_type == os_winphone) || (os_type == os_win8native))
+#macro __BULB_ZFAR           16000
+#macro __BULB_FLIP_CAMERA_Y  __BULB_ON_DIRECTX
+#macro __BULB_PARTIAL_CLEAR  true
+
+__bulb_trace("Welcome to Bulb by @jujuadams! This is version " + __BULB_VERSION + ", " + __BULB_DATE);
 
 //Create a couple vertex formats
 vertex_format_begin();
