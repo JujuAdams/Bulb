@@ -19,6 +19,7 @@
 /// @param camera          Camera to use as viewport for the lighting render
 /// @param ambientColour   Background "black" colour
 /// @param selfLighting    Whether to allow light into an occluder but not out. This lets occluding objects get lit up but still cast shadows
+/// @param smooth          Whether to render lights with texture filtering on, smoothing out the resulting image
 /// @param mode            Rendering mode to use, from the BULB_MODE enum (see below)
 
 enum BULB_MODE
@@ -33,7 +34,7 @@ enum BULB_MODE
 
 #region Renderer class
 
-function bulb_renderer(_camera, _ambient_colour, _self_lighting, _mode) constructor
+function bulb_renderer(_camera, _ambient_colour, _self_lighting, _smooth, _mode) constructor
 {
     //Assign the camera used to draw the lights
     camera = _camera;
@@ -44,6 +45,9 @@ function bulb_renderer(_camera, _ambient_colour, _self_lighting, _mode) construc
     //If culling is switched on, shadows will only be cast from the rear faces of occluders
     //This requires careful object placement as not to create weird graphical glitches
     self_lighting = _self_lighting;
+    
+    //The smoothing mode controls texture filtering both when accumulating lights and when drawing the resulting surface
+    smooth = _smooth;
     
     mode = _mode;
     freed = false;
@@ -82,12 +86,19 @@ function bulb_renderer(_camera, _ambient_colour, _self_lighting, _mode) construc
         }
         
         surface_set_target(surface);
+        
+        //Record the current texture filter state, then set our new filter state
+        var _old_tex_filter = gpu_get_tex_filter();
+        gpu_set_tex_filter(smooth);
     
         //Clear the surface with the ambient colour
         draw_clear(ambient_colour);
         
         //If we're not forcing deferred rendering everywhere, update those lights
         accumulate_lights(_camera_l, _camera_t, _camera_r, _camera_b, _camera_cx, _camera_cy, _camera_w, _camera_h);
+        
+        //Restore the old filter state
+        gpu_set_tex_filter(_old_tex_filter);
         
         surface_reset_target();
     }
@@ -105,9 +116,20 @@ function bulb_renderer(_camera, _ambient_colour, _self_lighting, _mode) construc
         
         if ((surface != undefined) && surface_exists(surface))
         {
+            //Record the current texture filter state, then set our new filter state
+            var _old_tex_filter = gpu_get_tex_filter();
+            gpu_set_tex_filter(smooth);
+            
             gpu_set_blendmode_ext(bm_dest_color, bm_zero);
+            gpu_set_colorwriteenable(true, true, true, false);
+            
             draw_surface(surface, _x, _y);
+            
             gpu_set_blendmode(bm_normal);
+            gpu_set_colorwriteenable(true, true, true, true);
+            
+            //Restore the old filter state
+            gpu_set_tex_filter(_old_tex_filter);
         }
     }
     
