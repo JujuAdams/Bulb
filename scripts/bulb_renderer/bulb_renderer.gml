@@ -358,55 +358,66 @@ function bulb_renderer(_camera, _ambient_colour, _self_lighting, _mode) construc
             //If this light is active, do some drawing
             if (__bulb_on_screen)
             {
-                gpu_set_colorwriteenable(false, false, false, true);
-                
-                //Clear alpha channel
-                gpu_set_blendmode(bm_subtract);
-                
-                if (__BULB_PARTIAL_CLEAR)
+                if (__bulb_cast_shadows)
                 {
+                    gpu_set_colorwriteenable(false, false, false, true);
+                    
+                    //Clear alpha channel
+                    gpu_set_blendmode(bm_subtract);
+                
+                    if (__BULB_PARTIAL_CLEAR)
+                    {
+                        draw_sprite_ext(sprite_index, image_index,
+                                        x - _camera_l, y - _camera_t,
+                                        image_xscale, image_yscale, image_angle,
+                                        c_black, 1);
+                    }
+                    else
+                    {
+                        vertex_submit(_wipe_vbuffer, pr_trianglelist, -1);
+                    }
+                    
+                    //Render shadows
+                    shader_set(__shd_bulb_soft_shadows);
+                    gpu_set_blendmode(bm_add);
+                    _proj_matrix[@  8] = x;
+                    _proj_matrix[@  9] = y;
+                    _proj_matrix[@ 10] = __bulb_light_penumbra_size;
+                    matrix_set(matrix_projection, _proj_matrix);
+                    vertex_submit(_static_vbuffer,  pr_trianglelist, -1);
+                    vertex_submit(_dynamic_vbuffer, pr_trianglelist, -1);
+                    
+                    //Draw light sprite
+                    shader_reset();
+                    matrix_set(matrix_projection, _vp_matrix);
+                    
+                    if (image_alpha < 1.0)
+                    {
+                        //If this light is fading out, adjust the destination alpha channel
+                        //TODO - Do this earlier during the wipe phase and before shadow casting
+                        gpu_set_blendmode_ext(bm_src_alpha, bm_one);
+                        draw_sprite_ext(sprite_index, image_index,
+                                        x - _camera_l, y - _camera_t,
+                                        image_xscale, image_yscale, image_angle,
+                                        image_blend, 1.0 - image_alpha);
+                    }
+                    
+                    gpu_set_colorwriteenable(true, true, true, false);
+                    gpu_set_blendmode_ext(bm_inv_dest_alpha, bm_one);
+                    
                     draw_sprite_ext(sprite_index, image_index,
                                     x - _camera_l, y - _camera_t,
                                     image_xscale, image_yscale, image_angle,
-                                    c_black, 1);
+                                    image_blend, image_alpha);
                 }
                 else
                 {
-                    vertex_submit(_wipe_vbuffer, pr_trianglelist, -1);
-                }
-                
-                //Render shadows
-                shader_set(__shd_bulb_soft_shadows);
-                gpu_set_blendmode(bm_add);
-                _proj_matrix[@  8] = x;
-                _proj_matrix[@  9] = y;
-                _proj_matrix[@ 10] = __bulb_light_penumbra_size;
-                matrix_set(matrix_projection, _proj_matrix);
-                vertex_submit(_static_vbuffer,  pr_trianglelist, -1);
-                vertex_submit(_dynamic_vbuffer, pr_trianglelist, -1);
-                
-                //Draw light sprite
-                shader_reset();
-                matrix_set(matrix_projection, _vp_matrix);
-                
-                if (image_alpha < 1.0)
-                {
-                    //If this light is fading out, adjust the destination alpha channel
-                    //TODO - Do this earlier during the wipe phase and before shadow casting
-                    gpu_set_blendmode_ext(bm_src_alpha, bm_one);
+                    gpu_set_blendmode(bm_add);
                     draw_sprite_ext(sprite_index, image_index,
                                     x - _camera_l, y - _camera_t,
                                     image_xscale, image_yscale, image_angle,
-                                    image_blend, 1.0 - image_alpha);
+                                    image_blend, image_alpha);
                 }
-                
-                gpu_set_colorwriteenable(true, true, true, false);
-                gpu_set_blendmode_ext(bm_inv_dest_alpha, bm_one);
-                
-                draw_sprite_ext(sprite_index, image_index,
-                                x - _camera_l, y - _camera_t,
-                                image_xscale, image_yscale, image_angle,
-                                image_blend, image_alpha);
             }
         }
     }
@@ -456,6 +467,9 @@ function bulb_renderer(_camera, _ambient_colour, _self_lighting, _mode) construc
             var _reset_shader = __shd_bulb_pass_through;
         }
         
+        shader_set(_reset_shader);
+        matrix_set(matrix_projection, _vp_matrix);
+        
         with (BULB_LIGHT_PARENT)
         {
             __bulb_on_screen = visible && __bulb_rect_in_rect(x - __bulb_light_width_half, y - __bulb_light_height_half,
@@ -465,42 +479,53 @@ function bulb_renderer(_camera, _ambient_colour, _self_lighting, _mode) construc
             //If this light is active, do some drawing
             if (__bulb_on_screen)
             {
-                //Draw shadow stencil
-                gpu_set_zfunc(cmpfunc_always);
-                gpu_set_colorwriteenable(false, false, false, false);
-                
-                //Reset zbuffer
-                if (__BULB_PARTIAL_CLEAR)
+                if (__bulb_cast_shadows)
                 {
+                    //Draw shadow stencil
+                    gpu_set_zfunc(cmpfunc_always);
+                    gpu_set_colorwriteenable(false, false, false, false);
+                    
+                    //Reset zbuffer
+                    if (__BULB_PARTIAL_CLEAR)
+                    {
+                        draw_sprite_ext(sprite_index, image_index,
+                                        x - _camera_l, y - _camera_t,
+                                        image_xscale, image_yscale, image_angle,
+                                        c_black, 1);
+                        shader_set(__shd_bulb_hard_shadows);
+                    }
+                    else
+                    {
+                        shader_set(__shd_bulb_hard_shadows);
+                        vertex_submit(_wipe_vbuffer, pr_trianglelist, -1);
+                    }
+                    
+                    //Render shadows
+                    _proj_matrix[@ 8] = _transformed_cam_x - x*_inv_camera_w;
+                    _proj_matrix[@ 9] = _transformed_cam_y - y*_inv_camera_h;
+                    matrix_set(matrix_projection, _proj_matrix);
+                    vertex_submit(_static_vbuffer,  pr_trianglelist, -1);
+                    vertex_submit(_dynamic_vbuffer, pr_trianglelist, -1);
+                    
+                    //Draw light sprite
+                    shader_set(_reset_shader);
+                    gpu_set_zfunc(cmpfunc_lessequal);
+                    gpu_set_colorwriteenable(true, true, true, false);
+                    matrix_set(matrix_projection, _vp_matrix);
+                    
                     draw_sprite_ext(sprite_index, image_index,
                                     x - _camera_l, y - _camera_t,
                                     image_xscale, image_yscale, image_angle,
-                                    c_black, 1);
-                    shader_set(__shd_bulb_hard_shadows);
+                                    image_blend, image_alpha);
                 }
                 else
                 {
-                    shader_set(__shd_bulb_hard_shadows);
-                    vertex_submit(_wipe_vbuffer, pr_trianglelist, -1);
+                    gpu_set_zfunc(cmpfunc_always);
+                    draw_sprite_ext(sprite_index, image_index,
+                                    x - _camera_l, y - _camera_t,
+                                    image_xscale, image_yscale, image_angle,
+                                    image_blend, image_alpha);
                 }
-                 
-                //Render shadows
-                _proj_matrix[@ 8] = _transformed_cam_x - x*_inv_camera_w;
-                _proj_matrix[@ 9] = _transformed_cam_y - y*_inv_camera_h;
-                matrix_set(matrix_projection, _proj_matrix);
-                vertex_submit(_static_vbuffer,  pr_trianglelist, -1);
-                vertex_submit(_dynamic_vbuffer, pr_trianglelist, -1);
-                
-                //Draw light sprite
-                shader_set(_reset_shader);
-                gpu_set_zfunc(cmpfunc_lessequal);
-                gpu_set_colorwriteenable(true, true, true, false);
-                matrix_set(matrix_projection, _vp_matrix);
-                
-                draw_sprite_ext(sprite_index, image_index,
-                                x - _camera_l, y - _camera_t,
-                                image_xscale, image_yscale, image_angle,
-                                image_blend, image_alpha);
             }
         }
         
