@@ -6,7 +6,7 @@
     "path": "folders/Bulb.yy",
   },
   "resourceVersion": "1.0",
-  "name": "bulb_set_as_light",
+  "name": "bulb_create_light",
   "tags": [],
   "resourceType": "GMScript",
 }

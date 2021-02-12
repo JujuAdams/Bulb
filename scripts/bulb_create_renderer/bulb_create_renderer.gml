@@ -47,9 +47,9 @@ function __bulb_class_renderer() constructor
     surface_width  = undefined;
     surface_height = undefined;
     
-    static_occluders  = [];
-    dynamic_occluders = [];
-    lights            = [];
+    static_occluders_array  = [];
+    dynamic_occluders_array = [];
+    lights_array            = [];
     
     
     #region Public Methods
@@ -355,75 +355,89 @@ function __bulb_class_renderer() constructor
         // yOut = (y - z*(camY - lightY) - camY) / camH
         // zOut = 0
         
-        with (BULB_LIGHT_PARENT)
+        var _i = 0;
+        repeat(array_length(lights_array))
         {
-            __bulb_on_screen = visible && __bulb_rect_in_rect(x - __bulb_light_width_half, y - __bulb_light_height_half,
-                                                              x + __bulb_light_width_half, y + __bulb_light_height_half,
-                                                              _camera_l, _camera_t, _camera_r, _camera_b);
-            
-            //If this light is active, do some drawing
-            if (__bulb_on_screen)
+            var _weak = lights_array[_i];
+            if (!weak_ref_alive(_weak))
             {
-                if (__bulb_cast_shadows)
+                array_delete(lights_array, 1, 1);
+            }
+            else
+            {
+                with(_weak.ref)
                 {
-                    gpu_set_colorwriteenable(false, false, false, true);
+                    __on_screen = visible && __bulb_rect_in_rect(x - __width_half, y - __height_half,
+                                                                 x + __width_half, y + __height_half,
+                                                                 _camera_l, _camera_t, _camera_r, _camera_b);
                     
-                    //Clear alpha channel
-                    gpu_set_blendmode(bm_subtract);
+                    //If this light is active, do some drawing
+                    if (__on_screen)
+                    {
+                        if (cast_shadows)
+                        {
+                            gpu_set_colorwriteenable(false, false, false, true);
+                            
+                            //Clear alpha channel
+                            gpu_set_blendmode(bm_subtract);
+                            
+                            if (__BULB_PARTIAL_CLEAR)
+                            {
+                                draw_sprite_ext(sprite, image,
+                                                x - _camera_l, y - _camera_t,
+                                                xscale, yscale, angle,
+                                                c_black, 1);
+                            }
+                            else
+                            {
+                                vertex_submit(_wipe_vbuffer, pr_trianglelist, -1);
+                            }
+                            
+                            //Render shadows
+                            shader_set(__shd_bulb_soft_shadows);
+                            gpu_set_blendmode(bm_add);
+                            _proj_matrix[@  8] = x;
+                            _proj_matrix[@  9] = y;
+                            _proj_matrix[@ 10] = penumbra_size;
+                            matrix_set(matrix_projection, _proj_matrix);
+                            vertex_submit(_static_vbuffer,  pr_trianglelist, -1);
+                            vertex_submit(_dynamic_vbuffer, pr_trianglelist, -1);
+                            
+                            //Draw light sprite
+                            shader_reset();
+                            matrix_set(matrix_projection, _vp_matrix);
+                            
+                            if (alpha < 1.0)
+                            {
+                                //If this light is fading out, adjust the destination alpha channel
+                                //TODO - Do this earlier during the wipe phase and before shadow casting
+                                gpu_set_blendmode_ext(bm_src_alpha, bm_one);
+                                draw_sprite_ext(sprite, image,
+                                                x - _camera_l, y - _camera_t,
+                                                xscale, yscale, angle,
+                                                blend, 1.0 - alpha);
+                            }
+                            
+                            gpu_set_colorwriteenable(true, true, true, false);
+                            gpu_set_blendmode_ext(bm_inv_dest_alpha, bm_one);
+                            
+                            draw_sprite_ext(sprite, image,
+                                            x - _camera_l, y - _camera_t,
+                                            xscale, yscale, angle,
+                                            blend, alpha);
+                        }
+                        else
+                        {
+                            gpu_set_blendmode(bm_add);
+                            draw_sprite_ext(sprite, image,
+                                            x - _camera_l, y - _camera_t,
+                                            xscale, yscale, angle,
+                                            blend, alpha);
+                        }
+                    }
+                }
                 
-                    if (__BULB_PARTIAL_CLEAR)
-                    {
-                        draw_sprite_ext(sprite_index, image_index,
-                                        x - _camera_l, y - _camera_t,
-                                        image_xscale, image_yscale, image_angle,
-                                        c_black, 1);
-                    }
-                    else
-                    {
-                        vertex_submit(_wipe_vbuffer, pr_trianglelist, -1);
-                    }
-                    
-                    //Render shadows
-                    shader_set(__shd_bulb_soft_shadows);
-                    gpu_set_blendmode(bm_add);
-                    _proj_matrix[@  8] = x;
-                    _proj_matrix[@  9] = y;
-                    _proj_matrix[@ 10] = __bulb_light_penumbra_size;
-                    matrix_set(matrix_projection, _proj_matrix);
-                    vertex_submit(_static_vbuffer,  pr_trianglelist, -1);
-                    vertex_submit(_dynamic_vbuffer, pr_trianglelist, -1);
-                    
-                    //Draw light sprite
-                    shader_reset();
-                    matrix_set(matrix_projection, _vp_matrix);
-                    
-                    if (image_alpha < 1.0)
-                    {
-                        //If this light is fading out, adjust the destination alpha channel
-                        //TODO - Do this earlier during the wipe phase and before shadow casting
-                        gpu_set_blendmode_ext(bm_src_alpha, bm_one);
-                        draw_sprite_ext(sprite_index, image_index,
-                                        x - _camera_l, y - _camera_t,
-                                        image_xscale, image_yscale, image_angle,
-                                        image_blend, 1.0 - image_alpha);
-                    }
-                    
-                    gpu_set_colorwriteenable(true, true, true, false);
-                    gpu_set_blendmode_ext(bm_inv_dest_alpha, bm_one);
-                    
-                    draw_sprite_ext(sprite_index, image_index,
-                                    x - _camera_l, y - _camera_t,
-                                    image_xscale, image_yscale, image_angle,
-                                    image_blend, image_alpha);
-                }
-                else
-                {
-                    gpu_set_blendmode(bm_add);
-                    draw_sprite_ext(sprite_index, image_index,
-                                    x - _camera_l, y - _camera_t,
-                                    image_xscale, image_yscale, image_angle,
-                                    image_blend, image_alpha);
-                }
+                ++_i;
             }
         }
     }

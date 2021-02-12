@@ -1,1 +1,0 @@
-bulb_set_as_light(30);

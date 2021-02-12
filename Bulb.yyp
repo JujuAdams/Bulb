@@ -1,5 +1,6 @@
 {
   "resources": [
+    {"id":{"name":"bulb_create_light","path":"scripts/bulb_create_light/bulb_create_light.yy",},"order":2,},
     {"id":{"name":"spr_static_block","path":"sprites/spr_static_block/spr_static_block.yy",},"order":0,},
     {"id":{"name":"__bulb_add_occlusion_soft","path":"scripts/__bulb_add_occlusion_soft/__bulb_add_occlusion_soft.yy",},"order":9,},
     {"id":{"name":"spr_dynamic_block","path":"sprites/spr_dynamic_block/spr_dynamic_block.yy",},"order":1,},
@@ -16,9 +17,8 @@
     {"id":{"name":"vertex_cake","path":"scripts/vertex_cake/vertex_cake.yy",},"order":2,},
     {"id":{"name":"__bulb_config","path":"scripts/__bulb_config/__bulb_config.yy",},"order":0,},
     {"id":{"name":"shd_premultiply_alpha","path":"shaders/shd_premultiply_alpha/shd_premultiply_alpha.yy",},"order":6,},
-    {"id":{"name":"bulb_set_as_occluder","path":"scripts/bulb_set_as_occluder/bulb_set_as_occluder.yy",},"order":3,},
-    {"id":{"name":"bulb_occluder_add_edge","path":"scripts/bulb_occluder_add_edge/bulb_occluder_add_edge.yy",},"order":4,},
-    {"id":{"name":"bulb_set_as_light","path":"scripts/bulb_set_as_light/bulb_set_as_light.yy",},"order":2,},
+    {"id":{"name":"bulb_set_as_occluder","path":"scripts/bulb_set_as_occluder/bulb_set_as_occluder.yy",},"order":4,},
+    {"id":{"name":"bulb_occluder_add_edge","path":"scripts/bulb_occluder_add_edge/bulb_occluder_add_edge.yy",},"order":5,},
     {"id":{"name":"__bulb_add_occlusion_hard","path":"scripts/__bulb_add_occlusion_hard/__bulb_add_occlusion_hard.yy",},"order":8,},
     {"id":{"name":"__shd_bulb_hard_shadows","path":"shaders/__shd_bulb_hard_shadows/__shd_bulb_hard_shadows.yy",},"order":3,},
     {"id":{"name":"bulb_create_renderer","path":"scripts/bulb_create_renderer/bulb_create_renderer.yy",},"order":1,},
@@ -34,7 +34,6 @@
     {"id":{"name":"obj_par_occluder","path":"objects/obj_par_occluder/obj_par_occluder.yy",},"order":5,},
     {"id":{"name":"obj_static_occluder","path":"objects/obj_static_occluder/obj_static_occluder.yy",},"order":7,},
     {"id":{"name":"obj_dynamic_occluder","path":"objects/obj_dynamic_occluder/obj_dynamic_occluder.yy",},"order":9,},
-    {"id":{"name":"obj_par_light","path":"objects/obj_par_light/obj_par_light.yy",},"order":11,},
     {"id":{"name":"obj_light_discoooo","path":"objects/obj_light_discoooo/obj_light_discoooo.yy",},"order":13,},
     {"id":{"name":"obj_light_plasma","path":"objects/obj_light_plasma/obj_light_plasma.yy",},"order":15,},
     {"id":{"name":"obj_light_torch","path":"objects/obj_light_torch/obj_light_torch.yy",},"order":17,},
@@ -74,7 +73,7 @@
     {"folderPath":"folders/Rooms.yy","order":3,"resourceVersion":"1.0","name":"Rooms","tags":[],"resourceType":"GMFolder",},
     {"folderPath":"folders/Example.yy","order":2,"resourceVersion":"1.0","name":"Example","tags":[],"resourceType":"GMFolder",},
     {"folderPath":"folders/Example/Unused.yy","order":7,"resourceVersion":"1.0","name":"Unused","tags":[],"resourceType":"GMFolder",},
-    {"folderPath":"folders/Bulb/(System).yy","order":5,"resourceVersion":"1.0","name":"(System)","tags":[],"resourceType":"GMFolder",},
+    {"folderPath":"folders/Bulb/(System).yy","order":6,"resourceVersion":"1.0","name":"(System)","tags":[],"resourceType":"GMFolder",},
   ],
   "AudioGroups": [
     {"targets":-1,"resourceVersion":"1.3","name":"audiogroup_default","resourceType":"GMAudioGroup",},
