@@ -14,9 +14,9 @@ function debug_controls()
     
     if (keyboard_check_pressed(ord("1"))) with(obj_light_discoooo) visible = !visible;
     
-    if (keyboard_check_pressed(ord("2"))) lighting.self_lighting = !lighting.self_lighting;
+    //if (keyboard_check_pressed(ord("2"))) lighting.self_lighting = !lighting.self_lighting;
     
-    if (keyboard_check_pressed(ord("3")))
+    if (keyboard_check_pressed(ord("2")))
     {
         lighting.mode = (lighting.mode + 1) mod BULB_MODE.__SIZE;
         lighting.free_vertex_buffers();

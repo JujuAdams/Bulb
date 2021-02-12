@@ -6,7 +6,7 @@
     "path": "folders/Bulb.yy",
   },
   "resourceVersion": "1.0",
-  "name": "bulb_renderer",
+  "name": "bulb_create_renderer",
   "tags": [],
   "resourceType": "GMScript",
 }

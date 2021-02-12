@@ -1,55 +1,41 @@
-/// Constructor for a Bulb renderer - a struct that handles light/shadow rendering
-/// Bulb renderers are created using the new struct behaviour in GMS2.3 - https://www.yoyogames.com/blog/549/gamemaker-studio-2-3-new-gml-features
-/// A Bulb renderer creates a surface when created. Bulb renderers must be freed (using the free()) method to prevent memory leaks
-/// 
-/// A Bulb renderer has the following public methods:
-///   
-///   update()
-///     Updates the internal surface by rendering lights and shadows to the renderer's internal surfaces
-///     
-///   draw()
-///     Convenience function to draw lights/shadows at the camera's position in worldspace
-///     
-///   draw_at(x, y)
-///     Manual drawing function. Coordinates are in worldspace
-///     
-///   free()
-///     Frees memory associated with the renderer. This must be called to prevent memory leaks
-/// 
-/// @param camera          Camera to use as viewport for the lighting render
-/// @param ambientColour   Background "black" colour
-/// @param selfLighting    Whether to allow light into an occluder but not out. This lets occluding objects get lit up but still cast shadows
-/// @param smooth          Whether to render lights with texture filtering on, smoothing out the resulting image
-/// @param mode            Rendering mode to use, from the BULB_MODE enum (see below)
+/// @param ambientColour
+/// @param mode
+/// @param smooth
 
 enum BULB_MODE
 {
-    HARD_BM_ADD, //Basic hard shadows with z-buffer stenciling, using the typical bm_add blend mode
-    HARD_BM_MAX, //As above, but using bm_max to reduce bloom
-    SOFT_BM_ADD, //Soft shadows using bm_add. N.B. This isn't compatible with self lighting
+    HARD_BM_ADD,
+    HARD_BM_ADD_SELFLIGHTING,
+    HARD_BM_MAX,
+    HARD_BM_MAX_SELFLIGHTING,
+    SOFT_BM_ADD,
     __SIZE
 }
 
-
-
-#region Renderer class
-
-function bulb_renderer(_camera, _ambient_colour, _self_lighting, _smooth, _mode) constructor
+function bulb_create_renderer(_ambient_colour, _mode, _smooth)
 {
-    //Assign the camera used to draw the lights
-    camera = _camera;
-    
+    with(new __bulb_class_renderer())
+    {
+        ambient_colour = _ambient_colour;
+        mode           = _mode;
+        smooth         = _smooth;
+        return self;
+    }
+}
+
+function __bulb_class_renderer() constructor
+{
     //Assign the ambient colour used for the darkest areas of the screen. This can be changed on the fly
-    ambient_colour = _ambient_colour;
+    ambient_colour = c_black;
     
     //If culling is switched on, shadows will only be cast from the rear faces of occluders
     //This requires careful object placement as not to create weird graphical glitches
-    self_lighting = _self_lighting;
+    self_lighting = false;
     
     //The smoothing mode controls texture filtering both when accumulating lights and when drawing the resulting surface
-    smooth = _smooth;
+    smooth = false;
     
-    mode = _mode;
+    mode = BULB_MODE.HARD_BM_ADD;
     freed = false;
     
     //Initialise variables used and updated in bulb_build()
@@ -58,34 +44,38 @@ function bulb_renderer(_camera, _ambient_colour, _self_lighting, _smooth, _mode)
     wipe_vbuffer    = undefined; //This vertex buffer is used to reset the z-buffer during accumulation of non-deferred lights
     surface         = undefined; //Screen-space surface for final accumulation of lights
     
+    surface_width  = undefined;
+    surface_height = undefined;
+    
+    static_occluders  = [];
+    dynamic_occluders = [];
+    lights            = [];
     
     
     #region Public Methods
     
-    static update = function()
+    static update_from_camera = function(_camera)
+    {
+        return update(camera_get_view_x(_camera), camera_get_view_y(_camera), camera_get_view_width(_camera), camera_get_view_height(_camera));
+    }
+    
+    static update = function(_camera_l, _camera_t, _camera_w, _camera_h)
     {
         if (freed) return undefined;
         
-        //Discover camera variables
-        var _camera_l  = camera_get_view_x(camera);
-        var _camera_t  = camera_get_view_y(camera);
-        var _camera_w  = camera_get_view_width(camera);
-        var _camera_h  = camera_get_view_height(camera);
+        if (surface_width  == undefined) surface_width  = _camera_w;
+        if (surface_height == undefined) surface_height = _camera_h;
+        
         var _camera_r  = _camera_l + _camera_w;
         var _camera_b  = _camera_t + _camera_h;
         var _camera_cx = _camera_l + 0.5*_camera_w;
         var _camera_cy = _camera_t + 0.5*_camera_h;
         
         //Construct our wipe/static/dynamic vertex buffers
-        update_vertex_buffers();
+        __update_vertex_buffers(_camera_l, _camera_t, _camera_r, _camera_b, _camera_w, _camera_h);
         
         //Create accumulating lighting surface
-        if ((surface == undefined)|| !surface_exists(surface))
-        {
-            surface = surface_create(_camera_w, _camera_h);
-        }
-        
-        surface_set_target(surface);
+        surface_set_target(get_surface());
         
         //Record the current texture filter state, then set our new filter state
         var _old_tex_filter = gpu_get_tex_filter();
@@ -103,16 +93,18 @@ function bulb_renderer(_camera, _ambient_colour, _self_lighting, _smooth, _mode)
         surface_reset_target();
     }
     
-    static draw = function()
-    {
-        draw_at(camera_get_view_x(camera), camera_get_view_y(camera));
-    }
-    
     /// @param x
     /// @param y
-    static draw_at = function(_x, _y)
+    /// @param [width]
+    /// @param [height]
+    static draw = function()
     {
         if (freed) return undefined;
+        
+        var _x      = argument[0];
+        var _y      = argument[1];
+        var _width  = ((argument_count > 2) && (argument[2] != undefined))? argument[2] : surface_width;
+        var _height = ((argument_count > 3) && (argument[3] != undefined))? argument[3] : surface_height;
         
         if ((surface != undefined) && surface_exists(surface))
         {
@@ -123,7 +115,7 @@ function bulb_renderer(_camera, _ambient_colour, _self_lighting, _smooth, _mode)
             gpu_set_blendmode_ext(bm_dest_color, bm_zero);
             gpu_set_colorwriteenable(true, true, true, false);
             
-            draw_surface(surface, _x, _y);
+            draw_surface_stretched(surface, _x, _y, _width, _height);
             
             gpu_set_blendmode(bm_normal);
             gpu_set_colorwriteenable(true, true, true, true);
@@ -133,10 +125,40 @@ function bulb_renderer(_camera, _ambient_colour, _self_lighting, _smooth, _mode)
         }
     }
     
+    static get_surface = function()
+    {
+        if (freed) return undefined;
+        if ((surface_width == undefined) || (surface_height == undefined)) return undefined;
+        
+        if ((surface != undefined) && ((surface_get_width(surface) != surface_width) || (surface_get_height(surface) != surface_height)))
+        {
+            surface_free(surface);
+            surface = undefined;
+        }
+        
+        if ((surface == undefined) || !surface_exists(surface))
+        {
+            surface = surface_create(surface_width, surface_height);
+            
+            surface_set_target(surface);
+            draw_clear_alpha(c_black, 1.0);
+            surface_reset_target();
+        }
+        
+        return surface;
+    }
+    
+    static clear_static_occluders = function()
+    {
+        if (freed) return undefined;
+        
+        array_resize(static_occluders, 0);
+    }
+    
     static free = function()
     {
-        free_vertex_buffers();
-        free_surface();
+        __free_vertex_buffers();
+        __free_surface();
         
         freed = true;
     }
@@ -145,49 +167,11 @@ function bulb_renderer(_camera, _ambient_colour, _self_lighting, _smooth, _mode)
     
     #region Update vertex buffers
     
-    static free_vertex_buffers = function()
-    {
-        if (wipe_vbuffer != undefined)
-        {
-            vertex_delete_buffer(wipe_vbuffer);
-            wipe_vbuffer = undefined;
-        }
-        
-        if (static_vbuffer != undefined)
-        {
-            vertex_delete_buffer(static_vbuffer);
-            static_vbuffer = undefined;
-        }
-        
-        if (dynamic_vbuffer != undefined)
-        {
-            vertex_delete_buffer(dynamic_vbuffer);
-            dynamic_vbuffer = undefined;
-        }
-    }
-    
-    static free_surface = function()
-    {
-        if ((surface != undefined) && surface_exists(surface))
-        {
-            surface_free(surface);
-            surface = undefined;
-        }
-    }
-    
-    static update_vertex_buffers = function()
+    static __update_vertex_buffers = function(_camera_l, _camera_t, _camera_r, _camera_b, _camera_w, _camera_h)
     {
         if (freed) return undefined;
         
         ///////////Discover camera variables
-        var _camera_w  = camera_get_view_width(camera);
-        var _camera_h  = camera_get_view_height(camera);
-        
-        var _camera_l  = camera_get_view_x(camera);
-        var _camera_t  = camera_get_view_y(camera);
-        var _camera_r  = _camera_l + _camera_w;
-        var _camera_b  = _camera_t + _camera_h;
-        
         var _camera_exp_l = _camera_l - BULB_DYNAMIC_OCCLUDER_RANGE;
         var _camera_exp_t = _camera_t - BULB_DYNAMIC_OCCLUDER_RANGE;
         var _camera_exp_r = _camera_r + BULB_DYNAMIC_OCCLUDER_RANGE;
@@ -555,17 +539,45 @@ function bulb_renderer(_camera, _ambient_colour, _self_lighting, _smooth, _mode)
         gpu_set_zwriteenable(false);
     }
     
+    static __free_vertex_buffers = function()
+    {
+        if (wipe_vbuffer != undefined)
+        {
+            vertex_delete_buffer(wipe_vbuffer);
+            wipe_vbuffer = undefined;
+        }
+        
+        if (static_vbuffer != undefined)
+        {
+            vertex_delete_buffer(static_vbuffer);
+            static_vbuffer = undefined;
+        }
+        
+        if (dynamic_vbuffer != undefined)
+        {
+            vertex_delete_buffer(dynamic_vbuffer);
+            dynamic_vbuffer = undefined;
+        }
+    }
+    
+    static __free_surface = function()
+    {
+        if ((surface != undefined) && surface_exists(surface))
+        {
+            surface_free(surface);
+            surface = undefined;
+        }
+    }
+    
     #endregion
 }
-
-#endregion
 
 
 
 #region Internal Macros + Helper Functions
 
-#macro __BULB_VERSION        "19.2.0"
-#macro __BULB_DATE           "2020-01-18"
+#macro __BULB_VERSION        "20.0.0"
+#macro __BULB_DATE           "2021-02-12"
 #macro __BULB_ON_DIRECTX     ((os_type == os_windows) || (os_type == os_xboxone) || (os_type == os_uwp) || (os_type == os_winphone) || (os_type == os_win8native))
 #macro __BULB_ZFAR           16000
 #macro __BULB_FLIP_CAMERA_Y  __BULB_ON_DIRECTX
