@@ -27,7 +27,7 @@ function __bulb_class_dynamic_occluder() constructor
     
     vertex_array = [];
     
-    static add_edge = function(_x1, _y1, _x2, _y2)
+    static addEdge = function(_x1, _y1, _x2, _y2)
     {
         __bbox_x_min = min(__bbox_x_min, __BULB_SQRT_2*_x1, __BULB_SQRT_2*_x2);
         __bbox_y_min = min(__bbox_y_min, __BULB_SQRT_2*_y1, __BULB_SQRT_2*_y2);

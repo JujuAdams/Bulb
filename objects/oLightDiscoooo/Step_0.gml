@@ -1,5 +1,5 @@
-blend_cycle = (blend_cycle + blend_cycle_speed) mod 255;
+blendCycle = (blendCycle + blendCycleSpeed) mod 255;
 
 light.x = x;
 light.y = y;
-light.blend = make_colour_hsv(blend_cycle, 230, 230);
+light.blend = make_colour_hsv(blendCycle, 230, 230);

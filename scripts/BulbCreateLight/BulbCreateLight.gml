@@ -32,7 +32,7 @@ function __bulb_class_light() constructor
     blend  = c_white;
     alpha  = 1.0;
     
-    penumbra_size = 0.0;
+    penumbraSize = 0.0;
     
     cast_shadows = true;
     

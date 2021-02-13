@@ -454,7 +454,7 @@ function __bulb_class_renderer() constructor
                             gpu_set_blendmode(bm_add);
                             _proj_matrix[@  8] = x;
                             _proj_matrix[@  9] = y;
-                            _proj_matrix[@ 10] = penumbra_size;
+                            _proj_matrix[@ 10] = penumbraSize;
                             matrix_set(matrix_projection, _proj_matrix);
                             vertex_submit(_static_vbuffer,  pr_trianglelist, -1);
                             vertex_submit(_dynamic_vbuffer, pr_trianglelist, -1);
