@@ -1,12 +1,11 @@
 {
-  "isDnD": false,
-  "isCompatibility": false,
+  "type": 1,
   "parent": {
     "name": "Unused",
     "path": "folders/Example/Unused.yy",
   },
   "resourceVersion": "1.0",
-  "name": "matrix_transform_vertex_full",
+  "name": "shdNoTexture",
   "tags": [],
-  "resourceType": "GMScript",
+  "resourceType": "GMShader",
 }

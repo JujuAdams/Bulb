@@ -23,8 +23,10 @@ camera_set_view_pos(oRenderer.camera,
                     round(x - 0.5*camera_get_view_width( oRenderer.camera)),
                     round(y - 0.5*camera_get_view_height(oRenderer.camera)));
 
+//Make sure the light tracks the player
 light.x = x;
 light.y = y;
 light.angle = point_direction(x, y, mouse_x, mouse_y);
 
+//Allow the right mouse button to toggle the light
 if (mouse_check_button_pressed(mb_right)) light.visible = !light.visible;

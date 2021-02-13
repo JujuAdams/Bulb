@@ -22,7 +22,7 @@
   "creationCodeFile": "",
   "inheritCode": false,
   "instanceCreationOrder": [
-    {"name":"inst_408F6C15","path":"rooms/rm_init/rm_init.yy",},
+    {"name":"inst_408F6C15","path":"rooms/rmInit/rmInit.yy",},
   ],
   "inheritCreationOrder": false,
   "sequenceId": null,
@@ -50,7 +50,7 @@
     "path": "folders/Rooms.yy",
   },
   "resourceVersion": "1.0",
-  "name": "rm_init",
+  "name": "rmInit",
   "tags": [],
   "resourceType": "GMRoom",
 }

@@ -2,14 +2,14 @@
 
 function BulbCreateStaticOccluder(_renderer)
 {
-    with(new __bulb_class_static_occluder())
+    with(new __BulbClassStaticOccluder())
     {
-        add_to_renderer(_renderer);
+        AddToRenderer(_renderer);
         return self;
     }
 }
 
-function __bulb_class_static_occluder() constructor
+function __BulbClassStaticOccluder() constructor
 {
     x = 0;
     y = 0;
@@ -18,30 +18,30 @@ function __bulb_class_static_occluder() constructor
     yscale = 1.0;
     angle  = 0.0;
     
-    vertex_array = [];
+    vertexArray = [];
     
-    __bbox_x_min = 0;
-    __bbox_x_max = 0;
-    __bbox_y_min = 0;
-    __bbox_y_max = 0;
+    __bboxXMin = 0;
+    __bboxXMax = 0;
+    __bboxYMin = 0;
+    __bboxYMax = 0;
     
     static addEdge = function(_x1, _y1, _x2, _y2)
     {
-        __bbox_x_min = min(__bbox_x_min, __BULB_SQRT_2*_x1, __BULB_SQRT_2*_x2);
-        __bbox_y_min = min(__bbox_y_min, __BULB_SQRT_2*_y1, __BULB_SQRT_2*_y2);
-        __bbox_x_max = max(__bbox_x_max, __BULB_SQRT_2*_x1, __BULB_SQRT_2*_x2);
-        __bbox_y_max = max(__bbox_y_max, __BULB_SQRT_2*_y1, __BULB_SQRT_2*_y2);
+        __bboxXMin = min(__bboxXMin, __BULB_SQRT_2*_x1, __BULB_SQRT_2*_x2);
+        __bboxYMin = min(__bboxYMin, __BULB_SQRT_2*_y1, __BULB_SQRT_2*_y2);
+        __bboxXMax = max(__bboxXMax, __BULB_SQRT_2*_x1, __BULB_SQRT_2*_x2);
+        __bboxYMax = max(__bboxYMax, __BULB_SQRT_2*_y1, __BULB_SQRT_2*_y2);
         
-        array_push(vertex_array, _x1, _y1, _x2, _y2);
+        array_push(vertexArray, _x1, _y1, _x2, _y2);
     }
     
-    static add_to_renderer = function(_renderer)
+    static AddToRenderer = function(_renderer)
     {
-        array_push(_renderer.static_occluders_array, weak_ref_create(self));
+        array_push(_renderer.__staticOccludersArray, weak_ref_create(self));
     }
     
-    static __is_on_screen = function(_camera_l, _camera_t, _camera_r, _camera_b)
+    static __IsOnScreen = function(_cameraL, _cameraT, _cameraR, _cameraB)
     {
-        return (visible && __bulb_rect_in_rect(__bbox_x_min, __bbox_y_min, __bbox_x_max, __bbox_y_max, _camera_l, _camera_t, _camera_r, _camera_b));
+        return (visible && __BulbRectInRect(__bboxXMin, __bboxYMin, __bboxXMax, __bboxYMax, _cameraL, _cameraT, _cameraR, _cameraB));
     }
 }

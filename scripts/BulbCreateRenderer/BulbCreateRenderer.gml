@@ -14,39 +14,40 @@ enum BULB_MODE
 
 function BulbCreateRenderer(_ambient_colour, _mode, _smooth)
 {
-    with(new __bulb_class_renderer())
+    with(new __BulbClassRenderer())
     {
-        ambient_colour = _ambient_colour;
-        mode           = _mode;
-        smooth         = _smooth;
+        ambientColor = _ambient_colour;
+        mode         = _mode;
+        smooth       = _smooth;
         return self;
     }
 }
 
-function __bulb_class_renderer() constructor
+function __BulbClassRenderer() constructor
 {
     //Assign the ambient colour used for the darkest areas of the screen. This can be changed on the fly
-    ambient_colour = c_black;
+    ambientColor = c_black;
     
-    //The smoothing mode controls texture filtering both when accumulating lights and when drawing the resulting surface
+    //The smoothing mode controls texture filtering both when accumulating lights and when drawing the resulting __surface
     smooth = false;
     
     mode = BULB_MODE.HARD_BM_ADD;
-    __old_mode = undefined;
-    freed = false;
     
     //Initialise variables used and updated in bulb_build()
-    static_vbuffer  = undefined; //Vertex buffer describing the geometry of static occluder objects
-    dynamic_vbuffer = undefined; //As above but for dynamic shadow occluders. This is updated every step
-    wipe_vbuffer    = undefined; //This vertex buffer is used to reset the z-buffer during accumulation of non-deferred lights
-    surface         = undefined; //Screen-space surface for final accumulation of lights
+    __staticVBuffer  = undefined; //Vertex buffer describing the geometry of static occluder objects
+    __dynamicVBuffer = undefined; //As above but for dynamic shadow occluders. This is updated every step
+    __wipeVBuffer    = undefined; //This vertex buffer is used to reset the z-buffer during accumulation of non-deferred lights
+    __surface        = undefined; //Screen-space __surface for final accumulation of lights
     
-    surface_width  = undefined;
-    surface_height = undefined;
+    __surfaceWidth  = undefined;
+    __surfaceHeight = undefined;
     
-    static_occluders_array  = [];
-    dynamic_occluders_array = [];
-    lights_array            = [];
+    __staticOccludersArray  = [];
+    __dynamicOccludersArray = [];
+    __lightsArray           = [];
+    
+    __freed = false;
+    __oldMode = undefined;
     
     
     
@@ -57,39 +58,39 @@ function __bulb_class_renderer() constructor
         return Update(camera_get_view_x(_camera), camera_get_view_y(_camera), camera_get_view_width(_camera), camera_get_view_height(_camera));
     }
     
-    static Update = function(_camera_l, _camera_t, _camera_w, _camera_h)
+    static Update = function(_cameraL, _cameraT, _cameraW, _cameraH)
     {
-        if (freed) return undefined;
+        if (__freed) return undefined;
         
-        if (surface_width  == undefined) surface_width  = _camera_w;
-        if (surface_height == undefined) surface_height = _camera_h;
+        if (__surfaceWidth  == undefined) __surfaceWidth  = _cameraW;
+        if (__surfaceHeight == undefined) __surfaceHeight = _cameraH;
         
-        if (mode != __old_mode)
+        if (mode != __oldMode)
         {
-            __old_mode = mode;
+            __oldMode = mode;
             __FreeVertexBuffers();
         }
         
-        var _camera_r  = _camera_l + _camera_w;
-        var _camera_b  = _camera_t + _camera_h;
-        var _camera_cx = _camera_l + 0.5*_camera_w;
-        var _camera_cy = _camera_t + 0.5*_camera_h;
+        var _cameraR  = _cameraL + _cameraW;
+        var _cameraB  = _cameraT + _cameraH;
+        var _cameraCX = _cameraL + 0.5*_cameraW;
+        var _cameraCY = _cameraT + 0.5*_cameraH;
         
         //Construct our wipe/static/dynamic vertex buffers
-        __UpdateVertexBuffers(_camera_l, _camera_t, _camera_r, _camera_b, _camera_w, _camera_h);
+        __UpdateVertexBuffers(_cameraL, _cameraT, _cameraR, _cameraB, _cameraW, _cameraH);
         
-        //Create accumulating lighting surface
+        //Create accumulating lighting __surface
         surface_set_target(GetSurface());
         
         //Record the current texture filter state, then set our new filter state
         var _old_tex_filter = gpu_get_tex_filter();
         gpu_set_tex_filter(smooth);
     
-        //Clear the surface with the ambient colour
-        draw_clear(ambient_colour);
+        //Clear the __surface with the ambient colour
+        draw_clear(ambientColor);
         
         //If we're not forcing deferred rendering everywhere, update those lights
-        AccumulateLights(_camera_l, _camera_t, _camera_r, _camera_b, _camera_cx, _camera_cy, _camera_w, _camera_h);
+        AccumulateLights(_cameraL, _cameraT, _cameraR, _cameraB, _cameraCX, _cameraCY, _cameraW, _cameraH);
         
         //Restore the old filter state
         gpu_set_tex_filter(_old_tex_filter);
@@ -103,14 +104,14 @@ function __bulb_class_renderer() constructor
     /// @param [height]
     static Draw = function()
     {
-        if (freed) return undefined;
+        if (__freed) return undefined;
         
         var _x      = argument[0];
         var _y      = argument[1];
-        var _width  = ((argument_count > 2) && (argument[2] != undefined))? argument[2] : surface_width;
-        var _height = ((argument_count > 3) && (argument[3] != undefined))? argument[3] : surface_height;
+        var _width  = ((argument_count > 2) && (argument[2] != undefined))? argument[2] : __surfaceWidth;
+        var _height = ((argument_count > 3) && (argument[3] != undefined))? argument[3] : __surfaceHeight;
         
-        if ((surface != undefined) && surface_exists(surface))
+        if ((__surface != undefined) && surface_exists(__surface))
         {
             //Record the current texture filter state, then set our new filter state
             var _old_tex_filter = gpu_get_tex_filter();
@@ -119,7 +120,7 @@ function __bulb_class_renderer() constructor
             gpu_set_blendmode_ext(bm_dest_color, bm_zero);
             gpu_set_colorwriteenable(true, true, true, false);
             
-            draw_surface_stretched(surface, _x, _y, _width, _height);
+            draw_surface_stretched(__surface, _x, _y, _width, _height);
             
             gpu_set_blendmode(bm_normal);
             gpu_set_colorwriteenable(true, true, true, true);
@@ -131,30 +132,30 @@ function __bulb_class_renderer() constructor
     
     static GetSurface = function()
     {
-        if (freed) return undefined;
-        if ((surface_width == undefined) || (surface_height == undefined)) return undefined;
+        if (__freed) return undefined;
+        if ((__surfaceWidth == undefined) || (__surfaceHeight == undefined)) return undefined;
         
-        if ((surface != undefined) && ((surface_get_width(surface) != surface_width) || (surface_get_height(surface) != surface_height)))
+        if ((__surface != undefined) && ((surface_get_width(__surface) != __surfaceWidth) || (surface_get_height(__surface) != __surfaceHeight)))
         {
-            surface_free(surface);
-            surface = undefined;
+            surface_free(__surface);
+            __surface = undefined;
         }
         
-        if ((surface == undefined) || !surface_exists(surface))
+        if ((__surface == undefined) || !surface_exists(__surface))
         {
-            surface = surface_create(surface_width, surface_height);
+            __surface = surface_create(__surfaceWidth, __surfaceHeight);
             
-            surface_set_target(surface);
+            surface_set_target(__surface);
             draw_clear_alpha(c_black, 1.0);
             surface_reset_target();
         }
         
-        return surface;
+        return __surface;
     }
     
     static ClearStaticOccluders = function()
     {
-        if (freed) return undefined;
+        if (__freed) return undefined;
         
         array_resize(static_occluders, 0);
     }
@@ -164,51 +165,51 @@ function __bulb_class_renderer() constructor
         __FreeVertexBuffers();
         __FreeSurface();
         
-        freed = true;
+        __freed = true;
     }
     
     #endregion
     
     #region Update vertex buffers
     
-    static __UpdateVertexBuffers = function(_camera_l, _camera_t, _camera_r, _camera_b, _camera_w, _camera_h)
+    static __UpdateVertexBuffers = function(_cameraL, _cameraT, _cameraR, _cameraB, _cameraW, _cameraH)
     {
-        if (freed) return undefined;
+        if (__freed) return undefined;
         
         ///////////Discover camera variables
-        var _camera_exp_l = _camera_l - BULB_DYNAMIC_OCCLUDER_RANGE;
-        var _camera_exp_t = _camera_t - BULB_DYNAMIC_OCCLUDER_RANGE;
-        var _camera_exp_r = _camera_r + BULB_DYNAMIC_OCCLUDER_RANGE;
-        var _camera_exp_b = _camera_b + BULB_DYNAMIC_OCCLUDER_RANGE;
+        var _cameraExpL = _cameraL - BULB_DYNAMIC_OCCLUDER_RANGE;
+        var _cameraExpT = _cameraT - BULB_DYNAMIC_OCCLUDER_RANGE;
+        var _cameraExpR = _cameraR + BULB_DYNAMIC_OCCLUDER_RANGE;
+        var _cameraExpB = _cameraB + BULB_DYNAMIC_OCCLUDER_RANGE;
         
         //One-time construction of a triangle to wipe the z-buffer
         //Using textures (rather than untextured) saves on shader_set() overhead... likely a trade-off depending on the GPU
-        if (wipe_vbuffer == undefined)
+        if (__wipeVBuffer == undefined)
         {
-            wipe_vbuffer = vertex_create_buffer();
-            vertex_begin(wipe_vbuffer, global.__bulb_format_3d_colour);
+            __wipeVBuffer = vertex_create_buffer();
+            vertex_begin(__wipeVBuffer, global.__bulb_format_3d_colour);
             
-            vertex_position_3d(wipe_vbuffer,           0,           0, 0); vertex_colour(wipe_vbuffer, c_black, 1);
-            vertex_position_3d(wipe_vbuffer, 2*_camera_w,           0, 0); vertex_colour(wipe_vbuffer, c_black, 1);
-            vertex_position_3d(wipe_vbuffer,           0, 2*_camera_h, 0); vertex_colour(wipe_vbuffer, c_black, 1);
+            vertex_position_3d(__wipeVBuffer,          0,          0, 0); vertex_colour(__wipeVBuffer, c_black, 1);
+            vertex_position_3d(__wipeVBuffer, 2*_cameraW,          0, 0); vertex_colour(__wipeVBuffer, c_black, 1);
+            vertex_position_3d(__wipeVBuffer,          0, 2*_cameraH, 0); vertex_colour(__wipeVBuffer, c_black, 1);
             
-            vertex_end(wipe_vbuffer);
-            vertex_freeze(wipe_vbuffer);
+            vertex_end(__wipeVBuffer);
+            vertex_freeze(__wipeVBuffer);
         }
         
         //One-time construction of the static occluder geometry
-        if (static_vbuffer == undefined)
+        if (__staticVBuffer == undefined)
         {
             //Create a new vertex buffer
-            static_vbuffer = vertex_create_buffer();
-            var _static_vbuffer = static_vbuffer;
+            __staticVBuffer = vertex_create_buffer();
+            var _staticVBuffer = __staticVBuffer;
             
             //Add static shadow caster vertices to the relevant vertex buffer
             if (mode == BULB_MODE.SOFT_BM_ADD)
             {
-                vertex_begin(static_vbuffer, global.__bulb_format_3d_texture);
+                vertex_begin(__staticVBuffer, global.__bulb_format_3d_texture);
                 
-                var _array = static_occluders_array;
+                var _array = __staticOccludersArray;
                 var _i = 0;
                 repeat(array_length(_array))
                 {
@@ -219,16 +220,16 @@ function __bulb_class_renderer() constructor
                     }
                     else
                     {
-                        with(_weak.ref) __bulb_add_occlusion_soft(_static_vbuffer);
+                        with(_weak.ref) __BulbAddOcclusionSoft(_staticVBuffer);
                         ++_i;
                     }
                 }
             }
             else
             {
-                vertex_begin(static_vbuffer, global.__bulb_format_3d_colour);
+                vertex_begin(__staticVBuffer, global.__bulb_format_3d_colour);
                 
-                var _array = static_occluders_array;
+                var _array = __staticOccludersArray;
                 var _i = 0;
                 repeat(array_length(_array))
                 {
@@ -239,28 +240,28 @@ function __bulb_class_renderer() constructor
                     }
                     else
                     {
-                        with(_weak.ref) __bulb_add_occlusion_hard(_static_vbuffer);
+                        with(_weak.ref) __BulbAddOcclusionHard(_staticVBuffer);
                         ++_i;
                     }
                 }
             }
             
-            vertex_end(static_vbuffer);
+            vertex_end(__staticVBuffer);
             
             //Freeze this buffer for speed boosts later on (though only if we have vertices in this buffer)
-            if (vertex_get_number(static_vbuffer) > 0) vertex_freeze(static_vbuffer);
+            if (vertex_get_number(__staticVBuffer) > 0) vertex_freeze(__staticVBuffer);
         }
         
         //Refresh the dynamic occluder geometry
-        if (dynamic_vbuffer == undefined) dynamic_vbuffer = vertex_create_buffer();
-        var _dynamic_vbuffer = dynamic_vbuffer;
+        if (__dynamicVBuffer == undefined) __dynamicVBuffer = vertex_create_buffer();
+        var _dynamicVBuffer = __dynamicVBuffer;
         
         //Add dynamic occluder vertices to the relevant vertex buffer
         if (mode == BULB_MODE.SOFT_BM_ADD)
         {
-            vertex_begin(_dynamic_vbuffer, global.__bulb_format_3d_texture);
+            vertex_begin(_dynamicVBuffer, global.__bulb_format_3d_texture);
             
-            var _array = dynamic_occluders_array;
+            var _array = __dynamicOccludersArray;
             var _i = 0;
             repeat(array_length(_array))
             {
@@ -273,7 +274,7 @@ function __bulb_class_renderer() constructor
                 {
                     with(_weak.ref)
                     {
-                        if (__is_on_screen(_camera_exp_l, _camera_exp_t, _camera_exp_r, _camera_exp_b)) __bulb_add_occlusion_soft(_dynamic_vbuffer);
+                        if (__IsOnScreen(_cameraExpL, _cameraExpT, _cameraExpR, _cameraExpB)) __BulbAddOcclusionSoft(_dynamicVBuffer);
                     }
                     
                     ++_i;
@@ -282,9 +283,9 @@ function __bulb_class_renderer() constructor
         }
         else
         {
-            vertex_begin(_dynamic_vbuffer, global.__bulb_format_3d_colour);
+            vertex_begin(_dynamicVBuffer, global.__bulb_format_3d_colour);
             
-            var _array = dynamic_occluders_array;
+            var _array = __dynamicOccludersArray;
             var _i = 0;
             repeat(array_length(_array))
             {
@@ -297,7 +298,7 @@ function __bulb_class_renderer() constructor
                 {
                     with(_weak.ref)
                     {
-                        if (__is_on_screen(_camera_exp_l, _camera_exp_t, _camera_exp_r, _camera_exp_b)) __bulb_add_occlusion_hard(_dynamic_vbuffer);
+                        if (__IsOnScreen(_cameraExpL, _cameraExpT, _cameraExpR, _cameraExpB)) __BulbAddOcclusionHard(_dynamicVBuffer);
                     }
                     
                     ++_i;
@@ -305,37 +306,37 @@ function __bulb_class_renderer() constructor
             }
         }
         
-        vertex_end(_dynamic_vbuffer);
+        vertex_end(_dynamicVBuffer);
     }
     
     #endregion
     
     #region Accumulate lights
     
-    static AccumulateLights = function(_camera_l, _camera_t, _camera_r, _camera_b, _camera_cx, _camera_cy, _camera_w, _camera_h)
+    static AccumulateLights = function(_cameraL, _cameraT, _cameraR, _cameraB, _cameraCX, _cameraCY, _cameraW, _cameraH)
     {
-        if (freed) return undefined;
+        if (__freed) return undefined;
         
         #region Linear algebra
         
-        //var _view_matrix = matrix_build_lookat(_camera_w/2, _camera_h/2, -16000,   _camera_w/2, _camera_h/2, 0,   0, 1, 0);
+        //var _view_matrix = matrix_build_lookat(_cameraW/2, _cameraH/2, -16000,   _cameraW/2, _cameraH/2, 0,   0, 1, 0);
         
         //var _view_matrix = [           1,            0,     0, 0,                   // [            1,            0,         0, 0, 
         //                               0,            1,     0, 0,                   //              0,            1,         0, 0, 
         //                               0,            0,     1, 0,                   //              0,            0,         1, 0, 
-        //                    -_camera_w/2, -_camera_h/2, 16000, 1 ];                 //   -_camera_w/2, -_camera_h/2, -camera_z, 1]
+        //                    -_cameraW/2, -_cameraH/2, 16000, 1 ];                 //   -_cameraW/2, -_cameraH/2, -camera_z, 1]
         
-        //var _proj_matrix =  matrix_build_projection_ortho(_camera_w, -_camera_h, 1, 32000);
+        //var _projMatrix =  matrix_build_projection_ortho(_cameraW, -_cameraH, 1, 32000);
         
-        //var _proj_matrix = [2/_camera_w,           0,           0,  0,             // [ 2/_camera_w,           0,                      0, 0,
-        //                              0, 2/_camera_h,           0,  0,             //             0, 2/_camera_h,                      0, 0,
+        //var _projMatrix = [2/_cameraW,           0,           0,  0,             // [ 2/_cameraW,           0,                      0, 0,
+        //                              0, 2/_cameraH,           0,  0,             //             0, 2/_cameraH,                      0, 0,
         //                              0,           0,  1/(32000-1), 0,             //             0,           0,       1/(z_far-z_near), 0,
         //                              0,           0, -1/(32000-1), 1 ];           //             0,           0, -z_near/(z_far-z_near), 1];
         
         //var _vp_matrix = matrix_multiply(_new_view, _new_proj);
         
-        //var _vp_matrix = [2/_camera_w,           0,           0, 0,                  // [ 2/_camera_w,            0,                                   0, 0,
-        //                            0, 2/_camera_h,           0, 0,                  //             0, -2/_camera_h,                                   0, 0,
+        //var _vp_matrix = [2/_cameraW,           0,           0, 0,                  // [ 2/_cameraW,            0,                                   0, 0,
+        //                            0, 2/_cameraH,           0, 0,                  //             0, -2/_cameraH,                                   0, 0,
         //                            0,           0,     1/31999, 0,                  //             0,            0,                    1/(z_far-z_near), 0,
         //                           -1,           1, 15999/31999, 1 ];                //            -1,            1, (-camera_z - z_near)/(z_far-z_near), 1];
         
@@ -345,17 +346,17 @@ function __bulb_class_renderer() constructor
         if (__BULB_FLIP_CAMERA_Y)
         {
             //DirectX platforms want the Y-axis flipped
-            var _vp_matrix = [2/_camera_w,            0, 0, 0,
-                                        0, -2/_camera_h, 0, 0,
-                                        0,            0, 0, 0,
-                                       -1,            1, 1, 1];
+            var _vp_matrix = [2/_cameraW,           0, 0, 0,
+                                       0, -2/_cameraH, 0, 0,
+                                       0,           0, 0, 0,
+                                      -1,           1, 1, 1];
         }
         else
         {
-            var _vp_matrix = [2/_camera_w,           0, 0, 0,
-                                        0, 2/_camera_h, 0, 0,
-                                        0,           0, 0, 0,
-                                       -1,          -1, 1, 1];
+            var _vp_matrix = [2/_cameraW,          0, 0, 0,
+                                       0, 2/_cameraH, 0, 0,
+                                       0,          0, 0, 0,
+                                      -1,         -1, 1, 1];
         }
         
         //We set the view matrix to identity to allow us to use our custom projection matrix
@@ -369,11 +370,11 @@ function __bulb_class_renderer() constructor
         ///////////Iterate over all non-deferred lights...
         if (mode == BULB_MODE.SOFT_BM_ADD)
         {
-            AccumulateSoftLights(_camera_l, _camera_t, _camera_r, _camera_b, _camera_cx, _camera_cy, _camera_w, _camera_h, _vp_matrix);
+            AccumulateSoftLights(_cameraL, _cameraT, _cameraR, _cameraB, _cameraCX, _cameraCY, _cameraW, _cameraH, _vp_matrix);
         }
         else
         {
-            AccumulateHardLights(_camera_l, _camera_t, _camera_r, _camera_b, _camera_cx, _camera_cy, _camera_w, _camera_h, _vp_matrix);
+            AccumulateHardLights(_cameraL, _cameraT, _cameraR, _cameraB, _cameraCX, _cameraCY, _cameraW, _cameraH, _vp_matrix);
         }
             
         //Reset GPU properties
@@ -386,51 +387,51 @@ function __bulb_class_renderer() constructor
     
     #region Accumulate soft lights
     
-    static AccumulateSoftLights = function(_camera_l, _camera_t, _camera_r, _camera_b, _camera_cx, _camera_cy, _camera_w, _camera_h, _vp_matrix)
+    static AccumulateSoftLights = function(_cameraL, _cameraT, _cameraR, _cameraB, _cameraCX, _cameraCY, _cameraW, _cameraH, _vp_matrix)
     {
-        if (freed) return undefined;
+        if (__freed) return undefined;
         
-        var _wipe_vbuffer    = wipe_vbuffer;
-        var _static_vbuffer  = static_vbuffer;
-        var _dynamic_vbuffer = dynamic_vbuffer;
+        var _wipeVBuffer    = __wipeVBuffer;
+        var _staticVBuffer  = __staticVBuffer;
+        var _dynamicVBuffer = __dynamicVBuffer;
         
         //Calculate some transform coefficients
-        var _inv_camera_w = 2/_camera_w;
-        var _inv_camera_h = 2/_camera_h;
-        if (__BULB_FLIP_CAMERA_Y) _inv_camera_h = -_inv_camera_h;
+        var _cameraInvW = 2/_cameraW;
+        var _cameraInvH = 2/_cameraH;
+        if (__BULB_FLIP_CAMERA_Y) _cameraInvH = -_cameraInvH;
         
-        var _transformed_cam_x = _camera_cx*_inv_camera_w;
-        var _transformed_cam_y = _camera_cy*_inv_camera_h;
+        var _cameraTransformedX = _cameraCX*_cameraInvW;
+        var _cameraTransformedY = _cameraCY*_cameraInvH;
         
         //Pre-build a custom projection matrix
         //[8] [9] [10] are set per light
-        var _proj_matrix = [      _inv_camera_w,                   0,          0,  0,
-                                              0,       _inv_camera_h,          0,  0,
-                                      undefined,           undefined,  undefined, -1,
-                            -_transformed_cam_x, -_transformed_cam_y,          0,  1];
+        var _projMatrix = [        _cameraInvW,                   0,          0,  0,
+                                             0,         _cameraInvH,          0,  0,
+                                     undefined,           undefined,  undefined, -1,
+                           -_cameraTransformedX, -_cameraTransformedY,          0,  1];
         
         // xOut = (x - z*(camX - lightX) - camX) / camW
         // yOut = (y - z*(camY - lightY) - camY) / camH
         // zOut = 0
         
         var _i = 0;
-        repeat(array_length(lights_array))
+        repeat(array_length(__lightsArray))
         {
-            var _weak = lights_array[_i];
+            var _weak = __lightsArray[_i];
             if (!weak_ref_alive(_weak))
             {
-                array_delete(lights_array, 1, 1);
+                array_delete(__lightsArray, 1, 1);
             }
             else
             {
                 with(_weak.ref)
                 {
-                    __check_sprite_dimensions();
+                    __CheckSpriteDimensions();
                     
                     //If this light is active, do some drawing
-                    if (__is_on_screen(_camera_l, _camera_t, _camera_r, _camera_b))
+                    if (__IsOnScreen(_cameraL, _cameraT, _cameraR, _cameraB))
                     {
-                        if (cast_shadows)
+                        if (castShadows)
                         {
                             gpu_set_colorwriteenable(false, false, false, true);
                             
@@ -440,24 +441,24 @@ function __bulb_class_renderer() constructor
                             if (__BULB_PARTIAL_CLEAR)
                             {
                                 draw_sprite_ext(sprite, image,
-                                                x - _camera_l, y - _camera_t,
+                                                x - _cameraL, y - _cameraT,
                                                 xscale, yscale, angle,
                                                 c_black, 1);
                             }
                             else
                             {
-                                vertex_submit(_wipe_vbuffer, pr_trianglelist, -1);
+                                vertex_submit(_wipeVBuffer, pr_trianglelist, -1);
                             }
                             
                             //Render shadows
                             shader_set(__shdBulbSoftShadows);
                             gpu_set_blendmode(bm_add);
-                            _proj_matrix[@  8] = x;
-                            _proj_matrix[@  9] = y;
-                            _proj_matrix[@ 10] = penumbraSize;
-                            matrix_set(matrix_projection, _proj_matrix);
-                            vertex_submit(_static_vbuffer,  pr_trianglelist, -1);
-                            vertex_submit(_dynamic_vbuffer, pr_trianglelist, -1);
+                            _projMatrix[@  8] = x;
+                            _projMatrix[@  9] = y;
+                            _projMatrix[@ 10] = penumbraSize;
+                            matrix_set(matrix_projection, _projMatrix);
+                            vertex_submit(_staticVBuffer,  pr_trianglelist, -1);
+                            vertex_submit(_dynamicVBuffer, pr_trianglelist, -1);
                             
                             //Draw light sprite
                             shader_reset();
@@ -469,7 +470,7 @@ function __bulb_class_renderer() constructor
                                 //TODO - Do this earlier during the wipe phase and before shadow casting
                                 gpu_set_blendmode_ext(bm_src_alpha, bm_one);
                                 draw_sprite_ext(sprite, image,
-                                                x - _camera_l, y - _camera_t,
+                                                x - _cameraL, y - _cameraT,
                                                 xscale, yscale, angle,
                                                 blend, 1.0 - alpha);
                             }
@@ -478,7 +479,7 @@ function __bulb_class_renderer() constructor
                             gpu_set_blendmode_ext(bm_inv_dest_alpha, bm_one);
                             
                             draw_sprite_ext(sprite, image,
-                                            x - _camera_l, y - _camera_t,
+                                            x - _cameraL, y - _cameraT,
                                             xscale, yscale, angle,
                                             blend, alpha);
                         }
@@ -486,7 +487,7 @@ function __bulb_class_renderer() constructor
                         {
                             gpu_set_blendmode(bm_add);
                             draw_sprite_ext(sprite, image,
-                                            x - _camera_l, y - _camera_t,
+                                            x - _cameraL, y - _cameraT,
                                             xscale, yscale, angle,
                                             blend, alpha);
                         }
@@ -502,28 +503,28 @@ function __bulb_class_renderer() constructor
     
     #region Accumulate hard lights
     
-    static AccumulateHardLights = function(_camera_l, _camera_t, _camera_r, _camera_b, _camera_cx, _camera_cy, _camera_w, _camera_h, _vp_matrix)
+    static AccumulateHardLights = function(_cameraL, _cameraT, _cameraR, _cameraB, _cameraCX, _cameraCY, _cameraW, _cameraH, _vp_matrix)
     {
-        if (freed) return undefined;
+        if (__freed) return undefined;
         
-        var _wipe_vbuffer    = wipe_vbuffer;
-        var _static_vbuffer  = static_vbuffer;
-        var _dynamic_vbuffer = dynamic_vbuffer;
+        var _wipeVBuffer    = __wipeVBuffer;
+        var _staticVBuffer  = __staticVBuffer;
+        var _dynamicVBuffer = __dynamicVBuffer;
         
         //Calculate some transform coefficients
-        var _inv_camera_w = 2/_camera_w;
-        var _inv_camera_h = 2/_camera_h;
-        if (__BULB_FLIP_CAMERA_Y) _inv_camera_h = -_inv_camera_h;
+        var _cameraInvW = 2/_cameraW;
+        var _cameraInvH = 2/_cameraH;
+        if (__BULB_FLIP_CAMERA_Y) _cameraInvH = -_cameraInvH;
         
-        var _transformed_cam_x = _camera_cx*_inv_camera_w;
-        var _transformed_cam_y = _camera_cy*_inv_camera_h;
+        var _cameraTransformedX = _cameraCX*_cameraInvW;
+        var _cameraTransformedY = _cameraCY*_cameraInvH;
         
         //Pre-build a custom projection matrix
         //[8] [9] are set per light
-        var _proj_matrix = [      _inv_camera_w,                   0, 0,  0,
-                                              0,       _inv_camera_h, 0,  0,
-                                      undefined,           undefined, 0, -1,
-                            -_transformed_cam_x, -_transformed_cam_y, 0,  1];
+        var _projMatrix = [         _cameraInvW,                    0, 0,  0,
+                                              0,          _cameraInvH, 0,  0,
+                                      undefined,            undefined, 0, -1,
+                           -_cameraTransformedX, -_cameraTransformedY, 0,  1];
         
         // xOut = (x - z*(camX - lightX) - camX) / camW
         // yOut = (y - z*(camY - lightY) - camY) / camH
@@ -535,35 +536,35 @@ function __bulb_class_renderer() constructor
         if (mode == BULB_MODE.HARD_BM_MAX)
         {
             gpu_set_blendmode(bm_max);
-            var _reset_shader = __shdBulbPremultiplyAlpha;
+            var _resetShader = __shdBulbPremultiplyAlpha;
         }
         else
         {
             gpu_set_blendmode(bm_add);
-            var _reset_shader = __shdBulbPassThrough;
+            var _resetShader = __shdBulbPassThrough;
         }
         
-        shader_set(_reset_shader);
+        shader_set(_resetShader);
         matrix_set(matrix_projection, _vp_matrix);
         
         var _i = 0;
-        repeat(array_length(lights_array))
+        repeat(array_length(__lightsArray))
         {
-            var _weak = lights_array[_i];
+            var _weak = __lightsArray[_i];
             if (!weak_ref_alive(_weak))
             {
-                array_delete(lights_array, 1, 1);
+                array_delete(__lightsArray, 1, 1);
             }
             else
             {
                 with(_weak.ref)
                 {
-                    __check_sprite_dimensions();
+                    __CheckSpriteDimensions();
                     
                     //If this light is active, do some drawing
-                    if (__is_on_screen(_camera_l, _camera_t, _camera_r, _camera_b))
+                    if (__IsOnScreen(_cameraL, _cameraT, _cameraR, _cameraB))
                     {
-                        if (cast_shadows)
+                        if (castShadows)
                         {
                             //Draw shadow stencil
                             gpu_set_zfunc(cmpfunc_always);
@@ -573,7 +574,7 @@ function __bulb_class_renderer() constructor
                             if (__BULB_PARTIAL_CLEAR)
                             {
                                 draw_sprite_ext(sprite, image,
-                                                x - _camera_l, y - _camera_t,
+                                                x - _cameraL, y - _cameraT,
                                                 xscale, yscale, angle,
                                                 c_black, 1);
                                 shader_set(__shdBulbHardShadows);
@@ -581,24 +582,24 @@ function __bulb_class_renderer() constructor
                             else
                             {
                                 shader_set(__shdBulbHardShadows);
-                                vertex_submit(_wipe_vbuffer, pr_trianglelist, -1);
+                                vertex_submit(_wipeVBuffer, pr_trianglelist, -1);
                             }
                     
                             //Render shadows
-                            _proj_matrix[@ 8] = _transformed_cam_x - x*_inv_camera_w;
-                            _proj_matrix[@ 9] = _transformed_cam_y - y*_inv_camera_h;
-                            matrix_set(matrix_projection, _proj_matrix);
-                            vertex_submit(_static_vbuffer,  pr_trianglelist, -1);
-                            vertex_submit(_dynamic_vbuffer, pr_trianglelist, -1);
+                            _projMatrix[@ 8] = _cameraTransformedX - x*_cameraInvW;
+                            _projMatrix[@ 9] = _cameraTransformedY - y*_cameraInvH;
+                            matrix_set(matrix_projection, _projMatrix);
+                            vertex_submit(_staticVBuffer,  pr_trianglelist, -1);
+                            vertex_submit(_dynamicVBuffer, pr_trianglelist, -1);
                     
                             //Draw light sprite
-                            shader_set(_reset_shader);
+                            shader_set(_resetShader);
                             gpu_set_zfunc(cmpfunc_lessequal);
                             gpu_set_colorwriteenable(true, true, true, false);
                             matrix_set(matrix_projection, _vp_matrix);
                     
                             draw_sprite_ext(sprite, image,
-                                            x - _camera_l, y - _camera_t,
+                                            x - _cameraL, y - _cameraT,
                                             xscale, yscale, angle,
                                             blend, alpha);
                         }
@@ -606,7 +607,7 @@ function __bulb_class_renderer() constructor
                         {
                             gpu_set_zfunc(cmpfunc_always);
                             draw_sprite_ext(sprite, image,
-                                            x - _camera_l, y - _camera_t,
+                                            x - _cameraL, y - _cameraT,
                                             xscale, yscale, angle,
                                             blend, alpha);
                         }
@@ -623,31 +624,31 @@ function __bulb_class_renderer() constructor
     
     static __FreeVertexBuffers = function()
     {
-        if (wipe_vbuffer != undefined)
+        if (__wipeVBuffer != undefined)
         {
-            vertex_delete_buffer(wipe_vbuffer);
-            wipe_vbuffer = undefined;
+            vertex_delete_buffer(__wipeVBuffer);
+            __wipeVBuffer = undefined;
         }
         
-        if (static_vbuffer != undefined)
+        if (__staticVBuffer != undefined)
         {
-            vertex_delete_buffer(static_vbuffer);
-            static_vbuffer = undefined;
+            vertex_delete_buffer(__staticVBuffer);
+            __staticVBuffer = undefined;
         }
         
-        if (dynamic_vbuffer != undefined)
+        if (__dynamicVBuffer != undefined)
         {
-            vertex_delete_buffer(dynamic_vbuffer);
-            dynamic_vbuffer = undefined;
+            vertex_delete_buffer(__dynamicVBuffer);
+            __dynamicVBuffer = undefined;
         }
     }
     
     static __FreeSurface = function()
     {
-        if ((surface != undefined) && surface_exists(surface))
+        if ((__surface != undefined) && surface_exists(__surface))
         {
-            surface_free(surface);
-            surface = undefined;
+            surface_free(__surface);
+            __surface = undefined;
         }
     }
     

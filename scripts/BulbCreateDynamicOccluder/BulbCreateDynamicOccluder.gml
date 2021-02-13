@@ -2,14 +2,14 @@
 
 function BulbCreateDynamicOccluder(_renderer)
 {
-    with(new __bulb_class_dynamic_occluder())
+    with(new __BulbClassDynamicOccluder())
     {
-        add_to_renderer(_renderer);
+        AddToRenderer(_renderer);
         return self;
     }
 }
 
-function __bulb_class_dynamic_occluder() constructor
+function __BulbClassDynamicOccluder() constructor
 {
     visible = true;
     
@@ -20,48 +20,48 @@ function __bulb_class_dynamic_occluder() constructor
     yscale = 1.0;
     angle  = 0.0;
     
-    __bbox_x_min = 0;
-    __bbox_x_max = 0;
-    __bbox_y_min = 0;
-    __bbox_y_max = 0;
+    vertexArray = [];
     
-    vertex_array = [];
+    __bboxXMin = 0;
+    __bboxXMax = 0;
+    __bboxYMin = 0;
+    __bboxYMax = 0;
     
     static addEdge = function(_x1, _y1, _x2, _y2)
     {
-        __bbox_x_min = min(__bbox_x_min, __BULB_SQRT_2*_x1, __BULB_SQRT_2*_x2);
-        __bbox_y_min = min(__bbox_y_min, __BULB_SQRT_2*_y1, __BULB_SQRT_2*_y2);
-        __bbox_x_max = max(__bbox_x_max, __BULB_SQRT_2*_x1, __BULB_SQRT_2*_x2);
-        __bbox_y_max = max(__bbox_y_max, __BULB_SQRT_2*_y1, __BULB_SQRT_2*_y2);
+        __bboxXMin = min(__bboxXMin, __BULB_SQRT_2*_x1, __BULB_SQRT_2*_x2);
+        __bboxYMin = min(__bboxYMin, __BULB_SQRT_2*_y1, __BULB_SQRT_2*_y2);
+        __bboxXMax = max(__bboxXMax, __BULB_SQRT_2*_x1, __BULB_SQRT_2*_x2);
+        __bboxYMax = max(__bboxYMax, __BULB_SQRT_2*_y1, __BULB_SQRT_2*_y2);
         
-        array_push(vertex_array, _x1, _y1, _x2, _y2);
+        array_push(vertexArray, _x1, _y1, _x2, _y2);
     }
     
-    static clear_edges = function(_x1, _y1, _x2, _y2)
+    static ClearEdges = function(_x1, _y1, _x2, _y2)
     {
-        __bbox_x_min = 0;
-        __bbox_x_max = 0;
-        __bbox_y_min = 0;
-        __bbox_y_max = 0;
+        __bboxXMin = 0;
+        __bboxXMax = 0;
+        __bboxYMin = 0;
+        __bboxYMax = 0;
         
-        array_resize(vertex_array, 0);
+        array_resize(vertexArray, 0);
     }
     
-    static add_to_renderer = function(_renderer)
+    static AddToRenderer = function(_renderer)
     {
-        array_push(_renderer.dynamic_occluders_array, weak_ref_create(self));
+        array_push(_renderer.__dynamicOccludersArray, weak_ref_create(self));
     }
     
-    static remove_from_rendere = function(_renderer)
+    static RemoveFromRenderer = function(_renderer)
     {
-        var _array = _renderer.dynamic_occluders_array;
+        var _array = _renderer.__dynamicOccludersArray;
         var _i = array_length(_array) - 1;
         repeat(array_length(_array))
         {
-            var _weak_ref = _array[_i];
-            if (weak_ref_alive(_weak_ref))
+            var _weak = _array[_i];
+            if (weak_ref_alive(_weak))
             {
-                if (_weak_ref.ref == self) array_delete(_array, _i, 1);
+                if (_weak.ref == self) array_delete(_array, _i, 1);
             }
             else
             {
@@ -72,8 +72,8 @@ function __bulb_class_dynamic_occluder() constructor
         }
     }
     
-    static __is_on_screen = function(_camera_l, _camera_t, _camera_r, _camera_b)
+    static __IsOnScreen = function(_cameraL, _cameraT, _cameraR, _cameraB)
     {
-        return (visible && __bulb_rect_in_rect(x + __bbox_x_min, y + __bbox_y_min, x + __bbox_x_max, y + __bbox_y_max, _camera_l, _camera_t, _camera_r, _camera_b));
+        return (visible && __BulbRectInRect(x + __bboxXMin, y + __bboxYMin, x + __bboxXMax, y + __bboxYMax, _cameraL, _cameraT, _cameraR, _cameraB));
     }
 }

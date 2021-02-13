@@ -6,19 +6,19 @@
 
 function BulbCreateLight(_renderer, _sprite, _image, _x, _y)
 {
-    with(new __bulb_class_light())
+    with(new __BulbClassLight())
     {
         sprite = _sprite;
         image  = _image;
         x      = _x;
         y      = _y;
         
-        add_to_renderer(_renderer);
+        AddToRenderer(_renderer);
         return self;
     }
 }
 
-function __bulb_class_light() constructor
+function __BulbClassLight() constructor
 {
     visible = true;
     
@@ -34,27 +34,27 @@ function __bulb_class_light() constructor
     
     penumbraSize = 0.0;
     
-    cast_shadows = true;
+    castShadows = true;
     
-    __old_sprite  = undefined;
-    __width_half  = 0;
-    __height_half = 0;
+    __oldSprite  = undefined;
+    __widthHalf  = 0;
+    __heightHalf = 0;
     
-    static add_to_renderer = function(_renderer)
+    static AddToRenderer = function(_renderer)
     {
-        array_push(_renderer.lights_array, weak_ref_create(self));
+        array_push(_renderer.__lightsArray, weak_ref_create(self));
     }
     
-    static remove_from_rendere = function(_renderer)
+    static RemoveFromRenderer = function(_renderer)
     {
-        var _array = _renderer.lights_array;
+        var _array = _renderer.__lightsArray;
         var _i = array_length(_array) - 1;
         repeat(array_length(_array))
         {
-            var _weak_ref = _array[_i];
-            if (weak_ref_alive(_weak_ref))
+            var _weak = _array[_i];
+            if (weak_ref_alive(_weak))
             {
-                if (_weak_ref.ref == self) array_delete(_array, _i, 1);
+                if (_weak.ref == self) array_delete(_array, _i, 1);
             }
             else
             {
@@ -65,19 +65,19 @@ function __bulb_class_light() constructor
         }
     }
     
-    static __is_on_screen = function(_camera_l, _camera_t, _camera_r, _camera_b)
+    static __IsOnScreen = function(_cameraL, _cameraT, _cameraR, _cameraB)
     {
-        return (visible && __bulb_rect_in_rect(x - __width_half, y - __height_half, x + __width_half, y + __height_half, _camera_l, _camera_t, _camera_r, _camera_b));
+        return (visible && __BulbRectInRect(x - __widthHalf, y - __heightHalf, x + __widthHalf, y + __heightHalf, _cameraL, _cameraT, _cameraR, _cameraB));
     }
     
-    static __check_sprite_dimensions = function()
+    static __CheckSpriteDimensions = function()
     {
-        if (sprite != __old_sprite)
+        if (sprite != __oldSprite)
         {
-            __old_sprite = sprite;
+            __oldSprite = sprite;
             
-            __width_half  = 0.5*xscale*sprite_get_width(sprite);
-            __height_half = 0.5*yscale*sprite_get_height(sprite);
+            __widthHalf  = 0.5*xscale*sprite_get_width(sprite);
+            __heightHalf = 0.5*yscale*sprite_get_height(sprite);
         }
     }
 }
