@@ -2,11 +2,11 @@
   "isDnD": false,
   "isCompatibility": false,
   "parent": {
-    "name": "Bulb",
-    "path": "folders/Bulb.yy",
+    "name": "(System)",
+    "path": "folders/Bulb/(System).yy",
   },
   "resourceVersion": "1.0",
-  "name": "bulb_set_as_occluder",
+  "name": "__bulb_system",
   "tags": [],
   "resourceType": "GMScript",
 }

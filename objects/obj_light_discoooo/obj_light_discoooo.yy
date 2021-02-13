@@ -23,9 +23,10 @@
   "eventList": [
     {"isDnD":false,"eventNum":0,"eventType":0,"collisionObjectId":null,"parent":{"name":"obj_light_discoooo","path":"objects/obj_light_discoooo/obj_light_discoooo.yy",},"resourceVersion":"1.0","name":"","tags":[],"resourceType":"GMEvent",},
     {"isDnD":false,"eventNum":0,"eventType":3,"collisionObjectId":null,"parent":{"name":"obj_light_discoooo","path":"objects/obj_light_discoooo/obj_light_discoooo.yy",},"resourceVersion":"1.0","name":"","tags":[],"resourceType":"GMEvent",},
-    {"isDnD":false,"eventNum":0,"eventType":4,"collisionObjectId":{"name":"obj_par_occluder","path":"objects/obj_par_occluder/obj_par_occluder.yy",},"parent":{"name":"obj_light_discoooo","path":"objects/obj_light_discoooo/obj_light_discoooo.yy",},"resourceVersion":"1.0","name":"","tags":[],"resourceType":"GMEvent",},
     {"isDnD":false,"eventNum":1,"eventType":7,"collisionObjectId":null,"parent":{"name":"obj_light_discoooo","path":"objects/obj_light_discoooo/obj_light_discoooo.yy",},"resourceVersion":"1.0","name":"","tags":[],"resourceType":"GMEvent",},
     {"isDnD":false,"eventNum":0,"eventType":8,"collisionObjectId":null,"parent":{"name":"obj_light_discoooo","path":"objects/obj_light_discoooo/obj_light_discoooo.yy",},"resourceVersion":"1.0","name":"","tags":[],"resourceType":"GMEvent",},
+    {"isDnD":false,"eventNum":0,"eventType":4,"collisionObjectId":{"name":"obj_dynamic_occluder","path":"objects/obj_dynamic_occluder/obj_dynamic_occluder.yy",},"parent":{"name":"obj_light_discoooo","path":"objects/obj_light_discoooo/obj_light_discoooo.yy",},"resourceVersion":"1.0","name":"","tags":[],"resourceType":"GMEvent",},
+    {"isDnD":false,"eventNum":0,"eventType":4,"collisionObjectId":{"name":"obj_static_occluder","path":"objects/obj_static_occluder/obj_static_occluder.yy",},"parent":{"name":"obj_light_discoooo","path":"objects/obj_light_discoooo/obj_light_discoooo.yy",},"resourceVersion":"1.0","name":"","tags":[],"resourceType":"GMEvent",},
   ],
   "properties": [],
   "overriddenProperties": [],

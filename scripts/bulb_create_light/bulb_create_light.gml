@@ -17,10 +17,8 @@ function bulb_create_light(_renderer, _sprite, _image, _x, _y)
         __light_height      = sprite_get_height(sprite);
         __light_width_half  = 0.5*__light_width;
         __light_height_half = 0.5*__light_height;
-        __on_screen         = true;
         
         add_to_renderer(_renderer);
-        
         return self;
     }
 }
@@ -47,7 +45,6 @@ function __bulb_class_light() constructor
     __height      = 0;
     __width_half  = 0;
     __height_half = 0;
-    __on_screen   = true;
     
     static add_to_renderer = function(_renderer)
     {
@@ -72,5 +69,10 @@ function __bulb_class_light() constructor
             
             --_i;
         }
+    }
+    
+    static is_on_screen = function(_camera_l, _camera_t, _camera_r, _camera_b)
+    {
+        return (visible && __bulb_rect_in_rect(x - __width_half, y - __height_half, x + __width_half, y + __height_half, _camera_l, _camera_t, _camera_r, _camera_b));
     }
 }

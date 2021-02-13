@@ -203,12 +203,42 @@ function __bulb_class_renderer() constructor
             if (mode == BULB_MODE.SOFT_BM_ADD)
             {
                 vertex_begin(static_vbuffer, global.__bulb_format_3d_texture);
-                with (BULB_STATIC_OCCLUDER_PARENT) __bulb_add_occlusion_soft(_static_vbuffer);
+                
+                var _array = static_occluders_array;
+                var _i = 0;
+                repeat(array_length(_array))
+                {
+                    var _weak = _array[_i];
+                    if (!weak_ref_alive(_weak))
+                    {
+                        array_delete(_array, 1, 1);
+                    }
+                    else
+                    {
+                        with(_weak.ref) __bulb_add_occlusion_soft(_static_vbuffer);
+                        ++_i;
+                    }
+                }
             }
             else
             {
                 vertex_begin(static_vbuffer, global.__bulb_format_3d_colour);
-                with (BULB_STATIC_OCCLUDER_PARENT) __bulb_add_occlusion_hard(_static_vbuffer);
+                
+                var _array = static_occluders_array;
+                var _i = 0;
+                repeat(array_length(_array))
+                {
+                    var _weak = _array[_i];
+                    if (!weak_ref_alive(_weak))
+                    {
+                        array_delete(_array, 1, 1);
+                    }
+                    else
+                    {
+                        with(_weak.ref) __bulb_add_occlusion_hard(_static_vbuffer);
+                        ++_i;
+                    }
+                }
             }
             
             vertex_end(static_vbuffer);
@@ -225,25 +255,49 @@ function __bulb_class_renderer() constructor
         if (mode == BULB_MODE.SOFT_BM_ADD)
         {
             vertex_begin(_dynamic_vbuffer, global.__bulb_format_3d_texture);
-            with (BULB_DYNAMIC_OCCLUDER_PARENT)
+            
+            var _array = dynamic_occluders_array;
+            var _i = 0;
+            repeat(array_length(_array))
             {
-                __bulb_on_screen = visible && __bulb_rect_in_rect(bbox_left, bbox_top,
-                                                                  bbox_right, bbox_bottom,
-                                                                  _camera_exp_l, _camera_exp_t,
-                                                                  _camera_exp_r, _camera_exp_b);
-                if (__bulb_on_screen) __bulb_add_occlusion_soft(_dynamic_vbuffer);
+                var _weak = _array[_i];
+                if (!weak_ref_alive(_weak))
+                {
+                    array_delete(_array, 1, 1);
+                }
+                else
+                {
+                    with(_weak.ref)
+                    {
+                        if (is_on_screen(_camera_exp_l, _camera_exp_t, _camera_exp_r, _camera_exp_b)) __bulb_add_occlusion_soft(_dynamic_vbuffer);
+                    }
+                    
+                    ++_i;
+                }
             }
         }
         else
         {
             vertex_begin(_dynamic_vbuffer, global.__bulb_format_3d_colour);
-            with (BULB_DYNAMIC_OCCLUDER_PARENT)
+            
+            var _array = dynamic_occluders_array;
+            var _i = 0;
+            repeat(array_length(_array))
             {
-                __bulb_on_screen = visible && __bulb_rect_in_rect(bbox_left, bbox_top,
-                                                                  bbox_right, bbox_bottom,
-                                                                  _camera_exp_l, _camera_exp_t,
-                                                                  _camera_exp_r, _camera_exp_b);
-                if (__bulb_on_screen) __bulb_add_occlusion_hard(_dynamic_vbuffer);
+                var _weak = _array[_i];
+                if (!weak_ref_alive(_weak))
+                {
+                    array_delete(_array, 1, 1);
+                }
+                else
+                {
+                    with(_weak.ref)
+                    {
+                        if (is_on_screen(_camera_exp_l, _camera_exp_t, _camera_exp_r, _camera_exp_b)) __bulb_add_occlusion_hard(_dynamic_vbuffer);
+                    }
+                    
+                    ++_i;
+                }
             }
         }
         
@@ -367,12 +421,8 @@ function __bulb_class_renderer() constructor
             {
                 with(_weak.ref)
                 {
-                    __on_screen = visible && __bulb_rect_in_rect(x - __width_half, y - __height_half,
-                                                                 x + __width_half, y + __height_half,
-                                                                 _camera_l, _camera_t, _camera_r, _camera_b);
-                    
                     //If this light is active, do some drawing
-                    if (__on_screen)
+                    if (is_on_screen(_camera_l, _camera_t, _camera_r, _camera_b))
                     {
                         if (cast_shadows)
                         {
@@ -490,62 +540,72 @@ function __bulb_class_renderer() constructor
         shader_set(_reset_shader);
         matrix_set(matrix_projection, _vp_matrix);
         
-        with (BULB_LIGHT_PARENT)
+        var _i = 0;
+        repeat(array_length(lights_array))
         {
-            __bulb_on_screen = visible && __bulb_rect_in_rect(x - __bulb_light_width_half, y - __bulb_light_height_half,
-                                                              x + __bulb_light_width_half, y + __bulb_light_height_half,
-                                                              _camera_l, _camera_t, _camera_r, _camera_b);
-            
-            //If this light is active, do some drawing
-            if (__bulb_on_screen)
+            var _weak = lights_array[_i];
+            if (!weak_ref_alive(_weak))
             {
-                if (__bulb_cast_shadows)
+                array_delete(lights_array, 1, 1);
+            }
+            else
+            {
+                with(_weak.ref)
                 {
-                    //Draw shadow stencil
-                    gpu_set_zfunc(cmpfunc_always);
-                    gpu_set_colorwriteenable(false, false, false, false);
-                    
-                    //Reset zbuffer
-                    if (__BULB_PARTIAL_CLEAR)
+                    //If this light is active, do some drawing
+                    if (is_on_screen(_camera_l, _camera_t, _camera_r, _camera_b))
                     {
-                        draw_sprite_ext(sprite_index, image_index,
-                                        x - _camera_l, y - _camera_t,
-                                        image_xscale, image_yscale, image_angle,
-                                        c_black, 1);
-                        shader_set(__shd_bulb_hard_shadows);
+                        if (cast_shadows)
+                        {
+                            //Draw shadow stencil
+                            gpu_set_zfunc(cmpfunc_always);
+                            gpu_set_colorwriteenable(false, false, false, false);
+                    
+                            //Reset zbuffer
+                            if (__BULB_PARTIAL_CLEAR)
+                            {
+                                draw_sprite_ext(sprite, image,
+                                                x - _camera_l, y - _camera_t,
+                                                xscale, yscale, angle,
+                                                c_black, 1);
+                                shader_set(__shd_bulb_hard_shadows);
+                            }
+                            else
+                            {
+                                shader_set(__shd_bulb_hard_shadows);
+                                vertex_submit(_wipe_vbuffer, pr_trianglelist, -1);
+                            }
+                    
+                            //Render shadows
+                            _proj_matrix[@ 8] = _transformed_cam_x - x*_inv_camera_w;
+                            _proj_matrix[@ 9] = _transformed_cam_y - y*_inv_camera_h;
+                            matrix_set(matrix_projection, _proj_matrix);
+                            vertex_submit(_static_vbuffer,  pr_trianglelist, -1);
+                            vertex_submit(_dynamic_vbuffer, pr_trianglelist, -1);
+                    
+                            //Draw light sprite
+                            shader_set(_reset_shader);
+                            gpu_set_zfunc(cmpfunc_lessequal);
+                            gpu_set_colorwriteenable(true, true, true, false);
+                            matrix_set(matrix_projection, _vp_matrix);
+                    
+                            draw_sprite_ext(sprite, image,
+                                            x - _camera_l, y - _camera_t,
+                                            xscale, yscale, angle,
+                                            blend, alpha);
+                        }
+                        else
+                        {
+                            gpu_set_zfunc(cmpfunc_always);
+                            draw_sprite_ext(sprite, image,
+                                            x - _camera_l, y - _camera_t,
+                                            xscale, yscale, angle,
+                                            blend, alpha);
+                        }
                     }
-                    else
-                    {
-                        shader_set(__shd_bulb_hard_shadows);
-                        vertex_submit(_wipe_vbuffer, pr_trianglelist, -1);
-                    }
-                    
-                    //Render shadows
-                    _proj_matrix[@ 8] = _transformed_cam_x - x*_inv_camera_w;
-                    _proj_matrix[@ 9] = _transformed_cam_y - y*_inv_camera_h;
-                    matrix_set(matrix_projection, _proj_matrix);
-                    vertex_submit(_static_vbuffer,  pr_trianglelist, -1);
-                    vertex_submit(_dynamic_vbuffer, pr_trianglelist, -1);
-                    
-                    //Draw light sprite
-                    shader_set(_reset_shader);
-                    gpu_set_zfunc(cmpfunc_lessequal);
-                    gpu_set_colorwriteenable(true, true, true, false);
-                    matrix_set(matrix_projection, _vp_matrix);
-                    
-                    draw_sprite_ext(sprite_index, image_index,
-                                    x - _camera_l, y - _camera_t,
-                                    image_xscale, image_yscale, image_angle,
-                                    image_blend, image_alpha);
                 }
-                else
-                {
-                    gpu_set_zfunc(cmpfunc_always);
-                    draw_sprite_ext(sprite_index, image_index,
-                                    x - _camera_l, y - _camera_t,
-                                    image_xscale, image_yscale, image_angle,
-                                    image_blend, image_alpha);
-                }
+                
+                ++_i;
             }
         }
         
@@ -585,44 +645,3 @@ function __bulb_class_renderer() constructor
     
     #endregion
 }
-
-
-
-#region Internal Macros + Helper Functions
-
-#macro __BULB_VERSION        "20.0.0"
-#macro __BULB_DATE           "2021-02-12"
-#macro __BULB_ON_DIRECTX     ((os_type == os_windows) || (os_type == os_xboxone) || (os_type == os_uwp) || (os_type == os_winphone) || (os_type == os_win8native))
-#macro __BULB_ZFAR           16000
-#macro __BULB_FLIP_CAMERA_Y  __BULB_ON_DIRECTX
-#macro __BULB_PARTIAL_CLEAR  true
-
-__bulb_trace("Welcome to Bulb by @jujuadams! This is version " + __BULB_VERSION + ", " + __BULB_DATE);
-
-//Create a couple vertex formats
-vertex_format_begin();
-vertex_format_add_position_3d();
-vertex_format_add_colour();
-global.__bulb_format_3d_colour = vertex_format_end();
-
-//Create a standard vertex format
-vertex_format_begin();
-vertex_format_add_position_3d();
-vertex_format_add_texcoord();
-global.__bulb_format_3d_texture = vertex_format_end();
-
-function __bulb_trace()
-{
-    var _string = "";
-    
-    var _i = 0;
-    repeat(argument_count)
-    {
-        _string += string(argument[_i]);
-        ++_i;
-    }
-    
-    show_debug_message("Bulb: " + _string);
-}
-
-#endregion
