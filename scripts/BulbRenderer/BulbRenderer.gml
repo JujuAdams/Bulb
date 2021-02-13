@@ -22,14 +22,14 @@ function BulbRenderer(_ambientColour, _mode, _smooth) constructor
     
     mode = _mode;
     
+    surfaceWidth  = undefined;
+    surfaceHeight = undefined;
+    
     //Initialise variables used and updated in bulb_build()
     __staticVBuffer  = undefined; //Vertex buffer describing the geometry of static occluder objects
     __dynamicVBuffer = undefined; //As above but for dynamic shadow occluders. This is updated every step
     __wipeVBuffer    = undefined; //This vertex buffer is used to reset the z-buffer during accumulation of non-deferred lights
     __surface        = undefined; //Screen-space __surface for final accumulation of lights
-    
-    __surfaceWidth  = undefined;
-    __surfaceHeight = undefined;
     
     __staticOccludersArray  = [];
     __dynamicOccludersArray = [];
@@ -51,8 +51,8 @@ function BulbRenderer(_ambientColour, _mode, _smooth) constructor
     {
         if (__freed) return undefined;
         
-        if (__surfaceWidth  == undefined) __surfaceWidth  = _cameraW;
-        if (__surfaceHeight == undefined) __surfaceHeight = _cameraH;
+        if (surfaceWidth  == undefined) surfaceWidth  = _cameraW;
+        if (surfaceHeight == undefined) surfaceHeight = _cameraH;
         
         if (mode != __oldMode)
         {
@@ -97,8 +97,8 @@ function BulbRenderer(_ambientColour, _mode, _smooth) constructor
         
         var _x      = argument[0];
         var _y      = argument[1];
-        var _width  = ((argument_count > 2) && (argument[2] != undefined))? argument[2] : __surfaceWidth;
-        var _height = ((argument_count > 3) && (argument[3] != undefined))? argument[3] : __surfaceHeight;
+        var _width  = ((argument_count > 2) && (argument[2] != undefined))? argument[2] : surfaceWidth;
+        var _height = ((argument_count > 3) && (argument[3] != undefined))? argument[3] : surfaceHeight;
         
         if ((__surface != undefined) && surface_exists(__surface))
         {
@@ -122,9 +122,9 @@ function BulbRenderer(_ambientColour, _mode, _smooth) constructor
     static GetSurface = function()
     {
         if (__freed) return undefined;
-        if ((__surfaceWidth == undefined) || (__surfaceHeight == undefined)) return undefined;
+        if ((surfaceWidth == undefined) || (surfaceHeight == undefined)) return undefined;
         
-        if ((__surface != undefined) && ((surface_get_width(__surface) != __surfaceWidth) || (surface_get_height(__surface) != __surfaceHeight)))
+        if ((__surface != undefined) && ((surface_get_width(__surface) != surfaceWidth) || (surface_get_height(__surface) != surfaceHeight)))
         {
             surface_free(__surface);
             __surface = undefined;
@@ -132,7 +132,7 @@ function BulbRenderer(_ambientColour, _mode, _smooth) constructor
         
         if ((__surface == undefined) || !surface_exists(__surface))
         {
-            __surface = surface_create(__surfaceWidth, __surfaceHeight);
+            __surface = surface_create(surfaceWidth, surfaceHeight);
             
             surface_set_target(__surface);
             draw_clear_alpha(c_black, 1.0);
