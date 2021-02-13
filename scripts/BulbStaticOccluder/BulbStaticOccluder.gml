@@ -26,6 +26,16 @@ function BulbStaticOccluder(_renderer) constructor
         array_push(vertexArray, _x1, _y1, _x2, _y2);
     }
     
+    static ClearEdges = function(_x1, _y1, _x2, _y2)
+    {
+        __bboxXMin = 0;
+        __bboxXMax = 0;
+        __bboxYMin = 0;
+        __bboxYMax = 0;
+        
+        array_resize(vertexArray, 0);
+    }
+    
     static AddToRenderer = function(_renderer)
     {
         array_push(_renderer.__staticOccludersArray, weak_ref_create(self));
