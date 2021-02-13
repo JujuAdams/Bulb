@@ -13,11 +13,6 @@ function bulb_create_light(_renderer, _sprite, _image, _x, _y)
         x      = _x;
         y      = _y;
         
-        __width       = sprite_get_width(sprite);
-        __height      = sprite_get_height(sprite);
-        __width_half  = 0.5*__width;
-        __height_half = 0.5*__height;
-        
         add_to_renderer(_renderer);
         return self;
     }
@@ -41,8 +36,7 @@ function __bulb_class_light() constructor
     
     cast_shadows = true;
     
-    __width       = 0;
-    __height      = 0;
+    __old_sprite  = undefined;
     __width_half  = 0;
     __height_half = 0;
     
@@ -71,8 +65,19 @@ function __bulb_class_light() constructor
         }
     }
     
-    static is_on_screen = function(_camera_l, _camera_t, _camera_r, _camera_b)
+    static __is_on_screen = function(_camera_l, _camera_t, _camera_r, _camera_b)
     {
         return (visible && __bulb_rect_in_rect(x - __width_half, y - __height_half, x + __width_half, y + __height_half, _camera_l, _camera_t, _camera_r, _camera_b));
+    }
+    
+    static __check_sprite_dimensions = function()
+    {
+        if (sprite != __old_sprite)
+        {
+            __old_sprite = sprite;
+            
+            __width_half  = 0.5*xscale*sprite_get_width(sprite);
+            __height_half = 0.5*yscale*sprite_get_height(sprite);
+        }
     }
 }

@@ -1,4 +1,4 @@
-occluder       = bulb_create_dynamic_occluder(obj_player.lighting);
+occluder       = bulb_create_dynamic_occluder(obj_renderer.lighting);
 occluder.x     = x;
 occluder.y     = y;
 occluder.angle = image_angle;

@@ -1,4 +1,4 @@
-occluder        = bulb_create_static_occluder(obj_player.lighting);
+occluder        = bulb_create_static_occluder(obj_renderer.lighting);
 occluder.x      = x;
 occluder.y      = y;
 occluder.xscale = image_xscale;

@@ -28,14 +28,11 @@ function __bulb_class_renderer() constructor
     //Assign the ambient colour used for the darkest areas of the screen. This can be changed on the fly
     ambient_colour = c_black;
     
-    //If culling is switched on, shadows will only be cast from the rear faces of occluders
-    //This requires careful object placement as not to create weird graphical glitches
-    self_lighting = false;
-    
     //The smoothing mode controls texture filtering both when accumulating lights and when drawing the resulting surface
     smooth = false;
     
     mode = BULB_MODE.HARD_BM_ADD;
+    __old_mode = undefined;
     freed = false;
     
     //Initialise variables used and updated in bulb_build()
@@ -52,6 +49,7 @@ function __bulb_class_renderer() constructor
     lights_array            = [];
     
     
+    
     #region Public Methods
     
     static update_from_camera = function(_camera)
@@ -65,6 +63,12 @@ function __bulb_class_renderer() constructor
         
         if (surface_width  == undefined) surface_width  = _camera_w;
         if (surface_height == undefined) surface_height = _camera_h;
+        
+        if (mode != __old_mode)
+        {
+            __old_mode = mode;
+            __free_vertex_buffers();
+        }
         
         var _camera_r  = _camera_l + _camera_w;
         var _camera_b  = _camera_t + _camera_h;
@@ -269,7 +273,7 @@ function __bulb_class_renderer() constructor
                 {
                     with(_weak.ref)
                     {
-                        if (is_on_screen(_camera_exp_l, _camera_exp_t, _camera_exp_r, _camera_exp_b)) __bulb_add_occlusion_soft(_dynamic_vbuffer);
+                        if (__is_on_screen(_camera_exp_l, _camera_exp_t, _camera_exp_r, _camera_exp_b)) __bulb_add_occlusion_soft(_dynamic_vbuffer);
                     }
                     
                     ++_i;
@@ -293,7 +297,7 @@ function __bulb_class_renderer() constructor
                 {
                     with(_weak.ref)
                     {
-                        if (is_on_screen(_camera_exp_l, _camera_exp_t, _camera_exp_r, _camera_exp_b)) __bulb_add_occlusion_hard(_dynamic_vbuffer);
+                        if (__is_on_screen(_camera_exp_l, _camera_exp_t, _camera_exp_r, _camera_exp_b)) __bulb_add_occlusion_hard(_dynamic_vbuffer);
                     }
                     
                     ++_i;
@@ -360,7 +364,7 @@ function __bulb_class_renderer() constructor
             
         //If culling is switched on, shadows will only be cast from the rear faces of occluders
         //This requires careful object placement as not to create weird graphical glitches
-        gpu_set_cullmode(self_lighting? cull_counterclockwise : cull_noculling);
+        gpu_set_cullmode(((mode == BULB_MODE.HARD_BM_ADD_SELFLIGHTING) || (mode == BULB_MODE.HARD_BM_MAX_SELFLIGHTING))? cull_counterclockwise : cull_noculling);
             
         ///////////Iterate over all non-deferred lights...
         if (mode == BULB_MODE.SOFT_BM_ADD)
@@ -421,8 +425,10 @@ function __bulb_class_renderer() constructor
             {
                 with(_weak.ref)
                 {
+                    __check_sprite_dimensions();
+                    
                     //If this light is active, do some drawing
-                    if (is_on_screen(_camera_l, _camera_t, _camera_r, _camera_b))
+                    if (__is_on_screen(_camera_l, _camera_t, _camera_r, _camera_b))
                     {
                         if (cast_shadows)
                         {
@@ -552,8 +558,10 @@ function __bulb_class_renderer() constructor
             {
                 with(_weak.ref)
                 {
+                    __check_sprite_dimensions();
+                    
                     //If this light is active, do some drawing
-                    if (is_on_screen(_camera_l, _camera_t, _camera_r, _camera_b))
+                    if (__is_on_screen(_camera_l, _camera_t, _camera_r, _camera_b))
                     {
                         if (cast_shadows)
                         {

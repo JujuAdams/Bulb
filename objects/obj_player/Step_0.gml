@@ -1,16 +1,30 @@
 //Player input
-player_controls();
+if (keyboard_check(vk_up   )) || (keyboard_check(ord("W"))) y -= 5;
+if (keyboard_check(vk_down )) || (keyboard_check(ord("S"))) y += 5;
+if (keyboard_check(vk_left )) || (keyboard_check(ord("A"))) x -= 5;
+if (keyboard_check(vk_right)) || (keyboard_check(ord("D"))) x += 5;
 
-//Other controls
-debug_controls();
+//Shooting
+if (mouse_check_button(mb_left) and (alarm_get(0) <= 0))
+{
+    alarm_set(0, 12);
+    
+    var _inst = instance_create_depth(x, y, 0, obj_light_plasma);
+    with(_inst)
+    {
+        speed = 10;
+        direction = point_direction(x, y, mouse_x, mouse_y) + random_range(-5, 5);
+        image_angle = direction;
+    }
+}
 
 //Update camera position
-camera_set_view_pos(camera, round(x - 0.5*camera_get_view_width(camera)), round(y - 0.5*camera_get_view_height(camera)));
+camera_set_view_pos(obj_renderer.camera,
+                    round(x - 0.5*camera_get_view_width( obj_renderer.camera)),
+                    round(y - 0.5*camera_get_view_height(obj_renderer.camera)));
 
-//Update debug timers
-if (alarm_get(1) < 0)
-{
-    smoothed_frame_time = lerp(smoothed_frame_time, 1000/fps_real, 0.005);
-    smoothed_fps = lerp(smoothed_fps, fps_real, 0.005);
-    smoothed_draw_end_time = lerp(smoothed_draw_end_time, draw_end_time, 0.005);
-}
+light.x = x;
+light.y = y;
+light.angle = point_direction(x, y, mouse_x, mouse_y);
+
+if (mouse_check_button_pressed(mb_right)) light.visible = !light.visible;

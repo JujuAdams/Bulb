@@ -20,29 +20,29 @@ function __bulb_class_dynamic_occluder() constructor
     yscale = 1.0;
     angle  = 0.0;
     
-    bbox_x_min = 0;
-    bbox_x_max = 0;
-    bbox_y_min = 0;
-    bbox_y_max = 0;
+    __bbox_x_min = 0;
+    __bbox_x_max = 0;
+    __bbox_y_min = 0;
+    __bbox_y_max = 0;
     
     vertex_array = [];
     
     static add_edge = function(_x1, _y1, _x2, _y2)
     {
-        bbox_x_min = min(bbox_x_min, __BULB_SQRT_2*_x1, __BULB_SQRT_2*_x2);
-        bbox_y_min = min(bbox_y_min, __BULB_SQRT_2*_y1, __BULB_SQRT_2*_y2);
-        bbox_x_max = max(bbox_x_max, __BULB_SQRT_2*_x1, __BULB_SQRT_2*_x2);
-        bbox_y_max = max(bbox_y_max, __BULB_SQRT_2*_y1, __BULB_SQRT_2*_y2);
+        __bbox_x_min = min(__bbox_x_min, __BULB_SQRT_2*_x1, __BULB_SQRT_2*_x2);
+        __bbox_y_min = min(__bbox_y_min, __BULB_SQRT_2*_y1, __BULB_SQRT_2*_y2);
+        __bbox_x_max = max(__bbox_x_max, __BULB_SQRT_2*_x1, __BULB_SQRT_2*_x2);
+        __bbox_y_max = max(__bbox_y_max, __BULB_SQRT_2*_y1, __BULB_SQRT_2*_y2);
         
         array_push(vertex_array, _x1, _y1, _x2, _y2);
     }
     
     static clear_edges = function(_x1, _y1, _x2, _y2)
     {
-        bbox_x_min = 0;
-        bbox_x_max = 0;
-        bbox_y_min = 0;
-        bbox_y_max = 0;
+        __bbox_x_min = 0;
+        __bbox_x_max = 0;
+        __bbox_y_min = 0;
+        __bbox_y_max = 0;
         
         array_resize(vertex_array, 0);
     }
@@ -72,8 +72,8 @@ function __bulb_class_dynamic_occluder() constructor
         }
     }
     
-    static is_on_screen = function(_camera_l, _camera_t, _camera_r, _camera_b)
+    static __is_on_screen = function(_camera_l, _camera_t, _camera_r, _camera_b)
     {
-        return (visible && __bulb_rect_in_rect(x + bbox_x_min, y + bbox_y_min, x + bbox_x_max, y + bbox_y_max, _camera_l, _camera_t, _camera_r, _camera_b));
+        return (visible && __bulb_rect_in_rect(x + __bbox_x_min, y + __bbox_y_min, x + __bbox_x_max, y + __bbox_y_max, _camera_l, _camera_t, _camera_r, _camera_b));
     }
 }
