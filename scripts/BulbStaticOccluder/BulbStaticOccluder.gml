@@ -11,28 +11,13 @@ function BulbStaticOccluder(_renderer) constructor
     
     vertexArray = [];
     
-    __bboxXMin = 0;
-    __bboxXMax = 0;
-    __bboxYMin = 0;
-    __bboxYMax = 0;
-    
     static AddEdge = function(_x1, _y1, _x2, _y2)
     {
-        __bboxXMin = min(__bboxXMin, __BULB_SQRT_2*_x1, __BULB_SQRT_2*_x2);
-        __bboxYMin = min(__bboxYMin, __BULB_SQRT_2*_y1, __BULB_SQRT_2*_y2);
-        __bboxXMax = max(__bboxXMax, __BULB_SQRT_2*_x1, __BULB_SQRT_2*_x2);
-        __bboxYMax = max(__bboxYMax, __BULB_SQRT_2*_y1, __BULB_SQRT_2*_y2);
-        
         array_push(vertexArray, _x1, _y1, _x2, _y2);
     }
     
     static ClearEdges = function(_x1, _y1, _x2, _y2)
     {
-        __bboxXMin = 0;
-        __bboxXMax = 0;
-        __bboxYMin = 0;
-        __bboxYMax = 0;
-        
         array_resize(vertexArray, 0);
     }
     

@@ -22,8 +22,8 @@ function BulbRenderer(_ambientColour, _mode, _smooth) constructor
     
     mode = _mode;
     
-    surfaceWidth  = undefined;
-    surfaceHeight = undefined;
+    surfaceWidth  = -1;
+    surfaceHeight = -1;
     
     //Initialise variables used and updated in bulb_build()
     __staticVBuffer  = undefined; //Vertex buffer describing the geometry of static occluder objects
@@ -51,8 +51,8 @@ function BulbRenderer(_ambientColour, _mode, _smooth) constructor
     {
         if (__freed) return undefined;
         
-        if (surfaceWidth  == undefined) surfaceWidth  = _cameraW;
-        if (surfaceHeight == undefined) surfaceHeight = _cameraH;
+        if (surfaceWidth  <= 0) surfaceWidth  = _cameraW;
+        if (surfaceHeight <= 0) surfaceHeight = _cameraH;
         
         if (mode != __oldMode)
         {
@@ -122,7 +122,7 @@ function BulbRenderer(_ambientColour, _mode, _smooth) constructor
     static GetSurface = function()
     {
         if (__freed) return undefined;
-        if ((surfaceWidth == undefined) || (surfaceHeight == undefined)) return undefined;
+        if ((surfaceWidth <= 0) || (surfaceHeight <= 0)) return undefined;
         
         if ((__surface != undefined) && ((surface_get_width(__surface) != surfaceWidth) || (surface_get_height(__surface) != surfaceHeight)))
         {
