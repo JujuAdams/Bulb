@@ -12,26 +12,15 @@ enum BULB_MODE
     __SIZE
 }
 
-function BulbCreateRenderer(_ambient_colour, _mode, _smooth)
-{
-    with(new __BulbClassRenderer())
-    {
-        ambientColor = _ambient_colour;
-        mode         = _mode;
-        smooth       = _smooth;
-        return self;
-    }
-}
-
-function __BulbClassRenderer() constructor
+function BulbRenderer(_ambientColour, _mode, _smooth) constructor
 {
     //Assign the ambient colour used for the darkest areas of the screen. This can be changed on the fly
-    ambientColor = c_black;
+    ambientColor = _ambientColour;
     
     //The smoothing mode controls texture filtering both when accumulating lights and when drawing the resulting __surface
-    smooth = false;
+    smooth = _smooth;
     
-    mode = BULB_MODE.HARD_BM_ADD;
+    mode = _mode;
     
     //Initialise variables used and updated in bulb_build()
     __staticVBuffer  = undefined; //Vertex buffer describing the geometry of static occluder objects
@@ -216,7 +205,7 @@ function __BulbClassRenderer() constructor
                     var _weak = _array[_i];
                     if (!weak_ref_alive(_weak))
                     {
-                        array_delete(_array, 1, 1);
+                        array_delete(_array, _i, 1);
                     }
                     else
                     {
@@ -236,7 +225,7 @@ function __BulbClassRenderer() constructor
                     var _weak = _array[_i];
                     if (!weak_ref_alive(_weak))
                     {
-                        array_delete(_array, 1, 1);
+                        array_delete(_array, _i, 1);
                     }
                     else
                     {
@@ -268,7 +257,7 @@ function __BulbClassRenderer() constructor
                 var _weak = _array[_i];
                 if (!weak_ref_alive(_weak))
                 {
-                    array_delete(_array, 1, 1);
+                    array_delete(_array, _i, 1);
                 }
                 else
                 {
@@ -292,7 +281,7 @@ function __BulbClassRenderer() constructor
                 var _weak = _array[_i];
                 if (!weak_ref_alive(_weak))
                 {
-                    array_delete(_array, 1, 1);
+                    array_delete(_array, _i, 1);
                 }
                 else
                 {
@@ -420,7 +409,7 @@ function __BulbClassRenderer() constructor
             var _weak = __lightsArray[_i];
             if (!weak_ref_alive(_weak))
             {
-                array_delete(__lightsArray, 1, 1);
+                array_delete(__lightsArray, _i, 1);
             }
             else
             {
@@ -553,7 +542,7 @@ function __BulbClassRenderer() constructor
             var _weak = __lightsArray[_i];
             if (!weak_ref_alive(_weak))
             {
-                array_delete(__lightsArray, 1, 1);
+                array_delete(__lightsArray, _i, 1);
             }
             else
             {

@@ -1,15 +1,6 @@
 /// @param renderer
 
-function BulbCreateStaticOccluder(_renderer)
-{
-    with(new __BulbClassStaticOccluder())
-    {
-        AddToRenderer(_renderer);
-        return self;
-    }
-}
-
-function __BulbClassStaticOccluder() constructor
+function BulbStaticOccluder(_renderer) constructor
 {
     x = 0;
     y = 0;
@@ -44,4 +35,6 @@ function __BulbClassStaticOccluder() constructor
     {
         return (visible && __BulbRectInRect(__bboxXMin, __bboxYMin, __bboxXMax, __bboxYMax, _cameraL, _cameraT, _cameraR, _cameraB));
     }
+    
+    if (_renderer != undefined) AddToRenderer(_renderer);
 }

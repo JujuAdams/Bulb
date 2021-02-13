@@ -6,7 +6,7 @@
     "path": "folders/Bulb.yy",
   },
   "resourceVersion": "1.0",
-  "name": "BulbCreateDynamicOccluder",
+  "name": "BulbRenderer",
   "tags": [],
   "resourceType": "GMScript",
 }

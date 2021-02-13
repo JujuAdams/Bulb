@@ -6,7 +6,7 @@
     "path": "folders/Bulb.yy",
   },
   "resourceVersion": "1.0",
-  "name": "BulbCreateStaticOccluder",
+  "name": "BulbStaticOccluder",
   "tags": [],
   "resourceType": "GMScript",
 }

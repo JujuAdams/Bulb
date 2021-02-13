@@ -8,10 +8,10 @@ function DebugOverlay()
     if (showDebug)
     {
         draw_set_halign(fa_center);
-        draw_text(display_get_gui_width()*0.5, 25, "FPS = " + string_format(fps_real, 4, 0) + "," + string_format(smoothedFrameTime, 2, 2) + "us / bulb_draw_end() = " + string_format(smoothedDrawEndTime, 4, 0) + "us");
+        draw_text(display_get_gui_width()*0.5, 25, "FPS = " + string_format(fps_real, 4, 0) + "," + string_format(smoothedFrameTime, 2, 2) + "us / .Draw() = " + string_format(smoothedDrawEndTime, 4, 0) + "us");
         
         draw_set_halign(fa_left);
-        var _str = "dynamic lights = " + string(array_length(lighting.__lightsArray));
+        var _str = "lights = " + string(array_length(lighting.__lightsArray));
         _str += "\nstatic occluders = " + string(array_length(lighting.__staticOccludersArray));
         _str += "\ndynamic occluders = " + string(array_length(lighting.__dynamicOccludersArray)) + "\n";
         

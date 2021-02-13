@@ -6,7 +6,7 @@
     "path": "folders/Bulb.yy",
   },
   "resourceVersion": "1.0",
-  "name": "BulbCreateRenderer",
+  "name": "BulbLight",
   "tags": [],
   "resourceType": "GMScript",
 }

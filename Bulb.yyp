@@ -1,12 +1,12 @@
 {
   "resources": [
-    {"id":{"name":"BulbCreateLight","path":"scripts/BulbCreateLight/BulbCreateLight.yy",},"order":2,},
+    {"id":{"name":"BulbLight","path":"scripts/BulbLight/BulbLight.yy",},"order":2,},
     {"id":{"name":"sStaticBlock","path":"sprites/sStaticBlock/sStaticBlock.yy",},"order":0,},
     {"id":{"name":"sDynamicBlock","path":"sprites/sDynamicBlock/sDynamicBlock.yy",},"order":1,},
     {"id":{"name":"sLight512","path":"sprites/sLight512/sLight512.yy",},"order":3,},
     {"id":{"name":"sLight128","path":"sprites/sLight128/sLight128.yy",},"order":4,},
     {"id":{"name":"sLightTorch","path":"sprites/sLightTorch/sLightTorch.yy",},"order":5,},
-    {"id":{"name":"BulbCreateDynamicOccluder","path":"scripts/BulbCreateDynamicOccluder/BulbCreateDynamicOccluder.yy",},"order":4,},
+    {"id":{"name":"BulbDynamicOccluder","path":"scripts/BulbDynamicOccluder/BulbDynamicOccluder.yy",},"order":4,},
     {"id":{"name":"sLightMask","path":"sprites/sLightMask/sLightMask.yy",},"order":6,},
     {"id":{"name":"__BulbSystem","path":"scripts/__BulbSystem/__BulbSystem.yy",},"order":0,},
     {"id":{"name":"rmTest","path":"rooms/rmTest/rmTest.yy",},"order":4,},
@@ -18,7 +18,7 @@
     {"id":{"name":"__BulbConfig","path":"scripts/__BulbConfig/__BulbConfig.yy",},"order":0,},
     {"id":{"name":"shdPremultiplyAlpha","path":"shaders/shdPremultiplyAlpha/shdPremultiplyAlpha.yy",},"order":6,},
     {"id":{"name":"__shdBulbHardShadows","path":"shaders/__shdBulbHardShadows/__shdBulbHardShadows.yy",},"order":1,},
-    {"id":{"name":"BulbCreateRenderer","path":"scripts/BulbCreateRenderer/BulbCreateRenderer.yy",},"order":1,},
+    {"id":{"name":"BulbRenderer","path":"scripts/BulbRenderer/BulbRenderer.yy",},"order":1,},
     {"id":{"name":"sLight1024","path":"sprites/sLight1024/sLight1024.yy",},"order":2,},
     {"id":{"name":"__shdBulbSoftShadows","path":"shaders/__shdBulbSoftShadows/__shdBulbSoftShadows.yy",},"order":2,},
     {"id":{"name":"__shdBulbPremultiplyAlpha","path":"shaders/__shdBulbPremultiplyAlpha/__shdBulbPremultiplyAlpha.yy",},"order":3,},
@@ -32,7 +32,7 @@
     {"id":{"name":"oDynamicOccluder","path":"objects/oDynamicOccluder/oDynamicOccluder.yy",},"order":4,},
     {"id":{"name":"oLightDiscoooo","path":"objects/oLightDiscoooo/oLightDiscoooo.yy",},"order":5,},
     {"id":{"name":"oLightPlasma","path":"objects/oLightPlasma/oLightPlasma.yy",},"order":6,},
-    {"id":{"name":"BulbCreateStaticOccluder","path":"scripts/BulbCreateStaticOccluder/BulbCreateStaticOccluder.yy",},"order":3,},
+    {"id":{"name":"BulbStaticOccluder","path":"scripts/BulbStaticOccluder/BulbStaticOccluder.yy",},"order":3,},
     {"id":{"name":"rmInit","path":"rooms/rmInit/rmInit.yy",},"order":1,},
   ],
   "Options": [

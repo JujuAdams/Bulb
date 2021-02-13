@@ -11,7 +11,7 @@ if (keyboard_check_pressed(ord("L"))) instance_create_depth(oPlayer.x, oPlayer.y
 
 if ((keyboard_check(ord("T"))) && (fps_real > 61) && (fps > 55)) instance_create_depth(oPlayer.x, oPlayer.y, 0, oLightDiscoooo);
 
-if (keyboard_check_pressed(ord("1"))) with(oLightDiscoooo) visible = !visible;
+if (keyboard_check_pressed(ord("1"))) with(oLightDiscoooo) light.visible = !light.visible;
 
 if (keyboard_check_pressed(ord("2"))) lighting.mode = (lighting.mode + 1) mod BULB_MODE.__SIZE;
 

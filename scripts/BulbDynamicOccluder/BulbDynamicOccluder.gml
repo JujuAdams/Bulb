@@ -1,15 +1,6 @@
 /// @param renderer
 
-function BulbCreateDynamicOccluder(_renderer)
-{
-    with(new __BulbClassDynamicOccluder())
-    {
-        AddToRenderer(_renderer);
-        return self;
-    }
-}
-
-function __BulbClassDynamicOccluder() constructor
+function BulbDynamicOccluder(_renderer) constructor
 {
     visible = true;
     
@@ -76,4 +67,6 @@ function __BulbClassDynamicOccluder() constructor
     {
         return (visible && __BulbRectInRect(x + __bboxXMin, y + __bboxYMin, x + __bboxXMax, y + __bboxYMax, _cameraL, _cameraT, _cameraR, _cameraB));
     }
+    
+    if (_renderer != undefined) AddToRenderer(_renderer);
 }

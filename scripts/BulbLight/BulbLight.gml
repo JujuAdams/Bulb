@@ -4,28 +4,14 @@
 /// @param x
 /// @param y
 
-function BulbCreateLight(_renderer, _sprite, _image, _x, _y)
-{
-    with(new __BulbClassLight())
-    {
-        sprite = _sprite;
-        image  = _image;
-        x      = _x;
-        y      = _y;
-        
-        AddToRenderer(_renderer);
-        return self;
-    }
-}
-
-function __BulbClassLight() constructor
+function BulbLight(_renderer, _sprite, _image, _x, _y) constructor
 {
     visible = true;
     
-    sprite = undefined;
-    image  = undefined;
-    x      = undefined;
-    y      = undefined;
+    sprite = _sprite;
+    image  = _image;
+    x      = _x;
+    y      = _y;
     xscale = 1.0;
     yscale = 1.0;
     angle  = 0.0;
@@ -80,4 +66,6 @@ function __BulbClassLight() constructor
             __heightHalf = 0.5*yscale*sprite_get_height(sprite);
         }
     }
+    
+    if (_renderer != undefined) AddToRenderer(_renderer);
 }
