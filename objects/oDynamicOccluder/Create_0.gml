@@ -11,7 +11,7 @@ var _r =  0.5*sprite_get_width(sprite_index);
 var _b =  0.5*sprite_get_height(sprite_index);
 
 //Use clockwise definitions!
-occluder.addEdge(_l, _t, _r, _t); //Top
-occluder.addEdge(_r, _t, _r, _b); //Right
-occluder.addEdge(_r, _b, _l, _b); //Bottom
-occluder.addEdge(_l, _b, _l, _t); //Left
+occluder.AddEdge(_l, _t, _r, _t); //Top
+occluder.AddEdge(_r, _t, _r, _b); //Right
+occluder.AddEdge(_r, _b, _l, _b); //Bottom
+occluder.AddEdge(_l, _b, _l, _t); //Left
