@@ -31,6 +31,26 @@ function BulbStaticOccluder(_renderer) constructor
         array_push(_renderer.__staticOccludersArray, weak_ref_create(self));
     }
     
+    static RemoveFromRenderer = function(_renderer)
+    {
+        var _array = _renderer.__staticOccludersArray;
+        var _i = array_length(_array) - 1;
+        repeat(array_length(_array))
+        {
+            var _weak = _array[_i];
+            if (weak_ref_alive(_weak))
+            {
+                if (_weak.ref == self) array_delete(_array, _i, 1);
+            }
+            else
+            {
+                array_delete(_array, _i, 1);
+            }
+            
+            --_i;
+        }
+    }
+    
     static __IsOnScreen = function(_cameraL, _cameraT, _cameraR, _cameraB)
     {
         return (visible && __BulbRectInRect(__bboxXMin, __bboxYMin, __bboxXMax, __bboxYMax, _cameraL, _cameraT, _cameraR, _cameraB));

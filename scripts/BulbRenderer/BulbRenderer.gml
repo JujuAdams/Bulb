@@ -142,11 +142,15 @@ function BulbRenderer(_ambientColour, _mode, _smooth) constructor
         return __surface;
     }
     
-    static ClearStaticOccluders = function()
+    static RefreshStaticOccluders = function()
     {
         if (__freed) return undefined;
         
-        array_resize(static_occluders, 0);
+        if (__staticVBuffer != undefined)
+        {
+            vertex_delete_buffer(__staticVBuffer);
+            __staticVBuffer = undefined;
+        }
     }
     
     static Free = function()
