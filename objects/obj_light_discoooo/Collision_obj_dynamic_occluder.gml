@@ -1,5 +1,3 @@
 x = xprevious;
 y = yprevious;
-
-hspeed = -hspeed;
-vspeed = -vspeed;
+direction = random(360);

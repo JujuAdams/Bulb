@@ -13,10 +13,10 @@ function bulb_create_light(_renderer, _sprite, _image, _x, _y)
         x      = _x;
         y      = _y;
         
-        __light_width       = sprite_get_width(sprite);
-        __light_height      = sprite_get_height(sprite);
-        __light_width_half  = 0.5*__light_width;
-        __light_height_half = 0.5*__light_height;
+        __width       = sprite_get_width(sprite);
+        __height      = sprite_get_height(sprite);
+        __width_half  = 0.5*__width;
+        __height_half = 0.5*__height;
         
         add_to_renderer(_renderer);
         return self;
