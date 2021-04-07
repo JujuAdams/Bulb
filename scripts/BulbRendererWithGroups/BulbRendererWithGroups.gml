@@ -3,7 +3,7 @@
 /// @param smooth
 /// @param maxGroups
 
-function BulbRendererMasked(_ambientColour, _mode, _smooth, _maxGroups) constructor
+function BulbRendererWithGroups(_ambientColour, _mode, _smooth, _maxGroups) constructor
 {
     //Assign the ambient colour used for the darkest areas of the screen. This can be changed on the fly
     ambientColor = _ambientColour;

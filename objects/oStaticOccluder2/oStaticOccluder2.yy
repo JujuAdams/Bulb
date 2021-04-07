@@ -26,8 +26,8 @@
   "properties": [],
   "overriddenProperties": [],
   "parent": {
-    "name": "rmTestMasked Objects",
-    "path": "folders/Example/rmTestMasked Objects.yy",
+    "name": "rmTestWithGroups Objects",
+    "path": "folders/Example/rmTestWithGroups Objects.yy",
   },
   "resourceVersion": "1.0",
   "name": "oStaticOccluder2",

@@ -32,12 +32,12 @@
     {"id":{"name":"oStaticOccluder","path":"objects/oStaticOccluder/oStaticOccluder.yy",},"order":4,},
     {"id":{"name":"oDynamicOccluder2","path":"objects/oDynamicOccluder2/oDynamicOccluder2.yy",},"order":4,},
     {"id":{"name":"oDynamicOccluder","path":"objects/oDynamicOccluder/oDynamicOccluder.yy",},"order":5,},
-    {"id":{"name":"BulbRendererMasked","path":"scripts/BulbRendererMasked/BulbRendererMasked.yy",},"order":2,},
+    {"id":{"name":"BulbRendererWithGroups","path":"scripts/BulbRendererWithGroups/BulbRendererWithGroups.yy",},"order":2,},
     {"id":{"name":"oLightDiscoooo","path":"objects/oLightDiscoooo/oLightDiscoooo.yy",},"order":6,},
     {"id":{"name":"oLightPlasma","path":"objects/oLightPlasma/oLightPlasma.yy",},"order":7,},
     {"id":{"name":"BulbStaticOccluder","path":"scripts/BulbStaticOccluder/BulbStaticOccluder.yy",},"order":5,},
     {"id":{"name":"oStaticOccluder2","path":"objects/oStaticOccluder2/oStaticOccluder2.yy",},"order":3,},
-    {"id":{"name":"rmTestMasked","path":"rooms/rmTestMasked/rmTestMasked.yy",},"order":2,},
+    {"id":{"name":"rmTestWithGroups","path":"rooms/rmTestWithGroups/rmTestWithGroups.yy",},"order":2,},
     {"id":{"name":"BulbMakeBitmask","path":"scripts/BulbMakeBitmask/BulbMakeBitmask.yy",},"order":6,},
     {"id":{"name":"rmInit","path":"rooms/rmInit/rmInit.yy",},"order":0,},
   ],
@@ -66,7 +66,7 @@
   "RoomOrderNodes": [
     {"roomId":{"name":"rmInit","path":"rooms/rmInit/rmInit.yy",},},
     {"roomId":{"name":"rmTest","path":"rooms/rmTest/rmTest.yy",},},
-    {"roomId":{"name":"rmTestMasked","path":"rooms/rmTestMasked/rmTestMasked.yy",},},
+    {"roomId":{"name":"rmTestWithGroups","path":"rooms/rmTestWithGroups/rmTestWithGroups.yy",},},
   ],
   "Folders": [
     {"folderPath":"folders/Example/Sprites.yy","order":0,"resourceVersion":"1.0","name":"Sprites","tags":[],"resourceType":"GMFolder",},
@@ -76,7 +76,7 @@
     {"folderPath":"folders/Example.yy","order":2,"resourceVersion":"1.0","name":"Example","tags":[],"resourceType":"GMFolder",},
     {"folderPath":"folders/Bulb/(System).yy","order":7,"resourceVersion":"1.0","name":"(System)","tags":[],"resourceType":"GMFolder",},
     {"folderPath":"folders/Bulb/(System)/(Pay no attention to that man behind the curtain).yy","order":0,"resourceVersion":"1.0","name":"(Pay no attention to that man behind the curtain)","tags":[],"resourceType":"GMFolder",},
-    {"folderPath":"folders/Example/rmTestMasked Objects.yy","order":3,"resourceVersion":"1.0","name":"rmTestMasked Objects","tags":[],"resourceType":"GMFolder",},
+    {"folderPath":"folders/Example/rmTestWithGroups Objects.yy","order":3,"resourceVersion":"1.0","name":"rmTestWithGroups Objects","tags":[],"resourceType":"GMFolder",},
   ],
   "AudioGroups": [
     {"targets":-1,"resourceVersion":"1.3","name":"audiogroup_default","resourceType":"GMAudioGroup",},
