@@ -1,7 +1,7 @@
 {
   "spriteId": {
-    "name": "sDynamicBlock",
-    "path": "sprites/sDynamicBlock/sDynamicBlock.yy",
+    "name": "sLightMask",
+    "path": "sprites/sLightMask/sLightMask.yy",
   },
   "solid": false,
   "visible": true,
@@ -27,11 +27,11 @@
   "properties": [],
   "overriddenProperties": [],
   "parent": {
-    "name": "rmTest Objects",
-    "path": "folders/Example/rmTest Objects.yy",
+    "name": "rmTestMasked Objects",
+    "path": "folders/Example/rmTestMasked Objects.yy",
   },
   "resourceVersion": "1.0",
-  "name": "oDynamicOccluder",
+  "name": "oLightDiscoooo2",
   "tags": [],
   "resourceType": "GMObject",
 }

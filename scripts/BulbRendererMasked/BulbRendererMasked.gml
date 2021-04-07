@@ -1,16 +1,7 @@
 /// @param ambientColour
 /// @param mode
 /// @param smooth
-
-enum BULB_MODE
-{
-    HARD_BM_ADD,
-    HARD_BM_ADD_SELFLIGHTING,
-    HARD_BM_MAX,
-    HARD_BM_MAX_SELFLIGHTING,
-    SOFT_BM_ADD,
-    __SIZE
-}
+/// @param maxMaskIndex
 
 function BulbRendererMasked(_ambientColour, _mode, _smooth, _maxMaskIndex) constructor
 {

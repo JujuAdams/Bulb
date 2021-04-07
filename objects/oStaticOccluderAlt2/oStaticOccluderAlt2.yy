@@ -1,10 +1,10 @@
 {
   "spriteId": {
-    "name": "sDynamicBlock",
-    "path": "sprites/sDynamicBlock/sDynamicBlock.yy",
+    "name": "sStaticBlock",
+    "path": "sprites/sStaticBlock/sStaticBlock.yy",
   },
   "solid": false,
-  "visible": true,
+  "visible": false,
   "spriteMaskId": null,
   "persistent": false,
   "parentObjectId": null,
@@ -22,16 +22,15 @@
   "physicsShapePoints": [],
   "eventList": [
     {"isDnD":false,"eventNum":0,"eventType":0,"collisionObjectId":null,"resourceVersion":"1.0","name":"","tags":[],"resourceType":"GMEvent",},
-    {"isDnD":false,"eventNum":0,"eventType":3,"collisionObjectId":null,"resourceVersion":"1.0","name":"","tags":[],"resourceType":"GMEvent",},
   ],
   "properties": [],
   "overriddenProperties": [],
   "parent": {
-    "name": "rmTest Objects",
-    "path": "folders/Example/rmTest Objects.yy",
+    "name": "rmTestMasked Objects",
+    "path": "folders/Example/rmTestMasked Objects.yy",
   },
   "resourceVersion": "1.0",
-  "name": "oDynamicOccluder",
+  "name": "oStaticOccluderAlt2",
   "tags": [],
   "resourceType": "GMObject",
 }

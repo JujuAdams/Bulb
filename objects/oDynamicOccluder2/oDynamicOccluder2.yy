@@ -27,11 +27,11 @@
   "properties": [],
   "overriddenProperties": [],
   "parent": {
-    "name": "rmTest Objects",
-    "path": "folders/Example/rmTest Objects.yy",
+    "name": "rmTestMasked Objects",
+    "path": "folders/Example/rmTestMasked Objects.yy",
   },
   "resourceVersion": "1.0",
-  "name": "oDynamicOccluder",
+  "name": "oDynamicOccluder2",
   "tags": [],
   "resourceType": "GMObject",
 }

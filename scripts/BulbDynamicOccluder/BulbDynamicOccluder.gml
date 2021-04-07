@@ -13,7 +13,7 @@ function BulbDynamicOccluder(_renderer) constructor
     
     vertexArray = [];
     
-    bitmask = 0x0000000000000001; //Most significant bit defaults to 1
+    bitmask = 0xFFFFFFFFFFFFFFFF; //Default to rendering on every layer
     
     __bboxXMin = 0;
     __bboxXMax = 0;

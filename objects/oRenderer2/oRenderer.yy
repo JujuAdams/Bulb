@@ -29,8 +29,8 @@
   "properties": [],
   "overriddenProperties": [],
   "parent": {
-    "name": "rmTest Objects",
-    "path": "folders/Example/rmTest Objects.yy",
+    "name": "Objects",
+    "path": "folders/Example/Objects.yy",
   },
   "resourceVersion": "1.0",
   "name": "oRenderer",
