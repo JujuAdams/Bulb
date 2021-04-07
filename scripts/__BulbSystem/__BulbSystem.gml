@@ -1,5 +1,5 @@
-#macro __BULB_VERSION        "20.0.0"
-#macro __BULB_DATE           "2021-02-12"
+#macro __BULB_VERSION        "20.1.0"
+#macro __BULB_DATE           "2021-04-07"
 #macro __BULB_ON_DIRECTX     ((os_type == os_windows) || (os_type == os_xboxone) || (os_type == os_uwp) || (os_type == os_winphone) || (os_type == os_win8native))
 #macro __BULB_ZFAR           16000
 #macro __BULB_FLIP_CAMERA_Y  __BULB_ON_DIRECTX
