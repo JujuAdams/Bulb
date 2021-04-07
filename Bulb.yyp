@@ -1,12 +1,12 @@
 {
   "resources": [
-    {"id":{"name":"BulbLight","path":"scripts/BulbLight/BulbLight.yy",},"order":2,},
+    {"id":{"name":"BulbLight","path":"scripts/BulbLight/BulbLight.yy",},"order":3,},
     {"id":{"name":"sStaticBlock","path":"sprites/sStaticBlock/sStaticBlock.yy",},"order":0,},
     {"id":{"name":"sDynamicBlock","path":"sprites/sDynamicBlock/sDynamicBlock.yy",},"order":1,},
     {"id":{"name":"sLight512","path":"sprites/sLight512/sLight512.yy",},"order":3,},
     {"id":{"name":"sLight128","path":"sprites/sLight128/sLight128.yy",},"order":4,},
     {"id":{"name":"sLightTorch","path":"sprites/sLightTorch/sLightTorch.yy",},"order":5,},
-    {"id":{"name":"BulbDynamicOccluder","path":"scripts/BulbDynamicOccluder/BulbDynamicOccluder.yy",},"order":3,},
+    {"id":{"name":"BulbDynamicOccluder","path":"scripts/BulbDynamicOccluder/BulbDynamicOccluder.yy",},"order":4,},
     {"id":{"name":"sLightMask","path":"sprites/sLightMask/sLightMask.yy",},"order":6,},
     {"id":{"name":"__BulbSystem","path":"scripts/__BulbSystem/__BulbSystem.yy",},"order":0,},
     {"id":{"name":"rmTest","path":"rooms/rmTest/rmTest.yy",},"order":4,},
@@ -27,9 +27,10 @@
     {"id":{"name":"oPlayer","path":"objects/oPlayer/oPlayer.yy",},"order":2,},
     {"id":{"name":"oStaticOccluder","path":"objects/oStaticOccluder/oStaticOccluder.yy",},"order":3,},
     {"id":{"name":"oDynamicOccluder","path":"objects/oDynamicOccluder/oDynamicOccluder.yy",},"order":4,},
+    {"id":{"name":"BulbRendererMasked","path":"scripts/BulbRendererMasked/BulbRendererMasked.yy",},"order":2,},
     {"id":{"name":"oLightDiscoooo","path":"objects/oLightDiscoooo/oLightDiscoooo.yy",},"order":5,},
     {"id":{"name":"oLightPlasma","path":"objects/oLightPlasma/oLightPlasma.yy",},"order":6,},
-    {"id":{"name":"BulbStaticOccluder","path":"scripts/BulbStaticOccluder/BulbStaticOccluder.yy",},"order":4,},
+    {"id":{"name":"BulbStaticOccluder","path":"scripts/BulbStaticOccluder/BulbStaticOccluder.yy",},"order":5,},
     {"id":{"name":"rmInit","path":"rooms/rmInit/rmInit.yy",},"order":1,},
   ],
   "Options": [
@@ -64,7 +65,7 @@
     {"folderPath":"folders/Example/Objects.yy","order":1,"resourceVersion":"1.0","name":"Objects","tags":[],"resourceType":"GMFolder",},
     {"folderPath":"folders/Rooms.yy","order":3,"resourceVersion":"1.0","name":"Rooms","tags":[],"resourceType":"GMFolder",},
     {"folderPath":"folders/Example.yy","order":2,"resourceVersion":"1.0","name":"Example","tags":[],"resourceType":"GMFolder",},
-    {"folderPath":"folders/Bulb/(System).yy","order":5,"resourceVersion":"1.0","name":"(System)","tags":[],"resourceType":"GMFolder",},
+    {"folderPath":"folders/Bulb/(System).yy","order":6,"resourceVersion":"1.0","name":"(System)","tags":[],"resourceType":"GMFolder",},
     {"folderPath":"folders/Bulb/(System)/(Pay no attention to that man behind the curtain).yy","order":0,"resourceVersion":"1.0","name":"(Pay no attention to that man behind the curtain)","tags":[],"resourceType":"GMFolder",},
   ],
   "AudioGroups": [
@@ -75,7 +76,7 @@
   ],
   "IncludedFiles": [],
   "MetaData": {
-    "IDEVersion": "2.3.1.542",
+    "IDEVersion": "2.3.2.556",
   },
   "resourceVersion": "1.4",
   "name": "Bulb",

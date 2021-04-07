@@ -20,6 +20,8 @@ vertex_format_add_position_3d();
 vertex_format_add_texcoord();
 global.__bulb_format_3d_texture = vertex_format_end();
 
+
+
 function __BulbTrace()
 {
     var _string = "";
@@ -32,6 +34,21 @@ function __BulbTrace()
     }
     
     show_debug_message("Bulb: " + _string);
+}
+
+function __BulbError()
+{
+    var _string = "";
+    
+    var _i = 0
+    repeat(argument_count)
+    {
+        _string += string(argument[_i]);
+        ++_i;
+    }
+    
+    show_debug_message("Bulb: " + string_replace_all(_string, "\n", "\n          "));
+    show_error("Bulb:\n" + _string + "\n ", true);
 }
 
 

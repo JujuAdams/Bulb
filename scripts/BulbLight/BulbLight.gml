@@ -18,6 +18,8 @@ function BulbLight(_renderer, _sprite, _image, _x, _y) constructor
     blend  = c_white;
     alpha  = 1.0;
     
+    bitmask = 0x0000000000000001; //Most significant bit defaults to 1
+    
     penumbraSize = 0.0;
     
     castShadows = true;

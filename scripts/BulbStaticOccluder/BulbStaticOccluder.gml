@@ -11,6 +11,8 @@ function BulbStaticOccluder(_renderer) constructor
     
     vertexArray = [];
     
+    bitmask = 0x0000000000000001; //Most significant bit defaults to 1
+    
     static AddEdge = function(_x1, _y1, _x2, _y2)
     {
         array_push(vertexArray, _x1, _y1, _x2, _y2);

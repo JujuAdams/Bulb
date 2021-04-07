@@ -12,7 +12,7 @@ enum BULB_MODE
     __SIZE
 }
 
-function BulbRenderer(_ambientColour, _mode, _smooth) constructor
+function BulbRendererMasked(_ambientColour, _mode, _smooth, _maxMaskIndex) constructor
 {
     //Assign the ambient colour used for the darkest areas of the screen. This can be changed on the fly
     ambientColor = _ambientColour;
@@ -25,11 +25,27 @@ function BulbRenderer(_ambientColour, _mode, _smooth) constructor
     surfaceWidth  = -1;
     surfaceHeight = -1;
     
-    //Initialise variables used and updated in .__UpdateVertexBuffers()
-    __staticVBuffer  = undefined; //Vertex buffer describing the geometry of static occluder objects
-    __dynamicVBuffer = undefined; //As above but for dynamic shadow occluders. This is updated every step
-    __wipeVBuffer    = undefined; //This vertex buffer is used to reset the z-buffer during accumulation of non-deferred lights
-    __surface        = undefined; //Screen-space __surface for final accumulation of lights
+    //The highest mask index that can be specified
+    if ((_maxMaskIndex <= 0) || (_maxMaskIndex > 64)) __BulbError("Maximum mask index should be between 1 and 64 inclusive (got ", _maxMaskIndex, ")");
+    __maxMaskIndex = _maxMaskIndex;
+    
+    __layerArray = array_create(__maxMaskIndex);
+    var _i = 0;
+    repeat(__maxMaskIndex)
+    {
+        //Initialise variables used and updated in .__UpdateVertexBuffers()
+        var _layerStruct = {
+            staticVBuffer  : undefined, //Vertex buffer describing the geometry of static occluder objects
+            dynamicVBuffer : undefined, //As above but for dynamic shadow occluders. This is updated every step
+        }
+        
+        __layerArray[@ _i] = _layerStruct;
+        
+        ++_i;
+    }
+    
+    __wipeVBuffer = undefined; //This vertex buffer is used to reset the z-buffer during accumulation of non-deferred lights
+    __surface     = undefined; //Screen-space __surface for final accumulation of lights
     
     __staticOccludersArray  = [];
     __dynamicOccludersArray = [];
@@ -146,10 +162,19 @@ function BulbRenderer(_ambientColour, _mode, _smooth) constructor
     {
         if (__freed) return undefined;
         
-        if (__staticVBuffer != undefined)
+        var _i = 0;
+        repeat(__maxMaskIndex)
         {
-            vertex_delete_buffer(__staticVBuffer);
-            __staticVBuffer = undefined;
+            with(__layerArray[_i])
+            {
+                if (staticVBuffer != undefined)
+                {
+                    vertex_delete_buffer(staticVBuffer);
+                    staticVBuffer = undefined;
+                }
+            }
+            
+            ++_i;
         }
     }
     
@@ -190,116 +215,165 @@ function BulbRenderer(_ambientColour, _mode, _smooth) constructor
             vertex_freeze(__wipeVBuffer);
         }
         
-        //One-time construction of the static occluder geometry
-        if (__staticVBuffer == undefined)
+        var _layerArray   = __layerArray;
+        var _staticArray  = __staticOccludersArray;
+        var _staticCount  = array_length(_staticArray);
+        var _dynamicArray = __dynamicOccludersArray;
+        var _dynamicCount = array_length(_dynamicArray);
+        
+        //Pre-parse the static occluder array to remove any dead weak references
+        var _i = 0;
+        repeat(_staticCount)
         {
-            //Create a new vertex buffer
-            __staticVBuffer = vertex_create_buffer();
-            var _staticVBuffer = __staticVBuffer;
-            
-            //Add static shadow caster vertices to the relevant vertex buffer
-            if (mode == BULB_MODE.SOFT_BM_ADD)
+            var _weak = _staticArray[_i];
+            if (!weak_ref_alive(_weak))
             {
-                vertex_begin(__staticVBuffer, global.__bulb_format_3d_texture);
-                
-                var _array = __staticOccludersArray;
-                var _i = 0;
-                repeat(array_length(_array))
-                {
-                    var _weak = _array[_i];
-                    if (!weak_ref_alive(_weak))
-                    {
-                        array_delete(_array, _i, 1);
-                    }
-                    else
-                    {
-                        with(_weak.ref) __BulbAddOcclusionSoft(_staticVBuffer);
-                        ++_i;
-                    }
-                }
+                array_delete(_staticArray, _i, 1);
             }
             else
             {
-                vertex_begin(__staticVBuffer, global.__bulb_format_3d_colour);
-                
-                var _array = __staticOccludersArray;
-                var _i = 0;
-                repeat(array_length(_array))
-                {
-                    var _weak = _array[_i];
-                    if (!weak_ref_alive(_weak))
-                    {
-                        array_delete(_array, _i, 1);
-                    }
-                    else
-                    {
-                        with(_weak.ref) __BulbAddOcclusionHard(_staticVBuffer);
-                        ++_i;
-                    }
-                }
+                ++_i;
             }
-            
-            vertex_end(__staticVBuffer);
-            
-            //Freeze this buffer for speed boosts later on (though only if we have vertices in this buffer)
-            if (vertex_get_number(__staticVBuffer) > 0) vertex_freeze(__staticVBuffer);
         }
         
-        //Refresh the dynamic occluder geometry
-        if (__dynamicVBuffer == undefined) __dynamicVBuffer = vertex_create_buffer();
-        var _dynamicVBuffer = __dynamicVBuffer;
+        //Pre-parse the dynamic occluder array to remove any dead weak references
+        var _i = 0;
+        repeat(_dynamicCount)
+        {
+            var _weak = _dynamicArray[_i];
+            if (!weak_ref_alive(_weak))
+            {
+                array_delete(_dynamicArray, _i, 1);
+            }
+            else
+            {
+                ++_i;
+            }
+        }
         
-        //Add dynamic occluder vertices to the relevant vertex buffer
+        //Build our vertex buffers per layer depending on our rendering mode
         if (mode == BULB_MODE.SOFT_BM_ADD)
         {
-            vertex_begin(_dynamicVBuffer, global.__bulb_format_3d_texture);
-            
-            var _array = __dynamicOccludersArray;
-            var _i = 0;
-            repeat(array_length(_array))
+            var _j = 0;
+            repeat(__maxMaskIndex)
             {
-                var _weak = _array[_i];
-                if (!weak_ref_alive(_weak))
+                var _bit = 1 << _j;
+                with(_layerArray[_j])
                 {
-                    array_delete(_array, _i, 1);
-                }
-                else
-                {
-                    with(_weak.ref)
+                    //One-time construction of the static occluder geometry
+                    if (staticVBuffer == undefined)
                     {
-                        if (__IsOnScreen(_cameraExpL, _cameraExpT, _cameraExpR, _cameraExpB)) __BulbAddOcclusionSoft(_dynamicVBuffer);
+                        //Create a new vertex buffer
+                        staticVBuffer = vertex_create_buffer();
+                        var _staticVBuffer = staticVBuffer;
+                        vertex_begin(_staticVBuffer, global.__bulb_format_3d_texture);
+                        
+                        //Iterate over the static occluders and add them to this layer as necessary
+                        var _i = 0;
+                        repeat(_staticCount)
+                        {
+                            with(_staticArray[_i].ref)
+                            {
+                                if ((bitmask & _bit) > 0) __BulbAddOcclusionSoft(_staticVBuffer);
+                            }
+                            
+                            ++_i;
+                        }
+                        
+                        vertex_end(_staticVBuffer);
+                        
+                        //Freeze this buffer for speed boosts later on (though only if we have vertices in this buffer)
+                        if (vertex_get_number(_staticVBuffer) > 0) vertex_freeze(_staticVBuffer);
                     }
                     
-                    ++_i;
+                    
+                    
+                    //Refresh the dynamic occluder geometry
+                    if (dynamicVBuffer == undefined) dynamicVBuffer = vertex_create_buffer();
+                    var _dynamicVBuffer = dynamicVBuffer;
+                    vertex_begin(_dynamicVBuffer, global.__bulb_format_3d_texture);
+                    
+                    //Iterate over the dynamic occluders and add them to this layer as necessary
+                    var _i = 0;
+                    repeat(_dynamicCount)
+                    {
+                        with(_dynamicArray[_i].ref)
+                        {
+                            if (((bitmask & _bit) > 0) && __IsOnScreen(_cameraExpL, _cameraExpT, _cameraExpR, _cameraExpB))
+                            {
+                                __BulbAddOcclusionSoft(_dynamicVBuffer);
+                            }
+                        }
+                        
+                        ++_i;
+                    }
+                    
+                    vertex_end(_dynamicVBuffer);
                 }
+            
+                ++_j;
             }
         }
         else
         {
-            vertex_begin(_dynamicVBuffer, global.__bulb_format_3d_colour);
-            
-            var _array = __dynamicOccludersArray;
-            var _i = 0;
-            repeat(array_length(_array))
+            var _j = 0;
+            repeat(__maxMaskIndex)
             {
-                var _weak = _array[_i];
-                if (!weak_ref_alive(_weak))
+                var _bit = 1 << _j;
+                with(_layerArray[_j])
                 {
-                    array_delete(_array, _i, 1);
-                }
-                else
-                {
-                    with(_weak.ref)
+                    //One-time construction of the static occluder geometry
+                    if (staticVBuffer == undefined)
                     {
-                        if (__IsOnScreen(_cameraExpL, _cameraExpT, _cameraExpR, _cameraExpB)) __BulbAddOcclusionHard(_dynamicVBuffer);
+                        //Create a new vertex buffer
+                        staticVBuffer = vertex_create_buffer();
+                        var _staticVBuffer = staticVBuffer;
+                        vertex_begin(_staticVBuffer, global.__bulb_format_3d_colour);
+                        
+                        //Iterate over the static occluders and add them to this layer as necessary
+                        var _i = 0;
+                        repeat(_staticCount)
+                        {
+                            with(_staticArray[_i].ref)
+                            {
+                                if ((bitmask & _bit) > 0) __BulbAddOcclusionHard(_staticVBuffer);
+                            }
+                            
+                            ++_i;
+                        }
+                        
+                        vertex_end(_staticVBuffer);
+                        
+                        //Freeze this buffer for speed boosts later on (though only if we have vertices in this buffer)
+                        if (vertex_get_number(_staticVBuffer) > 0) vertex_freeze(_staticVBuffer);
                     }
                     
-                    ++_i;
+                    //Refresh the dynamic occluder geometry
+                    if (dynamicVBuffer == undefined) dynamicVBuffer = vertex_create_buffer();
+                    var _dynamicVBuffer = dynamicVBuffer;
+                    vertex_begin(_dynamicVBuffer, global.__bulb_format_3d_colour);
+                    
+                    //Iterate over the dynamic occluders and add them to this layer as necessary
+                    var _i = 0;
+                    repeat(_dynamicCount)
+                    {
+                        with(_dynamicArray[_i].ref)
+                        {
+                            if (((bitmask & _bit) > 0) && __IsOnScreen(_cameraExpL, _cameraExpT, _cameraExpR, _cameraExpB))
+                            {
+                                __BulbAddOcclusionSoft(_dynamicVBuffer);
+                            }
+                        }
+                        
+                        ++_i;
+                    }
+                    
+                    vertex_end(_dynamicVBuffer);
                 }
+                
+                ++_j;
             }
         }
-        
-        vertex_end(_dynamicVBuffer);
     }
     
     #endregion
@@ -384,9 +458,9 @@ function BulbRenderer(_ambientColour, _mode, _smooth) constructor
     {
         if (__freed) return undefined;
         
-        var _wipeVBuffer    = __wipeVBuffer;
-        var _staticVBuffer  = __staticVBuffer;
-        var _dynamicVBuffer = __dynamicVBuffer;
+        var _wipeVBuffer = __wipeVBuffer;
+        var _layerArray  = __layerArray;
+        var _layerCount  = __maxMaskIndex;
         
         //Calculate some transform coefficients
         var _cameraInvW = 2/_cameraW;
@@ -450,8 +524,21 @@ function BulbRenderer(_ambientColour, _mode, _smooth) constructor
                             _projMatrix[@  9] = y;
                             _projMatrix[@ 10] = penumbraSize;
                             matrix_set(matrix_projection, _projMatrix);
-                            vertex_submit(_staticVBuffer,  pr_trianglelist, -1);
-                            vertex_submit(_dynamicVBuffer, pr_trianglelist, -1);
+                            
+                            var _j = 0;
+                            repeat(_layerCount)
+                            {
+                                if ((bitmask & (1 << _j)) > 0)
+                                {
+                                    with(_layerArray[_j])
+                                    {
+                                        vertex_submit(staticVBuffer,  pr_trianglelist, -1);
+                                        vertex_submit(dynamicVBuffer, pr_trianglelist, -1);
+                                    }
+                                }
+                                
+                                ++_j;
+                            }
                             
                             //Draw light sprite
                             shader_reset();
@@ -500,9 +587,9 @@ function BulbRenderer(_ambientColour, _mode, _smooth) constructor
     {
         if (__freed) return undefined;
         
-        var _wipeVBuffer    = __wipeVBuffer;
-        var _staticVBuffer  = __staticVBuffer;
-        var _dynamicVBuffer = __dynamicVBuffer;
+        var _wipeVBuffer = __wipeVBuffer;
+        var _layerArray  = __layerArray;
+        var _layerCount  = __maxMaskIndex;
         
         //Calculate some transform coefficients
         var _cameraInvW = 2/_cameraW;
@@ -582,8 +669,21 @@ function BulbRenderer(_ambientColour, _mode, _smooth) constructor
                             _projMatrix[@ 8] = _cameraTransformedX - x*_cameraInvW;
                             _projMatrix[@ 9] = _cameraTransformedY - y*_cameraInvH;
                             matrix_set(matrix_projection, _projMatrix);
-                            vertex_submit(_staticVBuffer,  pr_trianglelist, -1);
-                            vertex_submit(_dynamicVBuffer, pr_trianglelist, -1);
+                            
+                            var _j = 0;
+                            repeat(_layerCount)
+                            {
+                                if ((bitmask & (1 << _j)) > 0)
+                                {
+                                    with(_layerArray[_j])
+                                    {
+                                        vertex_submit(staticVBuffer,  pr_trianglelist, -1);
+                                        vertex_submit(dynamicVBuffer, pr_trianglelist, -1);
+                                    }
+                                }
+                                
+                                ++_j;
+                            }
                     
                             //Draw light sprite
                             shader_set(_resetShader);
@@ -623,16 +723,25 @@ function BulbRenderer(_ambientColour, _mode, _smooth) constructor
             __wipeVBuffer = undefined;
         }
         
-        if (__staticVBuffer != undefined)
+        var _i = 0;
+        repeat(__maxMaskIndex)
         {
-            vertex_delete_buffer(__staticVBuffer);
-            __staticVBuffer = undefined;
-        }
-        
-        if (__dynamicVBuffer != undefined)
-        {
-            vertex_delete_buffer(__dynamicVBuffer);
-            __dynamicVBuffer = undefined;
+            with(__layerArray[_i])
+            {
+                if (staticVBuffer != undefined)
+                {
+                    vertex_delete_buffer(staticVBuffer);
+                    staticVBuffer = undefined;
+                }
+                
+                if (dynamicVBuffer != undefined)
+                {
+                    vertex_delete_buffer(dynamicVBuffer);
+                    dynamicVBuffer = undefined;
+                }
+            }
+            
+            ++_i;
         }
     }
     
