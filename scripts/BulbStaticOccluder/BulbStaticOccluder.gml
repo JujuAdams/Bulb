@@ -11,7 +11,7 @@ function BulbStaticOccluder(_renderer) constructor
     
     vertexArray = [];
     
-    bitmask = 0xFFFFFFFFFFFFFFFF; //Default to rendering on every layer
+    bitmask = 0xFFFFFFFFFFFFFFFF; //Default to rendering in every group
     
     static AddEdge = function(_x1, _y1, _x2, _y2)
     {

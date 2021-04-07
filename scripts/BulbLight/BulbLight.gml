@@ -18,7 +18,7 @@ function BulbLight(_renderer, _sprite, _image, _x, _y) constructor
     blend  = c_white;
     alpha  = 1.0;
     
-    bitmask = 0xFFFFFFFFFFFFFFFF; //Default to rendering on every layer
+    bitmask = 0xFFFFFFFFFFFFFFFF; //Default to rendering occluders from every group
     
     penumbraSize = 0.0;
     

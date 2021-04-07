@@ -13,7 +13,7 @@ function BulbDynamicOccluder(_renderer) constructor
     
     vertexArray = [];
     
-    bitmask = 0xFFFFFFFFFFFFFFFF; //Default to rendering on every layer
+    bitmask = 0xFFFFFFFFFFFFFFFF; //Default to rendering in every group
     
     __bboxXMin = 0;
     __bboxXMax = 0;

@@ -1,9 +1,9 @@
 /// @param ambientColour
 /// @param mode
 /// @param smooth
-/// @param maxMaskIndex
+/// @param maxGroups
 
-function BulbRendererMasked(_ambientColour, _mode, _smooth, _maxMaskIndex) constructor
+function BulbRendererMasked(_ambientColour, _mode, _smooth, _maxGroups) constructor
 {
     //Assign the ambient colour used for the darkest areas of the screen. This can be changed on the fly
     ambientColor = _ambientColour;
@@ -17,20 +17,20 @@ function BulbRendererMasked(_ambientColour, _mode, _smooth, _maxMaskIndex) const
     surfaceHeight = -1;
     
     //The highest mask index that can be specified
-    if ((_maxMaskIndex <= 0) || (_maxMaskIndex > 64)) __BulbError("Maximum mask index should be between 1 and 64 inclusive (got ", _maxMaskIndex, ")");
-    __maxMaskIndex = _maxMaskIndex;
+    if ((_maxGroups <= 0) || (_maxGroups > 64)) __BulbError("Maximum mask index should be between 1 and 64 inclusive (got ", _maxGroups, ")");
+    __maxGroups = _maxGroups;
     
-    __layerArray = array_create(__maxMaskIndex);
+    __groupArray = array_create(__maxGroups);
     var _i = 0;
-    repeat(__maxMaskIndex)
+    repeat(__maxGroups)
     {
         //Initialise variables used and updated in .__UpdateVertexBuffers()
-        var _layerStruct = {
+        var _groupStruct = {
             staticVBuffer  : undefined, //Vertex buffer describing the geometry of static occluder objects
             dynamicVBuffer : undefined, //As above but for dynamic shadow occluders. This is updated every step
         }
         
-        __layerArray[@ _i] = _layerStruct;
+        __groupArray[@ _i] = _groupStruct;
         
         ++_i;
     }
@@ -154,9 +154,9 @@ function BulbRendererMasked(_ambientColour, _mode, _smooth, _maxMaskIndex) const
         if (__freed) return undefined;
         
         var _i = 0;
-        repeat(__maxMaskIndex)
+        repeat(__maxGroups)
         {
-            with(__layerArray[_i])
+            with(__groupArray[_i])
             {
                 if (staticVBuffer != undefined)
                 {
@@ -206,7 +206,7 @@ function BulbRendererMasked(_ambientColour, _mode, _smooth, _maxMaskIndex) const
             vertex_freeze(__wipeVBuffer);
         }
         
-        var _layerArray   = __layerArray;
+        var _groupArray   = __groupArray;
         var _staticArray  = __staticOccludersArray;
         var _staticCount  = array_length(_staticArray);
         var _dynamicArray = __dynamicOccludersArray;
@@ -242,14 +242,14 @@ function BulbRendererMasked(_ambientColour, _mode, _smooth, _maxMaskIndex) const
             }
         }
         
-        //Build our vertex buffers per layer depending on our rendering mode
+        //Build our vertex buffers per group depending on our rendering mode
         if (mode == BULB_MODE.SOFT_BM_ADD)
         {
             var _j = 0;
-            repeat(__maxMaskIndex)
+            repeat(__maxGroups)
             {
                 var _bit = 1 << _j;
-                with(_layerArray[_j])
+                with(_groupArray[_j])
                 {
                     //One-time construction of the static occluder geometry
                     if (staticVBuffer == undefined)
@@ -259,7 +259,7 @@ function BulbRendererMasked(_ambientColour, _mode, _smooth, _maxMaskIndex) const
                         var _staticVBuffer = staticVBuffer;
                         vertex_begin(_staticVBuffer, global.__bulb_format_3d_texture);
                         
-                        //Iterate over the static occluders and add them to this layer as necessary
+                        //Iterate over the static occluders and add them to this group as necessary
                         var _i = 0;
                         repeat(_staticCount)
                         {
@@ -284,7 +284,7 @@ function BulbRendererMasked(_ambientColour, _mode, _smooth, _maxMaskIndex) const
                     var _dynamicVBuffer = dynamicVBuffer;
                     vertex_begin(_dynamicVBuffer, global.__bulb_format_3d_texture);
                     
-                    //Iterate over the dynamic occluders and add them to this layer as necessary
+                    //Iterate over the dynamic occluders and add them to this group as necessary
                     var _i = 0;
                     repeat(_dynamicCount)
                     {
@@ -308,10 +308,10 @@ function BulbRendererMasked(_ambientColour, _mode, _smooth, _maxMaskIndex) const
         else
         {
             var _j = 0;
-            repeat(__maxMaskIndex)
+            repeat(__maxGroups)
             {
                 var _bit = 1 << _j;
-                with(_layerArray[_j])
+                with(_groupArray[_j])
                 {
                     //One-time construction of the static occluder geometry
                     if (staticVBuffer == undefined)
@@ -321,7 +321,7 @@ function BulbRendererMasked(_ambientColour, _mode, _smooth, _maxMaskIndex) const
                         var _staticVBuffer = staticVBuffer;
                         vertex_begin(_staticVBuffer, global.__bulb_format_3d_colour);
                         
-                        //Iterate over the static occluders and add them to this layer as necessary
+                        //Iterate over the static occluders and add them to this group as necessary
                         var _i = 0;
                         repeat(_staticCount)
                         {
@@ -344,7 +344,7 @@ function BulbRendererMasked(_ambientColour, _mode, _smooth, _maxMaskIndex) const
                     var _dynamicVBuffer = dynamicVBuffer;
                     vertex_begin(_dynamicVBuffer, global.__bulb_format_3d_colour);
                     
-                    //Iterate over the dynamic occluders and add them to this layer as necessary
+                    //Iterate over the dynamic occluders and add them to this group as necessary
                     var _i = 0;
                     repeat(_dynamicCount)
                     {
@@ -450,8 +450,8 @@ function BulbRendererMasked(_ambientColour, _mode, _smooth, _maxMaskIndex) const
         if (__freed) return undefined;
         
         var _wipeVBuffer = __wipeVBuffer;
-        var _layerArray  = __layerArray;
-        var _layerCount  = __maxMaskIndex;
+        var _groupArray  = __groupArray;
+        var _groupCount  = __maxGroups;
         
         //Calculate some transform coefficients
         var _cameraInvW = 2/_cameraW;
@@ -517,11 +517,11 @@ function BulbRendererMasked(_ambientColour, _mode, _smooth, _maxMaskIndex) const
                             matrix_set(matrix_projection, _projMatrix);
                             
                             var _j = 0;
-                            repeat(_layerCount)
+                            repeat(_groupCount)
                             {
                                 if ((bitmask & (1 << _j)) > 0)
                                 {
-                                    with(_layerArray[_j])
+                                    with(_groupArray[_j])
                                     {
                                         vertex_submit(staticVBuffer,  pr_trianglelist, -1);
                                         vertex_submit(dynamicVBuffer, pr_trianglelist, -1);
@@ -579,8 +579,8 @@ function BulbRendererMasked(_ambientColour, _mode, _smooth, _maxMaskIndex) const
         if (__freed) return undefined;
         
         var _wipeVBuffer = __wipeVBuffer;
-        var _layerArray  = __layerArray;
-        var _layerCount  = __maxMaskIndex;
+        var _groupArray  = __groupArray;
+        var _groupCount  = __maxGroups;
         
         //Calculate some transform coefficients
         var _cameraInvW = 2/_cameraW;
@@ -662,11 +662,11 @@ function BulbRendererMasked(_ambientColour, _mode, _smooth, _maxMaskIndex) const
                             matrix_set(matrix_projection, _projMatrix);
                             
                             var _j = 0;
-                            repeat(_layerCount)
+                            repeat(_groupCount)
                             {
                                 if ((bitmask & (1 << _j)) > 0)
                                 {
-                                    with(_layerArray[_j])
+                                    with(_groupArray[_j])
                                     {
                                         vertex_submit(staticVBuffer,  pr_trianglelist, -1);
                                         vertex_submit(dynamicVBuffer, pr_trianglelist, -1);
@@ -715,9 +715,9 @@ function BulbRendererMasked(_ambientColour, _mode, _smooth, _maxMaskIndex) const
         }
         
         var _i = 0;
-        repeat(__maxMaskIndex)
+        repeat(__maxGroups)
         {
-            with(__layerArray[_i])
+            with(__groupArray[_i])
             {
                 if (staticVBuffer != undefined)
                 {
