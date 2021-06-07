@@ -51,7 +51,19 @@ function BulbRendererWithGroups(_ambientColour, _mode, _smooth, _maxGroups) cons
     
     static UpdateFromCamera = function(_camera)
     {
-        return Update(camera_get_view_x(_camera), camera_get_view_y(_camera), camera_get_view_width(_camera), camera_get_view_height(_camera));
+        //Deploy PROPER MATHS in case the dev is using matrices
+        
+        var _viewMatrix = camera_get_view_mat(_camera);
+        var _projMatrix = camera_get_proj_mat(_camera);
+        
+        var _cameraX          = -_viewMatrix[12];
+        var _cameraY          = -_viewMatrix[13];
+        var _cameraViewWidth  = round(abs(2/_projMatrix[0]));
+        var _cameraViewHeight = round(abs(2/_projMatrix[5]));
+        var _cameraLeft       = _cameraX - _cameraViewWidth/2;
+        var _cameraTop        = _cameraY - _cameraViewHeight/2;
+        
+        return Update(_cameraLeft, _cameraTop, _cameraViewWidth, _cameraViewHeight);
     }
     
     static Update = function(_cameraL, _cameraT, _cameraW, _cameraH)
