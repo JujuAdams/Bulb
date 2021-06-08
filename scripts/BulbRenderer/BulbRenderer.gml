@@ -99,6 +99,24 @@ function BulbRenderer(_ambientColour, _mode, _smooth) constructor
         surface_reset_target();
     }
     
+    /// @param camera
+    static DrawOnCamera = function(_camera)
+    {
+        //Deploy PROPER MATHS in case the dev is using matrices
+        
+        var _viewMatrix = camera_get_view_mat(_camera);
+        var _projMatrix = camera_get_proj_mat(_camera);
+        
+        var _cameraX          = -_viewMatrix[12];
+        var _cameraY          = -_viewMatrix[13];
+        var _cameraViewWidth  = round(abs(2/_projMatrix[0]));
+        var _cameraViewHeight = round(abs(2/_projMatrix[5]));
+        var _cameraLeft       = _cameraX - _cameraViewWidth/2;
+        var _cameraTop        = _cameraY - _cameraViewHeight/2;
+        
+        return Draw(_cameraLeft, _cameraTop, _cameraViewWidth, _cameraViewHeight);
+    }
+    
     /// @param x
     /// @param y
     /// @param [width]
