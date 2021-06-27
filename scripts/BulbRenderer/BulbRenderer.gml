@@ -520,6 +520,8 @@ function BulbRenderer(_ambientColour, _mode, _smooth) constructor
                 ++_i;
             }
         }
+        
+        gpu_set_blendmode(bm_normal);
     }
     
     #endregion
@@ -641,6 +643,7 @@ function BulbRenderer(_ambientColour, _mode, _smooth) constructor
             }
         }
         
+        gpu_set_blendmode(bm_normal);
         gpu_set_ztestenable(false);
         gpu_set_zwriteenable(false);
     }
