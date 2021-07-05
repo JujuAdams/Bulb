@@ -42,6 +42,16 @@ function BulbRenderer(_ambientColour, _mode, _smooth) constructor
     
     #region Public Methods
     
+    static SetAmbientColor = function(_color)
+    {
+        ambientColor = _color;
+    }
+    
+    static GetAmbientColor = function()
+    {
+        return ambientColor;
+    }
+    
     static UpdateFromCamera = function(_camera)
     {
         //Deploy PROPER MATHS in case the dev is using matrices

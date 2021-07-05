@@ -49,6 +49,18 @@ function BulbRendererWithGroups(_ambientColour, _mode, _smooth, _maxGroups) cons
     
     #region Public Methods
     
+    static SetAmbientColor = function(_color)
+    {
+        ambientColor = _color;
+        
+        return self;
+    }
+    
+    static GetAmbientColor = function()
+    {
+        return ambientColor;
+    }
+    
     static UpdateFromCamera = function(_camera)
     {
         //Deploy PROPER MATHS in case the dev is using matrices
