@@ -52,8 +52,6 @@ function BulbRendererWithGroups(_ambientColour, _mode, _smooth, _maxGroups) cons
     static SetAmbientColor = function(_color)
     {
         ambientColor = _color;
-        
-        return self;
     }
     
     static GetAmbientColor = function()
