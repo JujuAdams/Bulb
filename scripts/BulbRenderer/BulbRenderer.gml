@@ -100,13 +100,16 @@ function BulbRenderer(_ambientColour, _mode, _smooth) constructor
     }
     
     /// @param camera
-    static DrawOnCamera = function(_camera)
+    /// @param [alpha]
+    static DrawOnCamera = function()
     {
-        //Deploy PROPER MATHS in case the dev is using matrices
+        var _camera = argument[0];
+        var _alpha  = ((argument_count > 1) && (argument[1] != undefined))? argument[1] : undefined;
         
         var _viewMatrix = camera_get_view_mat(_camera);
         var _projMatrix = camera_get_proj_mat(_camera);
         
+        //Deploy PROPER MATHS in case the dev is using matrices
         var _cameraX          = -_viewMatrix[12];
         var _cameraY          = -_viewMatrix[13];
         var _cameraViewWidth  = round(abs(2/_projMatrix[0]));
@@ -114,13 +117,14 @@ function BulbRenderer(_ambientColour, _mode, _smooth) constructor
         var _cameraLeft       = _cameraX - _cameraViewWidth/2;
         var _cameraTop        = _cameraY - _cameraViewHeight/2;
         
-        return Draw(_cameraLeft, _cameraTop, _cameraViewWidth, _cameraViewHeight);
+        return Draw(_cameraLeft, _cameraTop, _cameraViewWidth, _cameraViewHeight, _alpha);
     }
     
     /// @param x
     /// @param y
     /// @param [width]
     /// @param [height]
+    /// @param [alpha]
     static Draw = function()
     {
         if (__freed) return undefined;
@@ -129,6 +133,7 @@ function BulbRenderer(_ambientColour, _mode, _smooth) constructor
         var _y      = argument[1];
         var _width  = ((argument_count > 2) && (argument[2] != undefined))? argument[2] : surfaceWidth;
         var _height = ((argument_count > 3) && (argument[3] != undefined))? argument[3] : surfaceHeight;
+        var _alpha  = ((argument_count > 4) && (argument[4] != undefined))? argument[4] : 1.0;
         
         if ((__surface != undefined) && surface_exists(__surface))
         {
@@ -136,10 +141,21 @@ function BulbRenderer(_ambientColour, _mode, _smooth) constructor
             var _old_tex_filter = gpu_get_tex_filter();
             gpu_set_tex_filter(smooth);
             
-            gpu_set_blendmode_ext(bm_dest_color, bm_zero);
             gpu_set_colorwriteenable(true, true, true, false);
             
-            draw_surface_stretched(__surface, _x, _y, _width, _height);
+            if (_alpha == 1.0)
+            {
+                //Don't use the shader if we don't have to!
+                gpu_set_blendmode_ext(bm_dest_color, bm_zero);
+                draw_surface_stretched(__surface, _x, _y, _width, _height);
+            }
+            else
+            {
+                gpu_set_blendmode_ext(bm_dest_color, bm_inv_src_alpha);
+                shader_set(__shdBulbFinalRender);
+                draw_surface_stretched_ext(__surface, _x, _y, _width, _height, c_white, _alpha);
+                shader_reset();
+            }
             
             gpu_set_blendmode(bm_normal);
             gpu_set_colorwriteenable(true, true, true, true);
