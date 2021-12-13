@@ -8,15 +8,19 @@ function BulbLight(_renderer, _sprite, _image, _x, _y) constructor
 {
     visible = true;
     
-    sprite = _sprite;
-    image  = _image;
-    x      = _x;
-    y      = _y;
-    xscale = 1.0;
-    yscale = 1.0;
-    angle  = 0.0;
-    blend  = c_white;
-    alpha  = 1.0;
+    sprite         = _sprite;
+    image          = _image;
+    x              = _x;
+    y              = _y;
+    xprevious      = x;
+    yprevious      = y;
+    xscale         = 1.0;
+    yscale         = 1.0;
+    xscaleprevious = xscale;
+    yscaleprevious = yscale;
+    angle          = 0.0;
+    blend          = c_white;
+    alpha          = 1.0;
     
     bitmask = BULB_DEFAULT_LIGHT_BITMASK;
     
@@ -25,8 +29,10 @@ function BulbLight(_renderer, _sprite, _image, _x, _y) constructor
     castShadows = true;
     
     __oldSprite  = undefined;
-    __widthHalf  = 0;
-    __heightHalf = 0;
+    __spriteL = 0;
+    __spriteT = 0;
+    __spriteR = 0;
+    __spriteB = 0;
     
     static AddToRenderer = function(_renderer)
     {
@@ -55,18 +61,30 @@ function BulbLight(_renderer, _sprite, _image, _x, _y) constructor
     
     static __IsOnScreen = function(_cameraL, _cameraT, _cameraR, _cameraB)
     {
-        return (visible && __BulbRectInRect(x - __widthHalf, y - __heightHalf, x + __widthHalf, y + __heightHalf, _cameraL, _cameraT, _cameraR, _cameraB));
+        return (visible && __BulbRectInRect(__spriteL, __spriteT, __spriteR, __spriteB, _cameraL, _cameraT, _cameraR, _cameraB));
     }
     
     static __CheckSpriteDimensions = function()
     {
-        if (sprite != __oldSprite)
+        // Redefine light sprite boundaries
+        if (sprite != __oldSprite || x != xprevious || y != yprevious || xscale != xscaleprevious || yscale != yscaleprevious)
         {
             __oldSprite = sprite;
-            
-            __widthHalf  = 0.5*xscale*sprite_get_width(sprite);
-            __heightHalf = 0.5*yscale*sprite_get_height(sprite);
+            __spriteL =  x - sprite_get_xoffset(sprite) * xscale;
+			__spriteT =  y - sprite_get_yoffset(sprite) * yscale;
+			__spriteR = __spriteL + sprite_get_width(sprite) * xscale;
+			__spriteB = __spriteT + sprite_get_height(sprite) * yscale;
         }
+    }
+    
+    // Update the previous variables
+    // Maintains correct dimensions for lights
+    static __UpdatePreviousVariables = function()
+    {
+        xprevious = x;
+        yprevious = y;
+        xscaleprevious = xscale;
+        yscaleprevious = yscale;
     }
     
     if (_renderer != undefined) AddToRenderer(_renderer);

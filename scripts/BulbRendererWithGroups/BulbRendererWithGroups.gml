@@ -619,6 +619,9 @@ function BulbRendererWithGroups(_ambientColour, _mode, _smooth, _maxGroups) cons
                                             blend, alpha);
                         }
                     }
+                    // Update the previous variables
+                    // Maintains correct dimensions for lights
+                    __UpdatePreviousVariables();
                 }
                 
                 ++_i;
@@ -752,6 +755,9 @@ function BulbRendererWithGroups(_ambientColour, _mode, _smooth, _maxGroups) cons
                                             blend, alpha);
                         }
                     }
+                    // Update the previous variables
+                    // Maintains correct dimensions for lights
+                    __UpdatePreviousVariables();
                 }
                 
                 ++_i;
