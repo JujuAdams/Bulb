@@ -75,12 +75,6 @@ function BulbLight(_renderer, _sprite, _image, _x, _y) constructor
 			__spriteR = __spriteL + sprite_get_width(sprite) * xscale;
 			__spriteB = __spriteT + sprite_get_height(sprite) * yscale;
         }
-    }
-    
-    // Update the previous variables
-    // Maintains correct dimensions for lights
-    static __UpdatePreviousVariables = function()
-    {
         xprevious = x;
         yprevious = y;
         xscaleprevious = xscale;

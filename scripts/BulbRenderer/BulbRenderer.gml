@@ -541,9 +541,6 @@ function BulbRenderer(_ambientColour, _mode, _smooth) constructor
                                             blend, alpha);
                         }
                     }
-                    // Update the previous variables
-                    // Maintains correct dimensions for lights
-                    __UpdatePreviousVariables();
                 }
                 
                 ++_i;
@@ -666,9 +663,6 @@ function BulbRenderer(_ambientColour, _mode, _smooth) constructor
                                             blend, alpha);
                         }
                     }
-                    // Update the previous variables
-                    // Maintains correct dimensions for lights
-                    __UpdatePreviousVariables();
                 }
                 
                 ++_i;
