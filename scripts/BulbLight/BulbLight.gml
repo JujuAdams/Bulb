@@ -70,10 +70,16 @@ function BulbLight(_renderer, _sprite, _image, _x, _y) constructor
         if (sprite != __oldSprite || x != xprevious || y != yprevious || xscale != xscaleprevious || yscale != yscaleprevious)
         {
             __oldSprite = sprite;
-            __spriteL =  x - sprite_get_xoffset(sprite) * xscale;
-			__spriteT =  y - sprite_get_yoffset(sprite) * yscale;
-			__spriteR = __spriteL + sprite_get_width(sprite) * xscale;
-			__spriteB = __spriteT + sprite_get_height(sprite) * yscale;
+            var _originX =  x - sprite_get_xoffset(sprite) * xscale,
+			_originY =  y - sprite_get_yoffset(sprite) * yscale,
+			_width = _originX + sprite_get_width(sprite) * xscale,
+			_height = _originY + sprite_get_height(sprite) * yscale;
+			
+			// Resolve negative scale values
+			__spriteL = min(_originX, _width);
+			__spriteT = min(_originY, _height);
+			__spriteR = max(_originX, _width);
+			__spriteB = max(_originY, _height);
         }
         xprevious = x;
         yprevious = y;
