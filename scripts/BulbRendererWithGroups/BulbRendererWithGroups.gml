@@ -408,7 +408,7 @@ function BulbRendererWithGroups(_ambientColour, _mode, _smooth, _maxGroups) cons
                         {
                             if (((bitmask & _bit) > 0) && __IsOnScreen(_cameraExpL, _cameraExpT, _cameraExpR, _cameraExpB))
                             {
-                                __BulbAddOcclusionSoft(_dynamicVBuffer);
+                                __BulbAddOcclusionHard(_dynamicVBuffer);
                             }
                         }
                         
