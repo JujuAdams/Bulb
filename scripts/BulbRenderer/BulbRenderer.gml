@@ -263,7 +263,7 @@ function BulbRenderer(_ambientColour, _mode, _smooth) constructor
                 repeat(array_length(_array))
                 {
                     var _weak = _array[_i];
-                    if (!weak_ref_alive(_weak))
+                    if (!weak_ref_alive(_weak) || _weak.ref.__destroyed)
                     {
                         array_delete(_array, _i, 1);
                     }
@@ -283,7 +283,7 @@ function BulbRenderer(_ambientColour, _mode, _smooth) constructor
                 repeat(array_length(_array))
                 {
                     var _weak = _array[_i];
-                    if (!weak_ref_alive(_weak))
+                    if (!weak_ref_alive(_weak) || _weak.ref.__destroyed)
                     {
                         array_delete(_array, _i, 1);
                     }
@@ -315,7 +315,7 @@ function BulbRenderer(_ambientColour, _mode, _smooth) constructor
             repeat(array_length(_array))
             {
                 var _weak = _array[_i];
-                if (!weak_ref_alive(_weak))
+                if (!weak_ref_alive(_weak) || _weak.ref.__destroyed)
                 {
                     array_delete(_array, _i, 1);
                 }
@@ -339,7 +339,7 @@ function BulbRenderer(_ambientColour, _mode, _smooth) constructor
             repeat(array_length(_array))
             {
                 var _weak = _array[_i];
-                if (!weak_ref_alive(_weak))
+                if (!weak_ref_alive(_weak) || _weak.ref.__destroyed)
                 {
                     array_delete(_array, _i, 1);
                 }
@@ -467,7 +467,7 @@ function BulbRenderer(_ambientColour, _mode, _smooth) constructor
         repeat(array_length(__lightsArray))
         {
             var _weak = __lightsArray[_i];
-            if (!weak_ref_alive(_weak))
+            if (!weak_ref_alive(_weak) || _weak.ref.__destroyed)
             {
                 array_delete(__lightsArray, _i, 1);
             }
@@ -602,7 +602,7 @@ function BulbRenderer(_ambientColour, _mode, _smooth) constructor
         repeat(array_length(__lightsArray))
         {
             var _weak = __lightsArray[_i];
-            if (!weak_ref_alive(_weak))
+            if (!weak_ref_alive(_weak) || _weak.ref.__destroyed)
             {
                 array_delete(__lightsArray, _i, 1);
             }

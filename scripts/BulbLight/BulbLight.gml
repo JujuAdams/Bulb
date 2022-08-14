@@ -34,8 +34,16 @@ function BulbLight(_renderer, _sprite, _image, _x, _y) constructor
     __spriteR = 0;
     __spriteB = 0;
     
+    __destroyed = false;
+    
+    static Destroy = function()
+    {
+        __destroyed = true;
+    }
+    
     static AddToRenderer = function(_renderer)
     {
+        if (__destroyed) return;
         array_push(_renderer.__lightsArray, weak_ref_create(self));
     }
     
@@ -61,11 +69,13 @@ function BulbLight(_renderer, _sprite, _image, _x, _y) constructor
     
     static __IsOnScreen = function(_cameraL, _cameraT, _cameraR, _cameraB)
     {
-        return (visible && __BulbRectInRect(__spriteL, __spriteT, __spriteR, __spriteB, _cameraL, _cameraT, _cameraR, _cameraB));
+        return (!__destroyed && visible && __BulbRectInRect(__spriteL, __spriteT, __spriteR, __spriteB, _cameraL, _cameraT, _cameraR, _cameraB));
     }
     
     static __CheckSpriteDimensions = function()
     {
+        if (__destroyed) return;
+        
         // Redefine light sprite boundaries
         if ((sprite != __oldSprite) || (x != xprevious) || (y != yprevious) || (xscale != xscaleprevious) || (yscale != yscaleprevious))
         {

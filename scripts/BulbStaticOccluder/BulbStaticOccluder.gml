@@ -13,18 +13,31 @@ function BulbStaticOccluder(_renderer) constructor
     
     bitmask = BULB_DEFAULT_STATIC_BITMASK;
     
+    __destroyed = false;
+    
+    static Destroy = function()
+    {
+        __destroyed = true;
+    }
+    
     static AddEdge = function(_x1, _y1, _x2, _y2)
     {
+        if (__destroyed) return;
+        
         array_push(vertexArray, _x1, _y1, _x2, _y2);
     }
     
     static ClearEdges = function(_x1, _y1, _x2, _y2)
     {
+        if (__destroyed) return;
+        
         array_resize(vertexArray, 0);
     }
     
     static AddToRenderer = function(_renderer)
     {
+        if (__destroyed) return;
+        
         array_push(_renderer.__staticOccludersArray, weak_ref_create(self));
     }
     
@@ -50,7 +63,7 @@ function BulbStaticOccluder(_renderer) constructor
     
     static __IsOnScreen = function(_cameraL, _cameraT, _cameraR, _cameraB)
     {
-        return (visible && __BulbRectInRect(__bboxXMin, __bboxYMin, __bboxXMax, __bboxYMax, _cameraL, _cameraT, _cameraR, _cameraB));
+        return (!__destroyed && visible && __BulbRectInRect(__bboxXMin, __bboxYMin, __bboxXMax, __bboxYMax, _cameraL, _cameraT, _cameraR, _cameraB));
     }
     
     if (_renderer != undefined) AddToRenderer(_renderer);

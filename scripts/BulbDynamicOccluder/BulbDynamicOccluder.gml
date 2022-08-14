@@ -20,8 +20,17 @@ function BulbDynamicOccluder(_renderer) constructor
     __bboxYMin = 0;
     __bboxYMax = 0;
     
+    __destroyed = false;
+    
+    static Destroy = function()
+    {
+        __destroyed = true;
+    }
+    
     static AddEdge = function(_x1, _y1, _x2, _y2)
     {
+        if (__destroyed) return;
+        
         __bboxXMin = min(__bboxXMin, __BULB_SQRT_2*_x1, __BULB_SQRT_2*_x2);
         __bboxYMin = min(__bboxYMin, __BULB_SQRT_2*_y1, __BULB_SQRT_2*_y2);
         __bboxXMax = max(__bboxXMax, __BULB_SQRT_2*_x1, __BULB_SQRT_2*_x2);
@@ -32,6 +41,8 @@ function BulbDynamicOccluder(_renderer) constructor
     
     static ClearEdges = function(_x1, _y1, _x2, _y2)
     {
+        if (__destroyed) return;
+        
         __bboxXMin = 0;
         __bboxXMax = 0;
         __bboxYMin = 0;
@@ -42,6 +53,7 @@ function BulbDynamicOccluder(_renderer) constructor
     
     static AddToRenderer = function(_renderer)
     {
+        if (__destroyed) return;
         array_push(_renderer.__dynamicOccludersArray, weak_ref_create(self));
     }
     
@@ -67,7 +79,7 @@ function BulbDynamicOccluder(_renderer) constructor
     
     static __IsOnScreen = function(_cameraL, _cameraT, _cameraR, _cameraB)
     {
-        return (visible && __BulbRectInRect(x + __bboxXMin, y + __bboxYMin, x + __bboxXMax, y + __bboxYMax, _cameraL, _cameraT, _cameraR, _cameraB));
+        return (!__destroyed && visible && __BulbRectInRect(x + __bboxXMin, y + __bboxYMin, x + __bboxXMax, y + __bboxYMax, _cameraL, _cameraT, _cameraR, _cameraB));
     }
     
     if (_renderer != undefined) AddToRenderer(_renderer);

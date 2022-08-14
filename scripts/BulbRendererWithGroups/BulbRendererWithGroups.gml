@@ -273,7 +273,7 @@ function BulbRendererWithGroups(_ambientColour, _mode, _smooth, _maxGroups) cons
         repeat(_staticCount)
         {
             var _weak = _staticArray[_i];
-            if (!weak_ref_alive(_weak))
+            if (!weak_ref_alive(_weak) || _weak.ref.__destroyed)
             {
                 array_delete(_staticArray, _i, 1);
             }
@@ -288,7 +288,7 @@ function BulbRendererWithGroups(_ambientColour, _mode, _smooth, _maxGroups) cons
         repeat(_dynamicCount)
         {
             var _weak = _dynamicArray[_i];
-            if (!weak_ref_alive(_weak))
+            if (!weak_ref_alive(_weak) || _weak.ref.__destroyed)
             {
                 array_delete(_dynamicArray, _i, 1);
             }
@@ -532,7 +532,7 @@ function BulbRendererWithGroups(_ambientColour, _mode, _smooth, _maxGroups) cons
         repeat(array_length(__lightsArray))
         {
             var _weak = __lightsArray[_i];
-            if (!weak_ref_alive(_weak))
+            if (!weak_ref_alive(_weak) || _weak.ref.__destroyed)
             {
                 array_delete(__lightsArray, _i, 1);
             }
@@ -678,7 +678,7 @@ function BulbRendererWithGroups(_ambientColour, _mode, _smooth, _maxGroups) cons
         repeat(array_length(__lightsArray))
         {
             var _weak = __lightsArray[_i];
-            if (!weak_ref_alive(_weak))
+            if (!weak_ref_alive(_weak) || _weak.ref.__destroyed)
             {
                 array_delete(__lightsArray, _i, 1);
             }
