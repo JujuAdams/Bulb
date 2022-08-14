@@ -571,6 +571,15 @@ function BulbRenderer(_ambientColour, _mode, _smooth, _useNormalMap = false) con
         // yOut = (y - z*(camY - lightY) - camY) / camH
         // zOut = 0
         
+        var _usingNormalMap = __usingNormalMap;
+        if (_usingNormalMap)
+        {
+            shader_set(__shdBulbSoftNormal);
+            var _normalMapTexture = surface_get_texture(GetNormalMapSurface());
+            texture_set_stage(shader_get_sampler_index(__shdBulbSoftNormal, "u_sNormalMap"), _normalMapTexture);
+            shader_reset();
+        }
+        
         var _i = 0;
         repeat(array_length(__lightsArray))
         {
@@ -590,6 +599,7 @@ function BulbRenderer(_ambientColour, _mode, _smooth, _useNormalMap = false) con
                     {
                         if (castShadows)
                         {
+                            shader_reset();
                             gpu_set_colorwriteenable(false, false, false, true);
                             
                             //Clear alpha channel
@@ -617,9 +627,23 @@ function BulbRenderer(_ambientColour, _mode, _smooth, _useNormalMap = false) con
                             vertex_submit(_staticVBuffer,  pr_trianglelist, -1);
                             vertex_submit(_dynamicVBuffer, pr_trianglelist, -1);
                             
+                            matrix_set(matrix_projection, _vp_matrix);
+                            
+                            //Add the influence of the normal map
+                            if (_usingNormalMap)
+                            {
+                                shader_set(__shdBulbSoftNormal);
+                                texture_set_stage(shader_get_sampler_index(__shdBulbSoftNormal, "u_sNormalMap"), _normalMapTexture);
+                                shader_set_uniform_f(shader_get_uniform(__shdBulbSoftNormal, "u_vLightPos"), x - _cameraL, y - _cameraT, 0);
+                                
+                                draw_sprite_ext(sprite, image,
+                                                x - _cameraL, y - _cameraT,
+                                                xscale, yscale, angle,
+                                                blend, alpha);
+                            }
+                            
                             //Draw light sprite
                             shader_reset();
-                            matrix_set(matrix_projection, _vp_matrix);
                             
                             if (alpha < 1.0)
                             {
@@ -634,7 +658,6 @@ function BulbRenderer(_ambientColour, _mode, _smooth, _useNormalMap = false) con
                             
                             gpu_set_colorwriteenable(true, true, true, false);
                             gpu_set_blendmode_ext(bm_inv_dest_alpha, bm_one);
-                            
                             draw_sprite_ext(sprite, image,
                                             x - _cameraL, y - _cameraT,
                                             xscale, yscale, angle,
@@ -643,10 +666,27 @@ function BulbRenderer(_ambientColour, _mode, _smooth, _useNormalMap = false) con
                         else
                         {
                             gpu_set_blendmode(bm_add);
-                            draw_sprite_ext(sprite, image,
-                                            x - _cameraL, y - _cameraT,
-                                            xscale, yscale, angle,
-                                            blend, alpha);
+                            
+                            if (_usingNormalMap)
+                            {
+                                shader_set(__shdBulbPassThroughWithNormalMap);
+                                texture_set_stage(shader_get_sampler_index(__shdBulbPassThroughWithNormalMap, "u_sNormalMap"), _normalMapTexture);
+                                shader_set_uniform_f(shader_get_uniform(__shdBulbPassThroughWithNormalMap, "u_vLightPos"), x - _cameraL, y - _cameraT, 0);
+                                
+                                draw_sprite_ext(sprite, image,
+                                                x - _cameraL, y - _cameraT,
+                                                xscale, yscale, angle,
+                                                blend, alpha);
+                                
+                                shader_reset();
+                            }
+                            else
+                            {
+                                draw_sprite_ext(sprite, image,
+                                                x - _cameraL, y - _cameraT,
+                                                xscale, yscale, angle,
+                                                blend, alpha);
+                            }
                         }
                     }
                 }
@@ -796,6 +836,7 @@ function BulbRenderer(_ambientColour, _mode, _smooth, _useNormalMap = false) con
             }
         }
         
+        shader_reset();
         gpu_set_blendmode(bm_normal);
         gpu_set_ztestenable(false);
         gpu_set_zwriteenable(false);

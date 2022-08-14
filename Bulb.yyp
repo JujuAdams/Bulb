@@ -7,7 +7,7 @@
     {"id":{"name":"sLight128","path":"sprites/sLight128/sLight128.yy",},"order":6,},
     {"id":{"name":"sLightTorch","path":"sprites/sLightTorch/sLightTorch.yy",},"order":7,},
     {"id":{"name":"BulbDynamicOccluder","path":"scripts/BulbDynamicOccluder/BulbDynamicOccluder.yy",},"order":4,},
-    {"id":{"name":"__shdBulbFinalRender","path":"shaders/__shdBulbFinalRender/__shdBulbFinalRender.yy",},"order":7,},
+    {"id":{"name":"__shdBulbFinalRender","path":"shaders/__shdBulbFinalRender/__shdBulbFinalRender.yy",},"order":8,},
     {"id":{"name":"sLightMask","path":"sprites/sLightMask/sLightMask.yy",},"order":8,},
     {"id":{"name":"BulbEncodeTransformAsColor","path":"scripts/BulbEncodeTransformAsColor/BulbEncodeTransformAsColor.yy",},"order":2,},
     {"id":{"name":"__BulbSystem","path":"scripts/__BulbSystem/__BulbSystem.yy",},"order":0,},
@@ -54,6 +54,7 @@
     {"id":{"name":"BulbStaticOccluder","path":"scripts/BulbStaticOccluder/BulbStaticOccluder.yy",},"order":5,},
     {"id":{"name":"oStaticOccluder2","path":"objects/oStaticOccluder2/oStaticOccluder2.yy",},"order":3,},
     {"id":{"name":"rmTestWithGroups","path":"rooms/rmTestWithGroups/rmTestWithGroups.yy",},"order":2,},
+    {"id":{"name":"__shdBulbSoftNormal","path":"shaders/__shdBulbSoftNormal/__shdBulbSoftNormal.yy",},"order":7,},
     {"id":{"name":"BulbMakeBitmask","path":"scripts/BulbMakeBitmask/BulbMakeBitmask.yy",},"order":6,},
     {"id":{"name":"oStaticOccluder4","path":"objects/oStaticOccluder4/oStaticOccluder4.yy",},"order":2,},
     {"id":{"name":"__shdBulbPassThroughWithNormalMap","path":"shaders/__shdBulbPassThroughWithNormalMap/__shdBulbPassThroughWithNormalMap.yy",},"order":6,},
@@ -83,10 +84,10 @@
   },
   "RoomOrderNodes": [
     {"roomId":{"name":"rmInit","path":"rooms/rmInit/rmInit.yy",},},
-    {"roomId":{"name":"rmTestWithNormalMap","path":"rooms/rmTestWithNormalMap/rmTestWithNormalMap.yy",},},
     {"roomId":{"name":"rmTest","path":"rooms/rmTest/rmTest.yy",},},
     {"roomId":{"name":"rmTestSoft","path":"rooms/rmTestSoft/rmTestSoft.yy",},},
     {"roomId":{"name":"rmTestWithGroups","path":"rooms/rmTestWithGroups/rmTestWithGroups.yy",},},
+    {"roomId":{"name":"rmTestWithNormalMap","path":"rooms/rmTestWithNormalMap/rmTestWithNormalMap.yy",},},
   ],
   "Folders": [
     {"folderPath":"folders/Example/Sprites.yy","order":0,"resourceVersion":"1.0","name":"Sprites","tags":[],"resourceType":"GMFolder",},
