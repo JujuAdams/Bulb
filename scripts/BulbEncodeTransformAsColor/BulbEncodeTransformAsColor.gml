@@ -7,7 +7,7 @@ function BulbEncodeTransformAsColor(_xscale, _yscale, _angle)
     
     var _red   = _normalizedAngle >> 8;
     var _green = _normalizedAngle & 0xFF;
-    var _blue  = (_xscale > 0) | ((_yscale > 0) << 1);
+    var _blue  = (_xscale >= 0) | ((_yscale >= 0) << 1);
     
     return make_color_rgb(_red, _green, _blue);
 }
