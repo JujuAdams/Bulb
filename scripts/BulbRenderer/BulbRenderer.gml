@@ -17,7 +17,7 @@ function BulbRenderer(_ambientColour, _mode, _smooth) constructor
     //Assign the ambient colour used for the darkest areas of the screen. This can be changed on the fly
     ambientColor = _ambientColour;
     
-    //The smoothing mode controls texture filtering both when accumulating lights and when drawing the resulting __surface
+    //The smoothing mode controls texture filtering both when accumulating lights and when drawing the resulting surface
     smooth = _smooth;
     
     mode = _mode;
@@ -29,7 +29,13 @@ function BulbRenderer(_ambientColour, _mode, _smooth) constructor
     __staticVBuffer  = undefined; //Vertex buffer describing the geometry of static occluder objects
     __dynamicVBuffer = undefined; //As above but for dynamic shadow occluders. This is updated every step
     __wipeVBuffer    = undefined; //This vertex buffer is used to reset the z-buffer during accumulation of non-deferred lights
-    __surface        = undefined; //Screen-space __surface for final accumulation of lights
+    __surface        = undefined; //Screen-space surface for final accumulation of lights
+    
+    __usingNormalMap = false;
+    __normalSurface  = undefined; //Screen-space surface that stores normals. This may stay <undefined> if no normal map is ever added
+    //Used when setting and resetting draw behaviour for the normal map
+    __oldViewMatrix       = undefined;
+    __oldProjectionMatrix = undefined;
     
     __staticOccludersArray  = [];
     __dynamicOccludersArray = [];
@@ -50,6 +56,67 @@ function BulbRenderer(_ambientColour, _mode, _smooth) constructor
     static GetAmbientColor = function()
     {
         return ambientColor;
+    }
+    
+    static UseNormalMap = function()
+    {
+        __usingNormalMap = true;
+        GetNormalMapSurface(); //Force the normal map surface to be created, if possible
+    }
+    
+    static RemoveNormalMap = function()
+    {
+        if (__usingNormalMap)
+        {
+            __usingNormalMap = false;
+            __FreeNormalMapSurface();
+        }
+    }
+    
+    static StartDrawingToNormalMapFromCamera = function(_camera, _clear)
+    {
+        var _viewMatrix = camera_get_view_mat(_camera);
+        
+        __usingNormalMap      = true;
+        __oldViewMatrix       = matrix_get(matrix_view      );
+        __oldProjectionMatrix = matrix_get(matrix_projection);
+        
+        surface_set_target(GetNormalMapSurface());
+        matrix_set(matrix_view, _viewMatrix);
+        if (_clear) draw_clear(make_color_rgb(127, 127, 127));
+        shader_set(shdBulbTransformNormal);
+    }
+    
+    static StartDrawingToNormalMap = function(_cameraL, _cameraT, _cameraW, _cameraH, _clear)
+    {
+        var _cameraX = _cameraL + _cameraW/2;
+        var _cameraY = _cameraT + _cameraH/2;
+        
+        __usingNormalMap      = true;
+        __oldViewMatrix       = matrix_get(matrix_view      );
+        __oldProjectionMatrix = matrix_get(matrix_projection);
+        
+        surface_set_target(GetNormalMapSurface());
+        matrix_set(matrix_view, matrix_build_lookat(_cameraX, _cameraY, -16000,    _cameraX, _cameraY, 16000,    0, -1, 0));
+        if (_clear) draw_clear(make_color_rgb(127, 127, 127));
+        shader_set(shdBulbTransformNormal);
+    }
+    
+    static StopDrawingToNormalMap = function()
+    {
+        if ((__oldViewMatrix == undefined) || (__oldProjectionMatrix == undefined))
+        {
+            __BulbError("Must call .StopDrawingToNormalMap() after .StartDrawingToNormalMap*()");
+        }
+        
+        surface_reset_target();
+        shader_reset();
+        
+        matrix_set(matrix_view,       __oldViewMatrix      );
+        matrix_set(matrix_projection, __oldProjectionMatrix);
+        
+        __oldViewMatrix       = undefined;
+        __oldProjectionMatrix = undefined;
     }
     
     static UpdateFromCamera = function(_camera)
@@ -198,6 +265,30 @@ function BulbRenderer(_ambientColour, _mode, _smooth) constructor
         return __surface;
     }
     
+    static GetNormalMapSurface = function()
+    {
+        if (__freed) return undefined;
+        if (!__usingNormalMap) return undefined;
+        if ((surfaceWidth <= 0) || (surfaceHeight <= 0)) return undefined;
+        
+        if ((__normalSurface != undefined) && ((surface_get_width(__normalSurface) != surfaceWidth) || (surface_get_height(__normalSurface) != surfaceHeight)))
+        {
+            surface_free(__normalSurface);
+            __normalSurface = undefined;
+        }
+        
+        if ((__normalSurface == undefined) || !surface_exists(__normalSurface))
+        {
+            __normalSurface = surface_create(surfaceWidth, surfaceHeight);
+            
+            surface_set_target(__normalSurface);
+            draw_clear_alpha(make_color_rgb(127, 127, 127), 1.0);
+            surface_reset_target();
+        }
+        
+        return __normalSurface;
+    }
+    
     static RefreshStaticOccluders = function()
     {
         if (__freed) return undefined;
@@ -213,6 +304,7 @@ function BulbRenderer(_ambientColour, _mode, _smooth) constructor
     {
         __FreeVertexBuffers();
         __FreeSurface();
+        __FreeNormalMapSurface();
         
         __freed = true;
     }
@@ -701,6 +793,15 @@ function BulbRenderer(_ambientColour, _mode, _smooth) constructor
         {
             surface_free(__surface);
             __surface = undefined;
+        }
+    }
+    
+    static __FreeNormalMapSurface = function()
+    {
+        if ((__normalSurface != undefined) && surface_exists(__normalSurface))
+        {
+            surface_free(__normalSurface);
+            __normalSurface = undefined;
         }
     }
     
