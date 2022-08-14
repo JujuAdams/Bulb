@@ -1,5 +1,5 @@
-#macro __BULB_VERSION              "20.1.3"
-#macro __BULB_DATE                 "2021-08-30"
+#macro __BULB_VERSION              "21.0.0"
+#macro __BULB_DATE                 "2022-08-14"
 #macro __BULB_ON_DIRECTX           ((os_browser == browser_not_a_browser) && ((os_type == os_windows) || (os_type == os_xboxone) || (os_type == os_uwp) || (os_type == os_winphone) || (os_type == os_win8native)))
 #macro __BULB_ZFAR                 16000
 #macro __BULB_FLIP_CAMERA_Y        __BULB_ON_DIRECTX
@@ -176,9 +176,21 @@ function __BulbAddOcclusionSoft(_vbuff)
     }
 }
 
-
-
 function __BulbRectInRect(_ax1, _ay1, _ax2, _ay2, _bx1, _by1, _bx2, _by2)
 {
     return !((_bx1 > _ax2) || (_bx2 < _ax1) || (_by1 > _ay2) || (_by2 < _ay1));
+}
+
+function __BulbEncodeTransformAsColor(_xscale, _yscale, _angle)
+{
+    _angle = (_angle < 0)? (360 - ((-_angle) mod 360)) : (_angle mod 360);
+    
+    //Angle is never exactly 1 so normalizedAngle can never be 65536
+    var _normalizedAngle = floor(65536 * _angle / 360);
+    
+    var _red   = _normalizedAngle >> 8;
+    var _green = _normalizedAngle & 0xFF;
+    var _blue  = (_xscale >= 0) | ((_yscale >= 0) << 1);
+    
+    return make_color_rgb(_red, _green, _blue);
 }

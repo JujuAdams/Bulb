@@ -1,15 +1,15 @@
 lighting.StartDrawingToNormalMapFromCamera(camera, true);
 
+draw_sprite_tiled(sFloorTileNormal, 0, 0, 0);
+
 with(oStaticOccluder4)
 {
-    BulbDrawNormal(sBlockNormal, undefined,
-                   640 + x - oPlayer4.x, 360 + y - oPlayer4.y);
+    BulbDrawNormal(sBlockNormal);
 }
 
 with(oDynamicOccluder4)
 {
-    BulbDrawNormal(sBlockNormal, undefined,
-                   640 + x - oPlayer4.x, 360 + y - oPlayer4.y);
+    BulbDrawNormal(sBlockNormal);
 }
 
 lighting.StopDrawingToNormalMap();

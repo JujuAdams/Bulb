@@ -19,3 +19,5 @@ smoothedDrawEndTime = 300;
 smoothedFrameTime = 1;
 smoothedFPS = 1000;
 alarm_set(0, 30);
+
+showNormalMap = false;

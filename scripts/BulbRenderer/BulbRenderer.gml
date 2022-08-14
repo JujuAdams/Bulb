@@ -34,9 +34,7 @@ function BulbRenderer(_ambientColour, _mode, _smooth, _useNormalMap = false) con
     
     __usingNormalMap = _useNormalMap;
     __normalSurface  = undefined; //Screen-space surface that stores normals. This may stay <undefined> if no normal map is ever added
-    //Used when setting and resetting draw behaviour for the normal map
-    __oldViewMatrix       = undefined;
-    __oldProjectionMatrix = undefined;
+    __oldTexFilter   = undefined;
     
     __staticOccludersArray  = [];
     __dynamicOccludersArray = [];
@@ -61,8 +59,6 @@ function BulbRenderer(_ambientColour, _mode, _smooth, _useNormalMap = false) con
     
     static StartDrawingToNormalMapFromCamera = function(_camera, _clear)
     {
-        if (!__usingNormalMap) __BulbError("Normal map was not added to this renderer when instantiated");
-        
         var _viewMatrix = camera_get_view_mat(_camera);
         var _projMatrix = camera_get_proj_mat(_camera);
         
@@ -74,45 +70,30 @@ function BulbRenderer(_ambientColour, _mode, _smooth, _useNormalMap = false) con
         var _cameraLeft       = _cameraX - _cameraViewWidth/2;
         var _cameraTop        = _cameraY - _cameraViewHeight/2;
         
-        if (surfaceWidth  <= 0) surfaceWidth  = _cameraViewWidth;
-        if (surfaceHeight <= 0) surfaceHeight = _cameraViewHeight;
-        
-        __usingNormalMap      = true;
-        __oldViewMatrix       = matrix_get(matrix_view      );
-        __oldProjectionMatrix = matrix_get(matrix_projection);
-        __oldTexFilter        = gpu_get_tex_filter();
-        
-        surface_set_target(GetNormalMapSurface());
-        gpu_set_tex_filter(smooth);
-        //matrix_set(matrix_view, _viewMatrix);
-        if (_clear) draw_clear(__BULB_NORMAL_CLEAR_COLOUR);
-        shader_set(shdBulbTransformNormal);
+        return StartDrawingToNormalMap(_cameraLeft, _cameraTop, _cameraViewWidth, _cameraViewHeight, _clear);
     }
     
     static StartDrawingToNormalMap = function(_cameraL, _cameraT, _cameraW, _cameraH, _clear)
     {
         if (!__usingNormalMap) __BulbError("Normal map was not added to this renderer when instantiated");
         
-        var _cameraX = _cameraL + _cameraW/2;
-        var _cameraY = _cameraT + _cameraH/2;
         if (surfaceWidth  <= 0) surfaceWidth  = _cameraW;
         if (surfaceHeight <= 0) surfaceHeight = _cameraH;
         
-        __usingNormalMap      = true;
-        __oldViewMatrix       = matrix_get(matrix_view      );
-        __oldProjectionMatrix = matrix_get(matrix_projection);
-        __oldTexFilter        = gpu_get_tex_filter();
+        __oldTexFilter = gpu_get_tex_filter();
+        gpu_set_tex_filter(smooth);
         
         surface_set_target(GetNormalMapSurface());
-        gpu_set_tex_filter(smooth);
-        matrix_set(matrix_view, matrix_build_lookat(_cameraX, _cameraY, -16000,    _cameraX, _cameraY, 16000,    0, -1, 0));
+        //FIXME - GameMaker is fucking stupid and aggressively culls sprite calls that it shouldn't
+        //        This should be implemented used the view matrix but instead we have to workaround by using the world matrix
+        matrix_set(matrix_world, matrix_build(-_cameraL, -_cameraT, 0,   0,0,0,   1,1,1));
         if (_clear) draw_clear(__BULB_NORMAL_CLEAR_COLOUR);
-        shader_set(shdBulbTransformNormal);
+        shader_set(__shdBulbTransformNormal);
     }
     
     static StopDrawingToNormalMap = function()
     {
-        if ((__oldViewMatrix == undefined) || (__oldProjectionMatrix == undefined) || (__oldTexFilter == undefined))
+        if (__oldTexFilter == undefined)
         {
             __BulbError("Must call .StopDrawingToNormalMap() after .StartDrawingToNormalMap*()");
         }
@@ -120,13 +101,10 @@ function BulbRenderer(_ambientColour, _mode, _smooth, _useNormalMap = false) con
         surface_reset_target();
         shader_reset();
         
-        matrix_set(matrix_view,       __oldViewMatrix      );
-        matrix_set(matrix_projection, __oldProjectionMatrix);
-        gpu_set_tex_filter(__oldTexFilter);
+        matrix_set(matrix_world, matrix_build_identity());
         
-        __oldViewMatrix       = undefined;
-        __oldProjectionMatrix = undefined;
-        __oldTexFilter        = undefined;
+        gpu_set_tex_filter(__oldTexFilter);
+        __oldTexFilter = undefined;
     }
     
     static UpdateFromCamera = function(_camera)
@@ -634,7 +612,7 @@ function BulbRenderer(_ambientColour, _mode, _smooth, _useNormalMap = false) con
                             {
                                 shader_set(__shdBulbSoftNormal);
                                 texture_set_stage(shader_get_sampler_index(__shdBulbSoftNormal, "u_sNormalMap"), _normalMapTexture);
-                                shader_set_uniform_f(shader_get_uniform(__shdBulbSoftNormal, "u_vLightPos"), x - _cameraL, y - _cameraT, 0);
+                                shader_set_uniform_f(shader_get_uniform(__shdBulbSoftNormal, "u_vLightPos"), x - _cameraL, y - _cameraT, 100);
                                 
                                 draw_sprite_ext(sprite, image,
                                                 x - _cameraL, y - _cameraT,
@@ -671,7 +649,7 @@ function BulbRenderer(_ambientColour, _mode, _smooth, _useNormalMap = false) con
                             {
                                 shader_set(__shdBulbPassThroughWithNormalMap);
                                 texture_set_stage(shader_get_sampler_index(__shdBulbPassThroughWithNormalMap, "u_sNormalMap"), _normalMapTexture);
-                                shader_set_uniform_f(shader_get_uniform(__shdBulbPassThroughWithNormalMap, "u_vLightPos"), x - _cameraL, y - _cameraT, 0);
+                                shader_set_uniform_f(shader_get_uniform(__shdBulbPassThroughWithNormalMap, "u_vLightPos"), x - _cameraL, y - _cameraT, 100);
                                 
                                 draw_sprite_ext(sprite, image,
                                                 x - _cameraL, y - _cameraT,
