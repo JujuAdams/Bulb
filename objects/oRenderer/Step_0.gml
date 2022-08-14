@@ -18,7 +18,11 @@ if (keyboard_check_pressed(ord("2"))) lighting.mode = (lighting.mode + 1) mod BU
 //Update debug timers
 if (alarm_get(1) < 0)
 {
-    smoothedFrameTime = lerp(smoothedFrameTime, 1000/fps_real, 0.005);
-    smoothedFPS = lerp(smoothedFPS, fps_real, 0.005);
+    if (fps_real > 0)
+    {
+        smoothedFrameTime = lerp(smoothedFrameTime, 1000/fps_real, 0.005);
+        smoothedFPS = lerp(smoothedFPS, fps_real, 0.005);
+    }
+    
     smoothedDrawEndTime = lerp(smoothedDrawEndTime, drawEndTime, 0.005);
 }
