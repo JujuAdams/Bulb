@@ -26,11 +26,11 @@
   "properties": [],
   "overriddenProperties": [],
   "parent": {
-    "name": "rmTestSoft Objects",
-    "path": "folders/Example/rmTestSoft Objects.yy",
+    "name": "rmTestWithNormalMap Objects",
+    "path": "folders/Example/rmTestWithNormalMap Objects.yy",
   },
   "resourceVersion": "1.0",
-  "name": "oStaticOccluder3",
+  "name": "oStaticOccluder4",
   "tags": [],
   "resourceType": "GMObject",
 }

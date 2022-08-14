@@ -1,10 +1,10 @@
 {
   "spriteId": {
-    "name": "sStaticBlock",
-    "path": "sprites/sStaticBlock/sStaticBlock.yy",
+    "name": "sPlayerMask",
+    "path": "sprites/sPlayerMask/sPlayerMask.yy",
   },
   "solid": false,
-  "visible": false,
+  "visible": true,
   "spriteMaskId": null,
   "persistent": false,
   "parentObjectId": null,
@@ -21,16 +21,17 @@
   "physicsKinematic": false,
   "physicsShapePoints": [],
   "eventList": [
+    {"isDnD":false,"eventNum":0,"eventType":3,"collisionObjectId":null,"resourceVersion":"1.0","name":"","tags":[],"resourceType":"GMEvent",},
     {"isDnD":false,"eventNum":0,"eventType":0,"collisionObjectId":null,"resourceVersion":"1.0","name":"","tags":[],"resourceType":"GMEvent",},
   ],
   "properties": [],
   "overriddenProperties": [],
   "parent": {
-    "name": "rmTestSoft Objects",
-    "path": "folders/Example/rmTestSoft Objects.yy",
+    "name": "rmTestWithNormalMap Objects",
+    "path": "folders/Example/rmTestWithNormalMap Objects.yy",
   },
   "resourceVersion": "1.0",
-  "name": "oStaticOccluder3",
+  "name": "oPlayer4",
   "tags": [],
   "resourceType": "GMObject",
 }

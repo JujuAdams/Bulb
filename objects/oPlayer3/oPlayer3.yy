@@ -27,8 +27,8 @@
   "properties": [],
   "overriddenProperties": [],
   "parent": {
-    "name": "rmTestSoft",
-    "path": "folders/Example/rmTestSoft.yy",
+    "name": "rmTestSoft Objects",
+    "path": "folders/Example/rmTestSoft Objects.yy",
   },
   "resourceVersion": "1.0",
   "name": "oPlayer3",

@@ -27,11 +27,11 @@
   "properties": [],
   "overriddenProperties": [],
   "parent": {
-    "name": "rmTestSoft Objects",
-    "path": "folders/Example/rmTestSoft Objects.yy",
+    "name": "rmTestWithNormalMap Objects",
+    "path": "folders/Example/rmTestWithNormalMap Objects.yy",
   },
   "resourceVersion": "1.0",
-  "name": "oRenderer3",
+  "name": "oRenderer4",
   "tags": [],
   "resourceType": "GMObject",
 }
