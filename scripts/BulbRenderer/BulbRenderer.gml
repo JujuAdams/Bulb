@@ -1,6 +1,7 @@
 /// @param ambientColour
 /// @param mode
 /// @param smooth
+/// @param [useNormalMap=false]
 
 enum BULB_MODE
 {
@@ -12,7 +13,7 @@ enum BULB_MODE
     __SIZE
 }
 
-function BulbRenderer(_ambientColour, _mode, _smooth) constructor
+function BulbRenderer(_ambientColour, _mode, _smooth, _useNormalMap = false) constructor
 {
     //Assign the ambient colour used for the darkest areas of the screen. This can be changed on the fly
     ambientColor = _ambientColour;
@@ -31,7 +32,7 @@ function BulbRenderer(_ambientColour, _mode, _smooth) constructor
     __wipeVBuffer    = undefined; //This vertex buffer is used to reset the z-buffer during accumulation of non-deferred lights
     __surface        = undefined; //Screen-space surface for final accumulation of lights
     
-    __usingNormalMap = false;
+    __usingNormalMap = _useNormalMap;
     __normalSurface  = undefined; //Screen-space surface that stores normals. This may stay <undefined> if no normal map is ever added
     //Used when setting and resetting draw behaviour for the normal map
     __oldViewMatrix       = undefined;
@@ -58,23 +59,10 @@ function BulbRenderer(_ambientColour, _mode, _smooth) constructor
         return ambientColor;
     }
     
-    static UseNormalMap = function()
-    {
-        __usingNormalMap = true;
-        GetNormalMapSurface(); //Force the normal map surface to be created, if possible
-    }
-    
-    static RemoveNormalMap = function()
-    {
-        if (__usingNormalMap)
-        {
-            __usingNormalMap = false;
-            __FreeNormalMapSurface();
-        }
-    }
-    
     static StartDrawingToNormalMapFromCamera = function(_camera, _clear)
     {
+        if (!__usingNormalMap) __BulbError("Normal map was not added to this renderer when instantiated");
+        
         var _viewMatrix = camera_get_view_mat(_camera);
         var _projMatrix = camera_get_proj_mat(_camera);
         
@@ -92,8 +80,10 @@ function BulbRenderer(_ambientColour, _mode, _smooth) constructor
         __usingNormalMap      = true;
         __oldViewMatrix       = matrix_get(matrix_view      );
         __oldProjectionMatrix = matrix_get(matrix_projection);
+        __oldTexFilter        = gpu_get_tex_filter();
         
         surface_set_target(GetNormalMapSurface());
+        gpu_set_tex_filter(smooth);
         //matrix_set(matrix_view, _viewMatrix);
         if (_clear) draw_clear(__BULB_NORMAL_CLEAR_COLOUR);
         shader_set(shdBulbTransformNormal);
@@ -101,6 +91,8 @@ function BulbRenderer(_ambientColour, _mode, _smooth) constructor
     
     static StartDrawingToNormalMap = function(_cameraL, _cameraT, _cameraW, _cameraH, _clear)
     {
+        if (!__usingNormalMap) __BulbError("Normal map was not added to this renderer when instantiated");
+        
         var _cameraX = _cameraL + _cameraW/2;
         var _cameraY = _cameraT + _cameraH/2;
         if (surfaceWidth  <= 0) surfaceWidth  = _cameraW;
@@ -109,8 +101,10 @@ function BulbRenderer(_ambientColour, _mode, _smooth) constructor
         __usingNormalMap      = true;
         __oldViewMatrix       = matrix_get(matrix_view      );
         __oldProjectionMatrix = matrix_get(matrix_projection);
+        __oldTexFilter        = gpu_get_tex_filter();
         
         surface_set_target(GetNormalMapSurface());
+        gpu_set_tex_filter(smooth);
         matrix_set(matrix_view, matrix_build_lookat(_cameraX, _cameraY, -16000,    _cameraX, _cameraY, 16000,    0, -1, 0));
         if (_clear) draw_clear(__BULB_NORMAL_CLEAR_COLOUR);
         shader_set(shdBulbTransformNormal);
@@ -118,7 +112,7 @@ function BulbRenderer(_ambientColour, _mode, _smooth) constructor
     
     static StopDrawingToNormalMap = function()
     {
-        if ((__oldViewMatrix == undefined) || (__oldProjectionMatrix == undefined))
+        if ((__oldViewMatrix == undefined) || (__oldProjectionMatrix == undefined) || (__oldTexFilter == undefined))
         {
             __BulbError("Must call .StopDrawingToNormalMap() after .StartDrawingToNormalMap*()");
         }
@@ -128,9 +122,11 @@ function BulbRenderer(_ambientColour, _mode, _smooth) constructor
         
         matrix_set(matrix_view,       __oldViewMatrix      );
         matrix_set(matrix_projection, __oldProjectionMatrix);
+        gpu_set_tex_filter(__oldTexFilter);
         
         __oldViewMatrix       = undefined;
         __oldProjectionMatrix = undefined;
+        __oldTexFilter        = undefined;
     }
     
     static UpdateFromCamera = function(_camera)
