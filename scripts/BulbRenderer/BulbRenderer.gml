@@ -712,7 +712,7 @@ function BulbRenderer(_ambientColour, _mode, _smooth, _useNormalMap = false) con
         
         var _usingNormalMap = __usingNormalMap;
         
-        if (mode == BULB_MODE.HARD_BM_MAX)
+        if ((mode == BULB_MODE.HARD_BM_MAX) || (mode == BULB_MODE.HARD_BM_MAX_SELFLIGHTING))
         {
             gpu_set_blendmode(bm_max);
             var _resetShader = _usingNormalMap? __shdBulbPremultiplyAlphaWithNormalMap : __shdBulbPremultiplyAlpha;
