@@ -660,7 +660,7 @@ function BulbRendererWithGroups(_ambientColour, _mode, _smooth, _maxGroups) cons
         gpu_set_ztestenable(true);
         gpu_set_zwriteenable(true);
         
-        if (mode == BULB_MODE.HARD_BM_MAX)
+        if ((mode == BULB_MODE.HARD_BM_MAX) || (mode == BULB_MODE.HARD_BM_MAX_SELFLIGHTING))
         {
             gpu_set_blendmode(bm_max);
             var _resetShader = __shdBulbPremultiplyAlpha;
