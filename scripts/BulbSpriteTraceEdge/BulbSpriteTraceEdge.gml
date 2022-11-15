@@ -144,13 +144,21 @@ function BulbSpriteTraceEdge(_sprite_index, _image_index, _alphaThreshold = 1/25
                     
                     if (buffer_peek(_buffer, _bufferPos - _rowSize + 4, buffer_u8) >= _alphaThreshold)
                     {
-                        __BulbSpriteTraceEdge_WriteIfNecessary
-                        
-                        //There's a pixel to our top-right
-                        ++_x;
-                        --_y;
-                        
-                        __BulbSpriteTraceEdge_Write
+                        if (buffer_peek(_buffer, _bufferPos + 4, buffer_u8) >= _alphaThreshold)
+                        {
+                            //There's a pixel to our top-right but there is a pixel directly to our right
+                            ++_x;
+                            __BulbSpriteTraceEdge_Write
+                            --_y;
+                        }
+                        else
+                        {
+                            //There's a pixel to our top-right but no pixel directly to our right
+                            __BulbSpriteTraceEdge_WriteIfNecessary
+                            ++_x;
+                            --_y;
+                            __BulbSpriteTraceEdge_Write
+                        }
                         
                         //We're an inside corner, rotate counterclockwise
                         _direction = 0x02;
@@ -181,13 +189,21 @@ function BulbSpriteTraceEdge(_sprite_index, _image_index, _alphaThreshold = 1/25
                     
                     if (buffer_peek(_buffer, _bufferPos - _rowSize - 4, buffer_u8) >= _alphaThreshold)
                     {
-                        __BulbSpriteTraceEdge_WriteIfNecessary
-                        
-                        //There's a pixel to our top-left
-                        --_x;
-                        --_y;
-                        
-                        __BulbSpriteTraceEdge_Write
+                        if (buffer_peek(_buffer, _bufferPos - _rowSize, buffer_u8) >= _alphaThreshold)
+                        {
+                            //There's a pixel to our top-left but there is a pixel directly above us
+                            --_y;
+                            __BulbSpriteTraceEdge_Write
+                            --_x;
+                        }
+                        else
+                        {
+                            //There's a pixel to our top-left but no pixel directly above us
+                            __BulbSpriteTraceEdge_WriteIfNecessary
+                            --_x;
+                            --_y;
+                            __BulbSpriteTraceEdge_Write
+                        }
                         
                         //We're an inside corner, rotate counterclockwise
                         _direction = 0x04;
@@ -218,13 +234,21 @@ function BulbSpriteTraceEdge(_sprite_index, _image_index, _alphaThreshold = 1/25
                     
                     if (buffer_peek(_buffer, _bufferPos + _rowSize - 4, buffer_u8) >= _alphaThreshold)
                     {
-                        __BulbSpriteTraceEdge_WriteIfNecessary
-                        
-                        //There's a pixel to our bottom-left
-                        --_x;
-                        ++_y;
-                        
-                        __BulbSpriteTraceEdge_Write
+                        if (buffer_peek(_buffer, _bufferPos - 4, buffer_u8) >= _alphaThreshold)
+                        {
+                            //There's a pixel to our bottom-left but there is a pixel directly to our left
+                            --_x;
+                            __BulbSpriteTraceEdge_Write
+                            ++_y;
+                        }
+                        else
+                        {
+                            //There's a pixel to our bottom-left but no pixel directly to our left
+                            __BulbSpriteTraceEdge_WriteIfNecessary
+                            --_x;
+                            ++_y;
+                            __BulbSpriteTraceEdge_Write
+                        }
                         
                         //We're an inside corner, rotate counterclockwise
                         _direction = 0x08;
@@ -255,13 +279,21 @@ function BulbSpriteTraceEdge(_sprite_index, _image_index, _alphaThreshold = 1/25
                     
                     if (buffer_peek(_buffer, _bufferPos + _rowSize + 4, buffer_u8) >= _alphaThreshold)
                     {
-                        __BulbSpriteTraceEdge_WriteIfNecessary
-                        
-                        //There's a pixel to our bottom-right
-                        ++_x;
-                        ++_y;
-                        
-                        __BulbSpriteTraceEdge_Write
+                        if (buffer_peek(_buffer, _bufferPos + _rowSize, buffer_u8) >= _alphaThreshold)
+                        {
+                            //There's a pixel to our bottom-right but there is a pixel directly below us
+                            ++_y;
+                            __BulbSpriteTraceEdge_Write
+                            ++_x;
+                        }
+                        else
+                        {
+                            //There's a pixel to our bottom-right but no pixel directly below us
+                            __BulbSpriteTraceEdge_WriteIfNecessary
+                            ++_x;
+                            ++_y;
+                            __BulbSpriteTraceEdge_Write
+                        }
                         
                         //We're an inside corner, rotate counterclockwise
                         _direction = 0x01;
@@ -281,6 +313,9 @@ function BulbSpriteTraceEdge(_sprite_index, _image_index, _alphaThreshold = 1/25
                 break;
             }
         }
+        
+        //Close the loop
+        array_push(_loop, _loop[0], _loop[1]);
     }
     
     ds_grid_destroy(_visitedGrid);
