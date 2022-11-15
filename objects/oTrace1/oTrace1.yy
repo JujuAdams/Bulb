@@ -1,13 +1,13 @@
 {
   "resourceType": "GMObject",
   "resourceVersion": "1.0",
-  "name": "oStaticOccluder3",
+  "name": "oTrace1",
   "spriteId": {
-    "name": "sStaticBlock",
-    "path": "sprites/sStaticBlock/sStaticBlock.yy",
+    "name": "sDynamicBlock",
+    "path": "sprites/sDynamicBlock/sDynamicBlock.yy",
   },
   "solid": false,
-  "visible": false,
+  "visible": true,
   "managed": true,
   "spriteMaskId": null,
   "persistent": false,
@@ -30,7 +30,7 @@
   "properties": [],
   "overriddenProperties": [],
   "parent": {
-    "name": "rmTestSoft Objects",
-    "path": "folders/Example/rmTestSoft Objects.yy",
+    "name": "rmTestTrace Objects",
+    "path": "folders/Example/rmTestTrace Objects.yy",
   },
 }
