@@ -56,35 +56,33 @@ function BulbSpriteTraceEdge(_sprite_index, _image_index, _alphaThreshold = 1/25
     // 0x04 = Visited left edge
     // 0x08 = Visited bottom edge
     
+    var _searchX = 1;
+    var _searchY = 1;
+    var _inside  = false;
+    
     while(true)
     {
-        //Find first point of contact
-        var _foundX = undefined;
-        var _foundY = undefined;
-        var _inside = false;
+        //Find the next point of contact
+        var _found = false;
         
-        var _y = 1;
-        repeat(_spriteHeight)
+        while(_searchY < _spriteHeight)
         {
-            var _x = 1;
-            var _bufferPos = _y*_rowSize + 4*_x + 3;
-            repeat(_spriteWidth)
+            while(_searchX < _spriteHeight)
             {
-                //First byte in every 32-bit value is alpha (due to GM's native AGR layout)
-                if (buffer_peek(_buffer, _bufferPos, buffer_u8) >= _alphaThreshold) //Alpha is greater than the threshold
+                //Last byte in every 32-bit value is alpha (due to GM's native ABGR layout)
+                if (buffer_peek(_buffer, _searchY*_rowSize + 4*_searchX + 3, buffer_u8) >= _alphaThreshold) //Alpha is greater than the threshold
                 {
                     if (!_inside)
                     {
-                        if ((_visitedGrid[# _x, _y] & 0x04) > 0)
+                        _inside = true;
+                        
+                        if ((_visitedGrid[# _searchX, _searchY] & 0x04) > 0)
                         {
-                            //If we've already visited the left-hand side of this pixel, set us as inside
-                            //We'll skip all interior pixels until we hit some empty space
-                            _inside = true;
+                            //If we've already visited the left-hand side of this pixel then we've already handled this pixel on a prior loop
                         }
                         else
                         {
-                            _foundX = _x;
-                            _foundY = _y;
+                            _found = true;
                             break;
                         }
                     }
@@ -95,22 +93,23 @@ function BulbSpriteTraceEdge(_sprite_index, _image_index, _alphaThreshold = 1/25
                     _inside = false;
                 }
                 
-                ++_x;
-                _bufferPos += 4;
+                ++_searchX;
             }
         
-            if (_foundX != undefined) break;
-            ++_y;
+            if (_found) break;
+            
+            _searchX = 1;
+            ++_searchY;
         }
         
-        if ((_foundX == undefined) && (_foundY == undefined))
+        if (!_found)
         {
             //No more pixels to traverse
             break;
         }
         
-        _x = _foundX;
-        _y = _foundY;
+        var _x = _searchX;
+        var _y = _searchY;
         
         //Start a new loop
         var _loop = [];
@@ -129,6 +128,7 @@ function BulbSpriteTraceEdge(_sprite_index, _image_index, _alphaThreshold = 1/25
         var _open = true;
         while(_open)
         {
+            //Last byte in every 32-bit value is alpha (due to GM's native ABGR layout)
             var _bufferPos = _y*_rowSize + 4*_x + 3;
             switch(_direction)
             {
