@@ -1,10 +1,10 @@
 {
   "resourceType": "GMObject",
   "resourceVersion": "1.0",
-  "name": "oTrace1",
+  "name": "oTrace2",
   "spriteId": {
-    "name": "sTraceTest1",
-    "path": "sprites/sTraceTest1/sTraceTest1.yy",
+    "name": "sTraceTest2",
+    "path": "sprites/sTraceTest2/sTraceTest2.yy",
   },
   "solid": false,
   "visible": true,
