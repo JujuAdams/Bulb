@@ -3,8 +3,8 @@
   "resourceVersion": "1.0",
   "name": "oTrace1",
   "spriteId": {
-    "name": "sDynamicBlock",
-    "path": "sprites/sDynamicBlock/sDynamicBlock.yy",
+    "name": "sTraceTest1",
+    "path": "sprites/sTraceTest1/sTraceTest1.yy",
   },
   "solid": false,
   "visible": true,

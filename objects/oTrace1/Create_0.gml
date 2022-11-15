@@ -15,3 +15,5 @@ occluder.AddEdge(_l, _t, _r, _t); //Top
 occluder.AddEdge(_r, _t, _r, _b); //Right
 occluder.AddEdge(_r, _b, _l, _b); //Bottom
 occluder.AddEdge(_l, _b, _l, _t); //Left
+
+BulbSpriteTraceEdge(sprite_index, image_index);
