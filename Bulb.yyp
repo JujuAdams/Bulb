@@ -15,6 +15,7 @@
     {"id":{"name":"__shdBulbFinalRender","path":"shaders/__shdBulbFinalRender/__shdBulbFinalRender.yy",},"order":9,},
     {"id":{"name":"sLightMask","path":"sprites/sLightMask/sLightMask.yy",},"order":7,},
     {"id":{"name":"oTrace2","path":"objects/oTrace2/oTrace2.yy",},"order":4,},
+    {"id":{"name":"BulbSpriteEdgeAddToOccluder","path":"scripts/BulbSpriteEdgeAddToOccluder/BulbSpriteEdgeAddToOccluder.yy",},"order":11,},
     {"id":{"name":"__BulbSystem","path":"scripts/__BulbSystem/__BulbSystem.yy",},"order":0,},
     {"id":{"name":"rmTest","path":"rooms/rmTest/rmTest.yy",},"order":1,},
     {"id":{"name":"sLightDebug","path":"sprites/sLightDebug/sLightDebug.yy",},"order":8,},

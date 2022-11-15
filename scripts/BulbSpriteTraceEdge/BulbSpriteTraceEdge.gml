@@ -1,6 +1,8 @@
 /// @param spriteIndex
 /// @param imageIndex
+/// @param [forceSinglePass=false]
 /// @param [alphaThreshold=0]
+/// @param [buildEdgesInHoles=false]
 
 #macro __BulbSpriteTraceEdge_Write  _lastWriteX = _x;\
                                     _lastWriteY = _y;\
@@ -12,8 +14,10 @@
                                               }
 
 
-function BulbSpriteTraceEdge(_sprite_index, _image_index, _alphaThreshold = 1/255)
+function BulbSpriteTraceEdge(_sprite_index, _image_index, _forceSinglePass = false, _alphaThreshold = 1/255, _buildEdgesInHoles = true)
 {
+    var _sharperCorners = false;
+    
     var _output = [];
     
     if ((_alphaThreshold <= 0) || (_alphaThreshold > 1))
@@ -87,7 +91,7 @@ function BulbSpriteTraceEdge(_sprite_index, _image_index, _alphaThreshold = 1/25
                         }
                     }
                 }
-                else
+                else if (_buildEdgesInHoles || ((_visitedGrid[# _searchX-1, _searchY] & 0x01) > 0))
                 {
                     //We're outside!
                     _inside = false;
@@ -144,7 +148,7 @@ function BulbSpriteTraceEdge(_sprite_index, _image_index, _alphaThreshold = 1/25
                     
                     if (buffer_peek(_buffer, _bufferPos - _rowSize + 4, buffer_u8) >= _alphaThreshold)
                     {
-                        if (buffer_peek(_buffer, _bufferPos + 4, buffer_u8) >= _alphaThreshold)
+                        if (_sharperCorners && (buffer_peek(_buffer, _bufferPos + 4, buffer_u8) >= _alphaThreshold))
                         {
                             //There's a pixel to our top-right but there is a pixel directly to our right
                             ++_x;
@@ -189,7 +193,7 @@ function BulbSpriteTraceEdge(_sprite_index, _image_index, _alphaThreshold = 1/25
                     
                     if (buffer_peek(_buffer, _bufferPos - _rowSize - 4, buffer_u8) >= _alphaThreshold)
                     {
-                        if (buffer_peek(_buffer, _bufferPos - _rowSize, buffer_u8) >= _alphaThreshold)
+                        if (_sharperCorners && (buffer_peek(_buffer, _bufferPos - _rowSize, buffer_u8) >= _alphaThreshold))
                         {
                             //There's a pixel to our top-left but there is a pixel directly above us
                             --_y;
@@ -234,7 +238,7 @@ function BulbSpriteTraceEdge(_sprite_index, _image_index, _alphaThreshold = 1/25
                     
                     if (buffer_peek(_buffer, _bufferPos + _rowSize - 4, buffer_u8) >= _alphaThreshold)
                     {
-                        if (buffer_peek(_buffer, _bufferPos - 4, buffer_u8) >= _alphaThreshold)
+                        if (_sharperCorners && (buffer_peek(_buffer, _bufferPos - 4, buffer_u8) >= _alphaThreshold))
                         {
                             //There's a pixel to our bottom-left but there is a pixel directly to our left
                             --_x;
@@ -279,7 +283,7 @@ function BulbSpriteTraceEdge(_sprite_index, _image_index, _alphaThreshold = 1/25
                     
                     if (buffer_peek(_buffer, _bufferPos + _rowSize + 4, buffer_u8) >= _alphaThreshold)
                     {
-                        if (buffer_peek(_buffer, _bufferPos + _rowSize, buffer_u8) >= _alphaThreshold)
+                        if (_sharperCorners && (buffer_peek(_buffer, _bufferPos + _rowSize, buffer_u8) >= _alphaThreshold))
                         {
                             //There's a pixel to our bottom-right but there is a pixel directly below us
                             ++_y;
@@ -316,6 +320,8 @@ function BulbSpriteTraceEdge(_sprite_index, _image_index, _alphaThreshold = 1/25
         
         //Close the loop
         array_push(_loop, _loop[0], _loop[1]);
+        
+        if (_forceSinglePass) break;
     }
     
     ds_grid_destroy(_visitedGrid);

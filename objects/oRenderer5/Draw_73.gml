@@ -1,2 +1,2 @@
 lighting.UpdateFromCamera(camera);
-//lighting.DrawOnCamera(camera);
+lighting.DrawOnCamera(camera);

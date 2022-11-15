@@ -2,7 +2,7 @@ function BulbSpriteEdgeDebug(_loopArray, _xOffset, _yOffset, _xScale, _yScale, _
 {
     var _matrix = matrix_build(0,0,0,   0,0,0,   _xScale, _yScale, 1);
     _matrix = matrix_multiply(_matrix, matrix_build(0,0,0,   0,0,_rotation,   1,1,1));
-    _matrix = matrix_multiply(_matrix, matrix_build(_xOffset + 0.5*_xScale, _yOffset + 0.5*_yScale, 0,   0,0,0,   1,1,1));
+    _matrix = matrix_multiply(_matrix, matrix_build(_xOffset, _yOffset, 0,   0,0,0,   1,1,1));
     matrix_set(matrix_world, _matrix);
     
     var _i = 0;
