@@ -4,20 +4,8 @@
 /// @param [alphaThreshold=0]
 /// @param [buildEdgesInHoles=false]
 
-#macro __BulbSpriteTraceEdge_Write  _lastWriteX = _x;\
-                                    _lastWriteY = _y;\
-                                    array_push(_loop, _x + _coordXOffset, _y + _coordYOffset);
-                                    
-#macro __BulbSpriteTraceEdge_WriteIfNecessary if ((_lastWriteX != _x) || (_lastWriteY != _y))\
-                                              {\
-                                                  __BulbSpriteTraceEdge_Write\
-                                              }
-
-
 function BulbSpriteTraceEdge(_sprite_index, _image_index, _forceSinglePass = false, _alphaThreshold = 1/255, _buildEdgesInHoles = true)
 {
-    var _sharperCorners = false;
-    
     var _output = [];
     
     if ((_alphaThreshold <= 0) || (_alphaThreshold > 1))
@@ -112,14 +100,14 @@ function BulbSpriteTraceEdge(_sprite_index, _image_index, _forceSinglePass = fal
             break;
         }
         
-        var _x = _searchX;
-        var _y = _searchY;
+        var _pixelX = _searchX;
+        var _pixelY = _searchY;
         
         //Start a new loop
         var _loop = [];
         array_push(_output, _loop);
         
-        __BulbSpriteTraceEdge_Write
+        array_push(_loop, _pixelX + _coordXOffset, _pixelY+1 + _coordYOffset);
         
         //We traverse the edge of the sprite clockwise
         // 0x01 = Heading right, checking edge is above us
@@ -133,36 +121,26 @@ function BulbSpriteTraceEdge(_sprite_index, _image_index, _forceSinglePass = fal
         while(_open)
         {
             //Last byte in every 32-bit value is alpha (due to GM's native ABGR layout)
-            var _bufferPos = _y*_rowSize + 4*_x + 3;
+            var _bufferPos = _pixelY*_rowSize + 4*_pixelX + 3;
             switch(_direction)
             {
                 case 0x01: //Right
                     //If we've already hit this edge then we've closed a loop and can stop
-                    if ((_visitedGrid[# _x, _y] & 0x02) > 0)
+                    if ((_visitedGrid[# _pixelX, _pixelY] & 0x02) > 0)
                     {
                         _open = false;
                         break;
                     }
                     
-                    _visitedGrid[# _x, _y] |= 0x02;
+                    _visitedGrid[# _pixelX, _pixelY] |= 0x02;
                     
                     if (buffer_peek(_buffer, _bufferPos - _rowSize + 4, buffer_u8) >= _alphaThreshold)
                     {
-                        if (_sharperCorners && (buffer_peek(_buffer, _bufferPos + 4, buffer_u8) >= _alphaThreshold))
-                        {
-                            //There's a pixel to our top-right but there is a pixel directly to our right
-                            ++_x;
-                            __BulbSpriteTraceEdge_Write
-                            --_y;
-                        }
-                        else
-                        {
-                            //There's a pixel to our top-right but no pixel directly to our right
-                            __BulbSpriteTraceEdge_WriteIfNecessary
-                            ++_x;
-                            --_y;
-                            __BulbSpriteTraceEdge_Write
-                        }
+                        //There's a pixel to our top-right but no pixel directly to our right
+                        array_push(_loop, _pixelX+1 + _coordXOffset, _pixelY + _coordYOffset);
+                        
+                        ++_pixelX;
+                        --_pixelY;
                         
                         //We're an inside corner, rotate counterclockwise
                         _direction = 0x02;
@@ -170,44 +148,36 @@ function BulbSpriteTraceEdge(_sprite_index, _image_index, _forceSinglePass = fal
                     else if (buffer_peek(_buffer, _bufferPos + 4, buffer_u8) >= _alphaThreshold)
                     {
                         //There's a pixel to the right of us
-                        ++_x;
+                        ++_pixelX;
                     }
                     else
                     {
-                        __BulbSpriteTraceEdge_WriteIfNecessary
+                        array_push(_loop, _pixelX+1 + _coordXOffset, _pixelY + _coordYOffset);
                         
                         //We're an outside corner, rotate clockwise
                         _direction = 0x08;
                     }
                 break;
                 
+                
+                
                 case 0x02: //Up
                     //If we've already hit this edge then we've closed a loop and can stop
-                    if ((_visitedGrid[# _x, _y] & 0x04) > 0)
+                    if ((_visitedGrid[# _pixelX, _pixelY] & 0x04) > 0)
                     {
                         _open = false;
                         break;
                     }
                     
-                    _visitedGrid[# _x, _y] |= 0x04;
+                    _visitedGrid[# _pixelX, _pixelY] |= 0x04;
                     
                     if (buffer_peek(_buffer, _bufferPos - _rowSize - 4, buffer_u8) >= _alphaThreshold)
                     {
-                        if (_sharperCorners && (buffer_peek(_buffer, _bufferPos - _rowSize, buffer_u8) >= _alphaThreshold))
-                        {
-                            //There's a pixel to our top-left but there is a pixel directly above us
-                            --_y;
-                            __BulbSpriteTraceEdge_Write
-                            --_x;
-                        }
-                        else
-                        {
-                            //There's a pixel to our top-left but no pixel directly above us
-                            __BulbSpriteTraceEdge_WriteIfNecessary
-                            --_x;
-                            --_y;
-                            __BulbSpriteTraceEdge_Write
-                        }
+                        //There's a pixel to our top-left
+                        array_push(_loop, _pixelX + _coordXOffset, _pixelY + _coordYOffset);
+                        
+                        --_pixelX;
+                        --_pixelY;
                         
                         //We're an inside corner, rotate counterclockwise
                         _direction = 0x04;
@@ -215,44 +185,36 @@ function BulbSpriteTraceEdge(_sprite_index, _image_index, _forceSinglePass = fal
                     else if (buffer_peek(_buffer, _bufferPos - _rowSize, buffer_u8) >= _alphaThreshold)
                     {
                         //There's a pixel above us
-                        --_y;
+                        --_pixelY;
                     }
                     else
                     {
-                        __BulbSpriteTraceEdge_WriteIfNecessary
+                        array_push(_loop, _pixelX + _coordXOffset, _pixelY + _coordYOffset);
                         
                         //We're an outside corner, rotate clockwise
                         _direction = 0x01;
                     }
                 break;
                 
+                
+                
                 case 0x04: //Left
                     //If we've already hit this edge then we've closed a loop and can stop
-                    if ((_visitedGrid[# _x, _y] & 0x08) > 0)
+                    if ((_visitedGrid[# _pixelX, _pixelY] & 0x08) > 0)
                     {
                         _open = false;
                         break;
                     }
                     
-                    _visitedGrid[# _x, _y] |= 0x08;
+                    _visitedGrid[# _pixelX, _pixelY] |= 0x08;
                     
                     if (buffer_peek(_buffer, _bufferPos + _rowSize - 4, buffer_u8) >= _alphaThreshold)
                     {
-                        if (_sharperCorners && (buffer_peek(_buffer, _bufferPos - 4, buffer_u8) >= _alphaThreshold))
-                        {
-                            //There's a pixel to our bottom-left but there is a pixel directly to our left
-                            --_x;
-                            __BulbSpriteTraceEdge_Write
-                            ++_y;
-                        }
-                        else
-                        {
-                            //There's a pixel to our bottom-left but no pixel directly to our left
-                            __BulbSpriteTraceEdge_WriteIfNecessary
-                            --_x;
-                            ++_y;
-                            __BulbSpriteTraceEdge_Write
-                        }
+                        //There's a pixel to our bottom-left
+                        array_push(_loop, _pixelX + _coordXOffset, _pixelY+1 + _coordYOffset);
+                        
+                        --_pixelX;
+                        ++_pixelY;
                         
                         //We're an inside corner, rotate counterclockwise
                         _direction = 0x08;
@@ -260,44 +222,36 @@ function BulbSpriteTraceEdge(_sprite_index, _image_index, _forceSinglePass = fal
                     else if (buffer_peek(_buffer, _bufferPos - 4, buffer_u8) >= _alphaThreshold)
                     {
                         //There's a pixel to the left of us
-                        --_x;
+                        --_pixelX;
                     }
                     else
                     {
-                        __BulbSpriteTraceEdge_WriteIfNecessary
+                        array_push(_loop, _pixelX + _coordXOffset, _pixelY+1 + _coordYOffset);
                         
                         //We're an outside corner, rotate clockwise
                         _direction = 0x02;
                     }
                 break;
                 
+                
+                
                 case 0x08: //Down
                     //If we've already hit this edge then we've closed a loop and can stop
-                    if ((_visitedGrid[# _x, _y] & 0x01) > 0)
+                    if ((_visitedGrid[# _pixelX, _pixelY] & 0x01) > 0)
                     {
                         _open = false;
                         break;
                     }
                     
-                    _visitedGrid[# _x, _y] |= 0x01;
+                    _visitedGrid[# _pixelX, _pixelY] |= 0x01;
                     
                     if (buffer_peek(_buffer, _bufferPos + _rowSize + 4, buffer_u8) >= _alphaThreshold)
                     {
-                        if (_sharperCorners && (buffer_peek(_buffer, _bufferPos + _rowSize, buffer_u8) >= _alphaThreshold))
-                        {
-                            //There's a pixel to our bottom-right but there is a pixel directly below us
-                            ++_y;
-                            __BulbSpriteTraceEdge_Write
-                            ++_x;
-                        }
-                        else
-                        {
-                            //There's a pixel to our bottom-right but no pixel directly below us
-                            __BulbSpriteTraceEdge_WriteIfNecessary
-                            ++_x;
-                            ++_y;
-                            __BulbSpriteTraceEdge_Write
-                        }
+                        //There's a pixel to our bottom-right
+                        array_push(_loop, _pixelX+1 + _coordXOffset, _pixelY+1 + _coordYOffset);
+                        
+                        ++_pixelX;
+                        ++_pixelY;
                         
                         //We're an inside corner, rotate counterclockwise
                         _direction = 0x01;
@@ -305,11 +259,11 @@ function BulbSpriteTraceEdge(_sprite_index, _image_index, _forceSinglePass = fal
                     else if (buffer_peek(_buffer, _bufferPos + _rowSize, buffer_u8) >= _alphaThreshold)
                     {
                         //There's a pixel below us
-                        ++_y;
+                        ++_pixelY;
                     }
                     else
                     {
-                        __BulbSpriteTraceEdge_WriteIfNecessary
+                        array_push(_loop, _pixelX+1 + _coordXOffset, _pixelY+1 + _coordYOffset);
                         
                         //We're an outside corner, rotate clockwise
                         _direction = 0x04;
