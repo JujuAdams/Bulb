@@ -40,7 +40,6 @@
     {"id":{"name":"sTraceTest3","path":"sprites/sTraceTest3/sTraceTest3.yy",},"order":13,},
     {"id":{"name":"oLightDiscoooo4","path":"objects/oLightDiscoooo4/oLightDiscoooo4.yy",},"order":4,},
     {"id":{"name":"sTraceTest8","path":"sprites/sTraceTest8/sTraceTest8.yy",},"order":18,},
-    {"id":{"name":"BulbSpriteTraceEdge__OLD","path":"scripts/BulbSpriteTraceEdge__OLD/BulbSpriteTraceEdge__OLD.yy",},"order":12,},
     {"id":{"name":"__shdBulbHardShadows","path":"shaders/__shdBulbHardShadows/__shdBulbHardShadows.yy",},"order":2,},
     {"id":{"name":"oTrace3","path":"objects/oTrace3/oTrace3.yy",},"order":5,},
     {"id":{"name":"BulbRenderer","path":"scripts/BulbRenderer/BulbRenderer.yy",},"order":1,},
