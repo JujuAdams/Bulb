@@ -4,7 +4,7 @@
 /// @param [alphaThreshold=0]
 /// @param [buildEdgesInHoles=false]
 
-function BulbSpriteTraceEdge(_sprite_index, _image_index, _forceSinglePass = false, _alphaThreshold = 1/255, _buildEdgesInHoles = true)
+function BulbSpriteEdgeTrace(_sprite_index, _image_index, _forceSinglePass = false, _alphaThreshold = 1/255, _buildEdgesInHoles = true)
 {
     var _output = [];
     
@@ -106,8 +106,6 @@ function BulbSpriteTraceEdge(_sprite_index, _image_index, _forceSinglePass = fal
         //Start a new loop
         var _loop = [];
         array_push(_output, _loop);
-        
-        array_push(_loop, _pixelX + _coordXOffset, _pixelY+1 + _coordYOffset);
         
         //We traverse the edge of the sprite clockwise
         // 0x01 = Heading right, checking edge is above us

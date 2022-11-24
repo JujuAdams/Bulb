@@ -1,3 +1,10 @@
+/// @param spriteEdge
+/// @param x
+/// @param y
+/// @param xScale
+/// @param yScale
+/// @param rotation
+
 function BulbSpriteEdgeDebug(_loopArray, _xOffset, _yOffset, _xScale, _yScale, _rotation)
 {
     var _matrix = matrix_build(0,0,0,   0,0,0,   _xScale, _yScale, 1);

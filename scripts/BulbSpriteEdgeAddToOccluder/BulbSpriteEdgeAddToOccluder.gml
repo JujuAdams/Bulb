@@ -1,3 +1,6 @@
+/// @param occluder
+/// @param spriteEdge
+
 function BulbSpriteEdgeAddToOccluder(_occluder, _loopArray)
 {
     var _l = 0;

@@ -1,11 +1,11 @@
 {
   "resourceType": "GMScript",
   "resourceVersion": "1.0",
-  "name": "BulbSpriteTraceEdge",
+  "name": "BulbSpriteEdgeTrace",
   "isDnD": false,
   "isCompatibility": false,
   "parent": {
-    "name": "Bulb",
-    "path": "folders/Bulb.yy",
+    "name": "Sprite Tracing",
+    "path": "folders/Bulb/Sprite Tracing.yy",
   },
 }
