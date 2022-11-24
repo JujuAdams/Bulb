@@ -37,6 +37,20 @@ function BulbDynamicOccluder(_renderer) constructor
         __bboxYMax = max(__bboxYMax, __BULB_SQRT_2*_y1, __BULB_SQRT_2*_y2);
         
         array_push(vertexArray, _x1, _y1, _x2, _y2);
+        
+        return self;
+    }
+    
+    static AddEdgesFromArray = function(_array)
+    {
+        if (__destroyed) return;
+        
+        var _oldLength = array_length(vertexArray);
+        var _newLength = array_length(_array);
+        array_resize(vertexArray, _oldLength + _newLength);
+        array_copy(vertexArray, _oldLength, _array, 0, _newLength);
+        
+        return self;
     }
     
     static ClearEdges = function(_x1, _y1, _x2, _y2)

@@ -7,19 +7,30 @@
 #macro __BULB_SQRT_2               1.41421356237
 #macro __BULB_NORMAL_CLEAR_COLOUR  #7F7FFF
 
-__BulbTrace("Welcome to Bulb by @jujuadams! This is version " + __BULB_VERSION + ", " + __BULB_DATE);
+__BulbInitialize();
 
-//Create a couple vertex formats
-vertex_format_begin();
-vertex_format_add_position_3d();
-vertex_format_add_colour();
-global.__bulb_format_3d_colour = vertex_format_end();
-
-//Create a standard vertex format
-vertex_format_begin();
-vertex_format_add_position_3d();
-vertex_format_add_texcoord();
-global.__bulb_format_3d_texture = vertex_format_end();
+function __BulbInitialize()
+{
+    static _initialized = false;
+    if (_initialized) return;
+    _initialized = true;
+    
+    __BulbTrace("Welcome to Bulb by @jujuadams! This is version " + __BULB_VERSION + ", " + __BULB_DATE);
+    
+    //Create a couple vertex formats
+    vertex_format_begin();
+    vertex_format_add_position_3d();
+    vertex_format_add_colour();
+    global.__bulb_format_3d_colour = vertex_format_end();
+    
+    //Create a standard vertex format
+    vertex_format_begin();
+    vertex_format_add_position_3d();
+    vertex_format_add_texcoord();
+    global.__bulb_format_3d_texture = vertex_format_end();
+    
+    global.__bulbTilesetDict = {};
+}
 
 
 

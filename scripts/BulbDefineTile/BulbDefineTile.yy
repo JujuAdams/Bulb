@@ -1,11 +1,11 @@
 {
   "resourceType": "GMScript",
   "resourceVersion": "1.0",
-  "name": "BulbDynamicOccluder",
+  "name": "BulbDefineTile",
   "isDnD": false,
   "isCompatibility": false,
   "parent": {
-    "name": "Bulb",
-    "path": "folders/Bulb.yy",
+    "name": "Tilemaps",
+    "path": "folders/Bulb/Tilemaps.yy",
   },
 }

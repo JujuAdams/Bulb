@@ -25,6 +25,32 @@ function BulbStaticOccluder(_renderer) constructor
         if (__destroyed) return;
         
         array_push(vertexArray, _x1, _y1, _x2, _y2);
+        
+        return self;
+    }
+    
+    static AddEdgesFromArray = function(_x, _y, _array)
+    {
+        if (__destroyed) return;
+        
+        var _oldLength = array_length(vertexArray);
+        var _newLength = array_length(_array);
+        array_resize(vertexArray, _oldLength + _newLength);
+        
+        var _i = _oldLength;
+        var _j = 0;
+        repeat(_newLength div 2)
+        {
+            vertexArray[@ _i] = _array[_j] + _x;
+            ++_i;
+            ++_j;
+            
+            vertexArray[@ _i] = _array[_j] + _y;
+            ++_i;
+            ++_j;
+        }
+        
+        return self;
     }
     
     static ClearEdges = function(_x1, _y1, _x2, _y2)
