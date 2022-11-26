@@ -1,13 +1,8 @@
-/// @param spriteIndex
-/// @param imageIndex
-/// @param [forceSinglePass=false]
+/// @param tileset
 /// @param [alphaThreshold=0]
-/// @param [buildEdgesInHoles=false]
 
-function BulbSpriteEdgeTrace(_sprite_index, _image_index, _forceSinglePass = false, _alphaThreshold = 1/255, _buildEdgesInHoles = true)
+function BulbTilesetEdgeTrace(_tileset, _alphaThreshold = 1/255)
 {
-    var _output = [];
-    
     if ((_alphaThreshold <= 0) || (_alphaThreshold > 1))
     {
         __BulbError("Alpha threshold must be greater than 0.0 and less than or equal to 1.0");
@@ -16,23 +11,59 @@ function BulbSpriteEdgeTrace(_sprite_index, _image_index, _forceSinglePass = fal
     
     _alphaThreshold *= 255;
     
-    var _spriteWidth  = sprite_get_width( _sprite_index);
-    var _spriteHeight = sprite_get_height(_sprite_index);
-    var _originX      = sprite_get_xoffset(_sprite_index);
-    var _originY      = sprite_get_yoffset(_sprite_index);
+    var _tileWidth  = __BulbGetTilesetTileWidth( _tileset);
+    var _tileHeight = __BulbGetTilesetTileHeight(_tileset);
     
-    var _coordXOffset = -1 - _originX;
-    var _coordYOffset = -1 - _originY;
+    var _extTileWidth  = 4 + _tileWidth;
+    var _extTileHeight = 4 + _tileHeight;
     
-    var _surfaceWidth  = _spriteWidth  + 2;
-    var _surfaceHeight = _spriteHeight + 2;
+    var _tilesetTexture = tileset_get_texture(_tileset);
+    var _tilesetUVs     = tileset_get_uvs(    _tileset);
+    var _surfaceWidth  = (_tilesetUVs[2] - _tilesetUVs[0]) / texture_get_texel_width( _tilesetTexture);
+    var _surfaceHeight = (_tilesetUVs[3] - _tilesetUVs[1]) / texture_get_texel_height(_tilesetTexture);
+    
     var _surface = surface_create(_surfaceWidth, _surfaceHeight);
-    
     surface_set_target(_surface);
     draw_clear_alpha(c_black, 0.0);
-    draw_sprite(_sprite_index, _image_index, 1 - _originX, 1 - _originY);
+    
+    //Draw the raw tileset to the surface
+    draw_primitive_begin_texture(pr_trianglestrip, _tilesetTexture);
+    draw_vertex_texture_colour(            0,              0, 0, 0, c_white, 1.0);
+    draw_vertex_texture_colour(            0, _surfaceHeight, 0, 1, c_white, 1.0);
+    draw_vertex_texture_colour(_surfaceWidth,              0, 1, 0, c_white, 1.0);
+    draw_vertex_texture_colour(_surfaceWidth, _surfaceHeight, 1, 1, c_white, 1.0);
+    draw_primitive_end();
+    
+    //Erase gutters
+    gpu_set_blendmode(bm_subtract);
+    draw_set_colour(c_white);
+    draw_set_alpha(1.0);
+    
+    var _x = 0;
+    repeat(__BulbGetTilesetTilesWide(_tileset))
+    {
+        draw_line(_x, -1, _x, _surfaceHeight);
+        draw_line(_x+1, -1, _x+1, _surfaceHeight);
+        _x += _extTileWidth;
+        draw_line(_x-2, -1, _x-2, _surfaceHeight);
+        draw_line(_x-1, -1, _x-1, _surfaceHeight);
+    }
+    
+    var _y = 0;
+    repeat(__BulbGetTilesetTilesHigh(_tileset))
+    {
+        draw_line(-1, _y, _surfaceWidth, _y);
+        draw_line(-1, _y+1, _surfaceWidth, _y+1);
+        _y += _extTileHeight;
+        draw_line(-1, _y-2, _surfaceWidth, _y-2);
+        draw_line(-1, _y-1, _surfaceWidth, _y-1);
+    }
+    
+    gpu_set_blendmode(bm_normal);
+    
     surface_reset_target();
     
+    //Turn the surface into a buffer for analysis
     var _bufferSize = 4*_surfaceWidth*_surfaceHeight;
     var _rowSize    = 4*_surfaceWidth;
     
@@ -41,6 +72,7 @@ function BulbSpriteEdgeTrace(_sprite_index, _image_index, _forceSinglePass = fal
     buffer_seek(_buffer, buffer_seek_start, 0);
     surface_free(_surface);
     
+    var _loopArray = [];
     var _visitedGrid = ds_grid_create(_surfaceWidth, _surfaceHeight);
     // 0x00 = Unvisited
     // 0x01 = Visited right edge
@@ -57,9 +89,9 @@ function BulbSpriteEdgeTrace(_sprite_index, _image_index, _forceSinglePass = fal
         //Find the next point of contact
         var _found = false;
         
-        while(_searchY < _spriteHeight)
+        while(_searchY < _surfaceHeight)
         {
-            while(_searchX < _spriteWidth)
+            while(_searchX < _surfaceWidth)
             {
                 //Last byte in every 32-bit value is alpha (due to GM's native ABGR layout)
                 if (buffer_peek(_buffer, _searchY*_rowSize + 4*_searchX + 3, buffer_u8) >= _alphaThreshold) //Alpha is greater than the threshold
@@ -79,7 +111,7 @@ function BulbSpriteEdgeTrace(_sprite_index, _image_index, _forceSinglePass = fal
                         }
                     }
                 }
-                else if (_buildEdgesInHoles || ((_visitedGrid[# _searchX-1, _searchY] & 0x01) > 0))
+                else if ((_visitedGrid[# _searchX-1, _searchY] & 0x01) > 0)
                 {
                     //We're outside!
                     _inside = false;
@@ -105,7 +137,7 @@ function BulbSpriteEdgeTrace(_sprite_index, _image_index, _forceSinglePass = fal
         
         //Start a new loop
         var _loop = [];
-        array_push(_output, _loop);
+        array_push(_loopArray, _loop);
         
         //We traverse the edge of the sprite clockwise
         // 0x01 = Heading right, checking edge is above us
@@ -135,7 +167,7 @@ function BulbSpriteEdgeTrace(_sprite_index, _image_index, _forceSinglePass = fal
                     if (buffer_peek(_buffer, _bufferPos - _rowSize + 4, buffer_u8) >= _alphaThreshold)
                     {
                         //There's a pixel to our top-right but no pixel directly to our right
-                        array_push(_loop, _pixelX+1 + _coordXOffset, _pixelY + _coordYOffset);
+                        array_push(_loop, _pixelX+1, _pixelY);
                         
                         ++_pixelX;
                         --_pixelY;
@@ -150,7 +182,7 @@ function BulbSpriteEdgeTrace(_sprite_index, _image_index, _forceSinglePass = fal
                     }
                     else
                     {
-                        array_push(_loop, _pixelX+1 + _coordXOffset, _pixelY + _coordYOffset);
+                        array_push(_loop, _pixelX+1, _pixelY);
                         
                         //We're an outside corner, rotate clockwise
                         _direction = 0x08;
@@ -172,7 +204,7 @@ function BulbSpriteEdgeTrace(_sprite_index, _image_index, _forceSinglePass = fal
                     if (buffer_peek(_buffer, _bufferPos - _rowSize - 4, buffer_u8) >= _alphaThreshold)
                     {
                         //There's a pixel to our top-left
-                        array_push(_loop, _pixelX + _coordXOffset, _pixelY + _coordYOffset);
+                        array_push(_loop, _pixelX, _pixelY);
                         
                         --_pixelX;
                         --_pixelY;
@@ -187,7 +219,7 @@ function BulbSpriteEdgeTrace(_sprite_index, _image_index, _forceSinglePass = fal
                     }
                     else
                     {
-                        array_push(_loop, _pixelX + _coordXOffset, _pixelY + _coordYOffset);
+                        array_push(_loop, _pixelX, _pixelY);
                         
                         //We're an outside corner, rotate clockwise
                         _direction = 0x01;
@@ -209,7 +241,7 @@ function BulbSpriteEdgeTrace(_sprite_index, _image_index, _forceSinglePass = fal
                     if (buffer_peek(_buffer, _bufferPos + _rowSize - 4, buffer_u8) >= _alphaThreshold)
                     {
                         //There's a pixel to our bottom-left
-                        array_push(_loop, _pixelX + _coordXOffset, _pixelY+1 + _coordYOffset);
+                        array_push(_loop, _pixelX, _pixelY+1);
                         
                         --_pixelX;
                         ++_pixelY;
@@ -224,7 +256,7 @@ function BulbSpriteEdgeTrace(_sprite_index, _image_index, _forceSinglePass = fal
                     }
                     else
                     {
-                        array_push(_loop, _pixelX + _coordXOffset, _pixelY+1 + _coordYOffset);
+                        array_push(_loop, _pixelX, _pixelY+1);
                         
                         //We're an outside corner, rotate clockwise
                         _direction = 0x02;
@@ -246,7 +278,7 @@ function BulbSpriteEdgeTrace(_sprite_index, _image_index, _forceSinglePass = fal
                     if (buffer_peek(_buffer, _bufferPos + _rowSize + 4, buffer_u8) >= _alphaThreshold)
                     {
                         //There's a pixel to our bottom-right
-                        array_push(_loop, _pixelX+1 + _coordXOffset, _pixelY+1 + _coordYOffset);
+                        array_push(_loop, _pixelX+1, _pixelY+1);
                         
                         ++_pixelX;
                         ++_pixelY;
@@ -261,7 +293,7 @@ function BulbSpriteEdgeTrace(_sprite_index, _image_index, _forceSinglePass = fal
                     }
                     else
                     {
-                        array_push(_loop, _pixelX+1 + _coordXOffset, _pixelY+1 + _coordYOffset);
+                        array_push(_loop, _pixelX+1, _pixelY+1);
                         
                         //We're an outside corner, rotate clockwise
                         _direction = 0x04;
@@ -272,12 +304,53 @@ function BulbSpriteEdgeTrace(_sprite_index, _image_index, _forceSinglePass = fal
         
         //Close the loop
         array_push(_loop, _loop[0], _loop[1]);
-        
-        if (_forceSinglePass) break;
     }
     
     ds_grid_destroy(_visitedGrid);
     buffer_delete(_buffer);
     
-    return _output;
+    var _i = 0;
+    repeat(array_length(_loopArray))
+    {
+        var _loop = _loopArray[_i];
+        
+        //Figure out which tile this is for using the first point
+        var _tileX = _loop[0] div _extTileWidth;
+        var _tileY = _loop[1] div _extTileHeight;
+        var _tile = BulbDefineTile(_tileset, _tileX, _tileY);
+        
+        //Adjust the position of all points in the loop relative to the top-left corner of the tile
+        var _x = 2 + _tileX*_extTileWidth;
+        var _y = 2 + _tileY*_extTileHeight;
+        
+        var _x1 = undefined;
+        var _y1 = undefined;
+        var _x2 = _loop[0] - _x;
+        var _y2 = _loop[1] - _y;
+        
+        var _j = 2;
+        repeat((array_length(_loop) div 2)-1)
+        {
+            _x1 = _x2;
+            _y1 = _y2;
+            _x2 = _loop[_j  ] - _x;
+            _y2 = _loop[_j+1] - _y;
+            
+            if (((_x1 <= 0) && (_x2 <= 0))
+            ||  ((_y1 <= 0) && (_y2 <= 0))
+            ||  ((_x1 >= _tileWidth) && (_x2 >= _tileWidth))
+            ||  ((_y1 >= _tileHeight) && (_y2 >= _tileHeight)))
+            {
+                
+            }
+            else
+            {
+                _tile.AddEdge(_x1, _y1, _x2, _y2);
+            }
+            
+            _j += 2;
+        }
+        
+        ++_i;
+    }
 }

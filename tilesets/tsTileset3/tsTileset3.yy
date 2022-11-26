@@ -1,10 +1,10 @@
 {
   "resourceType": "GMTileSet",
   "resourceVersion": "1.0",
-  "name": "tsTileset",
+  "name": "tsTileset3",
   "spriteId": {
-    "name": "sTileset",
-    "path": "sprites/sTileset/sTileset.yy",
+    "name": "sTileset3",
+    "path": "sprites/sTileset3/sTileset3.yy",
   },
   "tileWidth": 16,
   "tileHeight": 16,
