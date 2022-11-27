@@ -37,6 +37,7 @@ function __BulbInitialize()
     global.__bulbProjectDirectory = undefined;
     global.__bulbCacheBuffer      = undefined;
     global.__bulbCacheDict        = {};
+    global.__bulbCacheArray       = [];
     global.__bulbCachePauseSave   = false;
     
     BulbDiskCacheOpen();

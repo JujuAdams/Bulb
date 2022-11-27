@@ -1,4 +1,4 @@
-function BulbDiskCacheOpen()
+function __BulbDiskCacheOpen()
 {
     if (BULB_DISK_CACHE)
     {
@@ -15,10 +15,10 @@ function BulbDiskCacheOpen()
                 global.__bulbCacheBuffer = buffer_create(1024, buffer_grow, 1);
             }
             
-            global.__bulbCacheDict = {};
+            global.__bulbCacheDict  = {};
+            global.__bulbCacheArray = [];
             
             var _buffer = global.__bulbCacheBuffer;
-            var _entriesArray = [];
             
             var _pos = 0;
             var _byteSize = buffer_read(_buffer, buffer_u64);
@@ -26,7 +26,7 @@ function BulbDiskCacheOpen()
             {
                 var _name = buffer_read(_buffer, buffer_string);
                 
-                array_push(_entriesArray, {
+                array_push(global.__bulbCacheArray, {
                     __position: _pos,
                     __byteSize: _byteSize,
                     __name:     _name,
@@ -45,10 +45,11 @@ function BulbDiskCacheOpen()
                 --_i;
             }
             
+            //Now build the quick lookup dictionary
             var _i = 0;
-            repeat(array_length(_entriesArray))
+            repeat(array_length(global.__bulbCacheArray))
             {
-                var _entry = _entriesArray[_i];
+                var _entry = global.__bulbCacheArray[_i];
                 global.__bulbCacheDict[$ _entry.__name] = _entry.__position;
                 ++_i;
             }
