@@ -22,25 +22,34 @@ function __BulbClassImage(_spriteIndex, _imageIndex) constructor
     {
         if (__trace == undefined)
         {
+            if (BULB_VERBOSE) var _t = get_timer();
+            
             if (__DiskCheck()) __DiskLoad();
+            
+            if (BULB_VERBOSE)
+            {
+                if (__trace != undefined) __BulbTrace("Loaded ", __GetName(), " from disk cache (", (get_timer() - _t)/1000, "ms)");
+            }
         }
         
         if (__trace == undefined)
         {
+            if (BULB_VERBOSE) var _t = get_timer();
+            
             var _buffer = __GetBuffer();
             
             //We'll likely need the hash later so we can save a bit of time by calculating it now
             if (BULB_USE_DISK_CACHE && (__BULB_BUILD_TYPE == "run")) __GetHash(_buffer);
             
-            if (BULB_VERBOSE) var _t = get_timer();
             __trace = __BulbTraceBuffer(_buffer,
                                         sprite_get_width(__spriteIndex) + 2, sprite_get_height(__spriteIndex) + 2, 2,
                                         -1 - sprite_get_xoffset(__spriteIndex), -1 - sprite_get_yoffset(__spriteIndex),
-                                        false, 1/255, true);
-            if (BULB_VERBOSE) __BulbTrace("Tracing ", __GetName(), " buffer took ", (get_timer() - _t)/1000, "ms");
+                                        false, true);
             buffer_delete(_buffer);
             
             __DiskSave();
+            
+            if (BULB_VERBOSE) __BulbTrace("Traced ", __GetName(), " (", (get_timer() - _t)/1000, "ms)");
         }
         
         return __trace;
@@ -63,8 +72,6 @@ function __BulbClassImage(_spriteIndex, _imageIndex) constructor
         if (!BULB_USE_DISK_CACHE) return;
         if (!__DiskCheck()) return;
         
-        if (BULB_VERBOSE) var _t = get_timer();
-        
         var _buffer = global.__bulbCacheBuffer;
         var _oldTell = buffer_tell(_buffer);
         
@@ -76,7 +83,7 @@ function __BulbClassImage(_spriteIndex, _imageIndex) constructor
         var _diskName = buffer_read(_buffer, buffer_string);
         if (_diskName != __GetName())
         {
-            if (BULB_VERBOSE) __BulbTrace("Name in cache (", _diskName, ") doesn't match expected name (", __GetName(), ")");
+            __BulbTrace("Warning! Name in cache (", _diskName, ") doesn't match expected name (", __GetName(), ")");
             
             __onDisk = false;
             buffer_seek(_buffer, buffer_seek_start, _oldTell);
@@ -131,7 +138,7 @@ function __BulbClassImage(_spriteIndex, _imageIndex) constructor
         
         if (buffer_tell(_buffer) != _expectedFinalTell)
         {
-            if (BULB_VERBOSE) __BulbTrace("Warning! Final buffer position (", buffer_tell(_buffer), ") did not match expected (", _expectedFinalTell, ")");
+            __BulbTrace("Warning! Final buffer position (", buffer_tell(_buffer), ") did not match expected (", _expectedFinalTell, ")");
             
             __trace = undefined;
             
@@ -139,8 +146,6 @@ function __BulbClassImage(_spriteIndex, _imageIndex) constructor
             buffer_seek(_buffer, buffer_seek_start, _oldTell);
             return;
         }
-        
-        if (BULB_VERBOSE) __BulbTrace("Loading trace of ", __GetName(), " from disk cache took ", (get_timer() - _t)/1000, "ms");
         
         buffer_seek(_buffer, buffer_seek_start, _oldTell);
         return __trace;
@@ -209,8 +214,6 @@ function __BulbClassImage(_spriteIndex, _imageIndex) constructor
     
     static __GetBuffer = function()
     {
-        if (BULB_VERBOSE) var _t = get_timer();
-        
         var _surfaceWidth  = sprite_get_width( __spriteIndex) + 2;
         var _surfaceHeight = sprite_get_height(__spriteIndex) + 2;
         var _surface = surface_create(_surfaceWidth, _surfaceHeight);
@@ -224,8 +227,6 @@ function __BulbClassImage(_spriteIndex, _imageIndex) constructor
         buffer_get_surface(_buffer, _surface, 0);
         buffer_seek(_buffer, buffer_seek_start, 0);
         surface_free(_surface);
-        
-        if (BULB_VERBOSE) __BulbTrace("Building buffer for ", __GetName(), " took ", (get_timer() - _t)/1000, "ms");
         
         return _buffer;
     }

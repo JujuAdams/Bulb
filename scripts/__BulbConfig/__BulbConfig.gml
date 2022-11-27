@@ -11,6 +11,8 @@
 
 #macro BULB_VERBOSE  true
 
+#macro BULB_TRACE_ALPHA_THRESHOLD  0.1
+
 #macro BULB_TRACE_TAGGED_ASSETS_ON_BOOT  true
 #macro BULB_TRACE_TAG  "bulb trace"
 

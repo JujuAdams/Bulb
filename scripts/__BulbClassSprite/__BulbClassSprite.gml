@@ -61,6 +61,8 @@ function __BulbClassSprite(_spriteIndex, _checkForTag = true) constructor
             buffer_write(_buffer, buffer_text, _string);
             buffer_save(_buffer, _path);
             buffer_delete(_buffer);
+            
+            __BulbTrace("Added tag \"", BULB_TRACE_TAG, "\" to ", sprite_get_name(__spriteIndex));
         }
         else if (string_pos_ext("\"" + BULB_TRACE_TAG + "\"", _string, _pos) <= 0)
         {
@@ -70,6 +72,8 @@ function __BulbClassSprite(_spriteIndex, _checkForTag = true) constructor
             buffer_write(_buffer, buffer_text, _string);
             buffer_save(_buffer, _path);
             buffer_delete(_buffer);
+            
+            __BulbTrace("Added tag \"", BULB_TRACE_TAG, "\" to ", sprite_get_name(__spriteIndex));
         }
     }
 }

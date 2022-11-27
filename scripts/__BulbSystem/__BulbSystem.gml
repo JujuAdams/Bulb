@@ -39,34 +39,47 @@ function __BulbInitialize()
     global.__bulbCacheDict        = {};
     global.__bulbCachePauseSave   = false;
     
-    __BulbDiskCacheOpen();
+    __BulbDiskCacheLoad();
     
     if (BULB_TRACE_TAGGED_ASSETS_ON_BOOT)
     {
-        var _totalStartTime = get_timer();
-        var _autotraceArray = tag_get_asset_ids(BULB_TRACE_TAG, asset_sprite);
-        
-        if (BULB_VERBOSE) __BulbTrace("Starting autotrace of ", array_length(_autotraceArray), " sprites");
-        
         global.__bulbCachePauseSave = true;
         
+        //Sprites
+        if (BULB_VERBOSE) var _t = get_timer();
+        var _array = tag_get_asset_ids(BULB_TRACE_TAG, asset_sprite);
+        if (BULB_VERBOSE) __BulbTrace("Starting on-boot trace of ", array_length(_array), " sprites");
+        
         var _i = 0;
-        repeat(array_length(_autotraceArray))
+        repeat(array_length(_array))
         {
-            var _spriteIndex = _autotraceArray[_i];
+            var _spriteIndex = _array[_i];
             var _sprite = new __BulbClassSprite(_spriteIndex, false);
             _sprite.__TraceAll();
             ++_i;
         }
         
-        if (BULB_USE_DISK_CACHE)
+        if (BULB_VERBOSE) __BulbTrace("Sprite trace ended (", (get_timer() - _t)/1000, "ms)");
+        
+        //Tilemaps
+        if (BULB_VERBOSE) var _t = get_timer();
+        var _array = tag_get_asset_ids(BULB_TRACE_TAG, asset_tiles);
+        if (BULB_VERBOSE) __BulbTrace("Starting on-boot trace of ", array_length(_array), " tilesets");
+        
+        var _i = 0;
+        repeat(array_length(_array))
         {
-            if (BULB_VERBOSE) __BulbTrace("Now saving disk cache buffer");
-            global.__bulbCachePauseSave = false;
-            buffer_save_ext(global.__bulbCacheBuffer, __BULB_DISK_CACHE_NAME, 0, buffer_tell(global.__bulbCacheBuffer));
+            var _tilesetIndex = _array[_i];
+            var _tileset = new __BulbClassTileset(_tilesetIndex, false);
+            _tileset.__GetTileDictionary();
+            ++_i;
         }
         
-        if (BULB_VERBOSE) __BulbTrace("Autotrace ended. Time taken = ", (get_timer() - _totalStartTime)/1000, "ms");
+        if (BULB_VERBOSE) __BulbTrace("Tileset trace ended (", (get_timer() - _t)/1000, "ms)");
+        
+        //Actually save the cache to disk now
+        global.__bulbCachePauseSave = false;
+        if (BULB_USE_DISK_CACHE) buffer_save_ext(global.__bulbCacheBuffer, __BULB_DISK_CACHE_NAME, 0, buffer_tell(global.__bulbCacheBuffer));
     }
     
     if (BULB_TAG_ASSETS_ON_USE && (__BULB_BUILD_TYPE == "run"))

@@ -85,7 +85,7 @@
     {"id":{"name":"oTrace6","path":"objects/oTrace6/oTrace6.yy",},"order":8,},
     {"id":{"name":"rmTestSoft","path":"rooms/rmTestSoft/rmTestSoft.yy",},"order":3,},
     {"id":{"name":"__BulbAddTilemapToOccluder","path":"scripts/__BulbAddTilemapToOccluder/__BulbAddTilemapToOccluder.yy",},"order":18,},
-    {"id":{"name":"__BulbDiskCacheOpen","path":"scripts/__BulbDiskCacheOpen/__BulbDiskCacheOpen.yy",},"order":14,},
+    {"id":{"name":"__BulbDiskCacheLoad","path":"scripts/__BulbDiskCacheLoad/__BulbDiskCacheLoad.yy",},"order":14,},
     {"id":{"name":"oStaticOccluderAlt2","path":"objects/oStaticOccluderAlt2/oStaticOccluderAlt2.yy",},"order":5,},
     {"id":{"name":"oStaticOccluder","path":"objects/oStaticOccluder/oStaticOccluder.yy",},"order":4,},
     {"id":{"name":"oDynamicOccluder2","path":"objects/oDynamicOccluder2/oDynamicOccluder2.yy",},"order":4,},
@@ -135,8 +135,8 @@
   },
   "RoomOrderNodes": [
     {"roomId":{"name":"rmInit","path":"rooms/rmInit/rmInit.yy",},},
-    {"roomId":{"name":"rmTestTrace","path":"rooms/rmTestTrace/rmTestTrace.yy",},},
     {"roomId":{"name":"rmTestTilemap","path":"rooms/rmTestTilemap/rmTestTilemap.yy",},},
+    {"roomId":{"name":"rmTestTrace","path":"rooms/rmTestTrace/rmTestTrace.yy",},},
     {"roomId":{"name":"rmTest","path":"rooms/rmTest/rmTest.yy",},},
     {"roomId":{"name":"rmTestWithGroups","path":"rooms/rmTestWithGroups/rmTestWithGroups.yy",},},
     {"roomId":{"name":"rmTestSoft","path":"rooms/rmTestSoft/rmTestSoft.yy",},},

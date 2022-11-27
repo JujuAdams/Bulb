@@ -5,20 +5,13 @@
 /// @param xOffset
 /// @param yOffset
 /// @param forceSinglePass
-/// @param alphaThreshold
 /// @param buildEdgesInHoles
 
-function __BulbTraceBuffer(_buffer, _bufferWidth, _bufferHeight, _bufferBorder, _xOffset, _yOffset, _forceSinglePass, _alphaThreshold, _buildEdgesInHoles)
+function __BulbTraceBuffer(_buffer, _bufferWidth, _bufferHeight, _bufferBorder, _xOffset, _yOffset, _forceSinglePass, _buildEdgesInHoles)
 {
+    var _alphaThreshold = clamp(255*BULB_TRACE_ALPHA_THRESHOLD, 1, 255);
+    
     var _output = [];
-    
-    if ((_alphaThreshold <= 0) || (_alphaThreshold > 1))
-    {
-        __BulbError("Alpha threshold must be greater than 0.0 and less than or equal to 1.0");
-        return;
-    }
-    
-    _alphaThreshold *= 255;
     
     var _spriteWidth  = _bufferWidth  - _bufferBorder;
     var _spriteHeight = _bufferHeight - _bufferBorder;

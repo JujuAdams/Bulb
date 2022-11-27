@@ -40,11 +40,20 @@ function __BulbClassTileset(_tileset, _checkForTag = true) constructor
     {
         if (__tileDict == undefined)
         {
+            if (BULB_VERBOSE) var _t = get_timer();
+            
             if (__DiskCheck()) __DiskLoad();
+            
+            if (BULB_VERBOSE)
+            {
+                if (__tileDict != undefined) __BulbTrace("Loaded ", tileset_get_name(__tileset), " from disk cache (", (get_timer() - _t)/1000, "ms)");
+            }
         }
         
         if (__tileDict == undefined)
         {
+            if (BULB_VERBOSE) var _t = get_timer();
+            
             __tileDict = {};
             
             var _buffer = __GetBuffer();
@@ -52,9 +61,7 @@ function __BulbClassTileset(_tileset, _checkForTag = true) constructor
             //We'll likely need the hash later so we can save a bit of time by calculating it now
             if (BULB_USE_DISK_CACHE && (__BULB_BUILD_TYPE == "run")) __GetHash(_buffer);
             
-            if (BULB_VERBOSE) var _t = get_timer();
-            var _trace = __BulbTraceBuffer(_buffer, __textureWidth, __textureHeight, 0, 0, 0, false, 1/255, false);
-            if (BULB_VERBOSE) __BulbTrace("Tracing ", tileset_get_name(__tileset), " buffer took ", (get_timer() - _t)/1000, "ms");
+            var _trace = __BulbTraceBuffer(_buffer, __textureWidth, __textureHeight, 0, 0, 0, false, false);
             buffer_delete(_buffer);
             
             //Sort the traced loops into tile indexes
@@ -98,6 +105,8 @@ function __BulbClassTileset(_tileset, _checkForTag = true) constructor
             }
             
             __DiskSave();
+            
+            if (BULB_VERBOSE) __BulbTrace("Traced ", tileset_get_name(__tileset), " (", (get_timer() - _t)/1000, "ms)");
         }
         
         return __tileDict;
@@ -120,8 +129,6 @@ function __BulbClassTileset(_tileset, _checkForTag = true) constructor
         if (!BULB_USE_DISK_CACHE) return;
         if (!__DiskCheck()) return;
         
-        if (BULB_VERBOSE) var _t = get_timer();
-        
         var _buffer = global.__bulbCacheBuffer;
         var _oldTell = buffer_tell(_buffer);
         
@@ -133,7 +140,7 @@ function __BulbClassTileset(_tileset, _checkForTag = true) constructor
         var _diskName = buffer_read(_buffer, buffer_string);
         if (_diskName != tileset_get_name(__tileset))
         {
-            if (BULB_VERBOSE) __BulbTrace("Name in cache (", _diskName, ") doesn't match expected name (", tileset_get_name(__tileset), ")");
+            __BulbTrace("Warning! Name in cache (", _diskName, ") doesn't match expected name (", tileset_get_name(__tileset), ")");
             
             __onDisk = false;
             buffer_seek(_buffer, buffer_seek_start, _oldTell);
@@ -205,7 +212,7 @@ function __BulbClassTileset(_tileset, _checkForTag = true) constructor
         
         if (buffer_tell(_buffer) != _expectedFinalTell)
         {
-            if (BULB_VERBOSE) __BulbTrace("Warning! Final buffer position (", buffer_tell(_buffer), ") did not match expected (", _expectedFinalTell, ")");
+            __BulbTrace("Warning! Final buffer position (", buffer_tell(_buffer), ") did not match expected (", _expectedFinalTell, ")");
             
             __tileDict = undefined;
             
@@ -213,8 +220,6 @@ function __BulbClassTileset(_tileset, _checkForTag = true) constructor
             buffer_seek(_buffer, buffer_seek_start, _oldTell);
             return;
         }
-        
-        if (BULB_VERBOSE) __BulbTrace("Loading trace of ", tileset_get_name(__tileset), " from disk cache took ", (get_timer() - _t)/1000, "ms");
         
         buffer_seek(_buffer, buffer_seek_start, _oldTell);
         return __tileDict;
@@ -385,6 +390,8 @@ function __BulbClassTileset(_tileset, _checkForTag = true) constructor
             buffer_write(_buffer, buffer_text, _string);
             buffer_save(_buffer, _path);
             buffer_delete(_buffer);
+            
+            __BulbTrace("Added tag \"", BULB_TRACE_TAG, "\" to ", tileset_get_name(__tileset));
         }
         else if (string_pos_ext("\"" + BULB_TRACE_TAG + "\"", _string, _pos) <= 0)
         {
@@ -394,6 +401,8 @@ function __BulbClassTileset(_tileset, _checkForTag = true) constructor
             buffer_write(_buffer, buffer_text, _string);
             buffer_save(_buffer, _path);
             buffer_delete(_buffer);
+            
+            __BulbTrace("Added tag \"", BULB_TRACE_TAG, "\" to ", tileset_get_name(__tileset));
         }
     }
 }

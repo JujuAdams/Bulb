@@ -1,4 +1,4 @@
-function __BulbDiskCacheOpen()
+function __BulbDiskCacheLoad()
 {
     if (BULB_USE_DISK_CACHE)
     {
@@ -119,11 +119,11 @@ function __BulbDiskCacheOpen()
                 ++_i;
             }
             
-            if (BULB_VERBOSE) __BulbTrace("Disk cache open, took ", (get_timer() - _t)/1000, "ms");
+            if (BULB_VERBOSE) __BulbTrace("Disk cache loaded, took ", (get_timer() - _t)/1000, "ms");
         }
         else
         {
-            if (BULB_VERBOSE) __BulbTrace("Disk cache already open");
+            if (BULB_VERBOSE) __BulbTrace("Disk cache already loaded");
         }
     }
 }
