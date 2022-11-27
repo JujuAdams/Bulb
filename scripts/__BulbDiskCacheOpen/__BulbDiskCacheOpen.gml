@@ -39,7 +39,7 @@ function __BulbDiskCacheOpen()
             }
             
             //Detect any duplicate entries that need to be deleted
-            var _anyConflicts = false;
+            var _anyDeleted = false;
             var _dict = {};
             
             var _i = array_length(_entryArray)-1;
@@ -53,20 +53,32 @@ function __BulbDiskCacheOpen()
                     __BulbTrace("Found older version of ", _name);
                     
                     _entry.__delete = true;
-                    _anyConflicts = true;
+                    _anyDeleted = true;
                 }
                 else
                 {
-                    _dict[$ _name] = _entry;
+                    var _assetIndex = asset_get_index(_name);
+                    if (_assetIndex < 0)
+                    {
+                        __BulbTrace("Asset \"", _name, "\" no longer exists");
+                        
+                        _entry.__delete = true;
+                        _anyDeleted = true;
+                    }
+                    else
+                    {
+                        _dict[$ _name] = _entry;
+                    }
                 }
                 
                 --_i;
             }
             
-            if (_anyConflicts)
+            if (_anyDeleted)
             {
-                var _deletedBytes = 0;
+                var _newBuffer = buffer_create(buffer_get_size(_buffer), buffer_grow, 1);
                 
+                var _pos = 0;
                 var _i = 0;
                 repeat(array_length(_entryArray))
                 {
@@ -75,34 +87,25 @@ function __BulbDiskCacheOpen()
                     
                     if (_entry.__delete)
                     {
-                        _deletedBytes += _entry.__byteSize;
                         array_delete(_entryArray, _i, 1);
                     }
                     else
                     {
-                        _entry.__position -= _deletedBytes;
+                        buffer_copy(_buffer, _entry.__position, _entry.__byteSize, _newBuffer, _pos);
+                        _entry.__position = _pos;
+                        _pos += _entry.__byteSize;
+                        
                         ++_i;
                     }
                 }
                 
-                var _newBuffer = buffer_create(buffer_get_size(_buffer), buffer_grow, 1);
-                var _pos = 0;
-                
-                var _i = 0;
-                repeat(array_length(_entryArray))
-                {
-                    var _entry = _entryArray[_i];
-                    buffer_copy(_buffer, _entry.__position, _entry.__byteSize, _newBuffer, _pos);
-                    ++_i;
-                }
-                
-                global.__bulbCacheBuffer = _newBuffer;
                 buffer_delete(_buffer);
+                global.__bulbCacheBuffer = _newBuffer;
+                buffer_seek(global.__bulbCacheBuffer, buffer_seek_start, _pos);
+                buffer_write(global.__bulbCacheBuffer, buffer_u64, 0);
                 
                 buffer_save_ext(_newBuffer, __BULB_DISK_CACHE_NAME, 0, buffer_tell(_newBuffer));
             }
-            
-            
             
             //Now build the quick lookup dictionary
             var _i = 0;
