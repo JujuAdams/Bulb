@@ -1,3 +1,5 @@
+occluder = new BulbStaticOccluder(oRenderer6.lighting);
+
 BulbTilesetEdgeTrace(tsTileset);
 BulbAddTilemapToOccluder(occluder, layer_tilemap_get_id("Tiles"));
 

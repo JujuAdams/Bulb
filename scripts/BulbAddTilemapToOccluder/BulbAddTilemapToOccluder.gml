@@ -40,16 +40,16 @@ function BulbAddTilemapToOccluder(_occluder, _tilemap)
                         
                         var _x1 = undefined;
                         var _y1 = undefined;
-                        var _x2 = _loop[0] + _xOffset;
-                        var _y2 = _loop[1] + _yOffset;
+                        var _x2 = _loop[0];
+                        var _y2 = _loop[1];
                         
                         var _j = 2;
                         repeat((array_length(_loop) div 2)-1)
                         {
                             _x1 = _x2;
                             _y1 = _y2;
-                            _x2 = _loop[_j  ] + _xOffset;
-                            _y2 = _loop[_j+1] + _yOffset;
+                            _x2 = _loop[_j  ];
+                            _y2 = _loop[_j+1];
                             
                             if (((_x1 <= 0) && (_x2 <= 0))
                             ||  ((_y1 <= 0) && (_y2 <= 0))
@@ -60,7 +60,7 @@ function BulbAddTilemapToOccluder(_occluder, _tilemap)
                             }
                             else
                             {
-                                _occluder.AddEdge(_x1, _y1, _x2, _y2);
+                                _occluder.AddEdge(_x1 + _xOffset, _y1 + _yOffset, _x2 + _xOffset, _y2 + _yOffset);
                             }
                             
                             _j += 2;

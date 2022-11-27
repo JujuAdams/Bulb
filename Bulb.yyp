@@ -136,12 +136,12 @@
   },
   "RoomOrderNodes": [
     {"roomId":{"name":"rmInit","path":"rooms/rmInit/rmInit.yy",},},
-    {"roomId":{"name":"rmTestTrace","path":"rooms/rmTestTrace/rmTestTrace.yy",},},
     {"roomId":{"name":"rmTestTilemap","path":"rooms/rmTestTilemap/rmTestTilemap.yy",},},
     {"roomId":{"name":"rmTest","path":"rooms/rmTest/rmTest.yy",},},
     {"roomId":{"name":"rmTestWithGroups","path":"rooms/rmTestWithGroups/rmTestWithGroups.yy",},},
     {"roomId":{"name":"rmTestSoft","path":"rooms/rmTestSoft/rmTestSoft.yy",},},
     {"roomId":{"name":"rmTestWithNormalMap","path":"rooms/rmTestWithNormalMap/rmTestWithNormalMap.yy",},},
+    {"roomId":{"name":"rmTestTrace","path":"rooms/rmTestTrace/rmTestTrace.yy",},},
   ],
   "Folders": [
     {"resourceType":"GMFolder","resourceVersion":"1.0","name":"Bulb","folderPath":"folders/Bulb.yy","order":0,},

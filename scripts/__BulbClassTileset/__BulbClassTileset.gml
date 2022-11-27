@@ -6,7 +6,9 @@ function __BulbClassTileset(_tileset, _checkForTag = true) constructor
     global.__bulbTilesetDict[$ _tileset] = self;
     
     __tileset = _tileset;
-    __hash    = undefined;
+    
+    __hash   = undefined;
+    __onDisk = undefined;
     
     layer_set_target_room(0);
     var _layer   = layer_create(0);
@@ -98,7 +100,7 @@ function __BulbClassTileset(_tileset, _checkForTag = true) constructor
             __DiskSave();
         }
         
-        return __trace;
+        return __tileDict;
     }
     
     static __DiskCheck = function()
@@ -205,7 +207,7 @@ function __BulbClassTileset(_tileset, _checkForTag = true) constructor
         {
             if (BULB_VERBOSE) __BulbTrace("Warning! Final buffer position (", buffer_tell(_buffer), ") did not match expected (", _expectedFinalTell, ")");
             
-            __trace = undefined;
+            __tileDict = undefined;
             
             __onDisk = false;
             buffer_seek(_buffer, buffer_seek_start, _oldTell);
@@ -215,7 +217,7 @@ function __BulbClassTileset(_tileset, _checkForTag = true) constructor
         if (BULB_VERBOSE) __BulbTrace("Loading trace of ", tileset_get_name(__tileset), " from disk cache took ", (get_timer() - _t)/1000, "ms");
         
         buffer_seek(_buffer, buffer_seek_start, _oldTell);
-        return __trace;
+        return __tileDict;
     }
     
     static __DiskSave = function()
@@ -246,7 +248,7 @@ function __BulbClassTileset(_tileset, _checkForTag = true) constructor
             var _tileIndex = _tileIndexArray[_i];
             buffer_write(_buffer, buffer_u64, real(_tileIndex));
             
-            var _tileLoopArray = _tileIndexArray[_tileIndex];
+            var _tileLoopArray = __tileDict[$ _tileIndex];
             buffer_write(_buffer, buffer_u64, array_length(_tileLoopArray));
             
             var _j = 0;
