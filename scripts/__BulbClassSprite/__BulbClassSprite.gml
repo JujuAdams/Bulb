@@ -5,6 +5,12 @@ function __BulbClassSprite(_spriteIndex, _checkForTag = true) constructor
 {
     global.__bulbSpriteDict[$ _spriteIndex] = self;
     
+    if (!sprite_exists(_spriteIndex))
+    {
+        __BulbError("Sprite index ", _spriteIndex, " doesn't exist");
+        return;
+    }
+    
     __spriteIndex = _spriteIndex;
     __imageArray = array_create(sprite_get_number(__spriteIndex), undefined);
     
