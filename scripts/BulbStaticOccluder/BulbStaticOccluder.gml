@@ -72,6 +72,7 @@ function BulbStaticOccluder(_renderer) constructor
     
     static AddTilemap = function(_tilemap)
     {
+        if (is_string(_tilemap)) _tilemap = layer_tilemap_get_id(_tilemap);
         __BulbAddTilemapToOccluder(self, _tilemap);
     }
     
