@@ -53,6 +53,18 @@ function BulbDynamicOccluder(_renderer) constructor
         return self;
     }
     
+    static SetSprite = function(_sprite, _image)
+    {
+        ClearEdges();
+        AddSprite(_sprite, _image);
+    }
+    
+    static SetTilemap = function(_tilemap)
+    {
+        ClearEdges();
+        AddTilemap(_tilemap);
+    }
+    
     static AddSprite = function(_sprite, _image)
     {
         __BulbAddSpriteToOccluder(self, _sprite, _image);
@@ -63,7 +75,7 @@ function BulbDynamicOccluder(_renderer) constructor
         __BulbAddTilemapToOccluder(self, _tilemap);
     }
     
-    static ClearEdges = function(_x1, _y1, _x2, _y2)
+    static ClearEdges = function()
     {
         if (__destroyed) return;
         
