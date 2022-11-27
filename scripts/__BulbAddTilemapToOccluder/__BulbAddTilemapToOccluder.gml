@@ -1,7 +1,7 @@
 /// @param occluder
 /// @param tilemap
 
-function BulbAddTilemapToOccluder(_occluder, _tilemap)
+function __BulbAddTilemapToOccluder(_occluder, _tilemap)
 {
     var _tilesetIndex = tilemap_get_tileset(_tilemap);
     var _tileDict = global.__bulbTilesetDict[$ _tilesetIndex];

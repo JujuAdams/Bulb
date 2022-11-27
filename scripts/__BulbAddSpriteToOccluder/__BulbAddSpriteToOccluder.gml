@@ -2,7 +2,7 @@
 /// @param spriteIndex
 /// @param imageIndex
 
-function BulbAddSpriteToOccluder(_occluder, _spriteIndex, _imageIndex)
+function __BulbAddSpriteToOccluder(_occluder, _spriteIndex, _imageIndex)
 {
     var _trace = (__BulbGetSpriteImage(_spriteIndex, _imageIndex)).__GetTrace();
     

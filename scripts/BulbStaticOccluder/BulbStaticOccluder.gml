@@ -53,6 +53,16 @@ function BulbStaticOccluder(_renderer) constructor
         return self;
     }
     
+    static AddSprite = function(_sprite, _image)
+    {
+        __BulbAddSpriteToOccluder(self, _sprite, _image);
+    }
+    
+    static AddTilemap = function(_tilemap)
+    {
+        __BulbAddTilemapToOccluder(self, _tilemap);
+    }
+    
     static ClearEdges = function(_x1, _y1, _x2, _y2)
     {
         if (__destroyed) return;

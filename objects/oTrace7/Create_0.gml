@@ -4,5 +4,4 @@ occluder.y      = y;
 occluder.xscale = image_xscale;
 occluder.yscale = image_yscale;
 occluder.angle  = image_angle;
-
-BulbAddSpriteToOccluder(occluder, sprite_index, image_index);
+occluder.AddSprite(sprite_index, image_index);
