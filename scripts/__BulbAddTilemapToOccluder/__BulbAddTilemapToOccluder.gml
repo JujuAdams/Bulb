@@ -12,6 +12,11 @@ function __BulbAddTilemapToOccluder(_occluder, _tilemap)
     var _tileWidth  = tilemap_get_tile_width( _tilemap);
     var _tileHeight = tilemap_get_tile_height(_tilemap);
     
+    //TODO - Optimise this copy procedure
+    //    1. Precompile all loops for a tile down to a single array
+    //    2. Allow users to filter the resulting loop array (e.g. to include/exclude boundary edges)
+    //    3. Copy across the entire edge array using array_copy()
+    
     var _y = 0;
     repeat(tilemap_get_height(_tilemap))
     {
