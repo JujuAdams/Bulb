@@ -23,13 +23,13 @@ function __BulbInitialize()
     vertex_format_begin();
     vertex_format_add_position_3d();
     vertex_format_add_colour();
-    global.__bulb_format_3d_colour = vertex_format_end();
+    global.__bulbFormat3DColour = vertex_format_end();
     
     //Create a standard vertex format
     vertex_format_begin();
     vertex_format_add_position_3d();
     vertex_format_add_texcoord();
-    global.__bulb_format_3d_texture = vertex_format_end();
+    global.__bulbFormat3DTexture = vertex_format_end();
     
     global.__bulbSpriteDict  = {};
     global.__bulbTilesetDict = {};
