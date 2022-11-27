@@ -37,6 +37,7 @@ function __BulbInitialize()
     global.__bulbProjectDirectory = undefined;
     global.__bulbCacheBuffer      = undefined;
     global.__bulbCacheDict        = {};
+    global.__bulbCachePauseSave   = false;
     
     BulbDiskCacheOpen();
     
@@ -47,6 +48,8 @@ function __BulbInitialize()
         
         if (BULB_VERBOSE) __BulbTrace("Starting autotrace of ", array_length(_autotraceArray), " sprites");
         
+        global.__bulbCachePauseSave = true;
+        
         var _i = 0;
         repeat(array_length(_autotraceArray))
         {
@@ -54,6 +57,13 @@ function __BulbInitialize()
             var _sprite = new __BulbClassSprite(_spriteIndex, false);
             _sprite.__TraceAll();
             ++_i;
+        }
+        
+        if (BULB_DISK_CACHE)
+        {
+            if (BULB_VERBOSE) __BulbTrace("Now saving disk cache buffer");
+            global.__bulbCachePauseSave = false;
+            buffer_save_ext(global.__bulbCacheBuffer, __BULB_DISK_CACHE_NAME, 0, buffer_tell(global.__bulbCacheBuffer));
         }
         
         if (BULB_VERBOSE) __BulbTrace("Autotrace ended. Time taken = ", (get_timer() - _totalStartTime)/1000, "ms");

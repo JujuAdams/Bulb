@@ -179,7 +179,7 @@ function __BulbClassImage(_spriteIndex, _imageIndex) constructor
         buffer_poke(_buffer, _byteSizePosition, buffer_u64, _byteSize);
         buffer_write(_buffer, buffer_u64, 0);
         
-        buffer_save_ext(_buffer, __BULB_DISK_CACHE_NAME, 0, buffer_tell(_buffer));
+        if (!global.__bulbCachePauseSave) buffer_save_ext(_buffer, __BULB_DISK_CACHE_NAME, 0, buffer_tell(_buffer));
     }
     
     static __GetHash = function(_buffer = undefined)
