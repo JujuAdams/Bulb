@@ -1,13 +1,14 @@
-#macro __BULB_VERSION              "21.0.0"
-#macro __BULB_DATE                 "2022-08-14"
-#macro __BULB_ON_DIRECTX           ((os_browser == browser_not_a_browser) && ((os_type == os_windows) || (os_type == os_xboxone) || (os_type == os_uwp) || (os_type == os_winphone) || (os_type == os_win8native)))
-#macro __BULB_ZFAR                 16000
-#macro __BULB_FLIP_CAMERA_Y        __BULB_ON_DIRECTX
-#macro __BULB_PARTIAL_CLEAR        true
-#macro __BULB_SQRT_2               1.41421356237
-#macro __BULB_NORMAL_CLEAR_COLOUR  #7F7FFF
-#macro __BULB_BUILD_TYPE           (BULB_FORCE_PRODUCTION_MODE? "exe" : GM_build_type)
-#macro __BULB_DISK_CACHE_NAME      ((__BULB_BUILD_TYPE == "run")? "BulbCacheDev.dat" : "BulbCache.dat")
+#macro __BULB_VERSION                "21.0.0"
+#macro __BULB_DATE                   "2022-08-14"
+#macro __BULB_ON_DIRECTX             ((os_browser == browser_not_a_browser) && ((os_type == os_windows) || (os_type == os_xboxone) || (os_type == os_uwp) || (os_type == os_winphone) || (os_type == os_win8native)))
+#macro __BULB_ZFAR                   16000
+#macro __BULB_FLIP_CAMERA_Y          __BULB_ON_DIRECTX
+#macro __BULB_PARTIAL_CLEAR          true
+#macro __BULB_SQRT_2                 1.41421356237
+#macro __BULB_NORMAL_CLEAR_COLOUR    #7F7FFF
+#macro __BULB_FORCE_PRODUCTION_MODE  false
+#macro __BULB_BUILD_TYPE             (__BULB_FORCE_PRODUCTION_MODE? "exe" : GM_build_type)
+#macro __BULB_DISK_CACHE_NAME        ((__BULB_BUILD_TYPE == "run")? "BulbCacheDev.dat" : "BulbCache.dat")
 
 __BulbInitialize();
 
