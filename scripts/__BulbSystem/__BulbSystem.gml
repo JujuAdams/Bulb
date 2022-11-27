@@ -40,7 +40,7 @@ function __BulbInitialize()
     global.__bulbCacheArray       = [];
     global.__bulbCachePauseSave   = false;
     
-    BulbDiskCacheOpen();
+    __BulbDiskCacheOpen();
     
     if (BULB_SPRITE_EDGE_AUTOTRACE)
     {
