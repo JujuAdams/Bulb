@@ -5,5 +5,4 @@ occluder.xscale = image_xscale;
 occluder.yscale = image_yscale;
 occluder.angle  = image_angle;
 
-loopArray = BulbSpriteEdgeTrace(sprite_index, image_index);
-BulbSpriteEdgeAddToOccluder(occluder, loopArray);
+BulbAddSpriteToOccluder(occluder, sprite_index, image_index);

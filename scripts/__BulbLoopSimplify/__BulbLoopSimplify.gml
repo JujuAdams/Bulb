@@ -1,18 +1,18 @@
 /// @param spriteEdge
 /// @param [epsilon=1]
 
-function BulbSpriteEdgeSimplify(_loopArray, _epsilon = 1)
+function __BulbLoopSimplify(_loopArray, _epsilon = 1)
 {
     var _l = 0;
     repeat(array_length(_loopArray))
     {
         var _pointArray = _loopArray[_l];
-        __BulbSpriteEdgeSimplify(_pointArray, 0, array_length(_pointArray)-2, _epsilon);
+        __BulbLoopSimplifyInternal(_pointArray, 0, array_length(_pointArray)-2, _epsilon);
         ++_l;
     }
 }
 
-function __BulbSpriteEdgeSimplify(_pointArray, _start, _end, _epsilon)
+function __BulbLoopSimplifyInternal(_pointArray, _start, _end, _epsilon)
 {
     if (_end - _start < 4) return;
     

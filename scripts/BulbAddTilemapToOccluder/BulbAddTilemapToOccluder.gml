@@ -6,12 +6,6 @@ function BulbAddTilemapToOccluder(_occluder, _tilemap)
     var _tilesetIndex = tilemap_get_tileset(_tilemap);
     var _tileDict = global.__bulbTilesetDict[$ _tilesetIndex];
     
-    if (!is_struct(_tileDict))
-    {
-        __BulbError("Tileset ", _tilesetIndex, " has no tile definitions (tilemap ", _tilemap, ")");
-        return;
-    }
-    
     var _tileset = __BulbGetTileset(_tilesetIndex);
     var _tileDict = _tileset.__GetTileDictionary();
     

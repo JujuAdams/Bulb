@@ -5,7 +5,7 @@
 /// @param yScale
 /// @param rotation
 
-function BulbSpriteEdgeDebug(_loopArray, _xOffset, _yOffset, _xScale, _yScale, _rotation)
+function __BulbLoopDebug(_loopArray, _xOffset, _yOffset, _xScale, _yScale, _rotation)
 {
     var _matrix = matrix_build(0,0,0,   0,0,0,   _xScale, _yScale, 1);
     _matrix = matrix_multiply(_matrix, matrix_build(0,0,0,   0,0,_rotation,   1,1,1));

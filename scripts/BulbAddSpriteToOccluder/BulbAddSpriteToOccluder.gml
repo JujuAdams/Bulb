@@ -1,12 +1,15 @@
 /// @param occluder
-/// @param spriteEdge
+/// @param spriteIndex
+/// @param imageIndex
 
-function BulbSpriteEdgeAddToOccluder(_occluder, _loopArray)
+function BulbAddSpriteToOccluder(_occluder, _spriteIndex, _imageIndex)
 {
+    var _trace = (__BulbGetSpriteImage(_spriteIndex, _imageIndex)).__GetTrace();
+    
     var _l = 0;
-    repeat(array_length(_loopArray))
+    repeat(array_length(_trace))
     {
-        var _loop = _loopArray[_l];
+        var _loop = _trace[_l];
         
         var _x1 = undefined;
         var _y1 = undefined;

@@ -1,7 +1,7 @@
 {
   "resourceType": "GMScript",
   "resourceVersion": "1.0",
-  "name": "BulbAddTilemapToOccluder",
+  "name": "BulbAddSpriteToOccluder",
   "isDnD": false,
   "isCompatibility": false,
   "parent": {
