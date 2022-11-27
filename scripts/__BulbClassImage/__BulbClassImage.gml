@@ -13,6 +13,11 @@ function __BulbClassImage(_spriteIndex, _imageIndex) constructor
     
     
     
+    static __GetName = function()
+    {
+        return (sprite_get_name(__spriteIndex) + "." + string(__imageIndex));
+    }
+    
     static __GetTrace = function()
     {
         if (__trace == undefined)
@@ -32,7 +37,7 @@ function __BulbClassImage(_spriteIndex, _imageIndex) constructor
                                         sprite_get_width(__spriteIndex) + 2, sprite_get_height(__spriteIndex) + 2, 2,
                                         -1 - sprite_get_xoffset(__spriteIndex), -1 - sprite_get_yoffset(__spriteIndex),
                                         false, 1/255, true);
-            if (BULB_VERBOSE) __BulbTrace("Tracing ", sprite_get_name(__spriteIndex), " buffer took ", (get_timer() - _t)/1000, "ms");
+            if (BULB_VERBOSE) __BulbTrace("Tracing ", __GetName(), " buffer took ", (get_timer() - _t)/1000, "ms");
             buffer_delete(_buffer);
             
             __DiskSave();
@@ -47,7 +52,7 @@ function __BulbClassImage(_spriteIndex, _imageIndex) constructor
         
         if (__onDisk == undefined)
         {
-            __onDisk = variable_struct_exists(global.__bulbCacheDict, sprite_get_name(__spriteIndex));
+            __onDisk = variable_struct_exists(global.__bulbCacheDict, __GetName());
         }
         
         return __onDisk;
@@ -63,15 +68,15 @@ function __BulbClassImage(_spriteIndex, _imageIndex) constructor
         var _buffer = global.__bulbCacheBuffer;
         var _oldTell = buffer_tell(_buffer);
         
-        var _bufferPos = global.__bulbCacheDict[$ sprite_get_name(__spriteIndex)];
+        var _bufferPos = global.__bulbCacheDict[$ __GetName()];
         buffer_seek(_buffer, buffer_seek_start, _bufferPos);
         
         var _expectedFinalTell = _bufferPos + buffer_read(_buffer, buffer_u64);
         
         var _diskName = buffer_read(_buffer, buffer_string);
-        if (_diskName != sprite_get_name(__spriteIndex))
+        if (_diskName != __GetName())
         {
-            if (BULB_VERBOSE) __BulbTrace("Name in cache (", _diskName, ") doesn't match expected name (", sprite_get_name(__spriteIndex), ")");
+            if (BULB_VERBOSE) __BulbTrace("Name in cache (", _diskName, ") doesn't match expected name (", __GetName(), ")");
             
             __onDisk = false;
             buffer_seek(_buffer, buffer_seek_start, _oldTell);
@@ -85,7 +90,7 @@ function __BulbClassImage(_spriteIndex, _imageIndex) constructor
         {
             if (__GetHash() != _diskHash)
             {
-                if (BULB_VERBOSE) __BulbTrace("Hash for ", sprite_get_name(__spriteIndex), " (", __GetHash(), ") doesn't match hash on disk (", _diskHash, ")");
+                if (BULB_VERBOSE) __BulbTrace("Hash for ", __GetName(), " (", __GetHash(), ") doesn't match hash on disk (", _diskHash, ")");
                 
                 __onDisk = false;
                 buffer_seek(_buffer, buffer_seek_start, _oldTell);
@@ -96,7 +101,7 @@ function __BulbClassImage(_spriteIndex, _imageIndex) constructor
         {
             if (GM_build_date != _buildDate)
             {
-                if (BULB_VERBOSE) __BulbTrace("Current build date for ", sprite_get_name(__spriteIndex), " (", string_format(GM_build_date, 0, 10), ") doesn't match build date on disk (", string_format(_buildDate, 0, 10), ")");
+                if (BULB_VERBOSE) __BulbTrace("Current build date for ", __GetName(), " (", string_format(GM_build_date, 0, 10), ") doesn't match build date on disk (", string_format(_buildDate, 0, 10), ")");
                 
                 __onDisk = false;
                 buffer_seek(_buffer, buffer_seek_start, _oldTell);
@@ -135,7 +140,7 @@ function __BulbClassImage(_spriteIndex, _imageIndex) constructor
             return;
         }
         
-        if (BULB_VERBOSE) __BulbTrace("Loading trace of ", sprite_get_name(__spriteIndex), " from disk cache took ", (get_timer() - _t)/1000, "ms");
+        if (BULB_VERBOSE) __BulbTrace("Loading trace of ", __GetName(), " from disk cache took ", (get_timer() - _t)/1000, "ms");
         
         buffer_seek(_buffer, buffer_seek_start, _oldTell);
         return __trace;
@@ -154,7 +159,7 @@ function __BulbClassImage(_spriteIndex, _imageIndex) constructor
         var _byteSizePosition = buffer_tell(_buffer);
         buffer_write(_buffer, buffer_u64, 0);
         
-        buffer_write(_buffer, buffer_string, sprite_get_name(__spriteIndex));
+        buffer_write(_buffer, buffer_string, __GetName());
         buffer_write(_buffer, buffer_string, (__BULB_BUILD_TYPE == "run")? __GetHash() : "<undefined>");
         buffer_write(_buffer, buffer_f64,    GM_build_date);
         
@@ -220,7 +225,7 @@ function __BulbClassImage(_spriteIndex, _imageIndex) constructor
         buffer_seek(_buffer, buffer_seek_start, 0);
         surface_free(_surface);
         
-        if (BULB_VERBOSE) __BulbTrace("Building buffer for ", sprite_get_name(__spriteIndex), " took ", (get_timer() - _t)/1000, "ms");
+        if (BULB_VERBOSE) __BulbTrace("Building buffer for ", __GetName(), " took ", (get_timer() - _t)/1000, "ms");
         
         return _buffer;
     }

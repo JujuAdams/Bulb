@@ -57,7 +57,10 @@ function __BulbDiskCacheOpen()
                 }
                 else
                 {
-                    var _assetIndex = asset_get_index(_name);
+                    var _checkName = _name;
+                    if (string_count(".", _name) == 1) _checkName = string_copy(_name, 1, string_pos(".", _name)-1);
+                    
+                    var _assetIndex = asset_get_index(_checkName);
                     if (_assetIndex < 0)
                     {
                         __BulbTrace("Asset \"", _name, "\" no longer exists");
