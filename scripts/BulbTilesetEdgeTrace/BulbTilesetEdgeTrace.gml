@@ -3,6 +3,9 @@
 
 function BulbTilesetEdgeTrace(_tileset, _alphaThreshold = 1/255)
 {
+    return (__BulbGetTileset(_tileset)).__GetTileDictionary();
+    
+    /*
     if ((_alphaThreshold <= 0) || (_alphaThreshold > 1))
     {
         __BulbError("Alpha threshold must be greater than 0.0 and less than or equal to 1.0");
@@ -117,4 +120,5 @@ function BulbTilesetEdgeTrace(_tileset, _alphaThreshold = 1/255)
         
         ++_i;
     }
+    */
 }
