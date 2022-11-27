@@ -49,16 +49,16 @@ function __BulbClassSprite(_spriteIndex, _checkForTag = true) constructor
         var _pos = string_pos("  \"tags\": [", _string);
         if (_pos <= 0)
         {
-            _string = string_insert("\n  \"tags\": [\n    \"" + BULB_SPRITE_AUTOTRACE_TAG + "\",\n  ],", _string, string_length(_string)-2);
+            _string = string_insert("\n  \"tags\": [\n    \"" + BULB_AUTOTRACE_TAG + "\",\n  ],", _string, string_length(_string)-2);
             
             var _buffer = buffer_create(string_byte_length(_string), buffer_fixed, 1);
             buffer_write(_buffer, buffer_text, _string);
             buffer_save(_buffer, _path);
             buffer_delete(_buffer);
         }
-        else if (string_pos_ext("\"" + BULB_SPRITE_AUTOTRACE_TAG + "\"", _string, _pos) <= 0)
+        else if (string_pos_ext("\"" + BULB_AUTOTRACE_TAG + "\"", _string, _pos) <= 0)
         {
-            _string = string_insert("    \"" + BULB_SPRITE_AUTOTRACE_TAG + "\",", _string, _pos+12);
+            _string = string_insert("    \"" + BULB_AUTOTRACE_TAG + "\",", _string, _pos+12);
             
             var _buffer = buffer_create(string_byte_length(_string), buffer_fixed, 1);
             buffer_write(_buffer, buffer_text, _string);

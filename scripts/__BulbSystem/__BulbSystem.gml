@@ -45,7 +45,7 @@ function __BulbInitialize()
     if (BULB_SPRITE_EDGE_AUTOTRACE)
     {
         var _totalStartTime = get_timer();
-        var _autotraceArray = tag_get_asset_ids(BULB_SPRITE_AUTOTRACE_TAG, asset_sprite);
+        var _autotraceArray = tag_get_asset_ids(BULB_AUTOTRACE_TAG, asset_sprite);
         
         if (BULB_VERBOSE) __BulbTrace("Starting autotrace of ", array_length(_autotraceArray), " sprites");
         

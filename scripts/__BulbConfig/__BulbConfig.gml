@@ -12,7 +12,7 @@
 #macro BULB_VERBOSE  true
 
 #macro BULB_SPRITE_EDGE_AUTOTRACE  true
-#macro BULB_SPRITE_AUTOTRACE_TAG   "bulb trace"
+#macro BULB_AUTOTRACE_TAG   "bulb trace"
 
 #macro BULB_SPRITE_EDGE_AUTOTAG  true
 

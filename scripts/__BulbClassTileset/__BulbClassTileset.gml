@@ -1,4 +1,7 @@
-function __BulbClassTileset(_tileset) constructor
+/// @param tileset
+/// @param [checkForTag=true]
+
+function __BulbClassTileset(_tileset, _checkForTag = true) constructor
 {
     global.__bulbTilesetDict[$ _tileset] = self;
     
@@ -23,6 +26,8 @@ function __BulbClassTileset(_tileset) constructor
     
     __tilesWide = _textureWidth  / (__tileWidth  + 4);
     __tilesHigh = _textureHeight / (__tileHeight + 4);
+    
+    if (_checkForTag) __EnsureTag();
     
     
     
@@ -104,5 +109,43 @@ function __BulbClassTileset(_tileset) constructor
         surface_free(_surface);
         
         return _buffer;
+    }
+    
+    static __EnsureTag = function()
+    {
+        if (!BULB_SPRITE_EDGE_AUTOTAG || (__BULB_BUILD_TYPE != "run")) return;
+        
+        var _tilesetName = tileset_get_name(__tileset);
+        var _path = global.__bulbProjectDirectory + "tilesets/" + _tilesetName + "/" + _tilesetName + ".yy";
+        
+        if (!file_exists(_path))
+        {
+            __BulbError("Could not find \"", _path, "\"\nTileset was ", _tilesetName, " (index ", __tileset, ")");
+            return;
+        }
+        
+        var _buffer = buffer_load(_path);
+        var _string = buffer_read(_buffer, buffer_text);
+        buffer_delete(_buffer);
+        
+        var _pos = string_pos("  \"tags\": [", _string);
+        if (_pos <= 0)
+        {
+            _string = string_insert("\n  \"tags\": [\n    \"" + BULB_AUTOTRACE_TAG + "\",\n  ],", _string, string_length(_string)-2);
+            
+            var _buffer = buffer_create(string_byte_length(_string), buffer_fixed, 1);
+            buffer_write(_buffer, buffer_text, _string);
+            buffer_save(_buffer, _path);
+            buffer_delete(_buffer);
+        }
+        else if (string_pos_ext("\"" + BULB_AUTOTRACE_TAG + "\"", _string, _pos) <= 0)
+        {
+            _string = string_insert("    \"" + BULB_AUTOTRACE_TAG + "\",", _string, _pos+12);
+            
+            var _buffer = buffer_create(string_byte_length(_string), buffer_fixed, 1);
+            buffer_write(_buffer, buffer_text, _string);
+            buffer_save(_buffer, _path);
+            buffer_delete(_buffer);
+        }
     }
 }
