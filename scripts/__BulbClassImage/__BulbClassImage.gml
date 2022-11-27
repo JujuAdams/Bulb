@@ -30,7 +30,7 @@ function __BulbClassImage(_spriteIndex, _imageIndex) constructor
             var _buffer = __GetBuffer();
             
             //We'll likely need the hash later so we can save a bit of time by calculating it now
-            if (BULB_DISK_CACHE && (__BULB_BUILD_TYPE == "run")) __GetHash(_buffer);
+            if (BULB_USE_DISK_CACHE && (__BULB_BUILD_TYPE == "run")) __GetHash(_buffer);
             
             if (BULB_VERBOSE) var _t = get_timer();
             __trace = __BulbTraceBuffer(_buffer,
@@ -48,7 +48,7 @@ function __BulbClassImage(_spriteIndex, _imageIndex) constructor
     
     static __DiskCheck = function()
     {
-        if (!BULB_DISK_CACHE) return false;
+        if (!BULB_USE_DISK_CACHE) return false;
         
         if (__onDisk == undefined)
         {
@@ -60,7 +60,7 @@ function __BulbClassImage(_spriteIndex, _imageIndex) constructor
     
     static __DiskLoad = function()
     {
-        if (!BULB_DISK_CACHE) return;
+        if (!BULB_USE_DISK_CACHE) return;
         if (!__DiskCheck()) return;
         
         if (BULB_VERBOSE) var _t = get_timer();
@@ -148,7 +148,7 @@ function __BulbClassImage(_spriteIndex, _imageIndex) constructor
     
     static __DiskSave = function()
     {
-        if (!BULB_DISK_CACHE) return;
+        if (!BULB_USE_DISK_CACHE) return;
         
         __onDisk = true;
         

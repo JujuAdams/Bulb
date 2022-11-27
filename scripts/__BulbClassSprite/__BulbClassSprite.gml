@@ -37,7 +37,7 @@ function __BulbClassSprite(_spriteIndex, _checkForTag = true) constructor
     
     static __EnsureTag = function()
     {
-        if (!BULB_SPRITE_EDGE_AUTOTAG || (__BULB_BUILD_TYPE != "run")) return;
+        if (!BULB_TAG_ASSETS_ON_USE || (__BULB_BUILD_TYPE != "run")) return;
         
         var _spriteName = sprite_get_name(__spriteIndex);
         var _path = global.__bulbProjectDirectory + "sprites/" + _spriteName + "/" + _spriteName + ".yy";
@@ -55,16 +55,16 @@ function __BulbClassSprite(_spriteIndex, _checkForTag = true) constructor
         var _pos = string_pos("  \"tags\": [", _string);
         if (_pos <= 0)
         {
-            _string = string_insert("\n  \"tags\": [\n    \"" + BULB_AUTOTRACE_TAG + "\",\n  ],", _string, string_length(_string)-2);
+            _string = string_insert("\n  \"tags\": [\n    \"" + BULB_TRACE_TAG + "\",\n  ],", _string, string_length(_string)-2);
             
             var _buffer = buffer_create(string_byte_length(_string), buffer_fixed, 1);
             buffer_write(_buffer, buffer_text, _string);
             buffer_save(_buffer, _path);
             buffer_delete(_buffer);
         }
-        else if (string_pos_ext("\"" + BULB_AUTOTRACE_TAG + "\"", _string, _pos) <= 0)
+        else if (string_pos_ext("\"" + BULB_TRACE_TAG + "\"", _string, _pos) <= 0)
         {
-            _string = string_insert("    \"" + BULB_AUTOTRACE_TAG + "\",", _string, _pos+12);
+            _string = string_insert("    \"" + BULB_TRACE_TAG + "\",", _string, _pos+12);
             
             var _buffer = buffer_create(string_byte_length(_string), buffer_fixed, 1);
             buffer_write(_buffer, buffer_text, _string);

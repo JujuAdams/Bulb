@@ -6,7 +6,7 @@
 #macro __BULB_PARTIAL_CLEAR        true
 #macro __BULB_SQRT_2               1.41421356237
 #macro __BULB_NORMAL_CLEAR_COLOUR  #7F7FFF
-#macro __BULB_BUILD_TYPE           (BULB_FORCE_PRODUCTION? "exe" : GM_build_type)
+#macro __BULB_BUILD_TYPE           (BULB_FORCE_PRODUCTION_MODE? "exe" : GM_build_type)
 #macro __BULB_DISK_CACHE_NAME      ((__BULB_BUILD_TYPE == "run")? "BulbCacheDev.dat" : "BulbCache.dat")
 
 __BulbInitialize();
@@ -41,10 +41,10 @@ function __BulbInitialize()
     
     __BulbDiskCacheOpen();
     
-    if (BULB_SPRITE_EDGE_AUTOTRACE)
+    if (BULB_TRACE_TAGGED_ASSETS_ON_BOOT)
     {
         var _totalStartTime = get_timer();
-        var _autotraceArray = tag_get_asset_ids(BULB_AUTOTRACE_TAG, asset_sprite);
+        var _autotraceArray = tag_get_asset_ids(BULB_TRACE_TAG, asset_sprite);
         
         if (BULB_VERBOSE) __BulbTrace("Starting autotrace of ", array_length(_autotraceArray), " sprites");
         
@@ -59,7 +59,7 @@ function __BulbInitialize()
             ++_i;
         }
         
-        if (BULB_DISK_CACHE)
+        if (BULB_USE_DISK_CACHE)
         {
             if (BULB_VERBOSE) __BulbTrace("Now saving disk cache buffer");
             global.__bulbCachePauseSave = false;
@@ -69,11 +69,11 @@ function __BulbInitialize()
         if (BULB_VERBOSE) __BulbTrace("Autotrace ended. Time taken = ", (get_timer() - _totalStartTime)/1000, "ms");
     }
     
-    if (BULB_SPRITE_EDGE_AUTOTAG && (__BULB_BUILD_TYPE == "run"))
+    if (BULB_TAG_ASSETS_ON_USE && (__BULB_BUILD_TYPE == "run"))
     {
         if ((os_type != os_windows) && (os_type != os_macosx) && (os_type != os_linux))
         {
-            __BulbTrace("BULB_SPRITE_EDGE_AUTOTAG not supported outside of Windows/MacOS/Linux export");
+            __BulbTrace("Warning! BULB_TAG_ASSETS_ON_USE not supported outside of Windows/MacOS/Linux export");
         }
         else if (!file_exists(GM_project_filename))
         {

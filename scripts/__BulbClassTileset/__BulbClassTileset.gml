@@ -50,7 +50,7 @@ function __BulbClassTileset(_tileset, _checkForTag = true) constructor
             var _buffer = __GetBuffer();
             
             //We'll likely need the hash later so we can save a bit of time by calculating it now
-            if (BULB_DISK_CACHE && (__BULB_BUILD_TYPE == "run")) __GetHash(_buffer);
+            if (BULB_USE_DISK_CACHE && (__BULB_BUILD_TYPE == "run")) __GetHash(_buffer);
             
             if (BULB_VERBOSE) var _t = get_timer();
             var _trace = __BulbTraceBuffer(_buffer, __textureWidth, __textureHeight, 0, 0, 0, false, 1/255, false);
@@ -105,7 +105,7 @@ function __BulbClassTileset(_tileset, _checkForTag = true) constructor
     
     static __DiskCheck = function()
     {
-        if (!BULB_DISK_CACHE) return false;
+        if (!BULB_USE_DISK_CACHE) return false;
         
         if (__onDisk == undefined)
         {
@@ -117,7 +117,7 @@ function __BulbClassTileset(_tileset, _checkForTag = true) constructor
     
     static __DiskLoad = function()
     {
-        if (!BULB_DISK_CACHE) return;
+        if (!BULB_USE_DISK_CACHE) return;
         if (!__DiskCheck()) return;
         
         if (BULB_VERBOSE) var _t = get_timer();
@@ -222,7 +222,7 @@ function __BulbClassTileset(_tileset, _checkForTag = true) constructor
     
     static __DiskSave = function()
     {
-        if (!BULB_DISK_CACHE) return;
+        if (!BULB_USE_DISK_CACHE) return;
         
         __onDisk = true;
         
@@ -361,7 +361,7 @@ function __BulbClassTileset(_tileset, _checkForTag = true) constructor
     
     static __EnsureTag = function()
     {
-        if (!BULB_SPRITE_EDGE_AUTOTAG || (__BULB_BUILD_TYPE != "run")) return;
+        if (!BULB_TAG_ASSETS_ON_USE || (__BULB_BUILD_TYPE != "run")) return;
         
         var _tilesetName = tileset_get_name(__tileset);
         var _path = global.__bulbProjectDirectory + "tilesets/" + _tilesetName + "/" + _tilesetName + ".yy";
@@ -379,16 +379,16 @@ function __BulbClassTileset(_tileset, _checkForTag = true) constructor
         var _pos = string_pos("  \"tags\": [", _string);
         if (_pos <= 0)
         {
-            _string = string_insert("\n  \"tags\": [\n    \"" + BULB_AUTOTRACE_TAG + "\",\n  ],", _string, string_length(_string)-2);
+            _string = string_insert("\n  \"tags\": [\n    \"" + BULB_TRACE_TAG + "\",\n  ],", _string, string_length(_string)-2);
             
             var _buffer = buffer_create(string_byte_length(_string), buffer_fixed, 1);
             buffer_write(_buffer, buffer_text, _string);
             buffer_save(_buffer, _path);
             buffer_delete(_buffer);
         }
-        else if (string_pos_ext("\"" + BULB_AUTOTRACE_TAG + "\"", _string, _pos) <= 0)
+        else if (string_pos_ext("\"" + BULB_TRACE_TAG + "\"", _string, _pos) <= 0)
         {
-            _string = string_insert("    \"" + BULB_AUTOTRACE_TAG + "\",", _string, _pos+12);
+            _string = string_insert("    \"" + BULB_TRACE_TAG + "\",", _string, _pos+12);
             
             var _buffer = buffer_create(string_byte_length(_string), buffer_fixed, 1);
             buffer_write(_buffer, buffer_text, _string);

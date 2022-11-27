@@ -11,11 +11,11 @@
 
 #macro BULB_VERBOSE  true
 
-#macro BULB_SPRITE_EDGE_AUTOTRACE  true
-#macro BULB_AUTOTRACE_TAG   "bulb trace"
+#macro BULB_TRACE_TAGGED_ASSETS_ON_BOOT  true
+#macro BULB_TRACE_TAG  "bulb trace"
 
-#macro BULB_SPRITE_EDGE_AUTOTAG  true
+#macro BULB_TAG_ASSETS_ON_USE  true
 
-#macro BULB_DISK_CACHE  true
+#macro BULB_USE_DISK_CACHE  true
 
-#macro BULB_FORCE_PRODUCTION  false
+#macro BULB_FORCE_PRODUCTION_MODE  false

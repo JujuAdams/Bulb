@@ -1,6 +1,6 @@
 function __BulbDiskCacheOpen()
 {
-    if (BULB_DISK_CACHE)
+    if (BULB_USE_DISK_CACHE)
     {
         if (global.__bulbCacheBuffer == undefined)
         {
