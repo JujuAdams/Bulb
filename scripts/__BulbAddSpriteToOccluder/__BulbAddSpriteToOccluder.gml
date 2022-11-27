@@ -8,7 +8,7 @@ function __BulbAddSpriteToOccluder(_occluder, _spriteIndex, _imageIndex)
     
     //TODO - Optimise this copy procedure
     //    1. Precompile all loops for an image down to a single array
-    //    3. Copy across the entire edge array using array_copy()
+    //    2. Copy across the entire edge array using array_copy()
     
     var _l = 0;
     repeat(array_length(_trace))
