@@ -71,4 +71,9 @@
     "name": "Sprites",
     "path": "folders/Example/Sprites.yy",
   },
+  "tags": [
+    "bulb trace",
+    "blah",
+    "blep",
+  ],
 }

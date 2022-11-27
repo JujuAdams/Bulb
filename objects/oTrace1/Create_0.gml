@@ -6,5 +6,4 @@ occluder.yscale = image_yscale;
 occluder.angle  = image_angle;
 
 loopArray = BulbSpriteEdgeTrace(sprite_index, image_index);
-BulbSpriteEdgeSimplify(loopArray);
 BulbSpriteEdgeAddToOccluder(occluder, loopArray);

@@ -6,6 +6,8 @@
 #macro __BULB_PARTIAL_CLEAR        true
 #macro __BULB_SQRT_2               1.41421356237
 #macro __BULB_NORMAL_CLEAR_COLOUR  #7F7FFF
+#macro __BULB_BUILD_TYPE           (BULB_FORCE_PRODUCTION? "exe" : GM_build_type)
+#macro __BULB_DISK_CACHE_NAME      ((__BULB_BUILD_TYPE == "run")? "BulbCacheDev.dat" : "BulbCache.dat")
 
 __BulbInitialize();
 
@@ -29,7 +31,49 @@ function __BulbInitialize()
     vertex_format_add_texcoord();
     global.__bulb_format_3d_texture = vertex_format_end();
     
+    global.__bulbSpriteDict  = {};
     global.__bulbTilesetDict = {};
+    
+    global.__bulbProjectDirectory = undefined;
+    global.__bulbCacheBuffer      = undefined;
+    global.__bulbCacheDict        = {};
+    
+    BulbDiskCacheOpen();
+    
+    if (BULB_SPRITE_EDGE_AUTOTRACE)
+    {
+        var _totalStartTime = get_timer();
+        var _autotraceArray = tag_get_asset_ids(BULB_SPRITE_AUTOTRACE_TAG, asset_sprite);
+        
+        if (BULB_VERBOSE) __BulbTrace("Starting autotrace of ", array_length(_autotraceArray), " sprites");
+        
+        var _i = 0;
+        repeat(array_length(_autotraceArray))
+        {
+            var _spriteIndex = _autotraceArray[_i];
+            var _sprite = new __BulbClassSprite(_spriteIndex, false);
+            _sprite.__TraceAll();
+            ++_i;
+        }
+        
+        if (BULB_VERBOSE) __BulbTrace("Autotrace ended. Time taken = ", (get_timer() - _totalStartTime)/1000, "ms");
+    }
+    
+    if (BULB_SPRITE_EDGE_AUTOTAG && (__BULB_BUILD_TYPE == "run"))
+    {
+        if ((os_type != os_windows) && (os_type != os_macosx) && (os_type != os_linux))
+        {
+            __BulbTrace("BULB_SPRITE_EDGE_AUTOTAG not supported outside of Windows/MacOS/Linux export");
+        }
+        else if (!file_exists(GM_project_filename))
+        {
+            __BulbError("Could not verify existance of your project file\nEnsure that \"Disable file system sandbox\" is enabled\n(Project file path is \"", GM_project_filename, "\")");
+        }
+        else
+        {
+            global.__bulbProjectDirectory = filename_path(GM_project_filename);
+        }
+    }
 }
 
 
@@ -59,8 +103,8 @@ function __BulbError()
         ++_i;
     }
     
-    show_debug_message("Bulb: " + string_replace_all(_string, "\n", "\n          "));
-    show_error("Bulb:\n" + _string + "\n ", true);
+    show_debug_message("Bulb " + __BULB_VERSION + ": " + string_replace_all(_string, "\n", "\n          "));
+    show_error("Bulb " + __BULB_VERSION + ":\n" + _string + "\n ", true);
 }
 
 
