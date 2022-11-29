@@ -6,6 +6,8 @@ function __BulbAddTilemapToOccluder(_occluder, _tilemap)
     var _tilesetIndex = tilemap_get_tileset(_tilemap);
     var _tileDict = global.__bulbTilesetDict[$ _tilesetIndex];
     
+    var _tileEdgeDict = global.__bulbTileEdges[$ _tilesetIndex];
+    
     var _tileset = __BulbGetTileset(_tilesetIndex);
     var _tileDict = _tileset.__GetTileDictionary();
     
@@ -29,6 +31,8 @@ function __BulbAddTilemapToOccluder(_occluder, _tilemap)
                 var _loopArray = _tileDict[$ _tileIndex];
                 if (is_array(_loopArray))
                 {
+                    var _tileEdges = (is_struct(_tileEdgeDict)? _tileEdgeDict[$ _tileIndex] : 0) ?? 0;
+                    
                     var _xOffset = _x*_tileWidth;
                     var _yOffset = _y*_tileHeight;
                     
@@ -50,10 +54,10 @@ function __BulbAddTilemapToOccluder(_occluder, _tilemap)
                             _x2 = _loop[_j  ];
                             _y2 = _loop[_j+1];
                             
-                            if (((_x1 <= 0) && (_x2 <= 0))
-                            ||  ((_y1 <= 0) && (_y2 <= 0))
-                            ||  ((_x1 >= _tileWidth) && (_x2 >= _tileWidth))
-                            ||  ((_y1 >= _tileHeight) && (_y2 >= _tileHeight)))
+                            if (((_x1 <=           0) && (_x2 <=           0) && ((_tileEdges & BULB_EDGE.LEFT  ) == 0))
+                            ||  ((_y1 <=           0) && (_y2 <=           0) && ((_tileEdges & BULB_EDGE.TOP   ) == 0))
+                            ||  ((_x1 >=  _tileWidth) && (_x2 >=  _tileWidth) && ((_tileEdges & BULB_EDGE.RIGHT ) == 0))
+                            ||  ((_y1 >= _tileHeight) && (_y2 >= _tileHeight) && ((_tileEdges & BULB_EDGE.BOTTOM) == 0)))
                             {
                             
                             }

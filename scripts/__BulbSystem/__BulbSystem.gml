@@ -40,6 +40,9 @@ function __BulbInitialize()
     global.__bulbCacheDict        = {};
     global.__bulbCachePauseSave   = false;
     
+    global.__bulbTileEdges = {};
+    
+    __BulbConfigTileEdges();
     __BulbDiskCacheLoad();
     
     if (BULB_TRACE_TAGGED_ASSETS_ON_BOOT)
@@ -258,18 +261,4 @@ function __BulbAddOcclusionSoft(_vbuff)
 function __BulbRectInRect(_ax1, _ay1, _ax2, _ay2, _bx1, _by1, _bx2, _by2)
 {
     return !((_bx1 > _ax2) || (_bx2 < _ax1) || (_by1 > _ay2) || (_by2 < _ay1));
-}
-
-function __BulbEncodeTransformAsColor(_xscale, _yscale, _angle)
-{
-    _angle = (_angle < 0)? (360 - ((-_angle) mod 360)) : (_angle mod 360);
-    
-    //Angle is never exactly 1 so normalizedAngle can never be 65536
-    var _normalizedAngle = floor(65536 * _angle / 360);
-    
-    var _red   = _normalizedAngle >> 8;
-    var _green = _normalizedAngle & 0xFF;
-    var _blue  = (_xscale >= 0) | ((_yscale >= 0) << 1);
-    
-    return make_color_rgb(_red, _green, _blue);
 }

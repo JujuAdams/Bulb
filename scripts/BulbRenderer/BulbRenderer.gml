@@ -786,7 +786,7 @@ function BulbRenderer(_ambientColour, _mode, _smooth, _useNormalMap = false) con
                             if (_usingNormalMap)
                             {
                                 texture_set_stage(shader_get_sampler_index(_resetShader, "u_sNormalMap"), _normalMapTexture);
-                                shader_set_uniform_f(shader_get_uniform(_resetShader, "u_vLightPos"), x - _cameraL, y - _cameraT, 0);
+                                shader_set_uniform_f(shader_get_uniform(_resetShader, "u_vLightPos"), x - _cameraL, y - _cameraT, z);
                             }
                             
                             draw_sprite_ext(sprite, image,
@@ -798,7 +798,7 @@ function BulbRenderer(_ambientColour, _mode, _smooth, _useNormalMap = false) con
                         {
                             if (_usingNormalMap)
                             {
-                                shader_set_uniform_f(shader_get_uniform(_resetShader, "u_vLightPos"), x - _cameraL, y - _cameraT, 0);
+                                shader_set_uniform_f(shader_get_uniform(_resetShader, "u_vLightPos"), x - _cameraL, y - _cameraT, z);
                             }
                             
                             gpu_set_zfunc(cmpfunc_always);

@@ -1,7 +1,7 @@
 {
   "resourceType": "GMObject",
   "resourceVersion": "1.0",
-  "name": "oLightDiscoooo",
+  "name": "oLightDiscoooo6",
   "spriteId": {
     "name": "sLightMask",
     "path": "sprites/sLightMask/sLightMask.yy",
@@ -27,15 +27,11 @@
   "eventList": [
     {"resourceType":"GMEvent","resourceVersion":"1.0","name":"","isDnD":false,"eventNum":0,"eventType":0,"collisionObjectId":null,},
     {"resourceType":"GMEvent","resourceVersion":"1.0","name":"","isDnD":false,"eventNum":0,"eventType":3,"collisionObjectId":null,},
-    {"resourceType":"GMEvent","resourceVersion":"1.0","name":"","isDnD":false,"eventNum":1,"eventType":7,"collisionObjectId":null,},
-    {"resourceType":"GMEvent","resourceVersion":"1.0","name":"","isDnD":false,"eventNum":0,"eventType":8,"collisionObjectId":null,},
-    {"resourceType":"GMEvent","resourceVersion":"1.0","name":"","isDnD":false,"eventNum":0,"eventType":4,"collisionObjectId":{"name":"oDynamicOccluder","path":"objects/oDynamicOccluder/oDynamicOccluder.yy",},},
-    {"resourceType":"GMEvent","resourceVersion":"1.0","name":"","isDnD":false,"eventNum":0,"eventType":4,"collisionObjectId":{"name":"oStaticOccluder","path":"objects/oStaticOccluder/oStaticOccluder.yy",},},
   ],
   "properties": [],
   "overriddenProperties": [],
   "parent": {
-    "name": "rmTest Objects",
-    "path": "folders/Example/rmTest Objects.yy",
+    "name": "rmTestTilemap Objects",
+    "path": "folders/Example/rmTestTilemap Objects.yy",
   },
 }
