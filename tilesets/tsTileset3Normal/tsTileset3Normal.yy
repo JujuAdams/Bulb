@@ -1,10 +1,10 @@
 {
   "resourceType": "GMTileSet",
   "resourceVersion": "1.0",
-  "name": "tsTileset3",
+  "name": "tsTileset3Normal",
   "spriteId": {
-    "name": "sTileset3",
-    "path": "sprites/sTileset3/sTileset3.yy",
+    "name": "sTileset3Normal",
+    "path": "sprites/sTileset3Normal/sTileset3Normal.yy",
   },
   "tileWidth": 32,
   "tileHeight": 32,
