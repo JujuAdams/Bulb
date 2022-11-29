@@ -4,12 +4,12 @@ draw_sprite_tiled(sFloorTileNormal, 0, 0, 0);
 
 with(oStaticOccluder4)
 {
-    BulbDrawNormal(sBlockNormal);
+    BulbDrawSpriteNormal(sBlockNormal);
 }
 
 with(oDynamicOccluder4)
 {
-    BulbDrawNormal(sBlockNormal);
+    BulbDrawSpriteNormal(sBlockNormal);
 }
 
 lighting.StopDrawingToNormalMap();

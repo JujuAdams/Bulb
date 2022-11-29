@@ -15,7 +15,7 @@ repeat(ceil(surface_get_width(application_surface) / _width)+2)
     var _x = _width*floor(_cameraL / _width);
     repeat(ceil(surface_get_width(application_surface) / _height)+2)
     {
-        BulbDrawNormal(sFloorTileNormal, 0, _x, _y);
+        BulbDrawSpriteNormal(sFloorTileNormal, 0, _x, _y);
         _x += _width;
     }
     
@@ -24,12 +24,12 @@ repeat(ceil(surface_get_width(application_surface) / _width)+2)
 
 with(oStaticOccluder)
 {
-    BulbDrawNormal(sBlockNormal);
+    BulbDrawSpriteNormal(sBlockNormal);
 }
 
 with(oDynamicOccluder)
 {
-    BulbDrawNormal(sBlockNormal);
+    BulbDrawSpriteNormal(sBlockNormal);
 }
 
 lighting.StopDrawingToNormalMap();
