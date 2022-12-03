@@ -21,22 +21,26 @@ function __BulbAddOcclusionHard(_vbuff)
             var _oldAy = _vertexArray[_i+1];
             var _oldBx = _vertexArray[_i+2];
             var _oldBy = _vertexArray[_i+3];
+            var _oldNx = _vertexArray[_i+4];
+            var _oldNy = _vertexArray[_i+5];
             
             //...and transform
             var _newAx = x + _oldAx*_xCos + _oldAy*_ySin;
             var _newAy = y - _oldAx*_xSin + _oldAy*_yCos;
             var _newBx = x + _oldBx*_xCos + _oldBy*_ySin;
             var _newBy = y - _oldBx*_xSin + _oldBy*_yCos;
+            var _newNx =     _oldNx*_xCos + _oldNy*_ySin;
+            var _newNy =     _oldNx*_xSin + _oldNy*_yCos;
             
             //Add to the vertex buffer
             //Note that we reverse the winding order relative to below because we have one negative scaling dimension
-            vertex_position_3d(_vbuff,   _newAx, _newAy,  0);           vertex_colour(_vbuff,   c_black, 1);
-            vertex_position_3d(_vbuff,   _newBx, _newBy,  0);           vertex_colour(_vbuff,   c_black, 1);
-            vertex_position_3d(_vbuff,   _newBx, _newBy,  __BULB_ZFAR); vertex_colour(_vbuff,   c_black, 1);
+            vertex_position_3d(_vbuff,   _newAx, _newAy,  0);           vertex_texcoord(_vbuff,   _newNx, _newNy);
+            vertex_position_3d(_vbuff,   _newBx, _newBy,  0);           vertex_texcoord(_vbuff,   _newNx, _newNy);
+            vertex_position_3d(_vbuff,   _newBx, _newBy,  __BULB_ZFAR); vertex_texcoord(_vbuff,   _newNx, _newNy);
             
-            vertex_position_3d(_vbuff,   _newAx, _newAy,  0);           vertex_colour(_vbuff,   c_black, 1);
-            vertex_position_3d(_vbuff,   _newBx, _newBy,  __BULB_ZFAR); vertex_colour(_vbuff,   c_black, 1);
-            vertex_position_3d(_vbuff,   _newAx, _newAy,  __BULB_ZFAR); vertex_colour(_vbuff,   c_black, 1);
+            vertex_position_3d(_vbuff,   _newAx, _newAy,  0);           vertex_texcoord(_vbuff,   _newNx, _newNy);
+            vertex_position_3d(_vbuff,   _newBx, _newBy,  __BULB_ZFAR); vertex_texcoord(_vbuff,   _newNx, _newNy);
+            vertex_position_3d(_vbuff,   _newAx, _newAy,  __BULB_ZFAR); vertex_texcoord(_vbuff,   _newNx, _newNy);
             
             _i += __BULB_ARRAY_VERTEX_SIZE;
         }
@@ -53,21 +57,25 @@ function __BulbAddOcclusionHard(_vbuff)
             var _oldAy = _vertexArray[_i+1];
             var _oldBx = _vertexArray[_i+2];
             var _oldBy = _vertexArray[_i+3];
+            var _oldNx = _vertexArray[_i+4];
+            var _oldNy = _vertexArray[_i+5];
             
             //...and transform
             var _newAx = x + _oldAx*_xCos + _oldAy*_ySin;
             var _newAy = y - _oldAx*_xSin + _oldAy*_yCos;
             var _newBx = x + _oldBx*_xCos + _oldBy*_ySin;
             var _newBy = y - _oldBx*_xSin + _oldBy*_yCos;
+            var _newNx =     _oldNx*_xCos + _oldNy*_ySin;
+            var _newNy =     _oldNx*_xSin + _oldNy*_yCos;
             
             //Add to the vertex buffer
-            vertex_position_3d(_vbuff,   _newAx, _newAy,  0);           vertex_colour(_vbuff,   c_black, 1);
-            vertex_position_3d(_vbuff,   _newBx, _newBy,  __BULB_ZFAR); vertex_colour(_vbuff,   c_black, 1);
-            vertex_position_3d(_vbuff,   _newBx, _newBy,  0);           vertex_colour(_vbuff,   c_black, 1);
+            vertex_position_3d(_vbuff,   _newAx, _newAy,  0);           vertex_texcoord(_vbuff,   _newNx, _newNy);
+            vertex_position_3d(_vbuff,   _newBx, _newBy,  __BULB_ZFAR); vertex_texcoord(_vbuff,   _newNx, _newNy);
+            vertex_position_3d(_vbuff,   _newBx, _newBy,  0);           vertex_texcoord(_vbuff,   _newNx, _newNy);
             
-            vertex_position_3d(_vbuff,   _newAx, _newAy,  0);           vertex_colour(_vbuff,   c_black, 1);
-            vertex_position_3d(_vbuff,   _newAx, _newAy,  __BULB_ZFAR); vertex_colour(_vbuff,   c_black, 1);
-            vertex_position_3d(_vbuff,   _newBx, _newBy,  __BULB_ZFAR); vertex_colour(_vbuff,   c_black, 1);
+            vertex_position_3d(_vbuff,   _newAx, _newAy,  0);           vertex_texcoord(_vbuff,   _newNx, _newNy);
+            vertex_position_3d(_vbuff,   _newAx, _newAy,  __BULB_ZFAR); vertex_texcoord(_vbuff,   _newNx, _newNy);
+            vertex_position_3d(_vbuff,   _newBx, _newBy,  __BULB_ZFAR); vertex_texcoord(_vbuff,   _newNx, _newNy);
             
             _i += __BULB_ARRAY_VERTEX_SIZE;
         }

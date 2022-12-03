@@ -1,11 +1,10 @@
 {
-  "type": 1,
-  "parent": {
-    "name": "(Pay no attention to that man behind the curtain)",
-    "path": "folders/Bulb/(System)/(Pay no attention to that man behind the curtain).yy",
-  },
+  "resourceType": "GMShader",
   "resourceVersion": "1.0",
   "name": "__shdBulbSoftNormal",
-  "tags": [],
-  "resourceType": "GMShader",
+  "type": 1,
+  "parent": {
+    "name": "Shaders",
+    "path": "folders/Bulb/(System)/(Pay no attention to that man behind the curtain)/Shaders.yy",
+  },
 }

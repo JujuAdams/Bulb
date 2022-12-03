@@ -322,7 +322,7 @@ function BulbRenderer(_ambientColour, _mode, _smooth, _useNormalMap = false) con
         if (__wipeVBuffer == undefined)
         {
             __wipeVBuffer = vertex_create_buffer();
-            vertex_begin(__wipeVBuffer, global.__bulbFormat3DColour);
+            vertex_begin(__wipeVBuffer, global.__bulbFormatPassthrough);
             
             vertex_position_3d(__wipeVBuffer,          0,          0, 0); vertex_colour(__wipeVBuffer, c_black, 1);
             vertex_position_3d(__wipeVBuffer, 2*_cameraW,          0, 0); vertex_colour(__wipeVBuffer, c_black, 1);
@@ -342,7 +342,7 @@ function BulbRenderer(_ambientColour, _mode, _smooth, _useNormalMap = false) con
             //Add static shadow caster vertices to the relevant vertex buffer
             if (mode == BULB_MODE.SOFT_BM_ADD)
             {
-                vertex_begin(__staticVBuffer, global.__bulbFormat3DTexture);
+                vertex_begin(__staticVBuffer, global.__bulbFormatSoft);
                 
                 var _array = __staticOccludersArray;
                 var _i = 0;
@@ -362,7 +362,7 @@ function BulbRenderer(_ambientColour, _mode, _smooth, _useNormalMap = false) con
             }
             else
             {
-                vertex_begin(__staticVBuffer, global.__bulbFormat3DColour);
+                vertex_begin(__staticVBuffer, global.__bulbFormatHard);
                 
                 var _array = __staticOccludersArray;
                 var _i = 0;
@@ -394,7 +394,7 @@ function BulbRenderer(_ambientColour, _mode, _smooth, _useNormalMap = false) con
         //Add dynamic occluder vertices to the relevant vertex buffer
         if (mode == BULB_MODE.SOFT_BM_ADD)
         {
-            vertex_begin(_dynamicVBuffer, global.__bulbFormat3DTexture);
+            vertex_begin(_dynamicVBuffer, global.__bulbFormatSoft);
             
             var _array = __dynamicOccludersArray;
             var _i = 0;
@@ -418,7 +418,7 @@ function BulbRenderer(_ambientColour, _mode, _smooth, _useNormalMap = false) con
         }
         else
         {
-            vertex_begin(_dynamicVBuffer, global.__bulbFormat3DColour);
+            vertex_begin(_dynamicVBuffer, global.__bulbFormatHard);
             
             var _array = __dynamicOccludersArray;
             var _i = 0;

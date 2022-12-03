@@ -21,17 +21,20 @@ function __BulbInitialize()
     
     __BulbTrace("Welcome to Bulb by @jujuadams! This is version " + __BULB_VERSION + ", " + __BULB_DATE);
     
-    //Create a couple vertex formats
     vertex_format_begin();
     vertex_format_add_position_3d();
     vertex_format_add_colour();
-    global.__bulbFormat3DColour = vertex_format_end();
+    global.__bulbFormatPassthrough = vertex_format_end();
     
-    //Create a standard vertex format
     vertex_format_begin();
     vertex_format_add_position_3d();
     vertex_format_add_texcoord();
-    global.__bulbFormat3DTexture = vertex_format_end();
+    global.__bulbFormatHard = vertex_format_end();
+    
+    vertex_format_begin();
+    vertex_format_add_position_3d();
+    vertex_format_add_texcoord();
+    global.__bulbFormatSoft = vertex_format_end();
     
     global.__bulbSpriteDict  = {};
     global.__bulbTilesetDict = {};
