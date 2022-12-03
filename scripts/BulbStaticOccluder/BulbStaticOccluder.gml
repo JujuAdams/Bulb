@@ -20,11 +20,11 @@ function BulbStaticOccluder(_renderer) constructor
         __destroyed = true;
     }
     
-    static AddEdge = function(_x1, _y1, _x2, _y2)
+    static AddEdge = function(_x1, _y1, _x2, _y2, _nx = (_y2 - _y1), _ny = (_x1 - _x2))
     {
         if (__destroyed) return;
         
-        array_push(vertexArray, _x1, _y1, _x2, _y2);
+        array_push(vertexArray, _x1, _y1, _x2, _y2, _nx, _ny);
         
         return self;
     }

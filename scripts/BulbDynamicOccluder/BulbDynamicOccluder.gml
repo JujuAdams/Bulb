@@ -27,7 +27,7 @@ function BulbDynamicOccluder(_renderer) constructor
         __destroyed = true;
     }
     
-    static AddEdge = function(_x1, _y1, _x2, _y2)
+    static AddEdge = function(_x1, _y1, _x2, _y2, _nx = (_y2 - _y1), _ny = (_x1 - _x2))
     {
         if (__destroyed) return;
         
@@ -36,7 +36,7 @@ function BulbDynamicOccluder(_renderer) constructor
         __bboxXMax = max(__bboxXMax, __BULB_SQRT_2*_x1, __BULB_SQRT_2*_x2);
         __bboxYMax = max(__bboxYMax, __BULB_SQRT_2*_y1, __BULB_SQRT_2*_y2);
         
-        array_push(vertexArray, _x1, _y1, _x2, _y2);
+        array_push(vertexArray, _x1, _y1, _x2, _y2, _nx, _ny);
         
         return self;
     }

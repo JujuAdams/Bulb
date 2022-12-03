@@ -9,6 +9,7 @@
 #macro __BULB_FORCE_PRODUCTION_MODE  false
 #macro __BULB_BUILD_TYPE             (__BULB_FORCE_PRODUCTION_MODE? "exe" : GM_build_type)
 #macro __BULB_DISK_CACHE_NAME        ((__BULB_BUILD_TYPE == "run")? "BulbCacheDev.dat" : "BulbCache.dat")
+#macro __BULB_ARRAY_VERTEX_SIZE      6
 
 __BulbInitialize();
 
@@ -152,7 +153,7 @@ function __BulbAddOcclusionHard(_vbuff)
         //Loop through every line segment, remembering that we're storing coordinate data sequentially: { Ax1, Ay1, Bx1, Bx1,   Ax2, Ay2, Bx2, Bx2, ... }
         var _vertexArray = vertexArray;
         var _i = 0;
-        repeat(array_length(_vertexArray) div 4)
+        repeat(array_length(_vertexArray) div __BULB_ARRAY_VERTEX_SIZE)
         {
             //Collect first coordinate pair
             var _oldAx = _vertexArray[_i++];
@@ -182,7 +183,7 @@ function __BulbAddOcclusionHard(_vbuff)
         //Loop through every line segment, remembering that we're storing coordinate data sequentially: { Ax1, Ay1, Bx1, Bx1,   Ax2, Ay2, Bx2, Bx2, ... }
         var _vertexArray = vertexArray;
         var _i = 0;
-        repeat(array_length(_vertexArray) div 4)
+        repeat(array_length(_vertexArray) div __BULB_ARRAY_VERTEX_SIZE)
         {
             //Collect first coordinate pair
             var _oldAx = _vertexArray[_i++];
@@ -224,7 +225,7 @@ function __BulbAddOcclusionSoft(_vbuff)
     //Loop through every line segment, remembering that we're storing coordinate data sequentially: { Ax1, Ay1, Bx1, Bx1,   Ax2, Ay2, Bx2, Bx2, ... }
     var _vertexArray = vertexArray;
     var _i = 0;
-    repeat(array_length(_vertexArray) div 4)
+    repeat(array_length(_vertexArray) div __BULB_ARRAY_VERTEX_SIZE)
     {
         //Collect first coordinate pair
         var _oldAx = _vertexArray[_i++];
