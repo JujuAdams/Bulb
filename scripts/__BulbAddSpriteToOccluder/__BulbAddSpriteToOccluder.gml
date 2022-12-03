@@ -1,8 +1,10 @@
 /// @param occluder
 /// @param spriteIndex
 /// @param imageIndex
+/// @param xOffset
+/// @param yOffset
 
-function __BulbAddSpriteToOccluder(_occluder, _spriteIndex, _imageIndex)
+function __BulbAddSpriteToOccluder(_occluder, _spriteIndex, _imageIndex, _xOffset, _yOffset)
 {
     var _trace = (__BulbGetSpriteImage(_spriteIndex, _imageIndex)).__GetTrace();
     
@@ -19,16 +21,16 @@ function __BulbAddSpriteToOccluder(_occluder, _spriteIndex, _imageIndex)
         
         var _x1 = undefined;
         var _y1 = undefined;
-        var _x2 = _loop[0];
-        var _y2 = _loop[1];
+        var _x2 = _loop[0] + _xOffset;
+        var _y2 = _loop[1] + _yOffset;
         
         var _p = 2;
         repeat((array_length(_loop) div 2)-1)
         {
             _x1 = _x2;
             _y1 = _y2;
-            _x2 = _loop[_p  ];
-            _y2 = _loop[_p+1];
+            _x2 = _loop[_p  ] + _xOffset;
+            _y2 = _loop[_p+1] + _yOffset;
             
             array_push(_occluderVertexArray, _x1, _y1,
                                              _x2, _y2,

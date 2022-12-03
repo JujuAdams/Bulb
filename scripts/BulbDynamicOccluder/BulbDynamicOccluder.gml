@@ -66,9 +66,9 @@ function BulbDynamicOccluder(_renderer) constructor
         AddTilemap(_tilemap);
     }
     
-    static AddSprite = function(_sprite, _image)
+    static AddSprite = function(_sprite, _image, _xOffset = 0, _yOffset = 0)
     {
-        __BulbAddSpriteToOccluder(self, _sprite, _image);
+        __BulbAddSpriteToOccluder(self, _sprite, _image, _xOffset, _yOffset);
     }
     
     static AddTilemap = function(_tilemap)
