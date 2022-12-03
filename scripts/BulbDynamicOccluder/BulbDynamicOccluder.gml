@@ -41,17 +41,18 @@ function BulbDynamicOccluder(_renderer) constructor
         return self;
     }
     
-    static AddEdgesFromArray = function(_array)
-    {
-        if (__destroyed) return;
-        
-        var _oldLength = array_length(vertexArray);
-        var _newLength = array_length(_array);
-        array_resize(vertexArray, _oldLength + _newLength);
-        array_copy(vertexArray, _oldLength, _array, 0, _newLength);
-        
-        return self;
-    }
+    //Not used at this time
+    //static AddEdgesFromArray = function(_array)
+    //{
+    //    if (__destroyed) return;
+    //    
+    //    var _oldLength = array_length(vertexArray);
+    //    var _newLength = array_length(_array);
+    //    array_resize(vertexArray, _oldLength + _newLength);
+    //    array_copy(vertexArray, _oldLength, _array, 0, _newLength);
+    //    
+    //    return self;
+    //}
     
     static SetSprite = function(_sprite, _image)
     {
