@@ -10,9 +10,7 @@ function __BulbAddSpriteToOccluder(_occluder, _spriteIndex, _imageIndex, _xOffse
     
     var _occluderVertexArray = _occluder.vertexArray;
     
-    //TODO - Optimise this copy procedure
-    //    1. Precompile all loops for an image down to a single array
-    //    2. Copy across the entire edge array using array_copy()
+    //TODO - Optimise this copy procedure by precompiling all loops for an image down to a single array
     
     var _l = 0;
     repeat(array_length(_trace))

@@ -9,6 +9,8 @@ function BulbStaticOccluder(_renderer) constructor
     yscale = 1.0;
     angle  = 0.0;
     
+    //Arranged as repeating units of 6 elements: x1, y1, x2, y2, normal x, normal y
+    //The normal vector does *not* need to be of unit length
     vertexArray = [];
     
     bitmask = BULB_DEFAULT_STATIC_BITMASK;
