@@ -14,6 +14,8 @@ function __BulbAddTilemapToOccluder(_occluder, _tilemap)
     var _tileWidth  = tilemap_get_tile_width( _tilemap);
     var _tileHeight = tilemap_get_tile_height(_tilemap);
     
+    var _occluderVertexArray = _occluder.vertexArray;
+    
     //TODO - Optimise this copy procedure
     //    1. Precompile all loops for a tile down to a single array
     //    2. Allow users to filter the resulting loop array (e.g. to include/exclude boundary edges)
@@ -63,7 +65,9 @@ function __BulbAddTilemapToOccluder(_occluder, _tilemap)
                             }
                             else
                             {
-                                _occluder.AddEdge(_x1 + _xOffset, _y1 + _yOffset, _x2 + _xOffset, _y2 + _yOffset);
+                                array_push(_occluderVertexArray, _x1 + _xOffset, _y1 + _yOffset,
+                                                                 _x2 + _xOffset, _y2 + _yOffset,
+                                                                 _y2 - _y1, _x1 - _x2);
                             }
                             
                             _j += 2;

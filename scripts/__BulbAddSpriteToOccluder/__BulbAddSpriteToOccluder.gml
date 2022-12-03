@@ -6,6 +6,8 @@ function __BulbAddSpriteToOccluder(_occluder, _spriteIndex, _imageIndex)
 {
     var _trace = (__BulbGetSpriteImage(_spriteIndex, _imageIndex)).__GetTrace();
     
+    var _occluderVertexArray = _occluder.vertexArray;
+    
     //TODO - Optimise this copy procedure
     //    1. Precompile all loops for an image down to a single array
     //    2. Copy across the entire edge array using array_copy()
@@ -28,7 +30,9 @@ function __BulbAddSpriteToOccluder(_occluder, _spriteIndex, _imageIndex)
             _x2 = _loop[_p  ];
             _y2 = _loop[_p+1];
             
-            _occluder.AddEdge(_x1, _y1, _x2, _y2);
+            array_push(_occluderVertexArray, _x1, _y1,
+                                             _x2, _y2,
+                                             _y2 - _y1, _x1 - _x2);
             
             _p += 2;
         }
