@@ -92,15 +92,23 @@ function __BulbClassTileset(_tileset, _checkForTag = true) constructor
                 }
                 
                 //Push this loop into a per-tile array
-                var _tileLoopArray = __tileDict[$ _tileIndex];
-                if (!is_array(_tileLoopArray))
+                var _tile = __tileDict[$ _tileIndex];
+                if (!is_struct(_tile))
                 {
-                    _tileLoopArray = [];
-                    __tileDict[$ _tileIndex] = _tileLoopArray;
+                    _tile = new __BulbClassTile(__tileset, _tileIndex, _tileX, _tileY);
+                    __tileDict[$ _tileIndex] = _tile;
                 }
                 
-                array_push(_tileLoopArray, _loop);
+                array_push(_tile.__loopArray, _loop);
                 
+                ++_i;
+            }
+            
+            var _tileIndexArray = variable_struct_get_names(__tileDict);
+            var _i = 0;
+            repeat(array_length(_tileIndexArray))
+            {
+                __tileDict[$ _tileIndexArray[_i]].__Finalize(__tileWidth, __tileHeight);
                 ++_i;
             }
             
@@ -182,29 +190,9 @@ function __BulbClassTileset(_tileset, _checkForTag = true) constructor
         repeat(_tileCount)
         {
             var _tileIndex = buffer_read(_buffer, buffer_u64);
-            
-            var _loopCount = buffer_read(_buffer, buffer_u64);
-            var _loopArray = array_create(_loopCount, undefined);
-            
-            __tileDict[$ _tileIndex] = _loopArray;
-            
-            var _j = 0;
-            repeat(_loopCount)
-            {
-                var _loopLength = buffer_read(_buffer, buffer_u64);
-                var _loop = array_create(_loopLength, undefined);
-                _loopArray[@ _j] = _loop;
-                
-                var _k = 0;
-                repeat(_loopLength)
-                {
-                    _loop[@ _k] = buffer_read(_buffer, buffer_s16);
-                    ++_k;
-                }
-                
-                ++_j;
-            }
-            
+            var _tile = new __BulbClassTile(__tileset, _tileIndex, _tileIndex div __tilesWide, _tileIndex mod __tilesWide);
+            __tileDict[$ _tileIndex] = _tile;
+            _tile.__BufferRead(_buffer);
             ++_i;
         }
         
@@ -252,26 +240,7 @@ function __BulbClassTileset(_tileset, _checkForTag = true) constructor
         {
             var _tileIndex = _tileIndexArray[_i];
             buffer_write(_buffer, buffer_u64, real(_tileIndex));
-            
-            var _tileLoopArray = __tileDict[$ _tileIndex];
-            buffer_write(_buffer, buffer_u64, array_length(_tileLoopArray));
-            
-            var _j = 0;
-            repeat(array_length(_tileLoopArray))
-            {
-                var _loop = _tileLoopArray[_j];
-                buffer_write(_buffer, buffer_u64, array_length(_loop));
-                
-                var _k = 0;
-                repeat(array_length(_loop))
-                {
-                    buffer_write(_buffer, buffer_s16, _loop[_k]);
-                    ++_k;
-                }
-                
-                ++_j;
-            };
-            
+            __tileDict[$ _tileIndex].__BufferWrite(_buffer);
             ++_i;
         }
         
