@@ -83,7 +83,6 @@
     {"id":{"name":"tsTileset2","path":"tilesets/tsTileset2/tsTileset2.yy",},"order":23,},
     {"id":{"name":"__BulbGetTilesetTilesHigh","path":"scripts/__BulbGetTilesetTilesHigh/__BulbGetTilesetTilesHigh.yy",},"order":3,},
     {"id":{"name":"oTrace1","path":"objects/oTrace1/oTrace1.yy",},"order":3,},
-    {"id":{"name":"__BulbConfigTileEdges","path":"scripts/__BulbConfigTileEdges/__BulbConfigTileEdges.yy",},"order":10,},
     {"id":{"name":"__BulbGetTilesetTileHeight","path":"scripts/__BulbGetTilesetTileHeight/__BulbGetTilesetTileHeight.yy",},"order":5,},
     {"id":{"name":"oTrace8","path":"objects/oTrace8/oTrace8.yy",},"order":10,},
     {"id":{"name":"__BulbGetTilesetTileWidth","path":"scripts/__BulbGetTilesetTileWidth/__BulbGetTilesetTileWidth.yy",},"order":4,},
