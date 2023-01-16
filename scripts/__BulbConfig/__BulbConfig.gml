@@ -8,3 +8,7 @@
 #macro BULB_DEFAULT_LIGHT_BITMASK   0xFFFFFFFFFFFFFFFF
 #macro BULB_DEFAULT_STATIC_BITMASK  0xFFFFFFFFFFFFFFFF
 #macro BULB_DEFAULT_DYNAMIC_BITMASK 0xFFFFFFFFFFFFFFFF
+
+//Controls how shadow overlays (created with the BulbShadowOverlay() constructor) are drawn
+//If set to <true> then the HSV value
+#macro BULB_SHADOW_OVERLAY_HSV_VALUE_TO_ALPHA  true

@@ -40,6 +40,7 @@
     {"id":{"name":"oShadowOverlay","path":"objects/oShadowOverlay/oShadowOverlay.yy",},"order":8,},
     {"id":{"name":"oStaticOccluderAlt2","path":"objects/oStaticOccluderAlt2/oStaticOccluderAlt2.yy",},"order":5,},
     {"id":{"name":"oStaticOccluder","path":"objects/oStaticOccluder/oStaticOccluder.yy",},"order":4,},
+    {"id":{"name":"__shdBulbHSVValueToAlpha","path":"shaders/__shdBulbHSVValueToAlpha/__shdBulbHSVValueToAlpha.yy",},"order":6,},
     {"id":{"name":"oDynamicOccluder2","path":"objects/oDynamicOccluder2/oDynamicOccluder2.yy",},"order":4,},
     {"id":{"name":"oDynamicOccluder","path":"objects/oDynamicOccluder/oDynamicOccluder.yy",},"order":5,},
     {"id":{"name":"BulbRendererWithGroups","path":"scripts/BulbRendererWithGroups/BulbRendererWithGroups.yy",},"order":2,},

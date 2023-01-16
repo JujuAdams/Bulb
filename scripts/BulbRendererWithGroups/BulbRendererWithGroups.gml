@@ -491,11 +491,79 @@ function BulbRendererWithGroups(_ambientColour, _mode, _smooth, _maxGroups) cons
         {
             AccumulateHardLights(_cameraL, _cameraT, _cameraR, _cameraB, _cameraCX, _cameraCY, _cameraW, _cameraH, _vp_matrix);
         }
-            
-        //Reset GPU properties
-        shader_reset();
-        gpu_set_colorwriteenable(true, true, true, true);
+        
+        //Reset culling so we can draw sprites normally
         gpu_set_cullmode(cull_noculling);
+        
+        //Now draw shadow overlay sprites, if we have any
+        var _size = array_length(__shadowOverlayArray);
+        if (_size > 0)
+        {
+            if (BULB_SHADOW_OVERLAY_HSV_VALUE_TO_ALPHA)
+            {
+                shader_set(__shdBulbHSVValueToAlpha);
+            }
+            else
+            {
+                //Leverage the fog system to force the colour of the sprites we draw (alpha channel passes through)
+                shader_reset();
+                gpu_set_fog(true, ambientColor, 0, 0);
+            }
+            
+            //Don't touch the alpha channel
+            //TODO - We may need to adjust the alpha channel for use with sharing occlusion values
+            gpu_set_colorwriteenable(true, true, true, false);
+            
+            var _ambientColor = ambientColor;
+            var _i = 0;
+            repeat(_size)
+            {
+                var _weak = __shadowOverlayArray[_i];
+                if (!weak_ref_alive(_weak) || _weak.ref.__destroyed)
+                {
+                    array_delete(__shadowOverlayArray, _i, 1);
+                }
+                else
+                {
+                    with(_weak.ref)
+                    {
+                        if (visible)
+                        {
+                            __CheckSpriteDimensions();
+                            
+                            //If this light is active, do some drawing
+                            if (__IsOnScreen(_cameraL, _cameraT, _cameraR, _cameraB))
+                            {
+                                //We send the ambient colour over as well even though we have fogging on
+                                //This allow us to colour the sprite when using the __shdBulbBrightnessToAlpha shader
+                                draw_sprite_ext(sprite, image, x - _cameraL, y - _cameraT, xscale, yscale, angle, _ambientColor, alpha);
+                            }
+                        }
+                    }
+                    
+                    ++_i;
+                }
+            }
+            
+            if (BULB_SHADOW_OVERLAY_HSV_VALUE_TO_ALPHA)
+            {
+                //Don't use the value->alpha shader carry on
+                shader_reset();
+            }
+            else
+            {
+                //We're already using the default GM shader, though let's reset the fog value
+                gpu_set_fog(false, c_fuchsia, 0, 0);
+            }
+        }
+        else
+        {
+            //If we're not drawing any shadow overlays, reset what shader we're using
+            shader_reset();
+        }
+        
+        //Restore default writing behaviour
+        gpu_set_colorwriteenable(true, true, true, true);
     }
     
     #endregion
