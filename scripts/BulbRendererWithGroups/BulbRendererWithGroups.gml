@@ -41,6 +41,7 @@ function BulbRendererWithGroups(_ambientColour, _mode, _smooth, _maxGroups) cons
     __staticOccludersArray  = [];
     __dynamicOccludersArray = [];
     __lightsArray           = [];
+    __shadowOverlayArray    = [];
     
     __freed = false;
     __oldMode = undefined;

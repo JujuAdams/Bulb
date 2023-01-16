@@ -30,6 +30,7 @@
     {"id":{"name":"__shdBulbSoftShadows","path":"shaders/__shdBulbSoftShadows/__shdBulbSoftShadows.yy",},"order":2,},
     {"id":{"name":"oLightDiscoooo2","path":"objects/oLightDiscoooo2/oLightDiscoooo2.yy",},"order":2,},
     {"id":{"name":"__shdBulbPremultiplyAlpha","path":"shaders/__shdBulbPremultiplyAlpha/__shdBulbPremultiplyAlpha.yy",},"order":3,},
+    {"id":{"name":"BulbShadowOverlay","path":"scripts/BulbShadowOverlay/BulbShadowOverlay.yy",},"order":6,},
     {"id":{"name":"oRenderer","path":"objects/oRenderer/oRenderer.yy",},"order":1,},
     {"id":{"name":"__shdBulbPassThrough","path":"shaders/__shdBulbPassThrough/__shdBulbPassThrough.yy",},"order":4,},
     {"id":{"name":"oInit","path":"objects/oInit/oInit.yy",},"order":1,},
