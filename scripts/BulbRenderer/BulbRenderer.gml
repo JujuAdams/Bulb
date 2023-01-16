@@ -50,6 +50,24 @@ function BulbRenderer(_ambientColour, _mode, _smooth) constructor
     
     #region Public Methods
     
+    static SetSurfaceDimensionsFromCamera = function(_camera)
+    {
+        var _projMatrix = camera_get_proj_mat(_camera);
+        var _width  = round(abs(2/_projMatrix[0]));
+        var _height = round(abs(2/_projMatrix[5]));
+        
+        return SetSurfaceDimensions(_width, _height);
+    }
+    
+    static SetSurfaceDimensions = function(_width, _height)
+    {
+        surfaceWidth  = _width;
+        surfaceHeight = _height;
+        
+        GetSurface();
+        GetClippingSurface();
+    }
+    
     static SetClippingSurface = function(_clipIsShadow, _clipAlpha, _clipInvert = false, _hsvValueToAlpha = false)
     {
         __clipEnabled      = true;
@@ -225,7 +243,34 @@ function BulbRenderer(_ambientColour, _mode, _smooth) constructor
     
     static GetClippingSurface = function()
     {
-        return __GetClippingSurfaceRaw();
+        if (__freed || !__clipEnabled) return undefined;
+        if ((surfaceWidth <= 0) || (surfaceHeight <= 0)) return undefined;
+        
+        if ((__clipSurface != undefined) && ((surface_get_width(__clipSurface) != surfaceWidth) || (surface_get_height(__clipSurface) != surfaceHeight)))
+        {
+            surface_free(__clipSurface);
+            __clipSurface = undefined;
+        }
+        
+        if ((__clipSurface == undefined) || !surface_exists(__clipSurface))
+        {
+            __clipSurface = surface_create(surfaceWidth, surfaceHeight);
+            
+            surface_set_target(__clipSurface);
+            
+            if (__clipInvert)
+            {
+                draw_clear_alpha(c_black, 0.0);
+            }
+            else
+            {
+                draw_clear_alpha(c_white, 1.0);
+            }
+            
+            surface_reset_target();
+        }
+        
+        return __clipSurface;
     }
     
     static RefreshStaticOccluders = function()
@@ -822,32 +867,11 @@ function BulbRenderer(_ambientColour, _mode, _smooth) constructor
     
     #region Clip Surface
     
-    static __GetClippingSurfaceRaw = function()
-    {
-        if (__freed || !__clipEnabled) return undefined;
-        if ((surfaceWidth <= 0) || (surfaceHeight <= 0)) return undefined;
-        
-        if ((__clipSurface != undefined) && ((surface_get_width(__clipSurface) != surfaceWidth) || (surface_get_height(__clipSurface) != surfaceHeight)))
-        {
-            surface_free(__clipSurface);
-            __clipSurface = undefined;
-        }
-        
-        if ((__clipSurface == undefined) || !surface_exists(__clipSurface))
-        {
-            __clipSurface = surface_create(surfaceWidth, surfaceHeight);
-            
-            surface_set_target(__clipSurface);
-            draw_clear_alpha(c_white, 1.0);
-            surface_reset_target();
-        }
-    }
-    
     static __ApplyClippingSurface = function()
     {
         if (__freed || !__clipEnabled) return undefined;
         
-        var _clipSurface = __GetClippingSurfaceRaw();
+        var _clipSurface = GetClippingSurface();
         if (_clipSurface != undefined)
         {
             if (!__clipInvert) //Intended to be (!__clipInvert)
