@@ -83,6 +83,13 @@ function BulbRenderer(_ambientColour, _mode, _smooth) constructor
         __FreeClipSurface();
     }
     
+    static CopyClippingSurface = function(_surface)
+    {
+        gpu_set_blendmode_ext(bm_one, bm_zero);
+        surface_copy(GetClippingSurface(), 0, 0, _surface);
+        gpu_set_blendmode(bm_normal);
+    }
+    
     static SetAmbientColor = function(_color)
     {
         ambientColor = _color;
