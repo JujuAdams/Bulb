@@ -9,6 +9,8 @@ if (keyboard_check_pressed(vk_f1))
 
 if (keyboard_check_pressed(ord("L"))) instance_create_depth(oPlayer.x, oPlayer.y, 0, oLightDiscoooo);
 
+if (keyboard_check_pressed(ord("O"))) instance_create_depth(oPlayer.x, oPlayer.y, 0, oShadowOverlay);
+
 if ((keyboard_check(ord("T"))) && (fps_real > 61) && (fps > 55)) instance_create_depth(oPlayer.x, oPlayer.y, 0, oLightDiscoooo);
 
 if (keyboard_check_pressed(ord("1"))) with(oLightDiscoooo) light.visible = !light.visible;
