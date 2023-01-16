@@ -17,12 +17,7 @@ function BulbShadowOverlay(_renderer) constructor
     alpha = 1.0;
     
     __oldSprite = undefined;
-    
-    __bboxXMin = 0;
-    __bboxXMax = 0;
-    __bboxYMin = 0;
-    __bboxYMax = 0;
-    
+    __radius    = 0;
     __destroyed = false;
     
     static Destroy = function()
@@ -32,27 +27,26 @@ function BulbShadowOverlay(_renderer) constructor
     
     static __CheckSpriteDimensions = function()
     {
-        if (__destroyed) return;
-        
         // Redefine light sprite boundaries
-        if ((sprite != __oldSprite) || (x != xprevious) || (y != yprevious) || (xscale != xscaleprevious) || (yscale != yscaleprevious))
+        if (sprite != __oldSprite)
         {
             __oldSprite = sprite;
             
-            var _originX =  x - sprite_get_xoffset(sprite) * xscale;
-            var _originY =  y - sprite_get_yoffset(sprite) * yscale;
-            var _width   = _originX + sprite_get_width(sprite) * xscale;
-            var _height  = _originY + sprite_get_height(sprite) * yscale;
-            
-            __spriteL = min(_originX, _width );
-            __spriteT = min(_originY, _height);
-            __spriteR = max(_originX, _width );
-            __spriteB = max(_originY, _height);
-            
-            xprevious = x;
-            yprevious = y;
-            xscaleprevious = xscale;
-            yscaleprevious = yscale;
+            if ((sprite != undefined) && sprite_exists(sprite))
+            {
+                //Choose the longest axis of the sprite as the radius
+                //We apply x/y scaling in the __IsOnScreen() function
+                var _xOffset = sprite_get_xoffset(sprite);
+                var _yOffset = sprite_get_yoffset(sprite);
+                var _x = max(_xOffset, sprite_get_width( sprite) - _xOffset);
+                var _y = max(_yOffset, sprite_get_height(sprite) - _yOffset);
+                
+                __radius = sqrt(_x*_x + _y*_y);
+            }
+            else
+            {
+                __radius = 0;
+            }
         }
     }
     
@@ -84,7 +78,8 @@ function BulbShadowOverlay(_renderer) constructor
     
     static __IsOnScreen = function(_cameraL, _cameraT, _cameraR, _cameraB)
     {
-        return (!__destroyed && visible && __BulbRectInRect(__spriteL, __spriteT, __spriteR, __spriteB, _cameraL, _cameraT, _cameraR, _cameraB));
+        var _radius = __radius*max(xscale, yscale);
+        return (!__destroyed && visible && __BulbRectInRect(x - _radius, y - _radius, x + _radius, y + _radius, _cameraL, _cameraT, _cameraR, _cameraB));
     }
     
     if (_renderer != undefined) AddToRenderer(_renderer);

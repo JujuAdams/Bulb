@@ -15,11 +15,7 @@ function BulbDynamicOccluder(_renderer) constructor
     
     bitmask = BULB_DEFAULT_DYNAMIC_BITMASK;
     
-    __bboxXMin = 0;
-    __bboxXMax = 0;
-    __bboxYMin = 0;
-    __bboxYMax = 0;
-    
+    __radius    = 0;
     __destroyed = false;
     
     static Destroy = function()
@@ -31,10 +27,9 @@ function BulbDynamicOccluder(_renderer) constructor
     {
         if (__destroyed) return;
         
-        __bboxXMin = min(__bboxXMin, __BULB_SQRT_2*_x1, __BULB_SQRT_2*_x2);
-        __bboxYMin = min(__bboxYMin, __BULB_SQRT_2*_y1, __BULB_SQRT_2*_y2);
-        __bboxXMax = max(__bboxXMax, __BULB_SQRT_2*_x1, __BULB_SQRT_2*_x2);
-        __bboxYMax = max(__bboxYMax, __BULB_SQRT_2*_y1, __BULB_SQRT_2*_y2);
+        //Choose the longest axis of the sprite as the radius
+        //We apply x/y scaling in the __IsOnScreen() function
+        __radius = sqrt(max(_x1*_x1 + _y1*_y1, _x2*_x2 + _y2*_y2));
         
         array_push(vertexArray, _x1, _y1, _x2, _y2);
     }
@@ -43,10 +38,7 @@ function BulbDynamicOccluder(_renderer) constructor
     {
         if (__destroyed) return;
         
-        __bboxXMin = 0;
-        __bboxXMax = 0;
-        __bboxYMin = 0;
-        __bboxYMax = 0;
+        __radius = 0;
         
         array_resize(vertexArray, 0);
     }
@@ -79,7 +71,8 @@ function BulbDynamicOccluder(_renderer) constructor
     
     static __IsOnScreen = function(_cameraL, _cameraT, _cameraR, _cameraB)
     {
-        return (!__destroyed && visible && __BulbRectInRect(x + __bboxXMin, y + __bboxYMin, x + __bboxXMax, y + __bboxYMax, _cameraL, _cameraT, _cameraR, _cameraB));
+        var _radius = __radius*max(xscale, yscale);
+        return (!__destroyed && visible && __BulbRectInRect(x - _radius, y - _radius, x + _radius, y + _radius, _cameraL, _cameraT, _cameraR, _cameraB));
     }
     
     if (_renderer != undefined) AddToRenderer(_renderer);

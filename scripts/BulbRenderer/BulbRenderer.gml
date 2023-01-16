@@ -36,7 +36,7 @@ function BulbRenderer(_ambientColour, _mode, _smooth) constructor
     __lightsArray           = [];
     __shadowOverlayArray    = [];
     
-    __freed = false;
+    __freed   = false;
     __oldMode = undefined;
     
     
