@@ -90,12 +90,12 @@ function BulbLight(_renderer, _sprite, _image, _x, _y) constructor
             __spriteT = min(_originY, _height);
             __spriteR = max(_originX, _width );
             __spriteB = max(_originY, _height);
+            
+            xprevious = x;
+            yprevious = y;
+            xscaleprevious = xscale;
+            yscaleprevious = yscale;
         }
-        
-        xprevious = x;
-        yprevious = y;
-        xscaleprevious = xscale;
-        yscaleprevious = yscale;
     }
     
     if (_renderer != undefined) AddToRenderer(_renderer);
