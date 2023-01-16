@@ -6,6 +6,10 @@ view_set_camera(0, camera);
 
 //Start the lighting system
 lighting = new BulbRenderer(make_colour_rgb(50, 50, 80), BULB_MODE.SOFT_BM_ADD, true);
+lighting.SetSurfaceDimensionsFromCamera(camera);
+lighting.SetClippingSurface(true, 1.0, false, true);
+
+vision = new BulbRenderer(c_black, BULB_MODE.SOFT_BM_ADD, true);
 
 //Set up a vertex buffer for drawing the diffuse base texture for the walls
 //This isn't strictly part of the lighting example
