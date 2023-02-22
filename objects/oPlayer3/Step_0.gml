@@ -8,8 +8,3 @@ if (keyboard_check(vk_right)) || (keyboard_check(ord("D"))) x += 5;
 camera_set_view_pos(oRenderer3.camera,
                     round(x - 0.5*camera_get_view_width( oRenderer3.camera)),
                     round(y - 0.5*camera_get_view_height(oRenderer3.camera)));
-
-//Make sure the light tracks the player
-light.x = x;
-light.y = y;
-light.angle = point_direction(x, y, mouse_x, mouse_y);
