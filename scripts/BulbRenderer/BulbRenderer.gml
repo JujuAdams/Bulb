@@ -680,7 +680,7 @@ function BulbRenderer(_ambientColour, _mode, _smooth) constructor
                         {
                             if (castShadows)
                             {
-                                gpu_set_colorwriteenable(false, false, false, true);
+                                gpu_set_colorwriteenable(true, true, true, true);
                                 
                                 //Clear alpha channel
                                 gpu_set_blendmode(bm_subtract);
