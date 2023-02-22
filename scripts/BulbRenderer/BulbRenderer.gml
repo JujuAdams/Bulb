@@ -653,6 +653,11 @@ function BulbRenderer(_ambientColour, _mode, _smooth) constructor
         // yOut = (y - z*(camY - lightY) - camY) / camH
         // zOut = 0
         
+        if (keyboard_check_pressed(ord("J")))
+        {
+            surface_save(surface_get_target(), "surface_0_a.png");
+        }
+        
         var _i = 0;
         repeat(array_length(__lightsArray))
         {
@@ -691,6 +696,11 @@ function BulbRenderer(_ambientColour, _mode, _smooth) constructor
                                     vertex_submit(_wipeVBuffer, pr_trianglelist, -1);
                                 }
                                 
+                                if (keyboard_check_pressed(ord("J")))
+                                {
+                                    surface_save(surface_get_target(), "surface_" + string(_i+1) + "_a.png");
+                                }
+                                
                                 //Render shadows
                                 shader_set(__shdBulbSoftShadows);
                                 gpu_set_blendmode(bm_add);
@@ -700,6 +710,11 @@ function BulbRenderer(_ambientColour, _mode, _smooth) constructor
                                 matrix_set(matrix_projection, _projMatrix);
                                 vertex_submit(_staticVBuffer,  pr_trianglelist, -1);
                                 vertex_submit(_dynamicVBuffer, pr_trianglelist, -1);
+                                
+                                if (keyboard_check_pressed(ord("J")))
+                                {
+                                    surface_save(surface_get_target(), "surface_" + string(_i+1) + "_b.png");
+                                }
                                 
                                 //Draw light sprite
                                 shader_reset();
@@ -732,12 +747,27 @@ function BulbRenderer(_ambientColour, _mode, _smooth) constructor
                                                 xscale, yscale, angle,
                                                 blend, alpha);
                             }
+                            
+                            if (keyboard_check_pressed(ord("J")))
+                            {
+                                surface_save(surface_get_target(), "surface_" + string(_i+1) + "_c.png");
+                            }
                         }
                     }
                 }
                 
+                if (keyboard_check_pressed(ord("J")))
+                {
+                    surface_save(surface_get_target(), "surface_" + string(_i+1) + "_d.png");
+                }
+                
                 ++_i;
             }
+        }
+        
+        if (keyboard_check_pressed(ord("J")))
+        {
+            surface_save(surface_get_target(), "surface_0_z.png");
         }
         
         gpu_set_blendmode(bm_normal);
