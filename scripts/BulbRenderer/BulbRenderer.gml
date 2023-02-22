@@ -653,9 +653,10 @@ function BulbRenderer(_ambientColour, _mode, _smooth) constructor
         // yOut = (y - z*(camY - lightY) - camY) / camH
         // zOut = 0
         
+        var _counter = 0;
         if (keyboard_check_pressed(ord("J")))
         {
-            surface_save(surface_get_target(), "surface_0_a.png");
+            surface_save(surface_get_target(), string(_counter++) + ".png");
         }
         
         var _i = 0;
@@ -698,7 +699,7 @@ function BulbRenderer(_ambientColour, _mode, _smooth) constructor
                                 
                                 if (keyboard_check_pressed(ord("J")))
                                 {
-                                    surface_save(surface_get_target(), "surface_" + string(_i+1) + "_a.png");
+                                    surface_save(surface_get_target(), string(_counter++) + ".png");
                                 }
                                 
                                 //Render shadows
@@ -713,7 +714,7 @@ function BulbRenderer(_ambientColour, _mode, _smooth) constructor
                                 
                                 if (keyboard_check_pressed(ord("J")))
                                 {
-                                    surface_save(surface_get_target(), "surface_" + string(_i+1) + "_b.png");
+                                    surface_save(surface_get_target(), string(_counter++) + ".png");
                                 }
                                 
                                 //Draw light sprite
@@ -750,7 +751,7 @@ function BulbRenderer(_ambientColour, _mode, _smooth) constructor
                             
                             if (keyboard_check_pressed(ord("J")))
                             {
-                                surface_save(surface_get_target(), "surface_" + string(_i+1) + "_c.png");
+                                surface_save(surface_get_target(), string(_counter++) + ".png");
                             }
                         }
                     }
@@ -758,7 +759,7 @@ function BulbRenderer(_ambientColour, _mode, _smooth) constructor
                 
                 if (keyboard_check_pressed(ord("J")))
                 {
-                    surface_save(surface_get_target(), "surface_" + string(_i+1) + "_d.png");
+                    surface_save(surface_get_target(), string(_counter++) + ".png");
                 }
                 
                 ++_i;
@@ -767,7 +768,7 @@ function BulbRenderer(_ambientColour, _mode, _smooth) constructor
         
         if (keyboard_check_pressed(ord("J")))
         {
-            surface_save(surface_get_target(), "surface_0_z.png");
+            surface_save(surface_get_target(), string(_counter++) + ".png");
         }
         
         gpu_set_blendmode(bm_normal);
