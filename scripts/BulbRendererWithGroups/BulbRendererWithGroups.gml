@@ -46,9 +46,56 @@ function BulbRendererWithGroups(_ambientColour, _mode, _smooth, _maxGroups) cons
     __freed   = false;
     __oldMode = undefined;
     
+    __clipEnabled      = false;
+    __clipSurface      = undefined;
+    __clipIsShadow     = true;
+    __clipAlpha        = 1.0;
+    __clipInvert       = false;
+    __clipValueToAlpha = false;
+    
     
     
     #region Public Methods
+    
+    static SetSurfaceDimensionsFromCamera = function(_camera)
+    {
+        var _projMatrix = camera_get_proj_mat(_camera);
+        var _width  = round(abs(2/_projMatrix[0]));
+        var _height = round(abs(2/_projMatrix[5]));
+        
+        return SetSurfaceDimensions(_width, _height);
+    }
+    
+    static SetSurfaceDimensions = function(_width, _height)
+    {
+        surfaceWidth  = _width;
+        surfaceHeight = _height;
+        
+        GetSurface();
+        GetClippingSurface();
+    }
+    
+    static SetClippingSurface = function(_clipIsShadow, _clipAlpha, _clipInvert = false, _hsvValueToAlpha = false)
+    {
+        __clipEnabled      = true;
+        __clipIsShadow     = _clipIsShadow;
+        __clipAlpha        = _clipAlpha;
+        __clipInvert       = _clipInvert;
+        __clipValueToAlpha = _hsvValueToAlpha;
+    }
+    
+    static RemoveClippingSurface = function()
+    {
+        __clipEnabled = false;
+        __FreeClipSurface();
+    }
+    
+    static CopyClippingSurface = function(_surface)
+    {
+        gpu_set_blendmode_ext(bm_one, bm_zero);
+        surface_copy(GetClippingSurface(), 0, 0, _surface);
+        gpu_set_blendmode(bm_normal);
+    }
     
     static SetAmbientColor = function(_color)
     {
@@ -110,6 +157,8 @@ function BulbRendererWithGroups(_ambientColour, _mode, _smooth, _maxGroups) cons
         
         //If we're not forcing deferred rendering everywhere, update those lights
         AccumulateLights(_cameraL, _cameraT, _cameraR, _cameraB, _cameraCX, _cameraCY, _cameraW, _cameraH);
+        
+        if (__clipEnabled) __ApplyClippingSurface();
         
         //Restore the old filter state
         gpu_set_tex_filter(_old_tex_filter);
@@ -206,6 +255,38 @@ function BulbRendererWithGroups(_ambientColour, _mode, _smooth, _maxGroups) cons
         return __surface;
     }
     
+    static GetClippingSurface = function()
+    {
+        if (__freed || !__clipEnabled) return undefined;
+        if ((surfaceWidth <= 0) || (surfaceHeight <= 0)) return undefined;
+        
+        if ((__clipSurface != undefined) && ((surface_get_width(__clipSurface) != surfaceWidth) || (surface_get_height(__clipSurface) != surfaceHeight)))
+        {
+            surface_free(__clipSurface);
+            __clipSurface = undefined;
+        }
+        
+        if ((__clipSurface == undefined) || !surface_exists(__clipSurface))
+        {
+            __clipSurface = surface_create(surfaceWidth, surfaceHeight);
+            
+            surface_set_target(__clipSurface);
+            
+            if (__clipInvert)
+            {
+                draw_clear_alpha(c_black, 0.0);
+            }
+            else
+            {
+                draw_clear_alpha(c_white, 1.0);
+            }
+            
+            surface_reset_target();
+        }
+        
+        return __clipSurface;
+    }
+    
     static RefreshStaticOccluders = function()
     {
         if (__freed) return undefined;
@@ -230,11 +311,51 @@ function BulbRendererWithGroups(_ambientColour, _mode, _smooth, _maxGroups) cons
     {
         __FreeVertexBuffers();
         __FreeSurface();
+        __FreeClipSurface();
         
         __freed = true;
     }
     
     #endregion
+    
+    static __FreeVertexBuffers = function()
+    {
+        if (__wipeVBuffer != undefined)
+        {
+            vertex_delete_buffer(__wipeVBuffer);
+            __wipeVBuffer = undefined;
+        }
+        
+        if (__staticVBuffer != undefined)
+        {
+            vertex_delete_buffer(__staticVBuffer);
+            __staticVBuffer = undefined;
+        }
+        
+        if (__dynamicVBuffer != undefined)
+        {
+            vertex_delete_buffer(__dynamicVBuffer);
+            __dynamicVBuffer = undefined;
+        }
+    }
+    
+    static __FreeSurface = function()
+    {
+        if ((__surface != undefined) && surface_exists(__surface))
+        {
+            surface_free(__surface);
+            __surface = undefined;
+        }
+    }
+    
+    static __FreeClipSurface = function()
+    {
+        if ((__clipSurface != undefined) && surface_exists(__clipSurface))
+        {
+            surface_free(__clipSurface);
+            __clipSurface = undefined;
+        }
+    }
     
     #region Update vertex buffers
     
@@ -873,6 +994,45 @@ function BulbRendererWithGroups(_ambientColour, _mode, _smooth, _maxGroups) cons
         {
             surface_free(__surface);
             __surface = undefined;
+        }
+    }
+    
+    #endregion
+    
+    #region Clip Surface
+    
+    static __ApplyClippingSurface = function()
+    {
+        if (__freed || !__clipEnabled) return undefined;
+        
+        var _clipSurface = GetClippingSurface();
+        if (_clipSurface != undefined)
+        {
+            if (!__clipInvert) //Intended to be (!__clipInvert)
+            {
+                //Use an inverse alpha so that we paint visible areas onto the clip surface
+                //Inverted mode should use GameMaker's standard alpha blending
+                //...this makes sense if you think about it, trust me
+                gpu_set_blendmode_ext(bm_inv_src_alpha, bm_src_alpha);
+            }
+            
+            gpu_set_colorwriteenable(true, true, true, false);
+            
+            if (__clipValueToAlpha)
+            {
+                //Apply the HSV value->alpha conversion shader if so desired
+                shader_set(__shdBulbHSVValueToAlpha);
+                draw_surface_ext(_clipSurface, 0, 0, 1, 1, 0, __clipIsShadow? ambientColor : c_white, __clipAlpha);
+                shader_reset();
+            }
+            else
+            {
+                draw_surface_ext(_clipSurface, 0, 0, 1, 1, 0, __clipIsShadow? ambientColor : c_white, __clipAlpha);
+            }
+            
+            //Reset GPU state
+            gpu_set_blendmode(bm_normal);
+            gpu_set_colorwriteenable(true, true, true, true);
         }
     }
     
