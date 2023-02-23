@@ -11,8 +11,7 @@ void main()
     vec3 pos = in_Position.xyz;
     
     float lightRadius = 0.0;
-    //if ((in_TextureCoord.x == 0.0) && (in_TextureCoord.y == 0.0))
-    if (in_TextureCoord.y == 0.0)
+    if ((in_TextureCoord.x == 0.0) && (in_TextureCoord.y == 0.0))
     {
         lightRadius = matrix[2][2];
     }

@@ -704,7 +704,7 @@ function BulbRenderer(_ambientColour, _mode, _smooth) constructor
                                 
                                 //Render shadows
                                 shader_set(__shdBulbSoftShadows);
-                                gpu_set_blendmode(bm_normal);
+                                gpu_set_blendmode(bm_add);
                                 _projMatrix[@  8] = x;
                                 _projMatrix[@  9] = y;
                                 _projMatrix[@ 10] = penumbraSize;
@@ -719,34 +719,34 @@ function BulbRenderer(_ambientColour, _mode, _smooth) constructor
                                 
                                 //Draw light sprite
                                 shader_reset();
-                                //matrix_set(matrix_projection, _vp_matrix);
-                                //
-                                //if (alpha < 1.0)
-                                //{
-                                //    //If this light is fading out, adjust the destination alpha channel
-                                //    //TODO - Do this earlier during the wipe phase and before shadow casting
-                                //    gpu_set_blendmode_ext(bm_src_alpha, bm_one);
-                                //    draw_sprite_ext(sprite, image,
-                                //                    x - _cameraL, y - _cameraT,
-                                //                    xscale, yscale, angle,
-                                //                    blend, 1.0 - alpha);
-                                //}
-                                //
-                                //gpu_set_colorwriteenable(true, true, true, false);
-                                //gpu_set_blendmode_ext(bm_inv_dest_alpha, bm_one);
-                                //
-                                //draw_sprite_ext(sprite, image,
-                                //                x - _cameraL, y - _cameraT,
-                                //                xscale, yscale, angle,
-                                //                blend, alpha);
+                                matrix_set(matrix_projection, _vp_matrix);
+                                
+                                if (alpha < 1.0)
+                                {
+                                    //If this light is fading out, adjust the destination alpha channel
+                                    //TODO - Do this earlier during the wipe phase and before shadow casting
+                                    gpu_set_blendmode_ext(bm_src_alpha, bm_one);
+                                    draw_sprite_ext(sprite, image,
+                                                    x - _cameraL, y - _cameraT,
+                                                    xscale, yscale, angle,
+                                                    blend, 1.0 - alpha);
+                                }
+                                
+                                gpu_set_colorwriteenable(true, true, true, false);
+                                gpu_set_blendmode_ext(bm_inv_dest_alpha, bm_one);
+                                
+                                draw_sprite_ext(sprite, image,
+                                                x - _cameraL, y - _cameraT,
+                                                xscale, yscale, angle,
+                                                blend, alpha);
                             }
                             else
                             {
-                                //gpu_set_blendmode(bm_add);
-                                //draw_sprite_ext(sprite, image,
-                                //                x - _cameraL, y - _cameraT,
-                                //                xscale, yscale, angle,
-                                //                blend, alpha);
+                                gpu_set_blendmode(bm_add);
+                                draw_sprite_ext(sprite, image,
+                                                x - _cameraL, y - _cameraT,
+                                                xscale, yscale, angle,
+                                                blend, alpha);
                             }
                             
                             if (keyboard_check_pressed(ord("J")))
