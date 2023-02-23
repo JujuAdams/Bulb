@@ -15,6 +15,7 @@
     {"id":{"name":"__BulbSystem","path":"scripts/__BulbSystem/__BulbSystem.yy",},"order":0,},
     {"id":{"name":"rmTest","path":"rooms/rmTest/rmTest.yy",},"order":1,},
     {"id":{"name":"sLightDebug","path":"sprites/sLightDebug/sLightDebug.yy",},"order":7,},
+    {"id":{"name":"oLightDiscoooo3","path":"objects/oLightDiscoooo3/oLightDiscoooo3.yy",},"order":4,},
     {"id":{"name":"sPlayerMask","path":"sprites/sPlayerMask/sPlayerMask.yy",},"order":8,},
     {"id":{"name":"DebugOverlay","path":"scripts/DebugOverlay/DebugOverlay.yy",},"order":6,},
     {"id":{"name":"oPlayer3","path":"objects/oPlayer3/oPlayer3.yy",},"order":1,},
@@ -75,8 +76,8 @@
   },
   "RoomOrderNodes": [
     {"roomId":{"name":"rmInit","path":"rooms/rmInit/rmInit.yy",},},
-    {"roomId":{"name":"rmTest","path":"rooms/rmTest/rmTest.yy",},},
     {"roomId":{"name":"rmTestSoft","path":"rooms/rmTestSoft/rmTestSoft.yy",},},
+    {"roomId":{"name":"rmTest","path":"rooms/rmTest/rmTest.yy",},},
     {"roomId":{"name":"rmTestWithGroups","path":"rooms/rmTestWithGroups/rmTestWithGroups.yy",},},
   ],
   "Folders": [
