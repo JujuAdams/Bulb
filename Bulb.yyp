@@ -17,6 +17,7 @@
     {"id":{"name":"BulbLightOverlay","path":"scripts/BulbLightOverlay/BulbLightOverlay.yy",},"order":8,},
     {"id":{"name":"__sprBulbPixel","path":"sprites/__sprBulbPixel/__sprBulbPixel.yy",},"order":8,},
     {"id":{"name":"sLightDebug","path":"sprites/sLightDebug/sLightDebug.yy",},"order":7,},
+    {"id":{"name":"__shdBulbSoftShadowsSunlight","path":"shaders/__shdBulbSoftShadowsSunlight/__shdBulbSoftShadowsSunlight.yy",},"order":3,},
     {"id":{"name":"oLightDiscoooo3","path":"objects/oLightDiscoooo3/oLightDiscoooo3.yy",},"order":4,},
     {"id":{"name":"sPlayerMask","path":"sprites/sPlayerMask/sPlayerMask.yy",},"order":8,},
     {"id":{"name":"DebugOverlay","path":"scripts/DebugOverlay/DebugOverlay.yy",},"order":6,},

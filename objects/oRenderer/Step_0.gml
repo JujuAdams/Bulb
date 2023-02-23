@@ -28,3 +28,5 @@ if (alarm_get(1) < 0)
     
     smoothedDrawEndTime = lerp(smoothedDrawEndTime, drawEndTime, 0.005);
 }
+
+sunlight.angle += 0.1;
