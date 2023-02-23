@@ -868,6 +868,74 @@ function BulbRendererWithGroups(_ambientColour, _mode, _smooth, _maxGroups) cons
                 ++_i;
             }
         }
+        
+        var _aspectRatio = _cameraW/_cameraH;
+        var _i = 0;
+        repeat(array_length(__sunlightArray))
+        {
+            var _weak = __sunlightArray[_i];
+            if (!weak_ref_alive(_weak) || _weak.ref.__destroyed)
+            {
+                array_delete(__sunlightArray, _i, 1);
+            }
+            else
+            {
+                with(_weak.ref)
+                {
+                    if (visible)
+                    {
+                        //Clear alpha channel
+                        gpu_set_colorwriteenable(false, false, false, true);
+                        gpu_set_blendmode(bm_subtract);
+                        vertex_submit(_wipeVBuffer, pr_trianglelist, -1);
+                        
+                        //Render shadows
+                        shader_set(__shdBulbSoftShadowsSunlight);
+                        gpu_set_blendmode(bm_add);
+                        _projMatrix[@  8] = -__BULB_SUNLIGHT_SCALE*dcos(angle);
+                        _projMatrix[@  9] = -__BULB_SUNLIGHT_SCALE*dsin(angle);
+                        _projMatrix[@ 10] = __BULB_SOFT_SUNLIGHT_PENUMBRA_SCALE*penumbraSize;
+                        _projMatrix[@ 11] = _aspectRatio;
+                        matrix_set(matrix_projection, _projMatrix);
+                        
+                        var _j = 0;
+                        repeat(_groupCount)
+                        {
+                            if ((bitmask & (1 << _j)) > 0)
+                            {
+                                with(_groupArray[_j])
+                                {
+                                    vertex_submit(staticVBuffer,  pr_trianglelist, -1);
+                                    vertex_submit(dynamicVBuffer, pr_trianglelist, -1);
+                                }
+                            }
+                            
+                            ++_j;
+                        }
+                        
+                        //Draw light sprite
+                        shader_reset();
+                        matrix_set(matrix_projection, _vp_matrix);
+                        
+                        if (alpha < 1.0)
+                        {
+                            //If this light is fading out, adjust the destination alpha channel
+                            //TODO - Do this earlier during the wipe phase and before shadow casting
+                            gpu_set_blendmode_ext(bm_src_alpha, bm_one);
+                            draw_sprite_ext(__sprBulbPixel, 0, 0, 0, _cameraW, _cameraH, 0, blend, 1-alpha);
+                        }
+                        
+                        gpu_set_colorwriteenable(true, true, true, false);
+                        gpu_set_blendmode_ext(bm_inv_dest_alpha, bm_one);
+                        draw_sprite_ext(__sprBulbPixel, 0, 0, 0, _cameraW, _cameraH, 0, blend, alpha);
+                    }
+                }
+                
+                ++_i;
+            }
+        }
+        
+        gpu_set_blendmode(bm_normal);
     }
     
     #endregion
@@ -1005,6 +1073,64 @@ function BulbRendererWithGroups(_ambientColour, _mode, _smooth, _maxGroups) cons
             }
         }
         
+        var _aspectRatio = _cameraW/_cameraH;
+        var _i = 0;
+        repeat(array_length(__sunlightArray))
+        {
+            var _weak = __sunlightArray[_i];
+            if (!weak_ref_alive(_weak) || _weak.ref.__destroyed)
+            {
+                array_delete(__sunlightArray, _i, 1);
+            }
+            else
+            {
+                with(_weak.ref)
+                {
+                    if (visible)
+                    {
+                        //Draw shadow stencil
+                        gpu_set_zfunc(cmpfunc_always);
+                        gpu_set_colorwriteenable(false, false, false, false);
+                        
+                        //Reset zbuffer
+                        shader_set(__shdBulbHardShadows);
+                        vertex_submit(_wipeVBuffer, pr_trianglelist, -1);
+                        
+                        //Render shadows
+                        _projMatrix[@ 8] = -__BULB_SUNLIGHT_SCALE*dcos(angle);
+                        _projMatrix[@ 9] = -__BULB_SUNLIGHT_SCALE*dsin(angle)*_aspectRatio;
+                        matrix_set(matrix_projection, _projMatrix);
+                        
+                        var _j = 0;
+                        repeat(_groupCount)
+                        {
+                            if ((bitmask & (1 << _j)) > 0)
+                            {
+                                with(_groupArray[_j])
+                                {
+                                    vertex_submit(staticVBuffer,  pr_trianglelist, -1);
+                                    vertex_submit(dynamicVBuffer, pr_trianglelist, -1);
+                                }
+                            }
+                            
+                            ++_j;
+                        }
+                        
+                        //Draw fullscreen light sprite
+                        shader_set(_resetShader);
+                        gpu_set_zfunc(cmpfunc_lessequal);
+                        gpu_set_colorwriteenable(true, true, true, false);
+                        matrix_set(matrix_projection, _vp_matrix);
+                        
+                        draw_sprite_ext(__sprBulbPixel, 0, 0, 0, _cameraW, _cameraH, 0, blend, alpha);
+                    }
+                }
+                
+                ++_i;
+            }
+        }
+        
+        gpu_set_blendmode(bm_normal);
         gpu_set_ztestenable(false);
         gpu_set_zwriteenable(false);
     }
