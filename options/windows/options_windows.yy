@@ -1,10 +1,10 @@
 {
   "option_windows_display_name": "Bulb",
   "option_windows_executable_name": "${project_name}",
-  "option_windows_version": "20.2.0.0",
+  "option_windows_version": "20.3.0.0",
   "option_windows_company_info": "Juju Adams",
   "option_windows_product_info": "Bulb",
-  "option_windows_copyright_info": "@jujuadams 2022",
+  "option_windows_copyright_info": "@jujuadams 2023",
   "option_windows_description_info": "Bulb",
   "option_windows_display_cursor": true,
   "option_windows_icon": "${options_dir}/windows/runner_icon.ico",
