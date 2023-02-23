@@ -26,5 +26,5 @@ alarm_set(0, 30);
 
 sunlight = new BulbSunlight(lighting, 45);
 sunlight.blend = c_red;
-sunlight.alpha = 0.1;
+sunlight.alpha = 0.2;
 sunlight.penumbraSize = 5;

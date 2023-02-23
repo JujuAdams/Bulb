@@ -820,18 +820,19 @@ function BulbRenderer(_ambientColour, _mode, _smooth) constructor
                         matrix_set(matrix_projection, _projMatrix);
                         vertex_submit(_staticVBuffer,  pr_trianglelist, -1);
                         vertex_submit(_dynamicVBuffer, pr_trianglelist, -1);
-                                
+                        
                         //Draw light sprite
                         shader_reset();
                         matrix_set(matrix_projection, _vp_matrix);
-                                
+                        
                         if (alpha < 1.0)
                         {
                             //If this light is fading out, adjust the destination alpha channel
                             //TODO - Do this earlier during the wipe phase and before shadow casting
-                            draw_sprite_ext(__sprBulbPixel, 0, 0, 0, _cameraW, _cameraH, 0, blend, alpha);
+                            gpu_set_blendmode_ext(bm_src_alpha, bm_one);
+                            draw_sprite_ext(__sprBulbPixel, 0, 0, 0, _cameraW, _cameraH, 0, blend, 1-alpha);
                         }
-                                
+                        
                         gpu_set_colorwriteenable(true, true, true, false);
                         gpu_set_blendmode_ext(bm_inv_dest_alpha, bm_one);
                         draw_sprite_ext(__sprBulbPixel, 0, 0, 0, _cameraW, _cameraH, 0, blend, alpha);

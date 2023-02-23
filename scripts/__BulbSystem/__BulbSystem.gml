@@ -5,7 +5,7 @@
 #macro __BULB_FLIP_CAMERA_Y   __BULB_ON_DIRECTX
 #macro __BULB_PARTIAL_CLEAR   true
 #macro __BULB_SUNLIGHT_SCALE  10
-#macro __BULB_SOFT_SUNLIGHT_PENUMBRA_SCALE  0.01
+#macro __BULB_SOFT_SUNLIGHT_PENUMBRA_SCALE  0.001
 
 __BulbTrace("Welcome to Bulb by @jujuadams! This is version " + __BULB_VERSION + ", " + __BULB_DATE);
 
