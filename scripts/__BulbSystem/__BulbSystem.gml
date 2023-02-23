@@ -17,7 +17,7 @@ global.__bulb_format_3d_colour = vertex_format_end();
 //Create a standard vertex format
 vertex_format_begin();
 vertex_format_add_position_3d();
-vertex_format_add_texcoord();
+vertex_format_add_normal();
 global.__bulb_format_3d_texture = vertex_format_end();
 
 
@@ -123,22 +123,22 @@ function __BulbAddOcclusionSoft(_vbuff)
         var _newBy = y - _oldBx*_xSin + _oldBy*_yCos;
         
         //Add to the vertex buffer
-        vertex_position_3d(_vbuff,   _newAx, _newAy,  0);           vertex_texcoord(_vbuff,  1, 1);
-        vertex_position_3d(_vbuff,   _newBx, _newBy,  __BULB_ZFAR); vertex_texcoord(_vbuff,  1, 1);
-        vertex_position_3d(_vbuff,   _newBx, _newBy,  0);           vertex_texcoord(_vbuff,  1, 1);
+        vertex_position_3d(_vbuff,   _newAx, _newAy, 0);           vertex_normal(_vbuff,  1, 1, 0);
+        vertex_position_3d(_vbuff,   _newBx, _newBy, __BULB_ZFAR); vertex_normal(_vbuff,  1, 1, 0);
+        vertex_position_3d(_vbuff,   _newBx, _newBy, 0);           vertex_normal(_vbuff,  1, 1, 0);
         
-        vertex_position_3d(_vbuff,   _newAx, _newAy,  0);           vertex_texcoord(_vbuff,  1, 1);
-        vertex_position_3d(_vbuff,   _newAx, _newAy,  __BULB_ZFAR); vertex_texcoord(_vbuff,  1, 1);
-        vertex_position_3d(_vbuff,   _newBx, _newBy,  __BULB_ZFAR); vertex_texcoord(_vbuff,  1, 1);
+        vertex_position_3d(_vbuff,   _newAx, _newAy, 0);           vertex_normal(_vbuff,  1, 1, 0);
+        vertex_position_3d(_vbuff,   _newAx, _newAy, __BULB_ZFAR); vertex_normal(_vbuff,  1, 1, 0);
+        vertex_position_3d(_vbuff,   _newBx, _newBy, __BULB_ZFAR); vertex_normal(_vbuff,  1, 1, 0);
         
         //Add data for the soft shadows
-        vertex_position_3d(_vbuff,   _newAx, _newAy,  __BULB_ZFAR); vertex_texcoord(_vbuff,  1, 0);
-        vertex_position_3d(_vbuff,   _newAx, _newAy,  0);           vertex_texcoord(_vbuff,  0, 1);
-        vertex_position_3d(_vbuff,   _newAx, _newAy,  __BULB_ZFAR); vertex_texcoord(_vbuff,  0, 0);
+        vertex_position_3d(_vbuff,   _newAx, _newAy, __BULB_ZFAR); vertex_normal(_vbuff,  1, 0, 0);
+        vertex_position_3d(_vbuff,   _newAx, _newAy, 0);           vertex_normal(_vbuff,  0, 1, 0);
+        vertex_position_3d(_vbuff,   _newAx, _newAy, __BULB_ZFAR); vertex_normal(_vbuff,  0, 0, 1);
         
-        vertex_position_3d(_vbuff,   _newBx, _newBy, -__BULB_ZFAR); vertex_texcoord(_vbuff,  0, 0); //Bit of a hack. We interpret this in __shdBulbSoftShadows
-        vertex_position_3d(_vbuff,   _newBx, _newBy,  0);           vertex_texcoord(_vbuff,  0, 1);
-        vertex_position_3d(_vbuff,   _newBx, _newBy,  __BULB_ZFAR); vertex_texcoord(_vbuff,  1, 0);
+        vertex_position_3d(_vbuff,   _newBx, _newBy, __BULB_ZFAR); vertex_normal(_vbuff,  0, 0, -1);
+        vertex_position_3d(_vbuff,   _newBx, _newBy, 0);           vertex_normal(_vbuff,  0, 1,  0);
+        vertex_position_3d(_vbuff,   _newBx, _newBy, __BULB_ZFAR); vertex_normal(_vbuff,  1, 0,  0);
     }
 }
 
