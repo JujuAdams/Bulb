@@ -492,24 +492,24 @@ function BulbRenderer(_ambientColour, _mode, _smooth) constructor
         
         //var _view_matrix = matrix_build_lookat(_cameraW/2, _cameraH/2, -16000,   _cameraW/2, _cameraH/2, 0,   0, 1, 0);
         
-        //var _view_matrix = [           1,            0,     0, 0,                   // [            1,            0,         0, 0, 
-        //                               0,            1,     0, 0,                   //              0,            1,         0, 0, 
-        //                               0,            0,     1, 0,                   //              0,            0,         1, 0, 
+        //var _view_matrix = [          1,           0,     0, 0,                   // [           1,           0,         0, 0, 
+        //                              0,           1,     0, 0,                   //             0,           1,         0, 0, 
+        //                              0,           0,     1, 0,                   //             0,           0,         1, 0, 
         //                    -_cameraW/2, -_cameraH/2, 16000, 1 ];                 //   -_cameraW/2, -_cameraH/2, -camera_z, 1]
         
         //var _projMatrix =  matrix_build_projection_ortho(_cameraW, -_cameraH, 1, 32000);
         
-        //var _projMatrix = [2/_cameraW,           0,           0,  0,             // [ 2/_cameraW,           0,                      0, 0,
-        //                              0, 2/_cameraH,           0,  0,             //             0, 2/_cameraH,                      0, 0,
-        //                              0,           0,  1/(32000-1), 0,             //             0,           0,       1/(z_far-z_near), 0,
-        //                              0,           0, -1/(32000-1), 1 ];           //             0,           0, -z_near/(z_far-z_near), 1];
+        //var _projMatrix = [2/_cameraW,           0,            0, 0,             // [ 2/_cameraW,           0,                      0, 0,
+        //                            0, 2/_cameraH,             0, 0,             //             0, 2/_cameraH,                      0, 0,
+        //                            0,           0,  1/(32000-1), 0,             //             0,          0,       1/(z_far-z_near), 0,
+        //                            0,           0, -1/(32000-1), 1 ];           //             0,          0, -z_near/(z_far-z_near), 1];
         
         //var _vp_matrix = matrix_multiply(_new_view, _new_proj);
         
-        //var _vp_matrix = [2/_cameraW,           0,           0, 0,                  // [ 2/_cameraW,            0,                                   0, 0,
-        //                            0, 2/_cameraH,           0, 0,                  //             0, -2/_cameraH,                                   0, 0,
-        //                            0,           0,     1/31999, 0,                  //             0,            0,                    1/(z_far-z_near), 0,
-        //                           -1,           1, 15999/31999, 1 ];                //            -1,            1, (-camera_z - z_near)/(z_far-z_near), 1];
+        //var _vp_matrix = [2/_cameraW,          0,            0, 0,                  // [ 2/_cameraW,           0,                                   0, 0,
+        //                           0, 2/_cameraH,            0, 0,                  //            0, -2/_cameraH,                                   0, 0,
+        //                           0,           0,     1/31999, 0,                  //            0,           0,                    1/(z_far-z_near), 0,
+        //                          -1,           1, 15999/31999, 1 ];                //           -1,           1, (-camera_z - z_near)/(z_far-z_near), 1];
         
         #endregion
         
@@ -591,7 +591,7 @@ function BulbRenderer(_ambientColour, _mode, _smooth) constructor
                             if (__IsOnScreen(_cameraL, _cameraT, _cameraR, _cameraB))
                             {
                                 //We send the ambient colour over as well even though we have fogging on
-                                //This allow us to colour the sprite when using the __shdBulbBrightnessToAlpha shader
+                                //This allow us to colour the sprite when using the __shdBulbHSVValueToAlpha shader
                                 draw_sprite_ext(sprite, image, x - _cameraL, y - _cameraT, xscale, yscale, angle, _ambientColor, alpha);
                             }
                         }

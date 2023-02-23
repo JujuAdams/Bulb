@@ -656,7 +656,7 @@ function BulbRendererWithGroups(_ambientColour, _mode, _smooth, _maxGroups) cons
                             if (__IsOnScreen(_cameraL, _cameraT, _cameraR, _cameraB))
                             {
                                 //We send the ambient colour over as well even though we have fogging on
-                                //This allow us to colour the sprite when using the __shdBulbBrightnessToAlpha shader
+                                //This allow us to colour the sprite when using the __shdBulbHSVValueToAlpha shader
                                 draw_sprite_ext(sprite, image, x - _cameraL, y - _cameraT, xscale, yscale, angle, _ambientColor, alpha);
                             }
                         }
