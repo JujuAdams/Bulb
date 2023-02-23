@@ -76,8 +76,8 @@
   },
   "RoomOrderNodes": [
     {"roomId":{"name":"rmInit","path":"rooms/rmInit/rmInit.yy",},},
-    {"roomId":{"name":"rmTestSoft","path":"rooms/rmTestSoft/rmTestSoft.yy",},},
     {"roomId":{"name":"rmTest","path":"rooms/rmTest/rmTest.yy",},},
+    {"roomId":{"name":"rmTestSoft","path":"rooms/rmTestSoft/rmTestSoft.yy",},},
     {"roomId":{"name":"rmTestWithGroups","path":"rooms/rmTestWithGroups/rmTestWithGroups.yy",},},
   ],
   "Folders": [
