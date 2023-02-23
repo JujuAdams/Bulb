@@ -695,9 +695,9 @@ function BulbRenderer(_ambientColour, _mode, _smooth) constructor
         
         //Pre-build a custom projection matrix
         //[8] [9] [10] are set per light
-        var _projMatrix = [        _cameraInvW,                   0,          0,  0,
-                                             0,         _cameraInvH,          0,  0,
-                                     undefined,           undefined,  undefined, -1,
+        var _projMatrix = [         _cameraInvW,                    0,          0,  0,
+                                              0,          _cameraInvH,          0,  0,
+                                      undefined,            undefined,  undefined, -1,
                            -_cameraTransformedX, -_cameraTransformedY,          0,  1];
         
         // xOut = (x - z*(camX - lightX) - camX) / camW
@@ -725,9 +725,8 @@ function BulbRenderer(_ambientColour, _mode, _smooth) constructor
                         {
                             if (castShadows)
                             {
-                                gpu_set_colorwriteenable(false, false, false, true);
-                                
                                 //Clear alpha channel
+                                gpu_set_colorwriteenable(false, false, false, true);
                                 gpu_set_blendmode(bm_subtract);
                                 
                                 if (__BULB_PARTIAL_CLEAR)
@@ -909,6 +908,50 @@ function BulbRenderer(_ambientColour, _mode, _smooth) constructor
                                                 blend, alpha);
                             }
                         }
+                    }
+                }
+                
+                ++_i;
+            }
+        }
+        
+        var _aspectRatio = _cameraW/_cameraH;
+        var _i = 0;
+        repeat(array_length(__sunlightArray))
+        {
+            var _weak = __sunlightArray[_i];
+            if (!weak_ref_alive(_weak) || _weak.ref.__destroyed)
+            {
+                array_delete(__sunlightArray, _i, 1);
+            }
+            else
+            {
+                with(_weak.ref)
+                {
+                    if (visible)
+                    {
+                        //Draw shadow stencil
+                        gpu_set_zfunc(cmpfunc_always);
+                        gpu_set_colorwriteenable(false, false, false, false);
+                        
+                        //Reset zbuffer
+                        shader_set(__shdBulbHardShadows);
+                        vertex_submit(_wipeVBuffer, pr_trianglelist, -1);
+                        
+                        //Render shadows
+                        _projMatrix[@ 8] = -__BULB_SUNLIGHT_SCALE*dcos(angle);
+                        _projMatrix[@ 9] = -__BULB_SUNLIGHT_SCALE*dsin(angle)*_aspectRatio;
+                        matrix_set(matrix_projection, _projMatrix);
+                        vertex_submit(_staticVBuffer,  pr_trianglelist, -1);
+                        vertex_submit(_dynamicVBuffer, pr_trianglelist, -1);
+                        
+                        //Draw fullscreen light sprite
+                        shader_set(_resetShader);
+                        gpu_set_zfunc(cmpfunc_lessequal);
+                        gpu_set_colorwriteenable(true, true, true, false);
+                        matrix_set(matrix_projection, _vp_matrix);
+                        
+                        draw_sprite_ext(__sprBulbPixel, 0, 0, 0, _cameraW, _cameraH, 0, blend, alpha);
                     }
                 }
                 
