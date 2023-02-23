@@ -1,33 +1,20 @@
 /// @param renderer
-/// @param sprite
-/// @param image
-/// @param x
-/// @param y
 
-function BulbLight(_renderer, _sprite, _image, _x, _y) constructor
+function BulbShadowOverlay(_renderer) constructor
 {
     visible = true;
     
-    x         = _x;
-    y         = _y;
-    xprevious = x;
-    yprevious = y;
+    sprite = undefined;
+    image  = 0;
     
-    sprite         = _sprite;
-    image          = _image;
-    xscale         = 1.0;
-    yscale         = 1.0;
-    xscaleprevious = xscale;
-    yscaleprevious = yscale;
-    angle          = 0.0;
-    blend          = c_white;
-    alpha          = 1.0;
+    x = 0;
+    y = 0;
     
-    bitmask = BULB_DEFAULT_LIGHT_BITMASK;
+    xscale = 1.0;
+    yscale = 1.0;
+    angle  = 0.0;
     
-    penumbraSize = 0.0;
-    
-    castShadows = true;
+    alpha = 1.0;
     
     __oldSprite = undefined;
     __radius    = 0;
@@ -36,32 +23,6 @@ function BulbLight(_renderer, _sprite, _image, _x, _y) constructor
     static Destroy = function()
     {
         __destroyed = true;
-    }
-    
-    static AddToRenderer = function(_renderer)
-    {
-        if (__destroyed) return;
-        array_push(_renderer.__lightsArray, weak_ref_create(self));
-    }
-    
-    static RemoveFromRenderer = function(_renderer)
-    {
-        var _array = _renderer.__lightsArray;
-        var _i = array_length(_array) - 1;
-        repeat(array_length(_array))
-        {
-            var _weak = _array[_i];
-            if (weak_ref_alive(_weak))
-            {
-                if (_weak.ref == self) array_delete(_array, _i, 1);
-            }
-            else
-            {
-                array_delete(_array, _i, 1);
-            }
-            
-            --_i;
-        }
     }
     
     static __CheckSpriteDimensions = function()
@@ -86,6 +47,32 @@ function BulbLight(_renderer, _sprite, _image, _x, _y) constructor
             {
                 __radius = 0;
             }
+        }
+    }
+    
+    static AddToRenderer = function(_renderer)
+    {
+        if (__destroyed) return;
+        array_push(_renderer.__shadowOverlayArray, weak_ref_create(self));
+    }
+    
+    static RemoveFromRenderer = function(_renderer)
+    {
+        var _array = _renderer.__shadowOverlayArray;
+        var _i = array_length(_array) - 1;
+        repeat(array_length(_array))
+        {
+            var _weak = _array[_i];
+            if (weak_ref_alive(_weak))
+            {
+                if (_weak.ref == self) array_delete(_array, _i, 1);
+            }
+            else
+            {
+                array_delete(_array, _i, 1);
+            }
+            
+            --_i;
         }
     }
     

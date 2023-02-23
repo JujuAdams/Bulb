@@ -4,17 +4,15 @@ function BulbShadowOverlay(_renderer) constructor
 {
     visible = true;
     
-    sprite = undefined;
-    image  = 0;
-    
     x = 0;
     y = 0;
     
+    sprite = undefined;
+    image  = 0;
     xscale = 1.0;
     yscale = 1.0;
     angle  = 0.0;
-    
-    alpha = 1.0;
+    alpha  = 1.0;
     
     __oldSprite = undefined;
     __radius    = 0;

@@ -35,6 +35,7 @@ function BulbRenderer(_ambientColour, _mode, _smooth) constructor
     __dynamicOccludersArray = [];
     __lightsArray           = [];
     __shadowOverlayArray    = [];
+    __lightOverlayArray     = [];
     
     __freed   = false;
     __oldMode = undefined;
@@ -551,6 +552,8 @@ function BulbRenderer(_ambientColour, _mode, _smooth) constructor
         //Reset culling so we can draw sprites normally
         gpu_set_cullmode(cull_noculling);
         
+        
+        
         //Now draw shadow overlay sprites, if we have any
         var _size = array_length(__shadowOverlayArray);
         if (_size > 0)
@@ -618,8 +621,55 @@ function BulbRenderer(_ambientColour, _mode, _smooth) constructor
             shader_reset();
         }
         
-        //Restore default writing behaviour
+        
+        
+        //Finally, draw light overlay sprites too
+        //We use the overarching blend mode for the renderer
+        if ((mode == BULB_MODE.HARD_BM_MAX) || (mode == BULB_MODE.HARD_BM_MAX_SELFLIGHTING))
+        {
+            gpu_set_blendmode(bm_max);
+        }
+        else
+        {
+            gpu_set_blendmode(bm_add);
+        }
+        
+        //Don't touch the alpha channel though
+        gpu_set_colorwriteenable(true, true, true, false);
+        
+        var _i = 0;
+        repeat(array_length(__lightOverlayArray))
+        {
+            var _weak = __lightOverlayArray[_i];
+            if (!weak_ref_alive(_weak) || _weak.ref.__destroyed)
+            {
+                array_delete(__lightOverlayArray, _i, 1);
+            }
+            else
+            {
+                with(_weak.ref)
+                {
+                    if (visible)
+                    {
+                        __CheckSpriteDimensions();
+                        
+                        //If this light is active, do some drawing
+                        if (__IsOnScreen(_cameraL, _cameraT, _cameraR, _cameraB))
+                        {
+                            draw_sprite_ext(sprite, image, x - _cameraL, y - _cameraT, xscale, yscale, angle, blend, alpha);
+                        }
+                    }
+                }
+                
+                ++_i;
+            }
+        }
+        
+        
+        
+        //Restore default behaviour
         gpu_set_colorwriteenable(true, true, true, true);
+        gpu_set_blendmode(bm_normal);
     }
     
     #endregion

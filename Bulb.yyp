@@ -14,6 +14,7 @@
     {"id":{"name":"sLightMask","path":"sprites/sLightMask/sLightMask.yy",},"order":6,},
     {"id":{"name":"__BulbSystem","path":"scripts/__BulbSystem/__BulbSystem.yy",},"order":0,},
     {"id":{"name":"rmTest","path":"rooms/rmTest/rmTest.yy",},"order":1,},
+    {"id":{"name":"BulbLightOverlay","path":"scripts/BulbLightOverlay/BulbLightOverlay.yy",},"order":7,},
     {"id":{"name":"sLightDebug","path":"sprites/sLightDebug/sLightDebug.yy",},"order":7,},
     {"id":{"name":"oLightDiscoooo3","path":"objects/oLightDiscoooo3/oLightDiscoooo3.yy",},"order":4,},
     {"id":{"name":"sPlayerMask","path":"sprites/sPlayerMask/sPlayerMask.yy",},"order":8,},
@@ -51,7 +52,7 @@
     {"id":{"name":"BulbStaticOccluder","path":"scripts/BulbStaticOccluder/BulbStaticOccluder.yy",},"order":5,},
     {"id":{"name":"oStaticOccluder2","path":"objects/oStaticOccluder2/oStaticOccluder2.yy",},"order":3,},
     {"id":{"name":"rmTestWithGroups","path":"rooms/rmTestWithGroups/rmTestWithGroups.yy",},"order":3,},
-    {"id":{"name":"BulbMakeBitmask","path":"scripts/BulbMakeBitmask/BulbMakeBitmask.yy",},"order":7,},
+    {"id":{"name":"BulbMakeBitmask","path":"scripts/BulbMakeBitmask/BulbMakeBitmask.yy",},"order":8,},
     {"id":{"name":"rmInit","path":"rooms/rmInit/rmInit.yy",},"order":0,},
   ],
   "Options": [
@@ -82,7 +83,7 @@
   ],
   "Folders": [
     {"resourceType":"GMFolder","resourceVersion":"1.0","name":"Bulb","folderPath":"folders/Bulb.yy","order":0,},
-    {"resourceType":"GMFolder","resourceVersion":"1.0","name":"(System)","folderPath":"folders/Bulb/(System).yy","order":8,},
+    {"resourceType":"GMFolder","resourceVersion":"1.0","name":"(System)","folderPath":"folders/Bulb/(System).yy","order":9,},
     {"resourceType":"GMFolder","resourceVersion":"1.0","name":"(Pay no attention to that man behind the curtain)","folderPath":"folders/Bulb/(System)/(Pay no attention to that man behind the curtain).yy","order":0,},
     {"resourceType":"GMFolder","resourceVersion":"1.0","name":"Example","folderPath":"folders/Example.yy","order":2,},
     {"resourceType":"GMFolder","resourceVersion":"1.0","name":"rmTest Objects","folderPath":"folders/Example/rmTest Objects.yy","order":2,},
