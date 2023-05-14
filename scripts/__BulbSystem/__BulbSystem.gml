@@ -44,9 +44,6 @@ function __BulbInitialize()
     global.__bulbCacheDict        = {};
     global.__bulbCachePauseSave   = false;
     
-    global.__bulbTileEdges = {};
-    
-    __BulbConfigTileEdges();
     __BulbDiskCacheLoad();
     
     if (BULB_TRACE_TAGGED_ASSETS_ON_BOOT)
