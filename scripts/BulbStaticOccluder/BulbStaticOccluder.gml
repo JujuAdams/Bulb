@@ -59,10 +59,5 @@ function BulbStaticOccluder(_renderer) constructor
         }
     }
     
-    static __IsOnScreen = function(_cameraL, _cameraT, _cameraR, _cameraB)
-    {
-        return (!__destroyed && visible && __BulbRectInRect(__bboxXMin, __bboxYMin, __bboxXMax, __bboxYMax, _cameraL, _cameraT, _cameraR, _cameraB));
-    }
-    
     if (_renderer != undefined) AddToRenderer(_renderer);
 }
