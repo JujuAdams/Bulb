@@ -74,8 +74,8 @@ function __BulbLoopSimplifyInternal(_pointArray, _start, _end, _epsilon)
     
     if (_maxDist >= _epsilon)
     {
-        __BulbSpriteEdgeSimplify(_pointArray, _maxPoint, _end, _epsilon);
-        __BulbSpriteEdgeSimplify(_pointArray, _start, _maxPoint, _epsilon);
+        __BulbLoopSimplifyInternal(_pointArray, _maxPoint, _end, _epsilon);
+        __BulbLoopSimplifyInternal(_pointArray, _start, _maxPoint, _epsilon);
     }
     else
     {
