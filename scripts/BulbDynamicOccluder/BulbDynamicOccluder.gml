@@ -13,8 +13,6 @@ function BulbDynamicOccluder(_renderer) constructor
     
     vertexArray = [];
     
-    bitmask = BULB_DEFAULT_DYNAMIC_BITMASK;
-    
     __radius    = 0;
     __destroyed = false;
     
