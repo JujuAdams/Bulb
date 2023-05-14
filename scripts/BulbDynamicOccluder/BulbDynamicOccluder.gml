@@ -11,6 +11,8 @@ function BulbDynamicOccluder(_renderer) constructor
     yscale = 1.0;
     angle  = 0.0;
     
+    //Arranged as repeating units of 6 elements: x1, y1, x2, y2, normal x, normal y
+    //The normal vector does *not* need to be of unit length
     vertexArray = [];
     
     __radius    = 0;
@@ -21,7 +23,7 @@ function BulbDynamicOccluder(_renderer) constructor
         __destroyed = true;
     }
     
-    static AddEdge = function(_x1, _y1, _x2, _y2)
+    static AddEdge = function(_x1, _y1, _x2, _y2, _normalX = (_y2 - _y1), _normalY = (_x1 - _x2))
     {
         if (__destroyed) return;
         
@@ -29,16 +31,39 @@ function BulbDynamicOccluder(_renderer) constructor
         //We apply x/y scaling in the __IsOnScreen() function
         __radius = sqrt(max(_x1*_x1 + _y1*_y1, _x2*_x2 + _y2*_y2));
         
-        array_push(vertexArray, _x1, _y1, _x2, _y2, _y2-_y1, _x1-_x2);
+        array_push(vertexArray, _x1, _y1, _x2, _y2, _normalX, _normalY);
     }
     
-    static ClearEdges = function(_x1, _y1, _x2, _y2)
+    static ClearEdges = function()
     {
         if (__destroyed) return;
         
         __radius = 0;
         
         array_resize(vertexArray, 0);
+    }
+    
+    static SetSprite = function(_sprite, _image)
+    {
+        ClearEdges();
+        AddSprite(_sprite, _image);
+    }
+    
+    static SetTilemap = function(_tilemap)
+    {
+        ClearEdges();
+        AddTilemap(_tilemap);
+    }
+    
+    static AddSprite = function(_sprite, _image, _xOffset = 0, _yOffset = 0)
+    {
+        //__BulbAddSpriteToOccluder(self, _sprite, _image, _xOffset, _yOffset);
+    }
+    
+    static AddTilemap = function(_tilemap)
+    {
+        if (is_string(_tilemap)) _tilemap = layer_tilemap_get_id(_tilemap);
+        //__BulbAddTilemapToOccluder(self, _tilemap);
     }
     
     static AddToRenderer = function(_renderer)
