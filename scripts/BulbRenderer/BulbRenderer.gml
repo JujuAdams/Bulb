@@ -523,7 +523,7 @@ function BulbRenderer(_ambientColour, _mode, _smooth) constructor
                 {
                     with(_weak.ref)
                     {
-                        if (visible)
+                        if (visible && (alpha > 0))
                         {
                             __CheckSpriteDimensions();
                             
@@ -586,7 +586,7 @@ function BulbRenderer(_ambientColour, _mode, _smooth) constructor
             {
                 with(_weak.ref)
                 {
-                    if (visible)
+                    if (visible && (alpha > 0))
                     {
                         __CheckSpriteDimensions();
                         
@@ -635,7 +635,7 @@ function BulbRenderer(_ambientColour, _mode, _smooth) constructor
             {
                 with(_weak.ref)
                 {
-                    if (visible)
+                    if (visible && (alpha > 0))
                     {
                         __CheckSpriteDimensions();
                         
@@ -702,7 +702,7 @@ function BulbRenderer(_ambientColour, _mode, _smooth) constructor
             {
                 with(_weak.ref)
                 {
-                    if (visible)
+                    if (visible && (alpha > 0))
                     {
                         //Only write into the alpha channel
                         gpu_set_colorwriteenable(false, false, false, true);
@@ -797,7 +797,7 @@ function BulbRenderer(_ambientColour, _mode, _smooth) constructor
             {
                 with(_weak.ref)
                 {
-                    if (visible)
+                    if (visible && (alpha > 0))
                     {
                         __CheckSpriteDimensions();
                         
@@ -863,7 +863,7 @@ function BulbRenderer(_ambientColour, _mode, _smooth) constructor
             {
                 with(_weak.ref)
                 {
-                    if (visible)
+                    if (visible && (alpha > 0))
                     {
                         //Turn off all RGBA writing, leaving only z-writing
                         gpu_set_colorwriteenable(false, false, false, false);
