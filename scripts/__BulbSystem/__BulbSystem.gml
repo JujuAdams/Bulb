@@ -1,22 +1,100 @@
-#macro __BULB_VERSION         "20.4.0 alpha"
-#macro __BULB_DATE            "2023-05-14"
-#macro __BULB_ZFAR            1
+#macro __BULB_VERSION                "20.4.0 alpha"
+#macro __BULB_DATE                   "2023-05-14"
+#macro __BULB_ZFAR                   1
+#macro __BULB_FORCE_PRODUCTION_MODE  false
+#macro __BULB_BUILD_TYPE             (__BULB_FORCE_PRODUCTION_MODE? "exe" : GM_build_type)
+#macro __BULB_DISK_CACHE_NAME        ((__BULB_BUILD_TYPE == "run")? "BulbCacheDev.dat" : "BulbCache.dat")
+#macro __BULB_ARRAY_VERTEX_SIZE      6
 
-__BulbTrace("Welcome to Bulb by @jujuadams! This is version " + __BULB_VERSION + ", " + __BULB_DATE);
+__BulbInitialize();
 
-//Create a couple vertex formats
-vertex_format_begin();
-vertex_format_add_position_3d();
-vertex_format_add_normal();
-global.__bulb_format_3d_normal = vertex_format_end();
+function __BulbInitialize()
+{
+    static _initialized = false;
+    if (_initialized) return;
+    _initialized = true;
 
-vertex_format_begin();
-vertex_format_add_position_3d();
-vertex_format_add_normal();
-vertex_format_add_texcoord();
-global.__bulb_format_3d_normal_tex = vertex_format_end();
-
-
+    __BulbTrace("Welcome to Bulb by @jujuadams! This is version " + __BULB_VERSION + ", " + __BULB_DATE);
+    
+    //Create a couple vertex formats
+    vertex_format_begin();
+    vertex_format_add_position_3d();
+    vertex_format_add_normal();
+    global.__bulb_format_3d_normal = vertex_format_end();
+    
+    vertex_format_begin();
+    vertex_format_add_position_3d();
+    vertex_format_add_normal();
+    vertex_format_add_texcoord();
+    global.__bulb_format_3d_normal_tex = vertex_format_end();
+    
+    global.__bulbSpriteDict  = {};
+    global.__bulbTilesetDict = {};
+    
+    global.__bulbProjectDirectory = undefined;
+    global.__bulbCacheBuffer      = undefined;
+    global.__bulbCacheDict        = {};
+    global.__bulbCachePauseSave   = false;
+    
+    __BulbDiskCacheLoad();
+    
+    if (BULB_TRACE_TAGGED_ASSETS_ON_BOOT)
+    {
+        global.__bulbCachePauseSave = true;
+        
+        //Sprites
+        if (BULB_VERBOSE) var _t = get_timer();
+        var _array = tag_get_asset_ids(BULB_TRACE_TAG, asset_sprite);
+        if (BULB_VERBOSE) __BulbTrace("Starting on-boot trace of ", array_length(_array), " sprites");
+        
+        var _i = 0;
+        repeat(array_length(_array))
+        {
+            var _spriteIndex = _array[_i];
+            var _sprite = new __BulbClassSprite(_spriteIndex, false);
+            _sprite.__TraceAll();
+            ++_i;
+        }
+        
+        if (BULB_VERBOSE) __BulbTrace("Sprite trace ended (", (get_timer() - _t)/1000, "ms)");
+        
+        //Tilemaps
+        if (BULB_VERBOSE) var _t = get_timer();
+        var _array = tag_get_asset_ids(BULB_TRACE_TAG, asset_tiles);
+        if (BULB_VERBOSE) __BulbTrace("Starting on-boot trace of ", array_length(_array), " tilesets");
+        
+        var _i = 0;
+        repeat(array_length(_array))
+        {
+            var _tilesetIndex = _array[_i];
+            var _tileset = new __BulbClassTileset(_tilesetIndex, false);
+            _tileset.__GetTileDictionary();
+            ++_i;
+        }
+        
+        if (BULB_VERBOSE) __BulbTrace("Tileset trace ended (", (get_timer() - _t)/1000, "ms)");
+        
+        //Actually save the cache to disk now
+        global.__bulbCachePauseSave = false;
+        if (BULB_USE_DISK_CACHE) buffer_save_ext(global.__bulbCacheBuffer, __BULB_DISK_CACHE_NAME, 0, buffer_tell(global.__bulbCacheBuffer));
+    }
+    
+    if (BULB_TAG_ASSETS_ON_USE && (__BULB_BUILD_TYPE == "run"))
+    {
+        if ((os_type != os_windows) && (os_type != os_macosx) && (os_type != os_linux))
+        {
+            __BulbTrace("Warning! BULB_TAG_ASSETS_ON_USE not supported outside of Windows/MacOS/Linux export");
+        }
+        else if (!file_exists(GM_project_filename))
+        {
+            __BulbError("Could not verify existance of your project file\nEnsure that \"Disable file system sandbox\" is enabled\n(Project file path is \"", GM_project_filename, "\")");
+        }
+        else
+        {
+            global.__bulbProjectDirectory = filename_path(GM_project_filename);
+        }
+    }
+}
 
 function __BulbTrace()
 {
