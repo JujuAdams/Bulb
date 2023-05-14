@@ -48,13 +48,13 @@ function BulbStaticOccluder(_renderer) constructor
     
     static AddSprite = function(_sprite, _image, _xOffset = 0, _yOffset = 0)
     {
-        //__BulbAddSpriteToOccluder(self, _sprite, _image, _xOffset, _yOffset);
+        __BulbAddSpriteToOccluder(self, _sprite, _image, _xOffset, _yOffset);
     }
     
     static AddTilemap = function(_tilemap)
     {
         if (is_string(_tilemap)) _tilemap = layer_tilemap_get_id(_tilemap);
-        //__BulbAddTilemapToOccluder(self, _tilemap);
+        __BulbAddTilemapToOccluder(self, _tilemap);
     }
     
     static AddToRenderer = function(_renderer)
