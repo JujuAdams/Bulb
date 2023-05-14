@@ -24,7 +24,7 @@ function BulbStaticOccluder(_renderer) constructor
     {
         if (__destroyed) return;
         
-        array_push(vertexArray, _x1, _y1, _x2, _y2);
+        array_push(vertexArray, _x1, _y1, _x2, _y2, _y2-_y1, _x1-_x2);
     }
     
     static ClearEdges = function(_x1, _y1, _x2, _y2)

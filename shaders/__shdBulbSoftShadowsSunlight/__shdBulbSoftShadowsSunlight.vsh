@@ -1,24 +1,18 @@
 precision highp float;
 
+#define MAX_LENGTH 2000.0
+
 attribute vec3 in_Position;
 attribute vec3 in_Normal;
+attribute vec2 in_Texcoord;
+
+uniform vec3 u_vLightVector;
 
 varying vec2 v_vTexcoord;
 
 void main()
 {
-    mat4 matrix = gm_Matrices[MATRIX_PROJECTION];
+    gl_Position = gm_Matrices[MATRIX_WORLD_VIEW_PROJECTION]*vec4(in_Position.xy + MAX_LENGTH*(in_Position.z*u_vLightVector.xy + 0.01*u_vLightVector.z*in_Normal.z*normalize(vec2(u_vLightVector.y, -u_vLightVector.x))), 0.0, 1.0);
     
-    //Push out penumbra fringes
-    vec2 direction = vec2(matrix[2][0], matrix[2][1]);
-    matrix[2][0] += in_Normal.z*matrix[2][2]*direction.y;
-    matrix[2][1] -= in_Normal.z*matrix[2][2]*direction.x;
-    
-    matrix[2][1] *= matrix[2][3]; //Aspect ratio correction
-    
-    matrix[2][2] = 0.0;
-    matrix[2][3] = 0.0;
-    gl_Position = matrix * vec4(in_Position.xyz, 1.0);
-    
-    v_vTexcoord = in_Normal.xy;
+    v_vTexcoord = in_Texcoord;
 }

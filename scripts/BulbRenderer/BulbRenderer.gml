@@ -28,7 +28,6 @@ function BulbRenderer(_ambientColour, _mode, _smooth) constructor
     //Initialise variables used and updated in .__UpdateVertexBuffers()
     __staticVBuffer  = undefined; //Vertex buffer describing the geometry of static occluder objects
     __dynamicVBuffer = undefined; //As above but for dynamic shadow occluders. This is updated every step
-    __wipeVBuffer    = undefined; //This vertex buffer is used to reset the z-buffer during accumulation of non-deferred lights
     __surface        = undefined; //Screen-space __surface for final accumulation of lights
     
     __staticOccludersArray  = [];
@@ -144,6 +143,8 @@ function BulbRenderer(_ambientColour, _mode, _smooth) constructor
         
         //Create accumulating lighting __surface
         surface_set_target(GetSurface());
+        
+        gpu_set_cullmode(cull_noculling);
         
         //Really we should use the view matrix for this, but GameMaker's sprite culling is fucked
         //If we use a proper view matrix then lighting sprites are culling, leading to no lighting being drawn
@@ -315,12 +316,6 @@ function BulbRenderer(_ambientColour, _mode, _smooth) constructor
     
     static __FreeVertexBuffers = function()
     {
-        if (__wipeVBuffer != undefined)
-        {
-            vertex_delete_buffer(__wipeVBuffer);
-            __wipeVBuffer = undefined;
-        }
-        
         if (__staticVBuffer != undefined)
         {
             vertex_delete_buffer(__staticVBuffer);
@@ -364,21 +359,6 @@ function BulbRenderer(_ambientColour, _mode, _smooth) constructor
         var _cameraExpR = _cameraR + BULB_DYNAMIC_OCCLUDER_RANGE;
         var _cameraExpB = _cameraB + BULB_DYNAMIC_OCCLUDER_RANGE;
         
-        //One-time construction of a triangle to wipe the z-buffer
-        //Using textures (rather than untextured) saves on shader_set() overhead... likely a trade-off depending on the GPU
-        if (__wipeVBuffer == undefined)
-        {
-            __wipeVBuffer = vertex_create_buffer();
-            vertex_begin(__wipeVBuffer, global.__bulb_format_3d_texture);
-            
-            vertex_position_3d(__wipeVBuffer,          0,          0, 0); vertex_normal(__wipeVBuffer, 0, 0, 0);
-            vertex_position_3d(__wipeVBuffer, 2*_cameraW,          0, 0); vertex_normal(__wipeVBuffer, 0, 0, 0);
-            vertex_position_3d(__wipeVBuffer,          0, 2*_cameraH, 0); vertex_normal(__wipeVBuffer, 0, 0, 0);
-            
-            vertex_end(__wipeVBuffer);
-            vertex_freeze(__wipeVBuffer);
-        }
-        
         //One-time construction of the static occluder geometry
         if (__staticVBuffer == undefined)
         {
@@ -389,7 +369,7 @@ function BulbRenderer(_ambientColour, _mode, _smooth) constructor
             //Add static shadow caster vertices to the relevant vertex buffer
             if (mode == BULB_MODE.SOFT_BM_ADD)
             {
-                vertex_begin(__staticVBuffer, global.__bulb_format_3d_texture);
+                vertex_begin(__staticVBuffer, global.__bulb_format_3d_normal_tex);
                 
                 var _array = __staticOccludersArray;
                 var _i = 0;
@@ -409,7 +389,7 @@ function BulbRenderer(_ambientColour, _mode, _smooth) constructor
             }
             else
             {
-                vertex_begin(__staticVBuffer, global.__bulb_format_3d_texture);
+                vertex_begin(__staticVBuffer, global.__bulb_format_3d_normal);
                 
                 var _array = __staticOccludersArray;
                 var _i = 0;
@@ -441,7 +421,7 @@ function BulbRenderer(_ambientColour, _mode, _smooth) constructor
         //Add dynamic occluder vertices to the relevant vertex buffer
         if (mode == BULB_MODE.SOFT_BM_ADD)
         {
-            vertex_begin(_dynamicVBuffer, global.__bulb_format_3d_texture);
+            vertex_begin(_dynamicVBuffer, global.__bulb_format_3d_normal_tex);
             
             var _array = __dynamicOccludersArray;
             var _i = 0;
@@ -465,7 +445,7 @@ function BulbRenderer(_ambientColour, _mode, _smooth) constructor
         }
         else
         {
-            vertex_begin(_dynamicVBuffer, global.__bulb_format_3d_texture);
+            vertex_begin(_dynamicVBuffer, global.__bulb_format_3d_normal);
             
             var _array = __dynamicOccludersArray;
             var _i = 0;
@@ -633,32 +613,15 @@ function BulbRenderer(_ambientColour, _mode, _smooth) constructor
     
     #region Accumulate soft lights
     
-    static AccumulateSoftLights = function(_cameraL, _cameraT, _cameraR, _cameraB, _cameraCX, _cameraCY, _cameraW, _cameraH, _vp_matrix)
+    static AccumulateSoftLights = function(_cameraL, _cameraT, _cameraR, _cameraB, _cameraCX, _cameraCY, _cameraW, _cameraH, _normalCoeff)
     {
         if (__freed) return undefined;
         
-        var _wipeVBuffer    = __wipeVBuffer;
+        static _u_vLight                = shader_get_uniform(__shdBulbSoftShadows,         "u_vLight"      );
+        static _sunlight_u_vLightVector = shader_get_uniform(__shdBulbSoftShadowsSunlight, "u_vLightVector");
+        
         var _staticVBuffer  = __staticVBuffer;
         var _dynamicVBuffer = __dynamicVBuffer;
-        
-        //Calculate some transform coefficients
-        var _cameraInvW = 2/_cameraW;
-        var _cameraInvH = 2/_cameraH;
-        if (__BULB_FLIP_CAMERA_Y) _cameraInvH = -_cameraInvH;
-        
-        var _cameraTransformedX = _cameraCX*_cameraInvW;
-        var _cameraTransformedY = _cameraCY*_cameraInvH;
-        
-        //Pre-build a custom projection matrix
-        //[8] [9] [10] are set per light
-        var _projMatrix = [         _cameraInvW,                    0,          0,  0,
-                                              0,          _cameraInvH,          0,  0,
-                                      undefined,            undefined,  undefined, -1,
-                           -_cameraTransformedX, -_cameraTransformedY,          0,  1];
-        
-        // xOut = (x - z*(camX - lightX) - camX) / camW
-        // yOut = (y - z*(camY - lightY) - camY) / camH
-        // zOut = 0
         
         var _i = 0;
         repeat(array_length(__lightsArray))
@@ -681,60 +644,41 @@ function BulbRenderer(_ambientColour, _mode, _smooth) constructor
                         {
                             if (castShadows)
                             {
-                                //Clear alpha channel
+                                //Only write into the alpha channel
                                 gpu_set_colorwriteenable(false, false, false, true);
+                                
+                                //Clear the alpha channel for the light's visual area
+                                gpu_set_blendmode_ext(bm_one, bm_zero);
+                                draw_sprite_ext(sprite, image,
+                                                x, y,
+                                                xscale, yscale, angle,
+                                                c_black, alpha);
+                                
+                                //Cut out shadows in the alpha channel
                                 gpu_set_blendmode(bm_subtract);
                                 
-                                if (__BULB_PARTIAL_CLEAR)
-                                {
-                                    draw_sprite_ext(sprite, image,
-                                                    x - _cameraL, y - _cameraT,
-                                                    xscale, yscale, angle,
-                                                    c_black, 1);
-                                }
-                                else
-                                {
-                                    vertex_submit(_wipeVBuffer, pr_trianglelist, -1);
-                                }
-                                
-                                //Render shadows
                                 shader_set(__shdBulbSoftShadows);
-                                gpu_set_blendmode(bm_add);
-                                _projMatrix[@  8] = x;
-                                _projMatrix[@  9] = y;
-                                _projMatrix[@ 10] = penumbraSize;
-                                matrix_set(matrix_projection, _projMatrix);
+                                shader_set_uniform_f(_u_vLight, x, y, penumbraSize);
                                 vertex_submit(_staticVBuffer,  pr_trianglelist, -1);
                                 vertex_submit(_dynamicVBuffer, pr_trianglelist, -1);
                                 
+                                //Set the light sprite to borrowing the alpha channel already on the surface
+                                gpu_set_colorwriteenable(true, true, true, false);
+                                gpu_set_blendmode_ext(bm_dest_alpha, bm_one);
+                                
                                 //Draw light sprite
                                 shader_reset();
-                                matrix_set(matrix_projection, _vp_matrix);
-                                
-                                if (alpha < 1.0)
-                                {
-                                    //If this light is fading out, adjust the destination alpha channel
-                                    //TODO - Do this earlier during the wipe phase and before shadow casting
-                                    gpu_set_blendmode_ext(bm_src_alpha, bm_one);
-                                    draw_sprite_ext(sprite, image,
-                                                    x - _cameraL, y - _cameraT,
-                                                    xscale, yscale, angle,
-                                                    blend, 1.0 - alpha);
-                                }
-                                
-                                gpu_set_colorwriteenable(true, true, true, false);
-                                gpu_set_blendmode_ext(bm_inv_dest_alpha, bm_one);
-                                
                                 draw_sprite_ext(sprite, image,
-                                                x - _cameraL, y - _cameraT,
+                                                x, y,
                                                 xscale, yscale, angle,
-                                                blend, alpha);
+                                                blend, 1);
                             }
                             else
                             {
+                                //No shadows - draw the light sprite normally
                                 gpu_set_blendmode(bm_add);
                                 draw_sprite_ext(sprite, image,
-                                                x - _cameraL, y - _cameraT,
+                                                x, y,
                                                 xscale, yscale, angle,
                                                 blend, alpha);
                             }
@@ -746,7 +690,6 @@ function BulbRenderer(_ambientColour, _mode, _smooth) constructor
             }
         }
         
-        var _aspectRatio = _cameraW/_cameraH;
         var _i = 0;
         repeat(array_length(__sunlightArray))
         {
@@ -761,37 +704,28 @@ function BulbRenderer(_ambientColour, _mode, _smooth) constructor
                 {
                     if (visible)
                     {
-                        //Clear alpha channel
+                        //Only write into the alpha channel
                         gpu_set_colorwriteenable(false, false, false, true);
-                        gpu_set_blendmode(bm_subtract);
-                        vertex_submit(_wipeVBuffer, pr_trianglelist, -1);
                         
-                        //Render shadows
+                        //Clear the alpha channel for the light's visual area
+                        gpu_set_blendmode_ext(bm_one, bm_zero);
+                        draw_sprite_ext(__sprBulbPixel, 0, _cameraL, _cameraT, _cameraW+1, _cameraH+1, 0, c_black, alpha);
+                        
+                        //Cut out shadows in the alpha channel
+                        gpu_set_blendmode(bm_subtract);
+                        
                         shader_set(__shdBulbSoftShadowsSunlight);
-                        gpu_set_blendmode(bm_add);
-                        _projMatrix[@  8] = -__BULB_SUNLIGHT_SCALE*dcos(angle);
-                        _projMatrix[@  9] = -__BULB_SUNLIGHT_SCALE*dsin(angle);
-                        _projMatrix[@ 10] = __BULB_SOFT_SUNLIGHT_PENUMBRA_SCALE*penumbraSize;
-                        _projMatrix[@ 11] = _aspectRatio;
-                        matrix_set(matrix_projection, _projMatrix);
+                        shader_set_uniform_f(_sunlight_u_vLightVector, dcos(angle), -dsin(angle), penumbraSize);
                         vertex_submit(_staticVBuffer,  pr_trianglelist, -1);
                         vertex_submit(_dynamicVBuffer, pr_trianglelist, -1);
                         
+                        //Set the light sprite to borrowing the alpha channel already on the surface
+                        gpu_set_colorwriteenable(true, true, true, false);
+                        gpu_set_blendmode_ext(bm_dest_alpha, bm_one);
+                        
                         //Draw light sprite
                         shader_reset();
-                        matrix_set(matrix_projection, _vp_matrix);
-                        
-                        if (alpha < 1.0)
-                        {
-                            //If this light is fading out, adjust the destination alpha channel
-                            //TODO - Do this earlier during the wipe phase and before shadow casting
-                            gpu_set_blendmode_ext(bm_src_alpha, bm_one);
-                            draw_sprite_ext(__sprBulbPixel, 0, 0, 0, _cameraW, _cameraH, 0, blend, 1-alpha);
-                        }
-                        
-                        gpu_set_colorwriteenable(true, true, true, false);
-                        gpu_set_blendmode_ext(bm_inv_dest_alpha, bm_one);
-                        draw_sprite_ext(__sprBulbPixel, 0, 0, 0, _cameraW, _cameraH, 0, blend, alpha);
+                        draw_sprite_ext(__sprBulbPixel, 0, _cameraL, _cameraT, _cameraW+1, _cameraH+1, 0, blend, 1);
                     }
                 }
                 
@@ -810,10 +744,11 @@ function BulbRenderer(_ambientColour, _mode, _smooth) constructor
     {
         if (__freed) return undefined;
         
-        static _u_vLight       = shader_get_uniform(__shdBulbHardShadows, "u_vLight");
-        static _u_vNormalCoeff = shader_get_uniform(__shdBulbHardShadows, "u_vNormalCoeff");
+        static _u_vLight                = shader_get_uniform(__shdBulbHardShadows,         "u_vLight"      );
+        static _u_fNormalCoeff          = shader_get_uniform(__shdBulbHardShadows,         "u_fNormalCoeff");
+        static _sunlight_u_vLightVector = shader_get_uniform(__shdBulbHardShadowsSunlight, "u_vLightVector");
+        static _sunlight_u_fNormalCoeff = shader_get_uniform(__shdBulbHardShadowsSunlight, "u_fNormalCoeff");
         
-        var _wipeVBuffer    = __wipeVBuffer;
         var _staticVBuffer  = __staticVBuffer;
         var _dynamicVBuffer = __dynamicVBuffer;
         
@@ -833,7 +768,14 @@ function BulbRenderer(_ambientColour, _mode, _smooth) constructor
         //Set up the coefficient to flip normals
         //We use this to control self-lighting
         shader_set(__shdBulbHardShadows);
-        shader_set_uniform_f(_u_vNormalCoeff, _normalCoeff);
+        shader_set_uniform_f(_u_fNormalCoeff, _normalCoeff);
+        
+        //Also do the same for our sunlight shader, provided we have any sunlight sources
+        if (array_length(__sunlightArray) > 0)
+        {
+            shader_set(__shdBulbHardShadowsSunlight);
+            shader_set_uniform_f(_sunlight_u_fNormalCoeff, _normalCoeff);
+        }
         
         //Set our default shader
         shader_set(_resetShader);
@@ -871,25 +813,14 @@ function BulbRenderer(_ambientColour, _mode, _smooth) constructor
                                 gpu_set_zfunc(cmpfunc_always);
                                 
                                 //Reset z-buffer
-                                if (__BULB_PARTIAL_CLEAR)
-                                {
-                                    draw_sprite_ext(sprite, image,
-                                                    x, y,
-                                                    xscale, yscale, angle,
-                                                    c_black, 1);
-                                    shader_set(__shdBulbHardShadows);
-                                }
-                                else
-                                {
-                                    //Full surface clear
-                                    //More reliable but slower
-                                    shader_set(__shdBulbHardShadows);
-                                    vertex_submit(_wipeVBuffer, pr_trianglelist, -1);
-                                }
+                                draw_sprite_ext(sprite, image,
+                                                x, y,
+                                                xscale, yscale, angle,
+                                                c_black, 1);
                                 
                                 //Stencil out shadow areas
                                 shader_set(__shdBulbHardShadows);
-                                shader_set_uniform_f(_u_vLight, x, y, _normalCoeff);
+                                shader_set_uniform_f(_u_vLight, x, y);
                                 vertex_submit(_staticVBuffer,  pr_trianglelist, -1);
                                 vertex_submit(_dynamicVBuffer, pr_trianglelist, -1);
                                 
@@ -906,6 +837,7 @@ function BulbRenderer(_ambientColour, _mode, _smooth) constructor
                             }
                             else
                             {
+                                //Just draw the sprite, no fancy stuff here
                                 draw_sprite_ext(sprite, image,
                                                 x, y,
                                                 xscale, yscale, angle,
@@ -919,49 +851,48 @@ function BulbRenderer(_ambientColour, _mode, _smooth) constructor
             }
         }
         
-        //var _aspectRatio = _cameraW/_cameraH;
-        //var _i = 0;
-        //repeat(array_length(__sunlightArray))
-        //{
-        //    var _weak = __sunlightArray[_i];
-        //    if (!weak_ref_alive(_weak) || _weak.ref.__destroyed)
-        //    {
-        //        array_delete(__sunlightArray, _i, 1);
-        //    }
-        //    else
-        //    {
-        //        with(_weak.ref)
-        //        {
-        //            if (visible)
-        //            {
-        //                //Draw shadow stencil
-        //                gpu_set_zfunc(cmpfunc_always);
-        //                gpu_set_colorwriteenable(false, false, false, false);
-        //                
-        //                //Reset zbuffer
-        //                shader_set(__shdBulbHardShadows);
-        //                vertex_submit(_wipeVBuffer, pr_trianglelist, -1);
-        //                
-        //                //Render shadows
-        //                _projMatrix[@ 8] = -__BULB_SUNLIGHT_SCALE*dcos(angle);
-        //                _projMatrix[@ 9] = -__BULB_SUNLIGHT_SCALE*dsin(angle)*_aspectRatio;
-        //                matrix_set(matrix_projection, _projMatrix);
-        //                vertex_submit(_staticVBuffer,  pr_trianglelist, -1);
-        //                vertex_submit(_dynamicVBuffer, pr_trianglelist, -1);
-        //                
-        //                //Draw fullscreen light sprite
-        //                shader_set(_resetShader);
-        //                gpu_set_zfunc(cmpfunc_lessequal);
-        //                gpu_set_colorwriteenable(true, true, true, false);
-        //                matrix_set(matrix_projection, _vp_matrix);
-        //                
-        //                draw_sprite_ext(__sprBulbPixel, 0, 0, 0, _cameraW, _cameraH, 0, blend, alpha);
-        //            }
-        //        }
-        //        
-        //        ++_i;
-        //    }
-        //}
+        var _i = 0;
+        repeat(array_length(__sunlightArray))
+        {
+            var _weak = __sunlightArray[_i];
+            if (!weak_ref_alive(_weak) || _weak.ref.__destroyed)
+            {
+                array_delete(__sunlightArray, _i, 1);
+            }
+            else
+            {
+                with(_weak.ref)
+                {
+                    if (visible)
+                    {
+                        //Turn off all RGBA writing, leaving only z-writing
+                        gpu_set_colorwriteenable(false, false, false, false);
+                        
+                        //Guarantee that we're going to write to the z-buffer with the next operations
+                        gpu_set_zfunc(cmpfunc_always);
+                        
+                        //Full surface clear of the z-buffer
+                        draw_sprite_ext(__sprBulbPixel, 0, _cameraL, _cameraT, _cameraW+1, _cameraH+1, 0, c_black, 0);
+                        
+                        //Stencil out shadow areas
+                        shader_set(__shdBulbHardShadowsSunlight);
+                        shader_set_uniform_f(_sunlight_u_vLightVector, dcos(angle), -dsin(angle));
+                        vertex_submit(_staticVBuffer,  pr_trianglelist, -1);
+                        vertex_submit(_dynamicVBuffer, pr_trianglelist, -1);
+                        
+                        //Swap to drawing RGB data (no alpha to make the output surface tidier)
+                        gpu_set_colorwriteenable(true, true, true, false);
+                        gpu_set_zfunc(cmpfunc_lessequal);
+                        
+                        //Reset shader and draw the light itself, but "behind" the shadows
+                        shader_set(_resetShader);
+                        draw_sprite_ext(__sprBulbPixel, 0, _cameraL, _cameraT, _cameraW+1, _cameraH+1, 0, blend, alpha);
+                    }
+                }
+                
+                ++_i;
+            }
+        }
         
         gpu_set_zfunc(cmpfunc_lessequal);
         gpu_set_blendmode(bm_normal);

@@ -1,22 +1,20 @@
 precision highp float;
 
+#define MAX_LENGTH 50.0
+
 attribute vec3 in_Position;
 attribute vec3 in_Normal;
+attribute vec2 in_Texcoord;
+
+uniform vec3 u_vLight;
 
 varying vec2 v_vTexcoord;
 
 void main()
 {
-    mat4 matrix = gm_Matrices[MATRIX_PROJECTION];
+    vec2 delta = in_Position.xy - u_vLight.xy;
     
-    vec2 lightPos = vec2(matrix[2][0], matrix[2][1]);
-    vec2 direction = normalize(in_Position.xy - lightPos);
-    lightPos -= in_Normal.z*matrix[2][2]*vec2(direction.y, -direction.x);
+    gl_Position = gm_Matrices[MATRIX_WORLD_VIEW_PROJECTION]*vec4(in_Position.xy + MAX_LENGTH*(in_Position.z*delta + u_vLight.z*in_Normal.z*normalize(vec2(delta.y, -delta.x))), 0.0, 1.0);
     
-    matrix[2][0] = -matrix[3][0] - lightPos.x*matrix[0][0];
-    matrix[2][1] = -matrix[3][1] - lightPos.y*matrix[1][1];
-    matrix[2][2] = 0.0;
-    gl_Position = matrix * vec4(in_Position.xyz, 1.0);
-    
-    v_vTexcoord = in_Normal.xy;
+    v_vTexcoord = in_Texcoord;
 }

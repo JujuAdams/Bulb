@@ -31,7 +31,7 @@ function BulbDynamicOccluder(_renderer) constructor
         //We apply x/y scaling in the __IsOnScreen() function
         __radius = sqrt(max(_x1*_x1 + _y1*_y1, _x2*_x2 + _y2*_y2));
         
-        array_push(vertexArray, _x1, _y1, _x2, _y2);
+        array_push(vertexArray, _x1, _y1, _x2, _y2, _y2-_y1, _x1-_x2);
     }
     
     static ClearEdges = function(_x1, _y1, _x2, _y2)

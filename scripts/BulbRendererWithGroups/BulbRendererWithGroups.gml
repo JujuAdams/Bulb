@@ -437,7 +437,7 @@ function BulbRendererWithGroups(_ambientColour, _mode, _smooth, _maxGroups) cons
                         //Create a new vertex buffer
                         staticVBuffer = vertex_create_buffer();
                         var _staticVBuffer = staticVBuffer;
-                        vertex_begin(_staticVBuffer, global.__bulb_format_3d_texture);
+                        vertex_begin(_staticVBuffer, global.__bulb_format_3d_normal);
                         
                         //Iterate over the static occluders and add them to this group as necessary
                         var _i = 0;
@@ -462,7 +462,7 @@ function BulbRendererWithGroups(_ambientColour, _mode, _smooth, _maxGroups) cons
                     //Refresh the dynamic occluder geometry
                     if (dynamicVBuffer == undefined) dynamicVBuffer = vertex_create_buffer();
                     var _dynamicVBuffer = dynamicVBuffer;
-                    vertex_begin(_dynamicVBuffer, global.__bulb_format_3d_texture);
+                    vertex_begin(_dynamicVBuffer, global.__bulb_format_3d_normal);
                     
                     //Iterate over the dynamic occluders and add them to this group as necessary
                     var _i = 0;
