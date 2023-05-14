@@ -123,6 +123,8 @@ function BulbRenderer(_ambientColour, _mode, _smooth) constructor
     {
         if (__freed) return undefined;
         
+        static _worldMatrix = [1,0,0,0,   0,1,0,0,   0,0,1,0,   0,0,0,1];
+        
         if (surfaceWidth  <= 0) surfaceWidth  = _cameraW;
         if (surfaceHeight <= 0) surfaceHeight = _cameraH;
         
@@ -143,10 +145,16 @@ function BulbRenderer(_ambientColour, _mode, _smooth) constructor
         //Create accumulating lighting __surface
         surface_set_target(GetSurface());
         
+        //Really we should use the view matrix for this, but GameMaker's sprite culling is fucked
+        //If we use a proper view matrix then lighting sprites are culling, leading to no lighting being drawn
+        _worldMatrix[@ 12] = -_cameraL;
+        _worldMatrix[@ 13] = -_cameraT;
+        matrix_set(matrix_world, _worldMatrix);
+        
         //Record the current texture filter state, then set our new filter state
         var _old_tex_filter = gpu_get_tex_filter();
         gpu_set_tex_filter(smooth);
-    
+        
         //Clear the __surface with the ambient colour
         draw_clear(ambientColor);
         
@@ -159,6 +167,7 @@ function BulbRenderer(_ambientColour, _mode, _smooth) constructor
         gpu_set_tex_filter(_old_tex_filter);
         
         surface_reset_target();
+        matrix_set(matrix_world, matrix_build_identity());
     }
     
     /// @param camera
@@ -360,11 +369,11 @@ function BulbRenderer(_ambientColour, _mode, _smooth) constructor
         if (__wipeVBuffer == undefined)
         {
             __wipeVBuffer = vertex_create_buffer();
-            vertex_begin(__wipeVBuffer, global.__bulb_format_3d_colour);
+            vertex_begin(__wipeVBuffer, global.__bulb_format_3d_texture);
             
-            vertex_position_3d(__wipeVBuffer,          0,          0, 0); vertex_colour(__wipeVBuffer, c_black, 1);
-            vertex_position_3d(__wipeVBuffer, 2*_cameraW,          0, 0); vertex_colour(__wipeVBuffer, c_black, 1);
-            vertex_position_3d(__wipeVBuffer,          0, 2*_cameraH, 0); vertex_colour(__wipeVBuffer, c_black, 1);
+            vertex_position_3d(__wipeVBuffer,          0,          0, 0); vertex_normal(__wipeVBuffer, 0, 0, 0);
+            vertex_position_3d(__wipeVBuffer, 2*_cameraW,          0, 0); vertex_normal(__wipeVBuffer, 0, 0, 0);
+            vertex_position_3d(__wipeVBuffer,          0, 2*_cameraH, 0); vertex_normal(__wipeVBuffer, 0, 0, 0);
             
             vertex_end(__wipeVBuffer);
             vertex_freeze(__wipeVBuffer);
@@ -400,7 +409,7 @@ function BulbRenderer(_ambientColour, _mode, _smooth) constructor
             }
             else
             {
-                vertex_begin(__staticVBuffer, global.__bulb_format_3d_colour);
+                vertex_begin(__staticVBuffer, global.__bulb_format_3d_texture);
                 
                 var _array = __staticOccludersArray;
                 var _i = 0;
@@ -456,7 +465,7 @@ function BulbRenderer(_ambientColour, _mode, _smooth) constructor
         }
         else
         {
-            vertex_begin(_dynamicVBuffer, global.__bulb_format_3d_colour);
+            vertex_begin(_dynamicVBuffer, global.__bulb_format_3d_texture);
             
             var _array = __dynamicOccludersArray;
             var _i = 0;
@@ -490,70 +499,17 @@ function BulbRenderer(_ambientColour, _mode, _smooth) constructor
     {
         if (__freed) return undefined;
         
-        #region Linear algebra
+        var _normalCoeff = ((mode == BULB_MODE.HARD_BM_ADD_SELFLIGHTING) || (mode == BULB_MODE.HARD_BM_MAX_SELFLIGHTING))? -1 : 1;
         
-        //var _view_matrix = matrix_build_lookat(_cameraW/2, _cameraH/2, -16000,   _cameraW/2, _cameraH/2, 0,   0, 1, 0);
-        
-        //var _view_matrix = [          1,           0,     0, 0,                   // [           1,           0,         0, 0, 
-        //                              0,           1,     0, 0,                   //             0,           1,         0, 0, 
-        //                              0,           0,     1, 0,                   //             0,           0,         1, 0, 
-        //                    -_cameraW/2, -_cameraH/2, 16000, 1 ];                 //   -_cameraW/2, -_cameraH/2, -camera_z, 1]
-        
-        //var _projMatrix =  matrix_build_projection_ortho(_cameraW, -_cameraH, 1, 32000);
-        
-        //var _projMatrix = [2/_cameraW,           0,            0, 0,             // [ 2/_cameraW,           0,                      0, 0,
-        //                            0, 2/_cameraH,             0, 0,             //             0, 2/_cameraH,                      0, 0,
-        //                            0,           0,  1/(32000-1), 0,             //             0,          0,       1/(z_far-z_near), 0,
-        //                            0,           0, -1/(32000-1), 1 ];           //             0,          0, -z_near/(z_far-z_near), 1];
-        
-        //var _vp_matrix = matrix_multiply(_new_view, _new_proj);
-        
-        //var _vp_matrix = [2/_cameraW,          0,            0, 0,                  // [ 2/_cameraW,           0,                                   0, 0,
-        //                           0, 2/_cameraH,            0, 0,                  //            0, -2/_cameraH,                                   0, 0,
-        //                           0,           0,     1/31999, 0,                  //            0,           0,                    1/(z_far-z_near), 0,
-        //                          -1,           1, 15999/31999, 1 ];                //           -1,           1, (-camera_z - z_near)/(z_far-z_near), 1];
-        
-        #endregion
-        
-        //Ultimately, we can use the following projection matrix
-        if (__BULB_FLIP_CAMERA_Y)
-        {
-            //DirectX platforms want the Y-axis flipped
-            var _vp_matrix = [2/_cameraW,           0, 0, 0,
-                                       0, -2/_cameraH, 0, 0,
-                                       0,           0, 0, 0,
-                                      -1,           1, 1, 1];
-        }
-        else
-        {
-            var _vp_matrix = [2/_cameraW,          0, 0, 0,
-                                       0, 2/_cameraH, 0, 0,
-                                       0,          0, 0, 0,
-                                      -1,         -1, 1, 1];
-        }
-        
-        //We set the view matrix to identity to allow us to use our custom projection matrix
-        matrix_set(matrix_view, [1,0,0,0,  0,1,0,0,  0,0,1,0,  0,0,0,1]);
-        matrix_set(matrix_projection, _vp_matrix);
-            
-        //If culling is switched on, shadows will only be cast from the rear faces of occluders
-        //This requires careful object placement as not to create weird graphical glitches
-        gpu_set_cullmode(((mode == BULB_MODE.HARD_BM_ADD_SELFLIGHTING) || (mode == BULB_MODE.HARD_BM_MAX_SELFLIGHTING))? cull_counterclockwise : cull_noculling);
-            
-        ///////////Iterate over all non-deferred lights...
+        //Iterate over all non-deferred lights...
         if (mode == BULB_MODE.SOFT_BM_ADD)
         {
-            AccumulateSoftLights(_cameraL, _cameraT, _cameraR, _cameraB, _cameraCX, _cameraCY, _cameraW, _cameraH, _vp_matrix);
+            AccumulateSoftLights(_cameraL, _cameraT, _cameraR, _cameraB, _cameraCX, _cameraCY, _cameraW, _cameraH, _normalCoeff);
         }
         else
         {
-            AccumulateHardLights(_cameraL, _cameraT, _cameraR, _cameraB, _cameraCX, _cameraCY, _cameraW, _cameraH, _vp_matrix);
+            AccumulateHardLights(_cameraL, _cameraT, _cameraR, _cameraB, _cameraCX, _cameraCY, _cameraW, _cameraH, _normalCoeff);
         }
-        
-        //Reset culling so we can draw sprites normally
-        gpu_set_cullmode(cull_noculling);
-        
-        
         
         //Now draw shadow overlay sprites, if we have any
         var _size = array_length(__shadowOverlayArray);
@@ -850,49 +806,42 @@ function BulbRenderer(_ambientColour, _mode, _smooth) constructor
     
     #region Accumulate hard lights
     
-    static AccumulateHardLights = function(_cameraL, _cameraT, _cameraR, _cameraB, _cameraCX, _cameraCY, _cameraW, _cameraH, _vp_matrix)
+    static AccumulateHardLights = function(_cameraL, _cameraT, _cameraR, _cameraB, _cameraCX, _cameraCY, _cameraW, _cameraH, _normalCoeff)
     {
         if (__freed) return undefined;
+        
+        static _u_vLight       = shader_get_uniform(__shdBulbHardShadows, "u_vLight");
+        static _u_vNormalCoeff = shader_get_uniform(__shdBulbHardShadows, "u_vNormalCoeff");
         
         var _wipeVBuffer    = __wipeVBuffer;
         var _staticVBuffer  = __staticVBuffer;
         var _dynamicVBuffer = __dynamicVBuffer;
         
-        //Calculate some transform coefficients
-        var _cameraInvW = 2/_cameraW;
-        var _cameraInvH = 2/_cameraH;
-        if (__BULB_FLIP_CAMERA_Y) _cameraInvH = -_cameraInvH;
-        
-        var _cameraTransformedX = _cameraCX*_cameraInvW;
-        var _cameraTransformedY = _cameraCY*_cameraInvH;
-        
-        //Pre-build a custom projection matrix
-        //[8] [9] are set per light
-        var _projMatrix = [         _cameraInvW,                    0, 0,  0,
-                                              0,          _cameraInvH, 0,  0,
-                                      undefined,            undefined, 0, -1,
-                           -_cameraTransformedX, -_cameraTransformedY, 0,  1];
-        
-        // xOut = (x - z*(camX - lightX) - camX) / camW
-        // yOut = (y - z*(camY - lightY) - camY) / camH
-        // zOut = 0
-        
-        gpu_set_ztestenable(true);
-        gpu_set_zwriteenable(true);
-        
+        //bm_max requires some trickery with alpha to get good-looking results
+        //Determine the blend mode and "default" shader accordingly
         if ((mode == BULB_MODE.HARD_BM_MAX) || (mode == BULB_MODE.HARD_BM_MAX_SELFLIGHTING))
         {
-            gpu_set_blendmode(bm_max);
             var _resetShader = __shdBulbPremultiplyAlpha;
+            gpu_set_blendmode(bm_max);
         }
         else
         {
-            gpu_set_blendmode(bm_add);
             var _resetShader = __shdBulbPassThrough;
+            gpu_set_blendmode(bm_add);
         }
         
+        //Set up the coefficient to flip normals
+        //We use this to control self-lighting
+        shader_set(__shdBulbHardShadows);
+        shader_set_uniform_f(_u_vNormalCoeff, _normalCoeff);
+        
+        //Set our default shader
         shader_set(_resetShader);
-        matrix_set(matrix_projection, _vp_matrix);
+        
+        //And switch on z-testing. We'll use z-testing for stenciling
+        gpu_set_ztestenable(true);
+        gpu_set_zwriteenable(true);
+        gpu_set_zfunc(cmpfunc_lessequal);
         
         var _i = 0;
         repeat(array_length(__lightsArray))
@@ -915,48 +864,50 @@ function BulbRenderer(_ambientColour, _mode, _smooth) constructor
                         {
                             if (castShadows)
                             {
-                                //Draw shadow stencil
-                                gpu_set_zfunc(cmpfunc_always);
+                                //Turn off all RGBA writing, leaving only z-writing
                                 gpu_set_colorwriteenable(false, false, false, false);
                                 
-                                //Reset zbuffer
+                                //Guarantee that we're going to write to the z-buffer with the next operations
+                                gpu_set_zfunc(cmpfunc_always);
+                                
+                                //Reset z-buffer
                                 if (__BULB_PARTIAL_CLEAR)
                                 {
                                     draw_sprite_ext(sprite, image,
-                                                    x - _cameraL, y - _cameraT,
+                                                    x, y,
                                                     xscale, yscale, angle,
                                                     c_black, 1);
                                     shader_set(__shdBulbHardShadows);
                                 }
                                 else
                                 {
+                                    //Full surface clear
+                                    //More reliable but slower
                                     shader_set(__shdBulbHardShadows);
                                     vertex_submit(_wipeVBuffer, pr_trianglelist, -1);
                                 }
                                 
-                                //Render shadows
-                                _projMatrix[@ 8] = _cameraTransformedX - x*_cameraInvW;
-                                _projMatrix[@ 9] = _cameraTransformedY - y*_cameraInvH;
-                                matrix_set(matrix_projection, _projMatrix);
+                                //Stencil out shadow areas
+                                shader_set(__shdBulbHardShadows);
+                                shader_set_uniform_f(_u_vLight, x, y, _normalCoeff);
                                 vertex_submit(_staticVBuffer,  pr_trianglelist, -1);
                                 vertex_submit(_dynamicVBuffer, pr_trianglelist, -1);
                                 
-                                //Draw light sprite
-                                shader_set(_resetShader);
-                                gpu_set_zfunc(cmpfunc_lessequal);
+                                //Swap to drawing RGB data (no alpha to make the output surface tidier)
                                 gpu_set_colorwriteenable(true, true, true, false);
-                                matrix_set(matrix_projection, _vp_matrix);
+                                gpu_set_zfunc(cmpfunc_lessequal);
                                 
+                                //Reset shader and draw the light itself, but "behind" the shadows
+                                shader_set(_resetShader);                      
                                 draw_sprite_ext(sprite, image,
-                                                x - _cameraL, y - _cameraT,
+                                                x, y,
                                                 xscale, yscale, angle,
                                                 blend, alpha);
                             }
                             else
                             {
-                                gpu_set_zfunc(cmpfunc_always);
                                 draw_sprite_ext(sprite, image,
-                                                x - _cameraL, y - _cameraT,
+                                                x, y,
                                                 xscale, yscale, angle,
                                                 blend, alpha);
                             }
@@ -968,50 +919,51 @@ function BulbRenderer(_ambientColour, _mode, _smooth) constructor
             }
         }
         
-        var _aspectRatio = _cameraW/_cameraH;
-        var _i = 0;
-        repeat(array_length(__sunlightArray))
-        {
-            var _weak = __sunlightArray[_i];
-            if (!weak_ref_alive(_weak) || _weak.ref.__destroyed)
-            {
-                array_delete(__sunlightArray, _i, 1);
-            }
-            else
-            {
-                with(_weak.ref)
-                {
-                    if (visible)
-                    {
-                        //Draw shadow stencil
-                        gpu_set_zfunc(cmpfunc_always);
-                        gpu_set_colorwriteenable(false, false, false, false);
-                        
-                        //Reset zbuffer
-                        shader_set(__shdBulbHardShadows);
-                        vertex_submit(_wipeVBuffer, pr_trianglelist, -1);
-                        
-                        //Render shadows
-                        _projMatrix[@ 8] = -__BULB_SUNLIGHT_SCALE*dcos(angle);
-                        _projMatrix[@ 9] = -__BULB_SUNLIGHT_SCALE*dsin(angle)*_aspectRatio;
-                        matrix_set(matrix_projection, _projMatrix);
-                        vertex_submit(_staticVBuffer,  pr_trianglelist, -1);
-                        vertex_submit(_dynamicVBuffer, pr_trianglelist, -1);
-                        
-                        //Draw fullscreen light sprite
-                        shader_set(_resetShader);
-                        gpu_set_zfunc(cmpfunc_lessequal);
-                        gpu_set_colorwriteenable(true, true, true, false);
-                        matrix_set(matrix_projection, _vp_matrix);
-                        
-                        draw_sprite_ext(__sprBulbPixel, 0, 0, 0, _cameraW, _cameraH, 0, blend, alpha);
-                    }
-                }
-                
-                ++_i;
-            }
-        }
+        //var _aspectRatio = _cameraW/_cameraH;
+        //var _i = 0;
+        //repeat(array_length(__sunlightArray))
+        //{
+        //    var _weak = __sunlightArray[_i];
+        //    if (!weak_ref_alive(_weak) || _weak.ref.__destroyed)
+        //    {
+        //        array_delete(__sunlightArray, _i, 1);
+        //    }
+        //    else
+        //    {
+        //        with(_weak.ref)
+        //        {
+        //            if (visible)
+        //            {
+        //                //Draw shadow stencil
+        //                gpu_set_zfunc(cmpfunc_always);
+        //                gpu_set_colorwriteenable(false, false, false, false);
+        //                
+        //                //Reset zbuffer
+        //                shader_set(__shdBulbHardShadows);
+        //                vertex_submit(_wipeVBuffer, pr_trianglelist, -1);
+        //                
+        //                //Render shadows
+        //                _projMatrix[@ 8] = -__BULB_SUNLIGHT_SCALE*dcos(angle);
+        //                _projMatrix[@ 9] = -__BULB_SUNLIGHT_SCALE*dsin(angle)*_aspectRatio;
+        //                matrix_set(matrix_projection, _projMatrix);
+        //                vertex_submit(_staticVBuffer,  pr_trianglelist, -1);
+        //                vertex_submit(_dynamicVBuffer, pr_trianglelist, -1);
+        //                
+        //                //Draw fullscreen light sprite
+        //                shader_set(_resetShader);
+        //                gpu_set_zfunc(cmpfunc_lessequal);
+        //                gpu_set_colorwriteenable(true, true, true, false);
+        //                matrix_set(matrix_projection, _vp_matrix);
+        //                
+        //                draw_sprite_ext(__sprBulbPixel, 0, 0, 0, _cameraW, _cameraH, 0, blend, alpha);
+        //            }
+        //        }
+        //        
+        //        ++_i;
+        //    }
+        //}
         
+        gpu_set_zfunc(cmpfunc_lessequal);
         gpu_set_blendmode(bm_normal);
         gpu_set_ztestenable(false);
         gpu_set_zwriteenable(false);
