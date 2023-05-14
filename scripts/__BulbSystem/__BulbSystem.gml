@@ -4,7 +4,7 @@
 #macro __BULB_FORCE_PRODUCTION_MODE  false
 #macro __BULB_BUILD_TYPE             (__BULB_FORCE_PRODUCTION_MODE? "exe" : GM_build_type)
 #macro __BULB_DISK_CACHE_NAME        ((__BULB_BUILD_TYPE == "run")? "BulbCacheDev.dat" : "BulbCache.dat")
-#macro __BULB_ARRAY_VERTEX_SIZE      6
+#macro __BULB_ARRAY_VERTEX_SIZE      8
 
 __BulbInitialize();
 
@@ -19,7 +19,7 @@ function __BulbInitialize()
     //Create a couple vertex formats
     vertex_format_begin();
     vertex_format_add_position_3d();
-    vertex_format_add_normal();
+    vertex_format_add_custom(vertex_type_float4, vertex_usage_texcoord);
     global.__bulb_format_3d_normal = vertex_format_end();
     
     vertex_format_begin();
