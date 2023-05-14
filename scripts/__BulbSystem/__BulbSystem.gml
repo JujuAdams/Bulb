@@ -87,7 +87,7 @@ function __BulbInitialize()
         }
         else if (!file_exists(GM_project_filename))
         {
-            __BulbError("Could not verify existance of your project file\nEnsure that \"Disable file system sandbox\" is enabled\n(Project file path is \"", GM_project_filename, "\")");
+            __BulbError("Could not find your project file\nEnsure that \"Disable file system sandbox\" is enabled\n(Project file path is \"", GM_project_filename, "\")");
         }
         else
         {
