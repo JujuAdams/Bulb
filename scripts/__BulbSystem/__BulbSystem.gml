@@ -9,12 +9,7 @@
 
 __BulbTrace("Welcome to Bulb by @jujuadams! This is version " + __BULB_VERSION + ", " + __BULB_DATE);
 
-//Create a few vertex formats
-vertex_format_begin();
-vertex_format_add_position_3d();
-vertex_format_add_colour();
-global.__bulb_format_3d_colour = vertex_format_end();
-
+//Create a couple vertex formats
 vertex_format_begin();
 vertex_format_add_position_3d();
 vertex_format_add_normal();
