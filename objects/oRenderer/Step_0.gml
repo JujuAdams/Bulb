@@ -26,3 +26,5 @@ if (alarm_get(1) < 0)
     
     smoothedDrawEndTime = lerp(smoothedDrawEndTime, drawEndTime, 0.005);
 }
+
+if (keyboard_check_pressed(ord("N"))) showNormalMap = !showNormalMap;

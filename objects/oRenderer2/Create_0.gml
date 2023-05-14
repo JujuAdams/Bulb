@@ -10,4 +10,4 @@ lighting = new BulbRendererWithGroups(make_colour_rgb(50, 50, 80), BULB_MODE.SOF
 //Set up a vertex buffer for drawing the diffuse base texture for the walls
 //This isn't strictly part of the lighting example
 staticBlocks = new VertexCake();
-staticBlocks.Bake(oStaticOccluder, sStaticBlock, 0, true)
+staticBlocks.Bake(oStaticOccluder2, sStaticBlock, 0, true)

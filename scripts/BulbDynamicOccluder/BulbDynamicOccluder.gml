@@ -11,6 +11,8 @@ function BulbDynamicOccluder(_renderer) constructor
     yscale = 1.0;
     angle  = 0.0;
     
+    //Arranged as repeating units of 6 elements: x1, y1, x2, y2, normal x, normal y
+    //The normal vector does *not* need to be of unit length
     vertexArray = [];
     
     bitmask = BULB_DEFAULT_DYNAMIC_BITMASK;
@@ -27,7 +29,7 @@ function BulbDynamicOccluder(_renderer) constructor
         __destroyed = true;
     }
     
-    static AddEdge = function(_x1, _y1, _x2, _y2)
+    static AddEdge = function(_x1, _y1, _x2, _y2, _nx = (_y2 - _y1), _ny = (_x1 - _x2))
     {
         if (__destroyed) return;
         
@@ -36,10 +38,48 @@ function BulbDynamicOccluder(_renderer) constructor
         __bboxXMax = max(__bboxXMax, __BULB_SQRT_2*_x1, __BULB_SQRT_2*_x2);
         __bboxYMax = max(__bboxYMax, __BULB_SQRT_2*_y1, __BULB_SQRT_2*_y2);
         
-        array_push(vertexArray, _x1, _y1, _x2, _y2);
+        array_push(vertexArray, _x1, _y1, _x2, _y2, _nx, _ny);
+        
+        return self;
     }
     
-    static ClearEdges = function(_x1, _y1, _x2, _y2)
+    //Not used at this time
+    //static AddEdgesFromArray = function(_array)
+    //{
+    //    if (__destroyed) return;
+    //    
+    //    var _oldLength = array_length(vertexArray);
+    //    var _newLength = array_length(_array);
+    //    array_resize(vertexArray, _oldLength + _newLength);
+    //    array_copy(vertexArray, _oldLength, _array, 0, _newLength);
+    //    
+    //    return self;
+    //}
+    
+    static SetSprite = function(_sprite, _image)
+    {
+        ClearEdges();
+        AddSprite(_sprite, _image);
+    }
+    
+    static SetTilemap = function(_tilemap)
+    {
+        ClearEdges();
+        AddTilemap(_tilemap);
+    }
+    
+    static AddSprite = function(_sprite, _image, _xOffset = 0, _yOffset = 0)
+    {
+        __BulbAddSpriteToOccluder(self, _sprite, _image, _xOffset, _yOffset);
+    }
+    
+    static AddTilemap = function(_tilemap)
+    {
+        if (is_string(_tilemap)) _tilemap = layer_tilemap_get_id(_tilemap);
+        __BulbAddTilemapToOccluder(self, _tilemap);
+    }
+    
+    static ClearEdges = function()
     {
         if (__destroyed) return;
         

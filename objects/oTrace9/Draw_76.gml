@@ -1,0 +1,1 @@
+occluder.SetSprite(sprite_index, image_index);

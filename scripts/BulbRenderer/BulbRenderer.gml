@@ -1,6 +1,7 @@
 /// @param ambientColour
 /// @param mode
 /// @param smooth
+/// @param [useNormalMap=false]
 
 enum BULB_MODE
 {
@@ -12,12 +13,12 @@ enum BULB_MODE
     __SIZE
 }
 
-function BulbRenderer(_ambientColour, _mode, _smooth) constructor
+function BulbRenderer(_ambientColour, _mode, _smooth, _useNormalMap = false) constructor
 {
     //Assign the ambient colour used for the darkest areas of the screen. This can be changed on the fly
     ambientColor = _ambientColour;
     
-    //The smoothing mode controls texture filtering both when accumulating lights and when drawing the resulting __surface
+    //The smoothing mode controls texture filtering both when accumulating lights and when drawing the resulting surface
     smooth = _smooth;
     
     mode = _mode;
@@ -29,7 +30,11 @@ function BulbRenderer(_ambientColour, _mode, _smooth) constructor
     __staticVBuffer  = undefined; //Vertex buffer describing the geometry of static occluder objects
     __dynamicVBuffer = undefined; //As above but for dynamic shadow occluders. This is updated every step
     __wipeVBuffer    = undefined; //This vertex buffer is used to reset the z-buffer during accumulation of non-deferred lights
-    __surface        = undefined; //Screen-space __surface for final accumulation of lights
+    __surface        = undefined; //Screen-space surface for final accumulation of lights
+    
+    __usingNormalMap = _useNormalMap;
+    __normalSurface  = undefined; //Screen-space surface that stores normals. This may stay <undefined> if no normal map is ever added
+    __oldTexFilter   = undefined;
     
     __staticOccludersArray  = [];
     __dynamicOccludersArray = [];
@@ -50,6 +55,56 @@ function BulbRenderer(_ambientColour, _mode, _smooth) constructor
     static GetAmbientColor = function()
     {
         return ambientColor;
+    }
+    
+    static StartDrawingToNormalMapFromCamera = function(_camera, _clear)
+    {
+        var _viewMatrix = camera_get_view_mat(_camera);
+        var _projMatrix = camera_get_proj_mat(_camera);
+        
+        //Deploy PROPER MATHS in case the dev is using matrices
+        var _cameraX          = -_viewMatrix[12];
+        var _cameraY          = -_viewMatrix[13];
+        var _cameraViewWidth  = round(abs(2/_projMatrix[0]));
+        var _cameraViewHeight = round(abs(2/_projMatrix[5]));
+        var _cameraLeft       = _cameraX - _cameraViewWidth/2;
+        var _cameraTop        = _cameraY - _cameraViewHeight/2;
+        
+        return StartDrawingToNormalMap(_cameraLeft, _cameraTop, _cameraViewWidth, _cameraViewHeight, _clear);
+    }
+    
+    static StartDrawingToNormalMap = function(_cameraL, _cameraT, _cameraW, _cameraH, _clear)
+    {
+        if (!__usingNormalMap) __BulbError("Normal map was not added to this renderer when instantiated");
+        
+        if (surfaceWidth  <= 0) surfaceWidth  = _cameraW;
+        if (surfaceHeight <= 0) surfaceHeight = _cameraH;
+        
+        __oldTexFilter = gpu_get_tex_filter();
+        gpu_set_tex_filter(smooth);
+        
+        surface_set_target(GetNormalMapSurface());
+        //FIXME - GameMaker is fucking stupid and aggressively culls sprite calls that it shouldn't
+        //        This should be implemented used the view matrix but instead we have to workaround by using the world matrix
+        matrix_set(matrix_world, matrix_build(-_cameraL, -_cameraT, 0,   0,0,0,   1,1,1));
+        if (_clear) draw_clear(__BULB_NORMAL_CLEAR_COLOUR);
+        shader_set(__shdBulbTransformNormal);
+    }
+    
+    static StopDrawingToNormalMap = function()
+    {
+        if (__oldTexFilter == undefined)
+        {
+            __BulbError("Must call .StopDrawingToNormalMap() after .StartDrawingToNormalMap*()");
+        }
+        
+        surface_reset_target();
+        shader_reset();
+        
+        matrix_set(matrix_world, matrix_build_identity());
+        
+        gpu_set_tex_filter(__oldTexFilter);
+        __oldTexFilter = undefined;
     }
     
     static UpdateFromCamera = function(_camera)
@@ -198,6 +253,36 @@ function BulbRenderer(_ambientColour, _mode, _smooth) constructor
         return __surface;
     }
     
+    static GetNormalMapSurface = function()
+    {
+        if (__freed) return undefined;
+        
+        if (!__usingNormalMap)
+        {
+            __BulbError("No normal map has been added to this renderer");
+            return undefined;
+        }
+        
+        if ((surfaceWidth <= 0) || (surfaceHeight <= 0)) return undefined;
+        
+        if ((__normalSurface != undefined) && ((surface_get_width(__normalSurface) != surfaceWidth) || (surface_get_height(__normalSurface) != surfaceHeight)))
+        {
+            surface_free(__normalSurface);
+            __normalSurface = undefined;
+        }
+        
+        if ((__normalSurface == undefined) || !surface_exists(__normalSurface))
+        {
+            __normalSurface = surface_create(surfaceWidth, surfaceHeight);
+            
+            surface_set_target(__normalSurface);
+            draw_clear_alpha(__BULB_NORMAL_CLEAR_COLOUR, 1.0);
+            surface_reset_target();
+        }
+        
+        return __normalSurface;
+    }
+    
     static RefreshStaticOccluders = function()
     {
         if (__freed) return undefined;
@@ -213,6 +298,7 @@ function BulbRenderer(_ambientColour, _mode, _smooth) constructor
     {
         __FreeVertexBuffers();
         __FreeSurface();
+        __FreeNormalMapSurface();
         
         __freed = true;
     }
@@ -236,7 +322,7 @@ function BulbRenderer(_ambientColour, _mode, _smooth) constructor
         if (__wipeVBuffer == undefined)
         {
             __wipeVBuffer = vertex_create_buffer();
-            vertex_begin(__wipeVBuffer, global.__bulb_format_3d_colour);
+            vertex_begin(__wipeVBuffer, global.__bulbFormatPassthrough);
             
             vertex_position_3d(__wipeVBuffer,          0,          0, 0); vertex_colour(__wipeVBuffer, c_black, 1);
             vertex_position_3d(__wipeVBuffer, 2*_cameraW,          0, 0); vertex_colour(__wipeVBuffer, c_black, 1);
@@ -256,7 +342,7 @@ function BulbRenderer(_ambientColour, _mode, _smooth) constructor
             //Add static shadow caster vertices to the relevant vertex buffer
             if (mode == BULB_MODE.SOFT_BM_ADD)
             {
-                vertex_begin(__staticVBuffer, global.__bulb_format_3d_texture);
+                vertex_begin(__staticVBuffer, global.__bulbFormatSoft);
                 
                 var _array = __staticOccludersArray;
                 var _i = 0;
@@ -276,7 +362,7 @@ function BulbRenderer(_ambientColour, _mode, _smooth) constructor
             }
             else
             {
-                vertex_begin(__staticVBuffer, global.__bulb_format_3d_colour);
+                vertex_begin(__staticVBuffer, global.__bulbFormatHard);
                 
                 var _array = __staticOccludersArray;
                 var _i = 0;
@@ -308,7 +394,7 @@ function BulbRenderer(_ambientColour, _mode, _smooth) constructor
         //Add dynamic occluder vertices to the relevant vertex buffer
         if (mode == BULB_MODE.SOFT_BM_ADD)
         {
-            vertex_begin(_dynamicVBuffer, global.__bulb_format_3d_texture);
+            vertex_begin(_dynamicVBuffer, global.__bulbFormatSoft);
             
             var _array = __dynamicOccludersArray;
             var _i = 0;
@@ -332,7 +418,7 @@ function BulbRenderer(_ambientColour, _mode, _smooth) constructor
         }
         else
         {
-            vertex_begin(_dynamicVBuffer, global.__bulb_format_3d_colour);
+            vertex_begin(_dynamicVBuffer, global.__bulbFormatHard);
             
             var _array = __dynamicOccludersArray;
             var _i = 0;
@@ -463,6 +549,15 @@ function BulbRenderer(_ambientColour, _mode, _smooth) constructor
         // yOut = (y - z*(camY - lightY) - camY) / camH
         // zOut = 0
         
+        var _usingNormalMap = __usingNormalMap;
+        if (_usingNormalMap)
+        {
+            shader_set(__shdBulbSoftNormal);
+            var _normalMapTexture = surface_get_texture(GetNormalMapSurface());
+            texture_set_stage(shader_get_sampler_index(__shdBulbSoftNormal, "u_sNormalMap"), _normalMapTexture);
+            shader_reset();
+        }
+        
         var _i = 0;
         repeat(array_length(__lightsArray))
         {
@@ -482,6 +577,7 @@ function BulbRenderer(_ambientColour, _mode, _smooth) constructor
                     {
                         if (castShadows)
                         {
+                            shader_reset();
                             gpu_set_colorwriteenable(false, false, false, true);
                             
                             //Clear alpha channel
@@ -509,9 +605,23 @@ function BulbRenderer(_ambientColour, _mode, _smooth) constructor
                             vertex_submit(_staticVBuffer,  pr_trianglelist, -1);
                             vertex_submit(_dynamicVBuffer, pr_trianglelist, -1);
                             
+                            matrix_set(matrix_projection, _vp_matrix);
+                            
+                            //Add the influence of the normal map
+                            if (_usingNormalMap)
+                            {
+                                shader_set(__shdBulbSoftNormal);
+                                texture_set_stage(shader_get_sampler_index(__shdBulbSoftNormal, "u_sNormalMap"), _normalMapTexture);
+                                shader_set_uniform_f(shader_get_uniform(__shdBulbSoftNormal, "u_vLightPos"), x - _cameraL, y - _cameraT, 100);
+                                
+                                draw_sprite_ext(sprite, image,
+                                                x - _cameraL, y - _cameraT,
+                                                xscale, yscale, angle,
+                                                blend, alpha);
+                            }
+                            
                             //Draw light sprite
                             shader_reset();
-                            matrix_set(matrix_projection, _vp_matrix);
                             
                             if (alpha < 1.0)
                             {
@@ -526,7 +636,6 @@ function BulbRenderer(_ambientColour, _mode, _smooth) constructor
                             
                             gpu_set_colorwriteenable(true, true, true, false);
                             gpu_set_blendmode_ext(bm_inv_dest_alpha, bm_one);
-                            
                             draw_sprite_ext(sprite, image,
                                             x - _cameraL, y - _cameraT,
                                             xscale, yscale, angle,
@@ -535,10 +644,27 @@ function BulbRenderer(_ambientColour, _mode, _smooth) constructor
                         else
                         {
                             gpu_set_blendmode(bm_add);
-                            draw_sprite_ext(sprite, image,
-                                            x - _cameraL, y - _cameraT,
-                                            xscale, yscale, angle,
-                                            blend, alpha);
+                            
+                            if (_usingNormalMap)
+                            {
+                                shader_set(__shdBulbPassThroughWithNormalMap);
+                                texture_set_stage(shader_get_sampler_index(__shdBulbPassThroughWithNormalMap, "u_sNormalMap"), _normalMapTexture);
+                                shader_set_uniform_f(shader_get_uniform(__shdBulbPassThroughWithNormalMap, "u_vLightPos"), x - _cameraL, y - _cameraT, 100);
+                                
+                                draw_sprite_ext(sprite, image,
+                                                x - _cameraL, y - _cameraT,
+                                                xscale, yscale, angle,
+                                                blend, alpha);
+                                
+                                shader_reset();
+                            }
+                            else
+                            {
+                                draw_sprite_ext(sprite, image,
+                                                x - _cameraL, y - _cameraT,
+                                                xscale, yscale, angle,
+                                                blend, alpha);
+                            }
                         }
                     }
                 }
@@ -584,19 +710,27 @@ function BulbRenderer(_ambientColour, _mode, _smooth) constructor
         gpu_set_ztestenable(true);
         gpu_set_zwriteenable(true);
         
+        var _usingNormalMap = __usingNormalMap;
+        
         if ((mode == BULB_MODE.HARD_BM_MAX) || (mode == BULB_MODE.HARD_BM_MAX_SELFLIGHTING))
         {
             gpu_set_blendmode(bm_max);
-            var _resetShader = __shdBulbPremultiplyAlpha;
+            var _resetShader = _usingNormalMap? __shdBulbPremultiplyAlphaWithNormalMap : __shdBulbPremultiplyAlpha;
         }
         else
         {
             gpu_set_blendmode(bm_add);
-            var _resetShader = __shdBulbPassThrough;
+            var _resetShader = _usingNormalMap? __shdBulbPassThroughWithNormalMap : __shdBulbPassThrough;
         }
         
         shader_set(_resetShader);
         matrix_set(matrix_projection, _vp_matrix);
+        
+        if (_usingNormalMap)
+        {
+            var _normalMapTexture = surface_get_texture(GetNormalMapSurface());
+            texture_set_stage(shader_get_sampler_index(_resetShader, "u_sNormalMap"), _normalMapTexture);
+        }
         
         var _i = 0;
         repeat(array_length(__lightsArray))
@@ -620,7 +754,7 @@ function BulbRenderer(_ambientColour, _mode, _smooth) constructor
                             //Draw shadow stencil
                             gpu_set_zfunc(cmpfunc_always);
                             gpu_set_colorwriteenable(false, false, false, false);
-                    
+                            
                             //Reset zbuffer
                             if (__BULB_PARTIAL_CLEAR)
                             {
@@ -635,20 +769,26 @@ function BulbRenderer(_ambientColour, _mode, _smooth) constructor
                                 shader_set(__shdBulbHardShadows);
                                 vertex_submit(_wipeVBuffer, pr_trianglelist, -1);
                             }
-                    
+                            
                             //Render shadows
                             _projMatrix[@ 8] = _cameraTransformedX - x*_cameraInvW;
                             _projMatrix[@ 9] = _cameraTransformedY - y*_cameraInvH;
                             matrix_set(matrix_projection, _projMatrix);
                             vertex_submit(_staticVBuffer,  pr_trianglelist, -1);
                             vertex_submit(_dynamicVBuffer, pr_trianglelist, -1);
-                    
+                            
                             //Draw light sprite
                             shader_set(_resetShader);
                             gpu_set_zfunc(cmpfunc_lessequal);
                             gpu_set_colorwriteenable(true, true, true, false);
                             matrix_set(matrix_projection, _vp_matrix);
-                    
+                            
+                            if (_usingNormalMap)
+                            {
+                                texture_set_stage(shader_get_sampler_index(_resetShader, "u_sNormalMap"), _normalMapTexture);
+                                shader_set_uniform_f(shader_get_uniform(_resetShader, "u_vLightPos"), x - _cameraL, y - _cameraT, z);
+                            }
+                            
                             draw_sprite_ext(sprite, image,
                                             x - _cameraL, y - _cameraT,
                                             xscale, yscale, angle,
@@ -656,6 +796,11 @@ function BulbRenderer(_ambientColour, _mode, _smooth) constructor
                         }
                         else
                         {
+                            if (_usingNormalMap)
+                            {
+                                shader_set_uniform_f(shader_get_uniform(_resetShader, "u_vLightPos"), x - _cameraL, y - _cameraT, z);
+                            }
+                            
                             gpu_set_zfunc(cmpfunc_always);
                             draw_sprite_ext(sprite, image,
                                             x - _cameraL, y - _cameraT,
@@ -669,6 +814,7 @@ function BulbRenderer(_ambientColour, _mode, _smooth) constructor
             }
         }
         
+        shader_reset();
         gpu_set_blendmode(bm_normal);
         gpu_set_ztestenable(false);
         gpu_set_zwriteenable(false);
@@ -701,6 +847,15 @@ function BulbRenderer(_ambientColour, _mode, _smooth) constructor
         {
             surface_free(__surface);
             __surface = undefined;
+        }
+    }
+    
+    static __FreeNormalMapSurface = function()
+    {
+        if ((__normalSurface != undefined) && surface_exists(__normalSurface))
+        {
+            surface_free(__normalSurface);
+            __normalSurface = undefined;
         }
     }
     

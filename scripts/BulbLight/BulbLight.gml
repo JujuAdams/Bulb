@@ -3,8 +3,9 @@
 /// @param image
 /// @param x
 /// @param y
+/// @param [z=0]
 
-function BulbLight(_renderer, _sprite, _image, _x, _y) constructor
+function BulbLight(_renderer, _sprite, _image, _x, _y, _z = 0) constructor
 {
     visible = true;
     
@@ -12,6 +13,7 @@ function BulbLight(_renderer, _sprite, _image, _x, _y) constructor
     image          = _image;
     x              = _x;
     y              = _y;
+    z              = _z;
     xprevious      = x;
     yprevious      = y;
     xscale         = 1.0;
