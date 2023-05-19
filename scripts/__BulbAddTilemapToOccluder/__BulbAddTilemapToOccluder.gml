@@ -17,18 +17,16 @@ function __BulbAddTilemapToOccluder(_occluder, _tilemap)
     var _copyArrayFunc = function(_sourceArray, _destinationArray, _xOffset, _yOffset)
     {
         var _j = 0;
-        repeat(array_length(_sourceArray) div __BULB_ARRAY_VERTEX_SIZE)
+        repeat(array_length(_sourceArray) div 4)
         {
             //TODO - Optimise this
-            array_push(_destinationArray, _sourceArray[_j  ] + _xOffset,
-                                          _sourceArray[_j+1] + _yOffset,
-                                          _sourceArray[_j+2] + _xOffset,
-                                          _sourceArray[_j+3] + _yOffset,
-                                          _sourceArray[_j+4],
-                                          _sourceArray[_j+5],
-                                          _sourceArray[_j+6],
-                                          _sourceArray[_j+7]);
-            _j += 6;
+            var _x1 = _sourceArray[_j  ] + _xOffset;
+            var _y1 = _sourceArray[_j+1] + _yOffset;
+            var _x2 = _sourceArray[_j+2] + _xOffset;
+            var _y2 = _sourceArray[_j+3] + _yOffset;
+            array_push(_destinationArray, _x1, _y1, _x2, _y2, _x1, _y1, _x2, _y2);
+            
+            _j += 4;
         }
     }
     
