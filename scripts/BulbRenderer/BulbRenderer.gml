@@ -22,6 +22,8 @@ function BulbRenderer(_ambientColour, _mode, _smooth) constructor
     
     mode = _mode;
     
+    outputMultiply = true;
+    
     __surfaceWidth  = -1;
     __surfaceHeight = -1;
     
@@ -205,18 +207,26 @@ function BulbRenderer(_ambientColour, _mode, _smooth) constructor
             
             gpu_set_colorwriteenable(true, true, true, false);
             
-            if (_alpha == 1.0)
+            if (outputMultiply)
             {
-                //Don't use the shader if we don't have to!
-                gpu_set_blendmode_ext(bm_dest_color, bm_zero);
-                draw_surface_stretched(__surface, _x, _y, _width, _height);
+                if (_alpha == 1.0)
+                {
+                    //Don't use the shader if we don't have to!
+                    gpu_set_blendmode_ext(bm_dest_color, bm_zero);
+                    draw_surface_stretched(__surface, _x, _y, _width, _height);
+                }
+                else
+                {
+                    gpu_set_blendmode_ext(bm_dest_color, bm_inv_src_alpha);
+                    shader_set(__shdBulbFinalRender);
+                    draw_surface_stretched_ext(__surface, _x, _y, _width, _height, c_white, _alpha);
+                    shader_reset();
+                }
             }
             else
             {
-                gpu_set_blendmode_ext(bm_dest_color, bm_inv_src_alpha);
-                shader_set(__shdBulbFinalRender);
-                draw_surface_stretched_ext(__surface, _x, _y, _width, _height, c_white, _alpha);
-                shader_reset();
+                gpu_set_blendmode_ext(bm_one, bm_one);
+                draw_surface_stretched(__surface, _x, _y, _width, _height);
             }
             
             gpu_set_blendmode(bm_normal);
