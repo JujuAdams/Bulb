@@ -19,13 +19,12 @@ function __BulbInitialize()
     //Create a couple vertex formats
     vertex_format_begin();
     vertex_format_add_position_3d();
-    vertex_format_add_custom(vertex_type_float4, vertex_usage_texcoord);
+    vertex_format_add_custom(vertex_type_float4, vertex_usage_normal);
     global.__bulb_format_3d_normal = vertex_format_end();
     
     vertex_format_begin();
     vertex_format_add_position_3d();
-    vertex_format_add_normal();
-    vertex_format_add_texcoord();
+    vertex_format_add_custom(vertex_type_float3, vertex_usage_texcoord);
     global.__bulb_format_3d_normal_tex = vertex_format_end();
     
     global.__bulbSpriteDict  = {};
