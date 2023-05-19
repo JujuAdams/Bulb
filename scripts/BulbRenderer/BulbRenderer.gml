@@ -22,8 +22,8 @@ function BulbRenderer(_ambientColour, _mode, _smooth) constructor
     
     mode = _mode;
     
-    surfaceWidth  = -1;
-    surfaceHeight = -1;
+    __surfaceWidth  = -1;
+    __surfaceHeight = -1;
     
     //Initialise variables used and updated in .__UpdateVertexBuffers()
     __staticVBuffer  = undefined; //Vertex buffer describing the geometry of static occluder objects
@@ -62,8 +62,8 @@ function BulbRenderer(_ambientColour, _mode, _smooth) constructor
     
     static SetSurfaceDimensions = function(_width, _height)
     {
-        surfaceWidth  = _width;
-        surfaceHeight = _height;
+        __surfaceWidth  = _width;
+        __surfaceHeight = _height;
         
         GetSurface();
         GetClippingSurface();
@@ -124,8 +124,8 @@ function BulbRenderer(_ambientColour, _mode, _smooth) constructor
         
         static _worldMatrix = [1,0,0,0,   0,1,0,0,   0,0,1,0,   0,0,0,1];
         
-        if (surfaceWidth  <= 0) surfaceWidth  = _cameraW;
-        if (surfaceHeight <= 0) surfaceHeight = _cameraH;
+        if (__surfaceWidth  <= 0) __surfaceWidth  = _cameraW;
+        if (__surfaceHeight <= 0) __surfaceHeight = _cameraH;
         
         if (mode != __oldMode)
         {
@@ -203,8 +203,8 @@ function BulbRenderer(_ambientColour, _mode, _smooth) constructor
         
         var _x      = argument[0];
         var _y      = argument[1];
-        var _width  = ((argument_count > 2) && (argument[2] != undefined))? argument[2] : surfaceWidth;
-        var _height = ((argument_count > 3) && (argument[3] != undefined))? argument[3] : surfaceHeight;
+        var _width  = ((argument_count > 2) && (argument[2] != undefined))? argument[2] : __surfaceWidth;
+        var _height = ((argument_count > 3) && (argument[3] != undefined))? argument[3] : __surfaceHeight;
         var _alpha  = ((argument_count > 4) && (argument[4] != undefined))? argument[4] : 1.0;
         
         if ((__surface != undefined) && surface_exists(__surface))
@@ -240,9 +240,9 @@ function BulbRenderer(_ambientColour, _mode, _smooth) constructor
     static GetSurface = function()
     {
         if (__freed) return undefined;
-        if ((surfaceWidth <= 0) || (surfaceHeight <= 0)) return undefined;
+        if ((__surfaceWidth <= 0) || (__surfaceHeight <= 0)) return undefined;
         
-        if ((__surface != undefined) && ((surface_get_width(__surface) != surfaceWidth) || (surface_get_height(__surface) != surfaceHeight)))
+        if ((__surface != undefined) && ((surface_get_width(__surface) != __surfaceWidth) || (surface_get_height(__surface) != __surfaceHeight)))
         {
             surface_free(__surface);
             __surface = undefined;
@@ -250,7 +250,7 @@ function BulbRenderer(_ambientColour, _mode, _smooth) constructor
         
         if ((__surface == undefined) || !surface_exists(__surface))
         {
-            __surface = surface_create(surfaceWidth, surfaceHeight);
+            __surface = surface_create(__surfaceWidth, __surfaceHeight);
             
             surface_set_target(__surface);
             draw_clear_alpha(c_black, 1.0);
@@ -263,9 +263,9 @@ function BulbRenderer(_ambientColour, _mode, _smooth) constructor
     static GetClippingSurface = function()
     {
         if (__freed || !__clipEnabled) return undefined;
-        if ((surfaceWidth <= 0) || (surfaceHeight <= 0)) return undefined;
+        if ((__surfaceWidth <= 0) || (__surfaceHeight <= 0)) return undefined;
         
-        if ((__clipSurface != undefined) && ((surface_get_width(__clipSurface) != surfaceWidth) || (surface_get_height(__clipSurface) != surfaceHeight)))
+        if ((__clipSurface != undefined) && ((surface_get_width(__clipSurface) != __surfaceWidth) || (surface_get_height(__clipSurface) != __surfaceHeight)))
         {
             surface_free(__clipSurface);
             __clipSurface = undefined;
@@ -273,7 +273,7 @@ function BulbRenderer(_ambientColour, _mode, _smooth) constructor
         
         if ((__clipSurface == undefined) || !surface_exists(__clipSurface))
         {
-            __clipSurface = surface_create(surfaceWidth, surfaceHeight);
+            __clipSurface = surface_create(__surfaceWidth, __surfaceHeight);
             
             surface_set_target(__clipSurface);
             
