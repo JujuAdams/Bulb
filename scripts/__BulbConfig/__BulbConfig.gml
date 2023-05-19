@@ -36,4 +36,4 @@
 //    This means that the disk cache will be fully refreshed every time you distribute a new build
 //
 //  N.B. This feature has not been tested on console. Please conduct full testing before use cross-platform
-#macro BULB_USE_DISK_CACHE  true
+#macro BULB_USE_DISK_CACHE  false
