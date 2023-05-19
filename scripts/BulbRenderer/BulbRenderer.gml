@@ -91,16 +91,6 @@ function BulbRenderer(_ambientColour, _mode, _smooth) constructor
         gpu_set_blendmode(bm_normal);
     }
     
-    static SetAmbientColor = function(_color)
-    {
-        ambientColor = _color;
-    }
-    
-    static GetAmbientColor = function()
-    {
-        return ambientColor;
-    }
-    
     static UpdateFromCamera = function(_camera)
     {
         //Deploy PROPER MATHS in case the dev is using matrices
