@@ -24,7 +24,9 @@ function __BulbAddTilemapToOccluder(_occluder, _tilemap)
                                           _sourceArray[_j+2] + _xOffset,
                                           _sourceArray[_j+3] + _yOffset,
                                           _sourceArray[_j+4],
-                                          _sourceArray[_j+5]);
+                                          _sourceArray[_j+5],
+                                          _sourceArray[_j+6],
+                                          _sourceArray[_j+7]);
             _j += 6;
         }
     }

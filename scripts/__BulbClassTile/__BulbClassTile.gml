@@ -61,7 +61,8 @@ function __BulbClassTile(_tileset, _tileIndex, _x, _y) constructor
                 
                 array_push(_writeArray, _x1, _y1,
                                         _x2, _y2,
-                                        _y2 - _y1, _x1 - _x2);
+                                        _x1, _y1,
+                                        _x2, _y2);
                 
                 _j += 2;
             }
