@@ -50,7 +50,6 @@
     {"id":{"name":"__shdBulbSoftShadows","path":"shaders/__shdBulbSoftShadows/__shdBulbSoftShadows.yy",},"order":2,},
     {"id":{"name":"oSpriteOccluder3","path":"objects/oSpriteOccluder3/oSpriteOccluder3.yy",},"order":7,},
     {"id":{"name":"__BulbGetTileset","path":"scripts/__BulbGetTileset/__BulbGetTileset.yy",},"order":21,},
-    {"id":{"name":"__BulbEncodeTransformAsColor","path":"scripts/__BulbEncodeTransformAsColor/__BulbEncodeTransformAsColor.yy",},"order":19,},
     {"id":{"name":"__shdBulbPremultiplyAlpha","path":"shaders/__shdBulbPremultiplyAlpha/__shdBulbPremultiplyAlpha.yy",},"order":4,},
     {"id":{"name":"sTest2","path":"sprites/sTest2/sTest2.yy",},"order":11,},
     {"id":{"name":"BulbShadowOverlay","path":"scripts/BulbShadowOverlay/BulbShadowOverlay.yy",},"order":7,},
