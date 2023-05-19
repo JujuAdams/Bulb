@@ -4,7 +4,7 @@
   "name": "__shdBulbHSVValueToAlpha",
   "type": 1,
   "parent": {
-    "name": "(Pay no attention to that man behind the curtain)",
-    "path": "folders/Bulb/(System)/(Pay no attention to that man behind the curtain).yy",
+    "name": "Shaders",
+    "path": "folders/Bulb/(System)/(Pay no attention to that man behind the curtain)/Shaders.yy",
   },
 }

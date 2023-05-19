@@ -5,7 +5,7 @@
   "isDnD": false,
   "isCompatibility": false,
   "parent": {
-    "name": "(Pay no attention to that man behind the curtain)",
-    "path": "folders/Bulb/(System)/(Pay no attention to that man behind the curtain).yy",
+    "name": "Classes",
+    "path": "folders/Bulb/(System)/(Pay no attention to that man behind the curtain)/Classes.yy",
   },
 }
