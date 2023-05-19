@@ -11,6 +11,7 @@
     {"id":{"name":"tsTileset","path":"tilesets/tsTileset/tsTileset.yy",},"order":17,},
     {"id":{"name":"sLight128","path":"sprites/sLight128/sLight128.yy",},"order":4,},
     {"id":{"name":"oSpriteOccluder5","path":"objects/oSpriteOccluder5/oSpriteOccluder5.yy",},"order":9,},
+    {"id":{"name":"__shdBulbClipHSV","path":"shaders/__shdBulbClipHSV/__shdBulbClipHSV.yy",},"order":8,},
     {"id":{"name":"sLightTorch","path":"sprites/sLightTorch/sLightTorch.yy",},"order":5,},
     {"id":{"name":"BulbDynamicOccluder","path":"scripts/BulbDynamicOccluder/BulbDynamicOccluder.yy",},"order":5,},
     {"id":{"name":"oSpriteOccluder6","path":"objects/oSpriteOccluder6/oSpriteOccluder6.yy",},"order":10,},

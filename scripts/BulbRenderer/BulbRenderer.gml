@@ -44,7 +44,6 @@ function BulbRenderer(_ambientColour, _mode, _smooth) constructor
     
     __clipEnabled      = false;
     __clipSurface      = undefined;
-    __clipIsShadow     = true;
     __clipAlpha        = 1.0;
     __clipInvert       = false;
     __clipValueToAlpha = false;
@@ -71,10 +70,9 @@ function BulbRenderer(_ambientColour, _mode, _smooth) constructor
         GetClippingSurface();
     }
     
-    static SetClippingSurface = function(_clipIsShadow, _clipAlpha, _clipInvert = false, _hsvValueToAlpha = false)
+    static SetClippingSurface = function(_clipAlpha, _clipInvert, _hsvValueToAlpha)
     {
         __clipEnabled      = true;
-        __clipIsShadow     = _clipIsShadow;
         __clipAlpha        = _clipAlpha;
         __clipInvert       = _clipInvert;
         __clipValueToAlpha = _hsvValueToAlpha;
@@ -134,7 +132,8 @@ function BulbRenderer(_ambientColour, _mode, _smooth) constructor
         __UpdateVertexBuffers(_cameraL, _cameraT, _cameraR, _cameraB, _cameraW, _cameraH);
         
         //Create accumulating lighting __surface
-        surface_set_target(GetSurface());
+        var _surface = GetSurface();
+        surface_set_target(_surface);
         
         gpu_set_cullmode(cull_noculling);
         
@@ -154,13 +153,15 @@ function BulbRenderer(_ambientColour, _mode, _smooth) constructor
         //If we're not forcing deferred rendering everywhere, update those lights
         AccumulateLights(_cameraL, _cameraT, _cameraR, _cameraB, _cameraCX, _cameraCY, _cameraW, _cameraH);
         
+        //Reset the world matrix before applying the clipping surface
+        matrix_set(matrix_world, matrix_build_identity());
+        
         if (__clipEnabled) __ApplyClippingSurface();
         
         //Restore the old filter state
         gpu_set_tex_filter(_old_tex_filter);
         
         surface_reset_target();
-        matrix_set(matrix_world, matrix_build_identity());
     }
     
     /// @param camera
@@ -911,27 +912,25 @@ function BulbRenderer(_ambientColour, _mode, _smooth) constructor
         var _clipSurface = GetClippingSurface();
         if (_clipSurface != undefined)
         {
-            if (!__clipInvert) //Intended to be (!__clipInvert)
+            gpu_set_colorwriteenable(true, true, true, false);
+            
+            if (__clipInvert)
             {
-                //Use an inverse alpha so that we paint visible areas onto the clip surface
-                //Inverted mode should use GameMaker's standard alpha blending
-                //...this makes sense if you think about it, trust me
                 gpu_set_blendmode_ext(bm_inv_src_alpha, bm_src_alpha);
             }
-            
-            gpu_set_colorwriteenable(true, true, true, false);
+            else
+            {
+                gpu_set_blendmode_ext(bm_src_alpha, bm_inv_src_alpha);
+            }
             
             if (__clipValueToAlpha)
             {
                 //Apply the HSV value->alpha conversion shader if so desired
-                shader_set(__shdBulbHSVValueToAlpha);
-                draw_surface_ext(_clipSurface, 0, 0, 1, 1, 0, __clipIsShadow? ambientColor : c_white, __clipAlpha);
-                shader_reset();
+                shader_set(__shdBulbClipHSV);
             }
-            else
-            {
-                draw_surface_ext(_clipSurface, 0, 0, 1, 1, 0, __clipIsShadow? ambientColor : c_white, __clipAlpha);
-            }
+            
+            draw_surface_ext(_clipSurface, 0, 0, 1, 1, 0, ambientColor, __clipAlpha);
+            shader_reset();
             
             //Reset GPU state
             gpu_set_blendmode(bm_normal);
