@@ -47,10 +47,10 @@ function __BulbAddTilemapToOccluder(_occluder, _tilemap)
                     
                     _copyArrayFunc(_tile.__edgeArray, _occluderVertexArray, _xOffset, _yOffset);
                     
-                    /*if (tilemap_get(_tilemap, _x+1, _y) == 0)*/ _copyArrayFunc(_tile.__rightArray,  _occluderVertexArray, _xOffset, _yOffset);
-                    /*if (tilemap_get(_tilemap, _x, _y-1) == 0)*/ _copyArrayFunc(_tile.__topArray,    _occluderVertexArray, _xOffset, _yOffset);
-                    /*if (tilemap_get(_tilemap, _x-1, _y) == 0)*/ _copyArrayFunc(_tile.__leftArray,   _occluderVertexArray, _xOffset, _yOffset);
-                    /*if (tilemap_get(_tilemap, _x, _y+1) == 0)*/ _copyArrayFunc(_tile.__bottomArray, _occluderVertexArray, _xOffset, _yOffset);
+                    if (tilemap_get(_tilemap, _x+1, _y) == 0) _copyArrayFunc(_tile.__rightArray,  _occluderVertexArray, _xOffset, _yOffset);
+                    if (tilemap_get(_tilemap, _x, _y-1) == 0) _copyArrayFunc(_tile.__topArray,    _occluderVertexArray, _xOffset, _yOffset);
+                    if (tilemap_get(_tilemap, _x-1, _y) == 0) _copyArrayFunc(_tile.__leftArray,   _occluderVertexArray, _xOffset, _yOffset);
+                    if (tilemap_get(_tilemap, _x, _y+1) == 0) _copyArrayFunc(_tile.__bottomArray, _occluderVertexArray, _xOffset, _yOffset);
                 }
             }
             
