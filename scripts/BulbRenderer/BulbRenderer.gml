@@ -370,7 +370,7 @@ function BulbRenderer(_ambientColour, _mode, _smooth) constructor
             //Add static shadow caster vertices to the relevant vertex buffer
             if (mode == BULB_MODE.SOFT_BM_ADD)
             {
-                vertex_begin(__staticVBuffer, global.__bulb_format_3d_normal_tex);
+                vertex_begin(__staticVBuffer, global.__bulbVFormatSoft);
                 
                 var _array = __staticOccludersArray;
                 var _i = 0;
@@ -390,7 +390,7 @@ function BulbRenderer(_ambientColour, _mode, _smooth) constructor
             }
             else
             {
-                vertex_begin(__staticVBuffer, global.__bulb_format_3d_normal);
+                vertex_begin(__staticVBuffer, global.__bulbVFormatHard);
                 
                 var _array = __staticOccludersArray;
                 var _i = 0;
@@ -422,7 +422,7 @@ function BulbRenderer(_ambientColour, _mode, _smooth) constructor
         //Add dynamic occluder vertices to the relevant vertex buffer
         if (mode == BULB_MODE.SOFT_BM_ADD)
         {
-            vertex_begin(_dynamicVBuffer, global.__bulb_format_3d_normal_tex);
+            vertex_begin(_dynamicVBuffer, global.__bulbVFormatSoft);
             
             var _array = __dynamicOccludersArray;
             var _i = 0;
@@ -446,7 +446,7 @@ function BulbRenderer(_ambientColour, _mode, _smooth) constructor
         }
         else
         {
-            vertex_begin(_dynamicVBuffer, global.__bulb_format_3d_normal);
+            vertex_begin(_dynamicVBuffer, global.__bulbVFormatHard);
             
             var _array = __dynamicOccludersArray;
             var _i = 0;
