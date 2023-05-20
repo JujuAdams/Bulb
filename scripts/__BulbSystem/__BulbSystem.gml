@@ -1,4 +1,4 @@
-#macro __BULB_VERSION                "21.0.0 alpha"
+#macro __BULB_VERSION                "21.0.1 alpha"
 #macro __BULB_DATE                   "2023-05-20"
 #macro __BULB_FORCE_PRODUCTION_MODE  false
 #macro __BULB_BUILD_TYPE             (__BULB_FORCE_PRODUCTION_MODE? "exe" : GM_build_type)
