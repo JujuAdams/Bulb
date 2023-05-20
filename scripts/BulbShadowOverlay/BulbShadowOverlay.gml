@@ -1,14 +1,18 @@
 /// @param renderer
+/// @param sprite
+/// @param image
+/// @param x
+/// @param y
 
-function BulbShadowOverlay(_renderer) constructor
+function BulbShadowOverlay(_renderer, _sprite, _image, _x, _y) constructor
 {
     visible = true;
     
-    x = 0;
-    y = 0;
+    x = _x;
+    y = _y;
     
-    sprite = undefined;
-    image  = 0;
+    sprite = _sprite;
+    image  = _image;
     xscale = 1.0;
     yscale = 1.0;
     angle  = 0.0;
