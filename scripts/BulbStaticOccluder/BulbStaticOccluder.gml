@@ -9,8 +9,7 @@ function BulbStaticOccluder(_renderer) constructor
     yscale = 1.0;
     angle  = 0.0;
     
-    //Arranged as repeating units of 6 elements: x1, y1, x2, y2, normal x, normal y
-    //The normal vector does *not* need to be of unit length
+    //Arranged as repeating units of 8 elements: x1, y1, x2, y2, parent x1, parent y1, parent x2, parent y2
     vertexArray = [];
     
     __destroyed = false;
@@ -48,7 +47,7 @@ function BulbStaticOccluder(_renderer) constructor
     
     static AddSprite = function(_sprite, _image, _xOffset = 0, _yOffset = 0)
     {
-        __BulbAddSpriteToOccluder(self, _sprite, _image, _xOffset, _yOffset);
+        __BulbAddSpriteToOccluder(self, _sprite, _image, _xOffset, _yOffset, false);
     }
     
     static AddTilemap = function(_tilemap)

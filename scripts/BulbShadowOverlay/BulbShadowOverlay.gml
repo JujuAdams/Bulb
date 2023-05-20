@@ -14,8 +14,10 @@ function BulbShadowOverlay(_renderer) constructor
     angle  = 0.0;
     alpha  = 1.0;
     
+    //Size of the circle that encompasses the shape
+    radius = 0;
+    
     __oldSprite = undefined;
-    __radius    = 0;
     __destroyed = false;
     
     static Destroy = function()
@@ -39,11 +41,11 @@ function BulbShadowOverlay(_renderer) constructor
                 var _x = max(_xOffset, sprite_get_width( sprite) - _xOffset);
                 var _y = max(_yOffset, sprite_get_height(sprite) - _yOffset);
                 
-                __radius = sqrt(_x*_x + _y*_y);
+                radius = sqrt(_x*_x + _y*_y);
             }
             else
             {
-                __radius = 0;
+                radius = 0;
             }
         }
     }
@@ -76,7 +78,7 @@ function BulbShadowOverlay(_renderer) constructor
     
     static __IsOnScreen = function(_cameraL, _cameraT, _cameraR, _cameraB)
     {
-        var _radius = __radius*max(xscale, yscale);
+        var _radius = radius*max(xscale, yscale);
         return (!__destroyed && visible && __BulbRectInRect(x - _radius, y - _radius, x + _radius, y + _radius, _cameraL, _cameraT, _cameraR, _cameraB));
     }
     

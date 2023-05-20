@@ -11,11 +11,12 @@ function BulbDynamicOccluder(_renderer) constructor
     yscale = 1.0;
     angle  = 0.0;
     
-    //Arranged as repeating units of 6 elements: x1, y1, x2, y2, normal x, normal y
-    //The normal vector does *not* need to be of unit length
+    //Arranged as repeating units of 8 elements: x1, y1, x2, y2, parent x1, parent y1, parent x2, parent y2
     vertexArray = [];
     
-    __radius    = 0;
+    //Size of the circle that encompasses the shape
+    radius = 0;
+    
     __destroyed = false;
     
     static Destroy = function()
@@ -27,9 +28,9 @@ function BulbDynamicOccluder(_renderer) constructor
     {
         if (__destroyed) return;
         
-        //Choose the longest axis of the sprite as the radius
+        //Choose the longest axis of the shape as the radius
         //We apply x/y scaling in the __IsOnScreen() function
-        __radius = sqrt(max(_x1*_x1 + _y1*_y1, _x2*_x2 + _y2*_y2));
+        radius = sqrt(max(radius, _x1*_x1 + _y1*_y1, _x2*_x2 + _y2*_y2));
         
         array_push(vertexArray, _x1, _y1, _x2, _y2, _x3, _y3, _x4, _y4);
     }
@@ -38,7 +39,7 @@ function BulbDynamicOccluder(_renderer) constructor
     {
         if (__destroyed) return;
         
-        __radius = 0;
+        radius = 0;
         
         array_resize(vertexArray, 0);
     }
@@ -51,7 +52,7 @@ function BulbDynamicOccluder(_renderer) constructor
     
     static AddSprite = function(_sprite, _image, _xOffset = 0, _yOffset = 0)
     {
-        __BulbAddSpriteToOccluder(self, _sprite, _image, _xOffset, _yOffset);
+        __BulbAddSpriteToOccluder(self, _sprite, _image, _xOffset, _yOffset, true);
     }
     
     static AddToRenderer = function(_renderer)
@@ -82,7 +83,7 @@ function BulbDynamicOccluder(_renderer) constructor
     
     static __IsOnScreen = function(_cameraL, _cameraT, _cameraR, _cameraB)
     {
-        var _radius = __radius*max(xscale, yscale);
+        var _radius = radius*max(xscale, yscale);
         return (!__destroyed && visible && __BulbRectInRect(x - _radius, y - _radius, x + _radius, y + _radius, _cameraL, _cameraT, _cameraR, _cameraB));
     }
     

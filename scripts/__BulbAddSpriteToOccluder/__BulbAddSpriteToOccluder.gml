@@ -3,13 +3,16 @@
 /// @param imageIndex
 /// @param xOffset
 /// @param yOffset
+/// @param setRadius
 
-function __BulbAddSpriteToOccluder(_occluder, _spriteIndex, _imageIndex, _xOffset, _yOffset)
+function __BulbAddSpriteToOccluder(_occluder, _spriteIndex, _imageIndex, _xOffset, _yOffset, _setRadius)
 {
-    var _loopArray = (__BulbGetSpriteImage(_spriteIndex, _imageIndex)).__GetTrace();
+    var _spriteData = __BulbGetSpriteImage(_spriteIndex, _imageIndex);
+    if (_setRadius) _occluder.radius = max(_occluder.radius, _spriteData.radius);
     
     //TODO - Optimise this copy procedure by precompiling all loops for an image down to a single array
     
+    var _loopArray = _spriteData.__GetTrace();
     var _occluderVertexArray = _occluder.vertexArray;
     var _l = 0;
     repeat(array_length(_loopArray))

@@ -7,6 +7,7 @@ function __BulbClassImage(_spriteIndex, _imageIndex) constructor
     
     __spriteIndex = _spriteIndex;
     __imageIndex  = _imageIndex;
+    radius      = 0;
     
     __hash   = undefined;
     __onDisk = undefined;
@@ -43,11 +44,31 @@ function __BulbClassImage(_spriteIndex, _imageIndex) constructor
             //We'll likely need the hash later so we can save a bit of time by calculating it now
             if (BULB_USE_DISK_CACHE && (__BULB_BUILD_TYPE == "run")) __GetHash(_buffer);
             
-            __trace = __BulbTraceBuffer(_buffer,
-                                        sprite_get_width(__spriteIndex) + 2, sprite_get_height(__spriteIndex) + 2, 2,
-                                        -1 - sprite_get_xoffset(__spriteIndex), -1 - sprite_get_yoffset(__spriteIndex),
-                                        false, true);
+            var _loopArray = __BulbTraceBuffer(_buffer,
+                                               sprite_get_width(__spriteIndex) + 2, sprite_get_height(__spriteIndex) + 2, 2,
+                                               -1 - sprite_get_xoffset(__spriteIndex), -1 - sprite_get_yoffset(__spriteIndex),
+                                               false, true);
             buffer_delete(_buffer);
+            
+            //Calculate the radius
+            //TODO - Figure out a way to do this during the trace operation
+            var _radius = 0;
+            var _i = 0;
+            repeat(array_length(_loopArray))
+            {
+                var _pointArray = _loopArray[_i];
+                var _j = 0;
+                repeat(array_length(_pointArray) div 2)
+                {
+                    var _x = _pointArray[_j  ];
+                    var _y = _pointArray[_j+1];
+                    _radius = max(_radius, sqrt(_x*_x + _y*_y));
+                    _j += 2;
+                }
+            }
+            
+            __trace  = _loopArray;
+            radius = _radius;
             
             __DiskSave();
             
@@ -118,6 +139,7 @@ function __BulbClassImage(_spriteIndex, _imageIndex) constructor
             }
         }
         
+        radius = buffer_read(_buffer, buffer_f64);
         var _loopCount = buffer_read(_buffer, buffer_u64);
         __trace = array_create(_loopCount, undefined);
         
@@ -169,6 +191,7 @@ function __BulbClassImage(_spriteIndex, _imageIndex) constructor
         buffer_write(_buffer, buffer_string, __GetName());
         buffer_write(_buffer, buffer_string, (__BULB_BUILD_TYPE == "run")? __GetHash() : "<undefined>");
         buffer_write(_buffer, buffer_f64,    GM_build_date);
+        buffer_write(_buffer, buffer_f64,    radius);
         
         buffer_write(_buffer, buffer_u64, array_length(__trace));
         var _i = 0;
