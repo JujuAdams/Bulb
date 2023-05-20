@@ -14,9 +14,9 @@
 
 A renderer struct will allocate three vertex buffers and a surface for its use.
 
-**Remember to call the `.Free()` method when discarding a renderer struct otherwise you will create a memory leak.**
+!> Remember to call the `.Free()` method when discarding a renderer struct otherwise you will create a memory leak.
 
-**You must free and recreate your renderer when changing rooms.**
+!> You must free and recreate your renderer when changing rooms.
 
 &nbsp;
 

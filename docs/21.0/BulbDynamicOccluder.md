@@ -14,7 +14,7 @@ When created, a `BulbDynamicOccluder` will be added to the given renderer. An oc
 
 When dynamic occluders are drawn is controlled, in part, by `BULB_DYNAMIC_OCCLUDER_RANGE` found in `__BulbConfig()`. If you have large dynamic occluders and you're experiencing pop-in, increase this value.
 
-**Please note** that you must maintain a reference to a created `BulbDynamicOccluder` yourself. Bulb tracks occluders using a **weak reference** such that when you discard the reference to the occluder, the occluder is also automatically removed from the renderer. This makes memory management a lot safer, but does require that you keep your own strong reference to keep an occluder alive.
+?> You must maintain a reference to a created `BulbDynamicOccluder` yourself. Bulb tracks occluders using a **weak reference** such that when you discard the reference to the occluder, the occluder is also automatically removed from the renderer. This makes memory management a lot safer, but does require that you keep your own strong reference to keep an occluder alive.
 
 &nbsp;
 

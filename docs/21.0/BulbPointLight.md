@@ -16,7 +16,7 @@
 
 When created, a `BulbPointLight` will be added to the given renderer. A light can be added (and removed) from multiple renderers as you see fit.
 
-**Please note** that you must maintain a reference to a created `BulbPointLight` yourself. Bulb tracks lights using a **weak reference** such that when you discard the reference to the light, the light is also automatically removed from the renderer. This makes memory management a lot safer, but does require that you keep your own strong reference to keep a light alive.
+?> You must maintain a reference to a created `BulbPointLight` yourself. Bulb tracks lights using a **weak reference** such that when you discard the reference to the light, the light is also automatically removed from the renderer. This makes memory management a lot safer, but does require that you keep your own strong reference to keep a light alive.
 
 &nbsp;
 
