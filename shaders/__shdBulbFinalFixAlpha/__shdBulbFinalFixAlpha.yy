@@ -1,7 +1,7 @@
 {
   "resourceType": "GMShader",
   "resourceVersion": "1.0",
-  "name": "__shdBulbPassThrough",
+  "name": "__shdBulbFinalFixAlpha",
   "type": 1,
   "parent": {
     "name": "Shaders",

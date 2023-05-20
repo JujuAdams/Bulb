@@ -222,7 +222,7 @@ function BulbRenderer(_ambientColour, _mode, _smooth) constructor
                 else
                 {
                     gpu_set_blendmode_ext(bm_dest_color, bm_inv_src_alpha);
-                    shader_set(__shdBulbFinalRender);
+                    shader_set(__shdBulbFinalFixAlpha);
                     draw_surface_stretched_ext(__surface, _x, _y, _width, _height, c_white, _alpha);
                     shader_reset();
                 }
@@ -761,12 +761,12 @@ function BulbRenderer(_ambientColour, _mode, _smooth) constructor
         //Determine the blend mode and "default" shader accordingly
         if ((mode == BULB_MODE.HARD_BM_MAX) || (mode == BULB_MODE.HARD_BM_MAX_SELFLIGHTING))
         {
-            var _resetShader = __shdBulbPremultiplyAlpha;
+            var _resetShader = __shdBulbHardResetPremultiplyAlpha;
             gpu_set_blendmode(bm_max);
         }
         else
         {
-            var _resetShader = __shdBulbPassThrough;
+            var _resetShader = __shdBulbHardReset;
             gpu_set_blendmode(bm_add);
         }
         
