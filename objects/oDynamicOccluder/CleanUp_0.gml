@@ -1,1 +1,0 @@
-occluder.Destroy();
