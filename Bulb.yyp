@@ -16,7 +16,7 @@
     {"id":{"name":"BulbDynamicOccluder","path":"scripts/BulbDynamicOccluder/BulbDynamicOccluder.yy",},"order":5,},
     {"id":{"name":"oSpriteOccluder6","path":"objects/oSpriteOccluder6/oSpriteOccluder6.yy",},"order":10,},
     {"id":{"name":"__shdBulbFinalRender","path":"shaders/__shdBulbFinalRender/__shdBulbFinalRender.yy",},"order":6,},
-    {"id":{"name":"__BulbTraceBuffer","path":"scripts/__BulbTraceBuffer/__BulbTraceBuffer.yy",},"order":28,},
+    {"id":{"name":"__BulbTraceBufferToEdgeArray","path":"scripts/__BulbTraceBufferToEdgeArray/__BulbTraceBufferToEdgeArray.yy",},"order":28,},
     {"id":{"name":"oTilemapOccluder","path":"objects/oTilemapOccluder/oTilemapOccluder.yy",},"order":4,},
     {"id":{"name":"__BulbClassTileset","path":"scripts/__BulbClassTileset/__BulbClassTileset.yy",},"order":3,},
     {"id":{"name":"oSpriteOccluder1","path":"objects/oSpriteOccluder1/oSpriteOccluder1.yy",},"order":5,},

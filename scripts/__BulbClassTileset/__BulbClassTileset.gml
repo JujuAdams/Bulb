@@ -64,7 +64,9 @@ function __BulbClassTileset(_tileset, _checkForTag = true) constructor
             //We'll likely need the hash later so we can save a bit of time by calculating it now
             if (BULB_USE_DISK_CACHE && (__BULB_BUILD_TYPE == "run")) __GetHash(_buffer);
             
-            var _trace = __BulbTraceBuffer(_buffer, __textureWidth, __textureHeight, 0, 0, 0, false, false);
+            var _result = __BulbTraceBufferToEdgeArray(_buffer, __textureWidth, __textureHeight, 0, 0, 0, false, false, 1);
+            var _rawEdgeArray = _result.__edgeArray;
+            
             buffer_delete(_buffer);
             
             //Sort the traced loops into tile indexes
@@ -72,27 +74,15 @@ function __BulbClassTileset(_tileset, _checkForTag = true) constructor
             var _extTileHeight = 4 + __tileHeight;
             
             var _i = 0;
-            repeat(array_length(_trace))
+            repeat(array_length(_rawEdgeArray) div __BULB_ARRAY_VERTEX_SIZE)
             {
-                var _loop = _trace[_i];
+                var _x1 = _rawEdgeArray[_i  ];
+                var _y1 = _rawEdgeArray[_i+1];
                 
                 //Figure out which tile this is for using the first point
-                var _tileX = _loop[0] div _extTileWidth;
-                var _tileY = _loop[1] div _extTileHeight;
+                var _tileX = _x1 div _extTileWidth;
+                var _tileY = _y1 div _extTileHeight;
                 var _tileIndex = _tileX + _tileY*__tilesWide;
-                
-                //Adjust the position of all points in the loop relative to the top-left corner of the tile
-                var _x = 2 + _tileX*_extTileWidth;
-                var _y = 2 + _tileY*_extTileHeight;
-                
-                var _j = 0;
-                repeat(array_length(_loop) div 2)
-                {
-                    _loop[@ _j  ] -= _x;
-                    _loop[@ _j+1] -= _y;
-                    
-                    _j += 2;
-                }
                 
                 //Push this loop into a per-tile array
                 var _tile = __tileDict[$ _tileIndex];
@@ -102,9 +92,21 @@ function __BulbClassTileset(_tileset, _checkForTag = true) constructor
                     __tileDict[$ _tileIndex] = _tile;
                 }
                 
-                array_push(_tile.__loopArray, _loop);
+                //Adjust the position of all points for the edge relative to the top-left corner of the tile
+                var _xOffset = 2 + _tileX*_extTileWidth;
+                var _yOffset = 2 + _tileY*_extTileHeight;
                 
-                ++_i;
+                array_push(_tile.__rawEdgeArray,
+                           _x1                 - _xOffset,
+                           _y1                 - _yOffset,
+                           _rawEdgeArray[_i+2] - _xOffset,
+                           _rawEdgeArray[_i+3] - _yOffset,
+                           _rawEdgeArray[_i+4] - _xOffset,
+                           _rawEdgeArray[_i+5] - _yOffset,
+                           _rawEdgeArray[_i+6] - _xOffset,
+                           _rawEdgeArray[_i+7] - _yOffset);
+                
+                _i += __BULB_ARRAY_VERTEX_SIZE;
             }
             
             var _tileIndexArray = variable_struct_get_names(__tileDict);

@@ -6,12 +6,14 @@
 /// @param yOffset
 /// @param forceSinglePass
 /// @param buildEdgesInHoles
+/// @param [epsilon=1]
 
-function __BulbTraceBuffer(_buffer, _bufferWidth, _bufferHeight, _bufferBorder, _xOffset, _yOffset, _forceSinglePass, _buildEdgesInHoles)
+function __BulbTraceBufferToEdgeArray(_buffer, _bufferWidth, _bufferHeight, _bufferBorder, _xOffset, _yOffset, _forceSinglePass, _buildEdgesInHoles, _epsilon = 1)
 {
     var _alphaThreshold = clamp(255*BULB_TRACE_ALPHA_THRESHOLD, 1, 255);
     
     var _output = [];
+    var _loop   = [];
     
     var _spriteWidth  = _bufferWidth  - _bufferBorder;
     var _spriteHeight = _bufferHeight - _bufferBorder;
@@ -80,8 +82,7 @@ function __BulbTraceBuffer(_buffer, _bufferWidth, _bufferHeight, _bufferBorder, 
         var _pixelY = _searchY;
         
         //Start a new loop
-        var _loop = [];
-        array_push(_output, _loop);
+        array_resize(_loop, 0);
         
         //We traverse the edge of the sprite clockwise
         // 0x01 = Heading right, checking edge is above us
@@ -249,10 +250,109 @@ function __BulbTraceBuffer(_buffer, _bufferWidth, _bufferHeight, _bufferBorder, 
         //Close the loop
         array_push(_loop, _loop[0], _loop[1]);
         
+        __BulbAddImageToOccluderInternal(_output, _loop, 0, array_length(_loop)-2, _epsilon);
+        
         if (_forceSinglePass) break;
     }
     
     ds_grid_destroy(_visitedGrid);
     
-    return _output;
+    return {
+        __edgeArray: _output,
+        __radius:    0,
+    };
+}
+
+function __BulbAddImageToOccluderInternal(_occluderVertexArray, _pointArray, _start, _end, _epsilon = 1)
+{
+    var _maxDist = 0;
+    
+    var _x1 = _pointArray[_start  ];
+    var _y1 = _pointArray[_start+1];
+    var _x2 = _pointArray[_end    ];
+    var _y2 = _pointArray[_end+1  ];
+    
+    var _dx = _x2 - _x1;
+    var _dy = _y2 - _y1;
+    
+    if (_end - _start >= 4)
+    {
+        var _lengthSquared = _dx*_dx + _dy*_dy;
+        
+        if (_lengthSquared == 0)
+        {
+            var _maxDist  = 0;
+            var _maxPoint = undefined;
+            var _p = _start+2;
+            repeat(((_end - _start) div 2) - 1)
+            {
+                var _x = _pointArray[_p  ];
+                var _y = _pointArray[_p+1];
+                
+                var _distance = point_distance(_x1, _y1, _x, _y);
+                if (_distance >= _maxDist)
+                {
+                    _maxDist  = _distance;
+                    _maxPoint = _p;
+                }
+                
+                _p += 2;
+            }
+        }
+        else
+        {
+            var _maxPoint = undefined;
+            var _p = _start+2;
+            repeat(((_end - _start) div 2) - 1)
+            {
+                var _x = _pointArray[_p  ];
+                var _y = _pointArray[_p+1];
+                
+                var _t = real((_x - _x1)*_dx + (_y - _y1)*_dy) / _lengthSquared;
+                _t = clamp(_t, 0, 1);
+                
+                var _xP = _x1 + _t*_dx;
+                var _yP = _y1 + _t*_dy;
+                
+                var _perpendicularDistance = point_distance(_x, _y, _xP, _yP);
+                if (_perpendicularDistance >= _maxDist)
+                {
+                    _maxDist  = _perpendicularDistance;
+                    _maxPoint = _p;
+                }
+                
+                _p += 2;
+            }
+        }
+        
+        if (_maxDist >= _epsilon)
+        {
+            __BulbAddImageToOccluderInternal(_occluderVertexArray, _pointArray, _start, _maxPoint, _epsilon);
+            __BulbAddImageToOccluderInternal(_occluderVertexArray, _pointArray, _maxPoint, _end, _epsilon);
+        }
+    }
+    
+    if (_maxDist < _epsilon)
+    {
+        var _x3 = undefined;
+        var _y3 = undefined;
+        var _x4 = _pointArray[_start  ];
+        var _y4 = _pointArray[_start+1];
+        
+        var _p = _start + 2;
+        repeat((_end - _start) div 2)
+        {
+            _x3 = _x4;
+            _y3 = _y4;
+            var _x4 = _pointArray[_p  ];
+            var _y4 = _pointArray[_p+1];
+            
+            array_push(_occluderVertexArray, _x3, _y3,
+                                             _x4, _y4,
+                                             _x1, _y1,
+                                             _x2, _y2);
+            
+            _p += 2;
+        }
+    }
 }

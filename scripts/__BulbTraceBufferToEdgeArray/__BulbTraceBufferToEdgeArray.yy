@@ -1,7 +1,7 @@
 {
   "resourceType": "GMScript",
   "resourceVersion": "1.0",
-  "name": "__BulbTraceBuffer",
+  "name": "__BulbTraceBufferToEdgeArray",
   "isDnD": false,
   "isCompatibility": false,
   "parent": {

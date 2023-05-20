@@ -7,12 +7,14 @@ function __BulbClassImage(_spriteIndex, _imageIndex) constructor
     
     __spriteIndex = _spriteIndex;
     __imageIndex  = _imageIndex;
-    radius      = 0;
+    
+    //Size of the circle that encompasses the shape
+    radius = 0;
     
     __hash   = undefined;
     __onDisk = undefined;
     
-    __trace = undefined;
+    __edgeArray = undefined;
     
     
     
@@ -21,9 +23,9 @@ function __BulbClassImage(_spriteIndex, _imageIndex) constructor
         return (sprite_get_name(__spriteIndex) + "." + string(__imageIndex));
     }
     
-    static __GetTrace = function()
+    static __GetEdgeArray = function()
     {
-        if (__trace == undefined)
+        if (__edgeArray == undefined)
         {
             if (BULB_VERBOSE) var _t = get_timer();
             
@@ -31,11 +33,11 @@ function __BulbClassImage(_spriteIndex, _imageIndex) constructor
             
             if (BULB_VERBOSE)
             {
-                if (__trace != undefined) __BulbTrace("Loaded ", __GetName(), " from disk cache (", (get_timer() - _t)/1000, "ms)");
+                if (__edgeArray != undefined) __BulbTrace("Loaded ", __GetName(), " from disk cache (", (get_timer() - _t)/1000, "ms)");
             }
         }
         
-        if (__trace == undefined)
+        if (__edgeArray == undefined)
         {
             if (BULB_VERBOSE) var _t = get_timer();
             
@@ -44,38 +46,22 @@ function __BulbClassImage(_spriteIndex, _imageIndex) constructor
             //We'll likely need the hash later so we can save a bit of time by calculating it now
             if (BULB_USE_DISK_CACHE && (__BULB_BUILD_TYPE == "run")) __GetHash(_buffer);
             
-            var _loopArray = __BulbTraceBuffer(_buffer,
-                                               sprite_get_width(__spriteIndex) + 2, sprite_get_height(__spriteIndex) + 2, 2,
-                                               -1 - sprite_get_xoffset(__spriteIndex), -1 - sprite_get_yoffset(__spriteIndex),
-                                               false, true);
+            var _result = __BulbTraceBufferToEdgeArray(_buffer,
+                                                       sprite_get_width(__spriteIndex) + 2, sprite_get_height(__spriteIndex) + 2, 2,
+                                                       -1 - sprite_get_xoffset(__spriteIndex), -1 - sprite_get_yoffset(__spriteIndex),
+                                                       false, true);
+            
+            __edgeArray = _result.__edgeArray;
+            radius      = _result.__radius;
+            
             buffer_delete(_buffer);
-            
-            //Calculate the radius
-            //TODO - Figure out a way to do this during the trace operation
-            var _radius = 0;
-            var _i = 0;
-            repeat(array_length(_loopArray))
-            {
-                var _pointArray = _loopArray[_i];
-                var _j = 0;
-                repeat(array_length(_pointArray) div 2)
-                {
-                    var _x = _pointArray[_j  ];
-                    var _y = _pointArray[_j+1];
-                    _radius = max(_radius, sqrt(_x*_x + _y*_y));
-                    _j += 2;
-                }
-            }
-            
-            __trace  = _loopArray;
-            radius = _radius;
             
             __DiskSave();
             
             if (BULB_VERBOSE) __BulbTrace("Traced ", __GetName(), " (", (get_timer() - _t)/1000, "ms)");
         }
         
-        return __trace;
+        return __edgeArray;
     }
     
     static __DiskCheck = function()
@@ -140,23 +126,13 @@ function __BulbClassImage(_spriteIndex, _imageIndex) constructor
         }
         
         radius = buffer_read(_buffer, buffer_f64);
-        var _loopCount = buffer_read(_buffer, buffer_u64);
-        __trace = array_create(_loopCount, undefined);
+        var _pointCount = buffer_read(_buffer, buffer_u64);
+        __edgeArray = array_create(_pointCount, undefined);
         
         var _i = 0;
-        repeat(_loopCount)
+        repeat(_pointCount)
         {
-            var _loopLength = buffer_read(_buffer, buffer_u64);
-            var _loop = array_create(_loopLength, undefined);
-            __trace[@ _i] = _loop;
-            
-            var _j = 0;
-            repeat(_loopLength)
-            {
-                _loop[@ _j] = buffer_read(_buffer, buffer_s16);
-                ++_j;
-            }
-            
+            __edgeArray[@ _i] = buffer_read(_buffer, buffer_s16);
             ++_i;
         }
         
@@ -164,7 +140,7 @@ function __BulbClassImage(_spriteIndex, _imageIndex) constructor
         {
             __BulbTrace("Warning! Final buffer position (", buffer_tell(_buffer), ") did not match expected (", _expectedFinalTell, ")");
             
-            __trace = undefined;
+            __edgeArray = undefined;
             
             __onDisk = false;
             buffer_seek(_buffer, buffer_seek_start, _oldTell);
@@ -172,7 +148,7 @@ function __BulbClassImage(_spriteIndex, _imageIndex) constructor
         }
         
         buffer_seek(_buffer, buffer_seek_start, _oldTell);
-        return __trace;
+        return __edgeArray;
     }
     
     static __DiskSave = function()
@@ -193,20 +169,11 @@ function __BulbClassImage(_spriteIndex, _imageIndex) constructor
         buffer_write(_buffer, buffer_f64,    GM_build_date);
         buffer_write(_buffer, buffer_f64,    radius);
         
-        buffer_write(_buffer, buffer_u64, array_length(__trace));
+        buffer_write(_buffer, buffer_u64, array_length(__edgeArray));
         var _i = 0;
-        repeat(array_length(__trace))
+        repeat(array_length(__edgeArray))
         {
-            var _loop = __trace[_i];
-            buffer_write(_buffer, buffer_u64, array_length(_loop));
-            
-            var _j = 0;
-            repeat(array_length(_loop))
-            {
-                buffer_write(_buffer, buffer_s16, _loop[_j]);
-                ++_j;
-            }
-            
+            buffer_write(_buffer, buffer_s16, __edgeArray[_i]);
             ++_i;
         }
         
