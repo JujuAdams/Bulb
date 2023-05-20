@@ -5,11 +5,6 @@
 
 &nbsp;
 
-<p align="center"><a href="https://github.com/JujuAdams/Bulb/releases/">Download the .yymps</a></p>
-<p align="center">Chat about Bulb on the <a href="https://discord.gg/8krYCqr">Discord server</a></p>
-
-&nbsp;
-
 &nbsp;
 
 - ### [Download the .yymps](https://github.com/JujuAdams/Bulb/releases/)
