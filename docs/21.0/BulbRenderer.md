@@ -18,6 +18,8 @@ A renderer struct will allocate three vertex buffers and a surface for its use.
 
 **You must free and recreate your renderer when changing rooms.**
 
+&nbsp;
+
 The `BULB_MODE` enum contains the following elements:
 
 |Name                       |Functionality                                                                       |
@@ -28,6 +30,8 @@ The `BULB_MODE` enum contains the following elements:
 |`.HARD_BM_MAX_SELFLIGHTING`|As above, but using `bm_max` to reduce bloom                                        |
 |`.SOFT_BM_ADD`             |Soft shadows using `bm_add`                                                         |
 
+&nbsp;
+
 The created struct has the following public member variables:
 
 |Variable       |Datatype|Purpose                                                                              |
@@ -35,6 +39,8 @@ The created struct has the following public member variables:
 |`ambientColor` |integer |Colour to use for fully shadowed (unlit) areas                                       |
 |`mode`         |integer |Rendering mode to use, from the `BULB_MODE` enum (see below)                         |
 |`smooth`       |boolean |Whether to render lights with texture filtering on, smoothing out the resulting image|
+
+&nbsp;
 
 The created struct has the following methods (click to expand):
 

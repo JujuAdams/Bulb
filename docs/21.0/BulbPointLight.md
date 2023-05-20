@@ -18,6 +18,8 @@ When created, a `BulbPointLight` will be added to the given renderer. A light ca
 
 **Please note** that you must maintain a reference to a created `BulbPointLight` yourself. Bulb tracks lights using a **weak reference** such that when you discard the reference to the light, the light is also automatically removed from the renderer. This makes memory management a lot safer, but does require that you keep your own strong reference to keep a light alive.
 
+&nbsp;
+
 The created struct has the following public member variables:
 
 |Variable      |Datatype      |Purpose                                                                          |
@@ -34,6 +36,8 @@ The created struct has the following public member variables:
 |`visible`     |boolean       |Whether to draw the light at all                                                 |
 |`castShadows` |boolean       |Whether the light casts shadow. Not casting shadows is much faster!              |
 |`penumbraSize`|number        |Size of the penumbra when using the `BULB_MODE.SOFT_BM_ADD` rendering mode       |
+
+&nbsp;
 
 The created struct has the following methods (click to expand):
 

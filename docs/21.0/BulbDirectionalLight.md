@@ -15,6 +15,8 @@ When created, a `BulbDirectionalLight` will be added to the given renderer. A li
 
 **Please note** that you must maintain a reference to a created `BulbDirectionalLight` yourself. Bulb tracks lights using a **weak reference** such that when you discard the reference to the light, the light is also automatically removed from the renderer. This makes memory management a lot safer, but does require that you keep your own strong reference to keep a light alive.
 
+&nbsp;
+
 The created struct has the following public member variables:
 
 |Variable      |Datatype      |Purpose                                                                          |
@@ -24,6 +26,8 @@ The created struct has the following public member variables:
 |`alpha`       |number        |Transparency value for the light, from `0.0` (invisible) to `1.0` (fully visible)|
 |`visible`     |boolean       |Whether to draw the light at all                                                 |
 |`penumbraSize`|number        |Size of the penumbra when using the `BULB_MODE.SOFT_BM_ADD` rendering mode       |
+
+&nbsp;
 
 The created struct has the following methods (click to expand):
 

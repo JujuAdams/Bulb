@@ -1,4 +1,4 @@
-### BulbStaticOccluder
+# BulbStaticOccluder
 
 &nbsp;
 
@@ -21,15 +21,19 @@ Static occluders are therefore much more performant than dynamic occluders, but 
 
 **Please note** that you must maintain a reference to a created `BulbStaticOccluder` yourself. Bulb tracks occluders using a **weak reference** such that when you discard the reference to the occluder, the occluder is also automatically removed from the renderer. This makes memory management a lot safer, but does require that you keep your own strong reference to keep an occluder alive.
 
+&nbsp;
+
 The created struct has the following public member variables:
 
-|Variable     |Datatype|Purpose                                                             |
-|-------------|--------|--------------------------------------------------------------------|
-|`x`          |number  |x-position of the occluder                                          |
-|`y`          |number  |x-position of the occluder                                          |
-|`xscale`     |number  |Horizontal scaling of the occluder's edges, relative to its position|
-|`yscale`     |number  |Vertical scaling of the occluder's edges, relative to its position  |
-|`angle`      |number  |Rotation of the occluder's edges, relative to its position          |
+|Variable|Datatype|Purpose                                                             |
+|--------|--------|--------------------------------------------------------------------|
+|`x`     |number  |x-position of the occluder                                          |
+|`y`     |number  |x-position of the occluder                                          |
+|`xscale`|number  |Horizontal scaling of the occluder's edges, relative to its position|
+|`yscale`|number  |Vertical scaling of the occluder's edges, relative to its position  |
+|`angle` |number  |Rotation of the occluder's edges, relative to its position          |
+
+&nbsp;
 
 The created struct has the following methods (click to expand):
 
@@ -46,6 +50,56 @@ The created struct has the following methods (click to expand):
 |`y2`|number  |y-coordinate of the second vertex of the edge|
 
 Adds an occlusion edge (a shadow-casting line) to the occluder. Edges should be defined in a **clockwise** order.
+
+&nbsp;
+</details>
+
+<details><summary><code>.SetSprite(sprite, image)</code></summary>
+&nbsp;
+
+**Returns:** N/A (`undefined`)
+
+|Name    |Datatype    |Purpose                                                                      |
+|--------|------------|-----------------------------------------------------------------------------|
+|`sprite`|sprite index|Sprite to use for shadow casting                                             |
+|`image` |number      |Image index of the given sprite to use. Negative values are **not** supported|
+
+&nbsp;
+</details>
+
+<details><summary><code>.SetTilemap(tilemap)</code></summary>
+&nbsp;
+
+**Returns:** N/A (`undefined`)
+
+|Name     |Datatype                 |Purpose                                                                                               |
+|---------|-------------------------|------------------------------------------------------------------------------------------------------|
+|`tilemap`|tilemap ID, or layer name|Tilemap to use for occlusion. Alternatively, you can provide the name of a tilemap layer (as a string)|
+
+&nbsp;
+</details>
+
+<details><summary><code>.AddSprite(sprite, image)</code></summary>
+&nbsp;
+
+**Returns:** N/A (`undefined`)
+
+|Name    |Datatype    |Purpose                                                                      |
+|--------|------------|-----------------------------------------------------------------------------|
+|`sprite`|sprite index|Sprite to use for shadow casting                                             |
+|`image` |number      |Image index of the given sprite to use. Negative values are **not** supported|
+
+&nbsp;
+</details>
+
+<details><summary><code>.AddTilemap(tilemap)</code></summary>
+&nbsp;
+
+**Returns:** N/A (`undefined`)
+
+|Name     |Datatype                 |Purpose                                                                                               |
+|---------|-------------------------|------------------------------------------------------------------------------------------------------|
+|`tilemap`|tilemap ID, or layer name|Tilemap to use for occlusion. Alternatively, you can provide the name of a tilemap layer (as a string)|
 
 &nbsp;
 </details>
