@@ -1,6 +1,6 @@
 function __BulbDiskCacheLoad()
 {
-    static __global = __BulbGlobal();
+    static _global = __BulbGlobal();
     
     if (BULB_USE_DISK_CACHE)
     {
