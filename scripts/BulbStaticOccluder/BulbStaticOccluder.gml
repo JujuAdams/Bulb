@@ -35,23 +35,31 @@ function BulbStaticOccluder(_renderer) constructor
     
     static SetSprite = function(_sprite, _image)
     {
+        if (__destroyed) return;
+        
         ClearEdges();
         AddSprite(_sprite, _image);
     }
     
     static SetTilemap = function(_tilemap)
     {
+        if (__destroyed) return;
+        
         ClearEdges();
         AddTilemap(_tilemap);
     }
     
     static AddSprite = function(_sprite, _image, _xOffset = 0, _yOffset = 0)
     {
+        if (__destroyed) return;
+        
         __BulbAddSpriteToOccluder(self, _sprite, _image, _xOffset, _yOffset, false);
     }
     
     static AddTilemap = function(_tilemap)
     {
+        if (__destroyed) return;
+        
         if (is_string(_tilemap)) _tilemap = layer_tilemap_get_id(_tilemap);
         __BulbAddTilemapToOccluder(self, _tilemap);
     }

@@ -46,18 +46,23 @@ function BulbDynamicOccluder(_renderer) constructor
     
     static SetSprite = function(_sprite, _image)
     {
+        if (__destroyed) return;
+        
         ClearEdges();
         AddSprite(_sprite, _image);
     }
     
     static AddSprite = function(_sprite, _image, _xOffset = 0, _yOffset = 0)
     {
+        if (__destroyed) return;
+        
         __BulbAddSpriteToOccluder(self, _sprite, _image, _xOffset, _yOffset, true);
     }
     
     static AddToRenderer = function(_renderer)
     {
         if (__destroyed) return;
+        
         array_push(_renderer.__dynamicOccludersArray, weak_ref_create(self));
     }
     
