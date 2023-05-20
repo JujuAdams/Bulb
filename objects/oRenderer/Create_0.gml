@@ -24,7 +24,7 @@ smoothedFrameTime = 1;
 smoothedFPS = 1000;
 alarm_set(0, 30);
 
-sunlight = new BulbSunlight(lighting, 45);
+sunlight = new BulbDirectionalLight(lighting, 45);
 sunlight.blend = c_red;
 sunlight.alpha = 0.4;
 sunlight.penumbraSize = 5;

@@ -1,7 +1,7 @@
 /// @param renderer
 /// @param angle
 
-function BulbSunlight(_renderer, _angle) constructor
+function BulbDirectionalLight(_renderer, _angle) constructor
 {
     visible = true;
     
@@ -23,12 +23,12 @@ function BulbSunlight(_renderer, _angle) constructor
     static AddToRenderer = function(_renderer)
     {
         if (__destroyed) return;
-        array_push(_renderer.__sunlightArray, weak_ref_create(self));
+        array_push(_renderer.__directionalLightArray, weak_ref_create(self));
     }
     
     static RemoveFromRenderer = function(_renderer)
     {
-        var _array = _renderer.__sunlightArray;
+        var _array = _renderer.__directionalLightArray;
         var _i = array_length(_array) - 1;
         repeat(array_length(_array))
         {

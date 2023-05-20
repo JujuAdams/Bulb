@@ -4,7 +4,7 @@
 /// @param x
 /// @param y
 
-function BulbLight(_renderer, _sprite, _image, _x, _y) constructor
+function BulbPointLight(_renderer, _sprite, _image, _x, _y) constructor
 {
     visible = true;
     
@@ -39,12 +39,12 @@ function BulbLight(_renderer, _sprite, _image, _x, _y) constructor
     static AddToRenderer = function(_renderer)
     {
         if (__destroyed) return;
-        array_push(_renderer.__lightsArray, weak_ref_create(self));
+        array_push(_renderer.__pointLightArray, weak_ref_create(self));
     }
     
     static RemoveFromRenderer = function(_renderer)
     {
-        var _array = _renderer.__lightsArray;
+        var _array = _renderer.__pointLightArray;
         var _i = array_length(_array) - 1;
         repeat(array_length(_array))
         {

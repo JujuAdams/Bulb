@@ -1,7 +1,7 @@
 {
   "resourceType": "GMScript",
   "resourceVersion": "1.0",
-  "name": "BulbLight",
+  "name": "BulbPointLight",
   "isDnD": false,
   "isCompatibility": false,
   "parent": {

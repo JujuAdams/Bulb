@@ -37,8 +37,8 @@ function BulbRenderer(_ambientColour, _mode, _smooth) constructor
     
     __staticOccludersArray  = [];
     __dynamicOccludersArray = [];
-    __lightsArray           = [];
-    __sunlightArray         = [];
+    __pointLightArray       = [];
+    __directionalLightArray = [];
     __shadowOverlayArray    = [];
     __lightOverlayArray     = [];
     
@@ -621,19 +621,19 @@ function BulbRenderer(_ambientColour, _mode, _smooth) constructor
     {
         if (__freed) return undefined;
         
-        static _u_vLight                = shader_get_uniform(__shdBulbSoftShadows,         "u_vLight"      );
-        static _sunlight_u_vLightVector = shader_get_uniform(__shdBulbSoftShadowsSunlight, "u_vLightVector");
+        static _u_vLight       = shader_get_uniform(__shdBulbSoftShadows,            "u_vLight"      );
+        static _directional_u_vLightVector = shader_get_uniform(__shdBulbSoftShadowsDirectional, "u_vLightVector");
         
         var _staticVBuffer  = __staticVBuffer;
         var _dynamicVBuffer = __dynamicVBuffer;
         
         var _i = 0;
-        repeat(array_length(__lightsArray))
+        repeat(array_length(__pointLightArray))
         {
-            var _weak = __lightsArray[_i];
+            var _weak = __pointLightArray[_i];
             if (!weak_ref_alive(_weak) || _weak.ref.__destroyed)
             {
-                array_delete(__lightsArray, _i, 1);
+                array_delete(__pointLightArray, _i, 1);
             }
             else
             {
@@ -695,12 +695,12 @@ function BulbRenderer(_ambientColour, _mode, _smooth) constructor
         }
         
         var _i = 0;
-        repeat(array_length(__sunlightArray))
+        repeat(array_length(__directionalLightArray))
         {
-            var _weak = __sunlightArray[_i];
+            var _weak = __directionalLightArray[_i];
             if (!weak_ref_alive(_weak) || _weak.ref.__destroyed)
             {
-                array_delete(__sunlightArray, _i, 1);
+                array_delete(__directionalLightArray, _i, 1);
             }
             else
             {
@@ -718,8 +718,8 @@ function BulbRenderer(_ambientColour, _mode, _smooth) constructor
                         //Cut out shadows in the alpha channel
                         gpu_set_blendmode(bm_subtract);
                         
-                        shader_set(__shdBulbSoftShadowsSunlight);
-                        shader_set_uniform_f(_sunlight_u_vLightVector, dcos(angle), -dsin(angle), penumbraSize);
+                        shader_set(__shdBulbSoftShadowsDirectional);
+                        shader_set_uniform_f(_directional_u_vLightVector, dcos(angle), -dsin(angle), penumbraSize);
                         vertex_submit(_staticVBuffer,  pr_trianglelist, -1);
                         vertex_submit(_dynamicVBuffer, pr_trianglelist, -1);
                         
@@ -748,10 +748,11 @@ function BulbRenderer(_ambientColour, _mode, _smooth) constructor
     {
         if (__freed) return undefined;
         
-        static _u_vLight                = shader_get_uniform(__shdBulbHardShadows,         "u_vLight"      );
-        static _u_fNormalCoeff          = shader_get_uniform(__shdBulbHardShadows,         "u_fNormalCoeff");
-        static _sunlight_u_vLightVector = shader_get_uniform(__shdBulbHardShadowsSunlight, "u_vLightVector");
-        static _sunlight_u_fNormalCoeff = shader_get_uniform(__shdBulbHardShadowsSunlight, "u_fNormalCoeff");
+        static _u_vLight       = shader_get_uniform(__shdBulbHardShadows, "u_vLight"      );
+        static _u_fNormalCoeff = shader_get_uniform(__shdBulbHardShadows, "u_fNormalCoeff");
+        
+        static _directional_u_vLightVector = shader_get_uniform(__shdBulbHardShadowsDirectional, "u_vLightVector");
+        static _directional_u_fNormalCoeff = shader_get_uniform(__shdBulbHardShadowsDirectional, "u_fNormalCoeff");
         
         var _staticVBuffer  = __staticVBuffer;
         var _dynamicVBuffer = __dynamicVBuffer;
@@ -774,11 +775,11 @@ function BulbRenderer(_ambientColour, _mode, _smooth) constructor
         shader_set(__shdBulbHardShadows);
         shader_set_uniform_f(_u_fNormalCoeff, _normalCoeff);
         
-        //Also do the same for our sunlight shader, provided we have any sunlight sources
-        if (array_length(__sunlightArray) > 0)
+        //Also do the same for our directional light shader, provided we have any directional light sources
+        if (array_length(__directionalLightArray) > 0)
         {
-            shader_set(__shdBulbHardShadowsSunlight);
-            shader_set_uniform_f(_sunlight_u_fNormalCoeff, _normalCoeff);
+            shader_set(__shdBulbHardShadowsDirectional);
+            shader_set_uniform_f(_directional_u_fNormalCoeff, _normalCoeff);
         }
         
         //Set our default shader
@@ -790,12 +791,12 @@ function BulbRenderer(_ambientColour, _mode, _smooth) constructor
         gpu_set_zfunc(cmpfunc_lessequal);
         
         var _i = 0;
-        repeat(array_length(__lightsArray))
+        repeat(array_length(__pointLightArray))
         {
-            var _weak = __lightsArray[_i];
+            var _weak = __pointLightArray[_i];
             if (!weak_ref_alive(_weak) || _weak.ref.__destroyed)
             {
-                array_delete(__lightsArray, _i, 1);
+                array_delete(__pointLightArray, _i, 1);
             }
             else
             {
@@ -856,12 +857,12 @@ function BulbRenderer(_ambientColour, _mode, _smooth) constructor
         }
         
         var _i = 0;
-        repeat(array_length(__sunlightArray))
+        repeat(array_length(__directionalLightArray))
         {
-            var _weak = __sunlightArray[_i];
+            var _weak = __directionalLightArray[_i];
             if (!weak_ref_alive(_weak) || _weak.ref.__destroyed)
             {
-                array_delete(__sunlightArray, _i, 1);
+                array_delete(__directionalLightArray, _i, 1);
             }
             else
             {
@@ -879,8 +880,8 @@ function BulbRenderer(_ambientColour, _mode, _smooth) constructor
                         draw_sprite_ext(__sprBulbPixel, 0, _cameraL, _cameraT, _cameraW+1, _cameraH+1, 0, c_black, 0);
                         
                         //Stencil out shadow areas
-                        shader_set(__shdBulbHardShadowsSunlight);
-                        shader_set_uniform_f(_sunlight_u_vLightVector, dcos(angle), -dsin(angle));
+                        shader_set(__shdBulbHardShadowsDirectional);
+                        shader_set_uniform_f(_directional_u_vLightVector, dcos(angle), -dsin(angle));
                         vertex_submit(_staticVBuffer,  pr_trianglelist, -1);
                         vertex_submit(_dynamicVBuffer, pr_trianglelist, -1);
                         

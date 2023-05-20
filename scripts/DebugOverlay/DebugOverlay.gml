@@ -11,7 +11,7 @@ function DebugOverlay()
         draw_text(display_get_gui_width()*0.5, 25, "FPS = " + string_format(fps_real, 4, 0) + "," + string_format(smoothedFrameTime, 2, 2) + "ms / .Draw() = " + string_format(smoothedDrawEndTime, 4, 0) + "us");
         
         draw_set_halign(fa_left);
-        var _str = "lights = " + string(array_length(lighting.__lightsArray));
+        var _str = "lights = " + string(array_length(lighting.__pointLightArray));
         _str += "\nstatic occluders = " + string(array_length(lighting.__staticOccludersArray));
         _str += "\ndynamic occluders = " + string(array_length(lighting.__dynamicOccludersArray)) + "\n";
         
