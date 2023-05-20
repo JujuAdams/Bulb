@@ -10,9 +10,9 @@
 |----------|------------|------------------------------------------------------------------------------|
 |`renderer`|renderer    |Renderer to add this occluder to                                              |
 |`sprite`  |sprite index|Sprite to draw for the light                                                  |
-|`image`   |real        |Image index of the given sprite to draw. Negative values are **not** supported|
-|`x`       |real        |x-position of the light                                                       |
-|`y`       |real        |y-position of the light                                                       |
+|`image`   |number      |Image index of the given sprite to draw. Negative values are **not** supported|
+|`x`       |number      |x-position of the light                                                       |
+|`y`       |number      |y-position of the light                                                       |
 
 When created, a `BulbPointLight` will be added to the given renderer. A light can be added (and removed) from multiple renderers as you see fit.
 
@@ -23,17 +23,17 @@ The created struct has the following public member variables:
 |Variable      |Datatype      |Purpose                                                                          |
 |--------------|--------------|---------------------------------------------------------------------------------|
 |`sprite`      |sprite index  |Sprite to draw for the light                                                     |
-|`image`       |real          |Image index of the given sprite to draw. Negative values are **not** supported   |
-|`x`           |real          |x-position of the light                                                          |
-|`y`           |real          |y-position of the light                                                          |
-|`xscale`      |real          |Horizontal scaling of the light                                                  |
-|`yscale`      |real          |Vertical scaling of the light                                                    |
-|`angle`       |real          |Rotation of the light                                                            |
+|`image`       |number        |Image index of the given sprite to draw. Negative values are **not** supported   |
+|`x`           |number        |x-position of the light                                                          |
+|`y`           |number        |y-position of the light                                                          |
+|`xscale`      |number        |Horizontal scaling of the light                                                  |
+|`yscale`      |number        |Vertical scaling of the light                                                    |
+|`angle`       |number        |Rotation of the light                                                            |
 |`blend`       |integer       |Blend colour to use for the light                                                |
-|`alpha`       |real          |Transparency value for the light, from `0.0` (invisible) to `1.0` (fully visible)|
+|`alpha`       |number        |Transparency value for the light, from `0.0` (invisible) to `1.0` (fully visible)|
 |`visible`     |boolean       |Whether to draw the light at all                                                 |
 |`castShadows` |boolean       |Whether the light casts shadow. Not casting shadows is much faster!              |
-|`penumbraSize`|real          |Size of the penumbra when using the `BULB_MODE.SOFT_BM_ADD` rendering mode       |
+|`penumbraSize`|number        |Size of the penumbra when using the `BULB_MODE.SOFT_BM_ADD` rendering mode       |
 
 The created struct has the following methods (click to expand):
 
@@ -42,9 +42,9 @@ The created struct has the following methods (click to expand):
 
 **Returns:** N/A (`undefined`)
 
-|Name      |Datatype                                                                   |Purpose                      |
-|----------|---------------------------------------------------------------------------|-----------------------------|
-|`renderer`|[renderer](GML-Functions#bulbrendererambientcolour-mode-smooth-constructor)|Renderer to add this light to|
+|Name      |Datatype|Purpose                         |
+|----------|--------|--------------------------------|
+|`renderer`|renderer|Renderer to add this occluder to|
 
 &nbsp;
 </details>
@@ -54,21 +54,9 @@ The created struct has the following methods (click to expand):
 
 **Returns:** N/A (`undefined`)
 
-|Name      |Datatype                                                                   |Purpose                            |
-|----------|---------------------------------------------------------------------------|-----------------------------------|
-|`renderer`|[renderer](GML-Functions#bulbrendererambientcolour-mode-smooth-constructor)|Renderer to removed this light from|
-
-&nbsp;
-</details>
-
-<details><summary><code>.RemoveFromRenderer(renderer)</code></summary>
-&nbsp;
-
-**Returns:** N/A (`undefined`)
-
-|Name      |Datatype                                                                   |Purpose                            |
-|----------|---------------------------------------------------------------------------|-----------------------------------|
-|`renderer`|[renderer](GML-Functions#bulbrendererambientcolour-mode-smooth-constructor)|Renderer to removed this light from|
+|Name      |Datatype|Purpose                         |
+|----------|--------|--------------------------------|
+|`renderer`|renderer|Renderer to add this occluder to|
 
 &nbsp;
 </details>

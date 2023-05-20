@@ -1,4 +1,8 @@
-### `BulbRenderer(ambientColour, mode, smooth)` ***constructor***
+# BulbRenderer
+
+&nbsp;
+
+`BulbRenderer(ambientColour, mode, smooth)` ***constructor***
 
 **Constructor returns:** `BulbRenderer` struct
 
@@ -26,13 +30,11 @@ The `BULB_MODE` enum contains the following elements:
 
 The created struct has the following public member variables:
 
-|Variable       |Datatype|Purpose                                                                                                                                                                   |
-|---------------|--------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-|`ambientColor` |integer |Colour to use for fully shadowed (unlit) areas                                                                                                                            |
-|`mode`         |integer |Rendering mode to use, from the `BULB_MODE` enum (see below)                                                                                                              |
-|`smooth`       |boolean |Whether to render lights with texture filtering on, smoothing out the resulting image                                                                                     |
-|`surfaceWidth` |real    |Width of the output surface. If set to a negative number, this value will automatically be replaced with the size of the rendering area when the renderer is next updated |
-|`surfaceHeight`|real    |Height of the output surface. If set to a negative number, this value will automatically be replaced with the size of the rendering area when the renderer is next updated|
+|Variable       |Datatype|Purpose                                                                              |
+|---------------|--------|-------------------------------------------------------------------------------------|
+|`ambientColor` |integer |Colour to use for fully shadowed (unlit) areas                                       |
+|`mode`         |integer |Rendering mode to use, from the `BULB_MODE` enum (see below)                         |
+|`smooth`       |boolean |Whether to render lights with texture filtering on, smoothing out the resulting image|
 
 The created struct has the following methods (click to expand):
 
@@ -69,10 +71,10 @@ Sets the ambient light colour.
 
 |Name      |Datatype|Purpose                                                  |
 |----------|--------|---------------------------------------------------------|
-|viewLeft  |real    |x-coordinate of the top-left corner of the rendering area|
-|viewTop   |real    |y-coordinate of the top-left corner of the rendering area|
-|viewWidth |real    |Width of the rendering area                              |
-|viewHeight|real    |Height of the rendering area                             |
+|viewLeft  |number  |x-coordinate of the top-left corner of the rendering area|
+|viewTop   |number  |y-coordinate of the top-left corner of the rendering area|
+|viewWidth |number  |Width of the rendering area                              |
+|viewHeight|number  |Height of the rendering area                             |
 
 Updates the internal lighting/shadow surface for the renderer struct.
 
@@ -84,9 +86,9 @@ Updates the internal lighting/shadow surface for the renderer struct.
 
 **Returns:** N/A (`undefined`)
 
-|Name|Datatype|Purpose|
-|----|--------|-------|
-|camera|[camera index](https://docs2.yoyogames.com/source/_build/3_scripting/4_gml_reference/cameras%20and%20display/cameras/index.html)|Camera to use to define the light rendering area|
+|Name  |Datatype    |Purpose                                         |
+|------|------------|------------------------------------------------|
+|camera|camera index|Camera to use to define the light rendering area|
 
 Updates the internal lighting/shadow surface for the renderer struct using the position and dimensions of the provided camera's viewport. Intended to be used alongside `.DrawOnCamera()`.
 
@@ -100,11 +102,11 @@ Updates the internal lighting/shadow surface for the renderer struct using the p
 
 |Name      |Datatype|Purpose                                                                                                      |
 |----------|--------|-------------------------------------------------------------------------------------------------------------|
-|`x`       |real    |x-coordinate to draw at                                                                                      |
-|`y`       |real    |y-coordinate to draw at                                                                                      |
-|`[width]` |real    |Stretched width of the drawn lighting surface. Defaults to no stretching, using the surface's natural width  |
-|`[height]`|real    |Stretched height of the drawn lighting surface. Defaults to no stretching, using the surface's natural height|
-|`[alpha]` |real    |Alpha blend value to use, with `0.0` being completely invisible. Defaults to `1.0`                           |
+|`x`       |number  |x-coordinate to draw at                                                                                      |
+|`y`       |number  |y-coordinate to draw at                                                                                      |
+|`[width]` |number  |Stretched width of the drawn lighting surface. Defaults to no stretching, using the surface's natural width  |
+|`[height]`|number  |Stretched height of the drawn lighting surface. Defaults to no stretching, using the surface's natural height|
+|`[alpha]` |number  |Alpha blend value to use, with `0.0` being completely invisible. Defaults to `1.0`                           |
 
 Draws the lighting/shadow surface at the given coordinates, and stretched if desired.
 
@@ -118,10 +120,10 @@ Draws the lighting/shadow surface at the given coordinates, and stretched if des
 
 **Returns:** N/A (`undefined`)
 
-|Name     |Datatype|Purpose                                                                           |
-|---------|--------|----------------------------------------------------------------------------------|
-|camera   |[camera index](https://docs2.yoyogames.com/source/_build/3_scripting/4_gml_reference/cameras%20and%20display/cameras/index.html)|Camera to use as coordinates to draw the light surface|
-|`[alpha]`|real    |Alpha blend value to use, with `0.0` being completely invisible. Defaults to `1.0`|
+|Name     |Datatype    |Purpose                                                                           |
+|---------|------------|----------------------------------------------------------------------------------|
+|camera   |camera index|Camera to use as coordinates to draw the light surface                            |
+|`[alpha]`|number      |Alpha blend value to use, with `0.0` being completely invisible. Defaults to `1.0`|
 
 Draws the lighting/shadow surface on the given camera. Intended to be used alongside `.UpdateFromCamera()`.
 
@@ -151,7 +153,7 @@ This function may return `undefined` if no surface exists for the renderer.
 |----|--------|-------|
 |None|        |       |
 
-Refreshes this renderer's [static occluders](GML-Functions#bulbstaticoccluderrenderer-constructor), causing the renderer's output to reflect any changes made to its static occluders.
+Refreshes this renderer's static occluders, causing the renderer's output to reflect any changes made to its static occluders.
 
 &nbsp;
 </details>
