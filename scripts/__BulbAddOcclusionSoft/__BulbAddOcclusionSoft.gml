@@ -27,22 +27,22 @@ function __BulbAddOcclusionSoft(_vbuff)
         var _newBx = x + _oldBx*_xCos + _oldBy*_ySin;
         var _newBy = y - _oldBx*_xSin + _oldBy*_yCos;
         
-        ////Add to the vertex buffer
-        vertex_position_3d(_vbuff,   _newAx, _newAy, 0);           vertex_float3(_vbuff,  1, 1,  0);
-        vertex_position_3d(_vbuff,   _newBx, _newBy, __BULB_ZFAR); vertex_float3(_vbuff,  1, 1,  0);
-        vertex_position_3d(_vbuff,   _newBx, _newBy, 0);           vertex_float3(_vbuff,  1, 1,  0);
+        //Add to the vertex buffer
+        vertex_position_3d(_vbuff,   _newAx, _newAy, 0); vertex_float3(_vbuff,  1, 1,  0);
+        vertex_position_3d(_vbuff,   _newBx, _newBy, 1); vertex_float3(_vbuff,  1, 1,  0);
+        vertex_position_3d(_vbuff,   _newBx, _newBy, 0); vertex_float3(_vbuff,  1, 1,  0);
                                                                                   
-        vertex_position_3d(_vbuff,   _newAx, _newAy, 0);           vertex_float3(_vbuff,  1, 1,  0);
-        vertex_position_3d(_vbuff,   _newAx, _newAy, __BULB_ZFAR); vertex_float3(_vbuff,  1, 1,  0);
-        vertex_position_3d(_vbuff,   _newBx, _newBy, __BULB_ZFAR); vertex_float3(_vbuff,  1, 1,  0);
+        vertex_position_3d(_vbuff,   _newAx, _newAy, 0); vertex_float3(_vbuff,  1, 1,  0);
+        vertex_position_3d(_vbuff,   _newAx, _newAy, 1); vertex_float3(_vbuff,  1, 1,  0);
+        vertex_position_3d(_vbuff,   _newBx, _newBy, 1); vertex_float3(_vbuff,  1, 1,  0);
                                                                                   
         //Add data for the soft shadows                                           
-        vertex_position_3d(_vbuff,   _newAx, _newAy, __BULB_ZFAR); vertex_float3(_vbuff,  1, 0,  0);
-        vertex_position_3d(_vbuff,   _newAx, _newAy, 0);           vertex_float3(_vbuff,  0, 1,  0);
-        vertex_position_3d(_vbuff,   _newAx, _newAy, __BULB_ZFAR); vertex_float3(_vbuff,  0, 0,  1);
+        vertex_position_3d(_vbuff,   _newAx, _newAy, 1); vertex_float3(_vbuff,  1, 0,  0);
+        vertex_position_3d(_vbuff,   _newAx, _newAy, 0); vertex_float3(_vbuff,  0, 1,  0);
+        vertex_position_3d(_vbuff,   _newAx, _newAy, 1); vertex_float3(_vbuff,  0, 0,  1);
                                                                                         
-        vertex_position_3d(_vbuff,   _newBx, _newBy, __BULB_ZFAR); vertex_float3(_vbuff,  0, 0, -1);
-        vertex_position_3d(_vbuff,   _newBx, _newBy, 0);           vertex_float3(_vbuff,  0, 1,  0);
-        vertex_position_3d(_vbuff,   _newBx, _newBy, __BULB_ZFAR); vertex_float3(_vbuff,  1, 0,  0);
+        vertex_position_3d(_vbuff,   _newBx, _newBy, 1); vertex_float3(_vbuff,  0, 0, -1);
+        vertex_position_3d(_vbuff,   _newBx, _newBy, 0); vertex_float3(_vbuff,  0, 1,  0);
+        vertex_position_3d(_vbuff,   _newBx, _newBy, 1); vertex_float3(_vbuff,  1, 0,  0);
     }
 }

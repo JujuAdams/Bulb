@@ -1,6 +1,5 @@
 #macro __BULB_VERSION                "20.4.0 alpha"
 #macro __BULB_DATE                   "2023-05-14"
-#macro __BULB_ZFAR                   1
 #macro __BULB_FORCE_PRODUCTION_MODE  false
 #macro __BULB_BUILD_TYPE             (__BULB_FORCE_PRODUCTION_MODE? "exe" : GM_build_type)
 #macro __BULB_DISK_CACHE_NAME        ((__BULB_BUILD_TYPE == "run")? "BulbCacheDev.dat" : "BulbCache.dat")

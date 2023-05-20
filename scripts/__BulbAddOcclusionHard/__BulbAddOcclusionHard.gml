@@ -35,12 +35,12 @@ function __BulbAddOcclusionHard(_vbuff)
         var _newDy = y - _oldDx*_xSin + _oldDy*_yCos;
         
         //Add to the vertex buffer
-        vertex_position_3d(_vbuff,   _newAx, _newAy, 0);           vertex_float4(_vbuff,   _newCx, _newCy, _newDx, _newDy);
-        vertex_position_3d(_vbuff,   _newBx, _newBy, __BULB_ZFAR); vertex_float4(_vbuff,   _newCx, _newCy, _newDx, _newDy);
-        vertex_position_3d(_vbuff,   _newBx, _newBy, 0);           vertex_float4(_vbuff,   _newCx, _newCy, _newDx, _newDy);
+        vertex_position_3d(_vbuff,   _newAx, _newAy, 0); vertex_float4(_vbuff,   _newCx, _newCy, _newDx, _newDy);
+        vertex_position_3d(_vbuff,   _newBx, _newBy, 1); vertex_float4(_vbuff,   _newCx, _newCy, _newDx, _newDy);
+        vertex_position_3d(_vbuff,   _newBx, _newBy, 0); vertex_float4(_vbuff,   _newCx, _newCy, _newDx, _newDy);
         
-        vertex_position_3d(_vbuff,   _newAx, _newAy, 0);           vertex_float4(_vbuff,   _newCx, _newCy, _newDx, _newDy);
-        vertex_position_3d(_vbuff,   _newAx, _newAy, __BULB_ZFAR); vertex_float4(_vbuff,   _newCx, _newCy, _newDx, _newDy);
-        vertex_position_3d(_vbuff,   _newBx, _newBy, __BULB_ZFAR); vertex_float4(_vbuff,   _newCx, _newCy, _newDx, _newDy);
+        vertex_position_3d(_vbuff,   _newAx, _newAy, 0); vertex_float4(_vbuff,   _newCx, _newCy, _newDx, _newDy);
+        vertex_position_3d(_vbuff,   _newAx, _newAy, 1); vertex_float4(_vbuff,   _newCx, _newCy, _newDx, _newDy);
+        vertex_position_3d(_vbuff,   _newBx, _newBy, 1); vertex_float4(_vbuff,   _newCx, _newCy, _newDx, _newDy);
     }
 }
