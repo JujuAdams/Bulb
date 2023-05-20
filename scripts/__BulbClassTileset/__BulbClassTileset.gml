@@ -74,7 +74,7 @@ function __BulbClassTileset(_tileset, _checkForTag = true) constructor
             var _extTileHeight = 4 + __tileHeight;
             
             var _i = 0;
-            repeat(array_length(_rawEdgeArray) div __BULB_ARRAY_VERTEX_SIZE)
+            repeat(array_length(_rawEdgeArray) div __BULB_ARRAY_EDGE_SIZE)
             {
                 var _x1 = _rawEdgeArray[_i  ];
                 var _y1 = _rawEdgeArray[_i+1];
@@ -106,7 +106,7 @@ function __BulbClassTileset(_tileset, _checkForTag = true) constructor
                            _rawEdgeArray[_i+6] - _xOffset,
                            _rawEdgeArray[_i+7] - _yOffset);
                 
-                _i += __BULB_ARRAY_VERTEX_SIZE;
+                _i += __BULB_ARRAY_EDGE_SIZE;
             }
             
             var _tileIndexArray = variable_struct_get_names(__tileDict);

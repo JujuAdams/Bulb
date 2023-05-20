@@ -9,7 +9,7 @@ function __BulbClassImage(_spriteIndex, _imageIndex) constructor
     __imageIndex  = _imageIndex;
     
     //Size of the circle that encompasses the shape
-    radius = 0;
+    __radius = 0;
     
     __hash   = undefined;
     __onDisk = undefined;
@@ -52,7 +52,7 @@ function __BulbClassImage(_spriteIndex, _imageIndex) constructor
                                                        false, true);
             
             __edgeArray = _result.__edgeArray;
-            radius      = _result.__radius;
+            __radius    = _result.__radius;
             
             buffer_delete(_buffer);
             
@@ -125,7 +125,7 @@ function __BulbClassImage(_spriteIndex, _imageIndex) constructor
             }
         }
         
-        radius = buffer_read(_buffer, buffer_f64);
+        __radius = buffer_read(_buffer, buffer_f64);
         var _pointCount = buffer_read(_buffer, buffer_u64);
         __edgeArray = array_create(_pointCount, undefined);
         
@@ -167,7 +167,7 @@ function __BulbClassImage(_spriteIndex, _imageIndex) constructor
         buffer_write(_buffer, buffer_string, __GetName());
         buffer_write(_buffer, buffer_string, (__BULB_BUILD_TYPE == "run")? __GetHash() : "<undefined>");
         buffer_write(_buffer, buffer_f64,    GM_build_date);
-        buffer_write(_buffer, buffer_f64,    radius);
+        buffer_write(_buffer, buffer_f64,    __radius);
         
         buffer_write(_buffer, buffer_u64, array_length(__edgeArray));
         var _i = 0;

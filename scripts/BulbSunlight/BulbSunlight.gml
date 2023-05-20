@@ -12,7 +12,7 @@ function BulbSunlight(_renderer, _angle) constructor
     penumbraSize = 0.0;
     
     __oldSprite = undefined;
-    radius    = 0;
+    __radius    = 0;
     __destroyed = false;
     
     static Destroy = function()

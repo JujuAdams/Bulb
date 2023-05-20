@@ -14,12 +14,12 @@ function __BulbAddTilemapToOccluder(_occluder, _tilemap)
     var _tileWidth  = tilemap_get_tile_width( _tilemap);
     var _tileHeight = tilemap_get_tile_height(_tilemap);
     
-    var _occluderVertexArray = _occluder.vertexArray;
+    var _occluderVertexArray = _occluder.__edgeArray;
     
     var _copyArrayFunc = function(_sourceArray, _destinationArray, _xOffset, _yOffset)
     {
         var _j = 0;
-        repeat(array_length(_sourceArray) div __BULB_ARRAY_VERTEX_SIZE)
+        repeat(array_length(_sourceArray) div __BULB_ARRAY_EDGE_SIZE)
         {
             array_push(_destinationArray, _sourceArray[_j  ] + _xOffset,
                                           _sourceArray[_j+1] + _yOffset,
@@ -30,7 +30,7 @@ function __BulbAddTilemapToOccluder(_occluder, _tilemap)
                                           _sourceArray[_j+6] + _xOffset,
                                           _sourceArray[_j+7] + _yOffset);
             
-            _j += __BULB_ARRAY_VERTEX_SIZE;
+            _j += __BULB_ARRAY_EDGE_SIZE;
         }
     }
     

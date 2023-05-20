@@ -10,19 +10,19 @@ function __BulbAddOcclusionHard(_vbuff)
     var _yCos = yscale*_cos;
     
     //Loop through every line segment, remembering that we're storing coordinate data sequentially: { Ax1, Ay1, Bx1, Bx1,   Ax2, Ay2, Bx2, Bx2, ... }
-    var _vertexArray = vertexArray;
+    var _edgeArray = __edgeArray;
     var _i = 0;
-    repeat(array_length(_vertexArray) div __BULB_ARRAY_VERTEX_SIZE)
+    repeat(array_length(_edgeArray) div __BULB_ARRAY_EDGE_SIZE)
     {
         //Collect coordinates
-        var _oldAx = _vertexArray[_i++];
-        var _oldAy = _vertexArray[_i++];
-        var _oldBx = _vertexArray[_i++];
-        var _oldBy = _vertexArray[_i++];
-        var _oldCx = _vertexArray[_i++];
-        var _oldCy = _vertexArray[_i++];
-        var _oldDx = _vertexArray[_i++];
-        var _oldDy = _vertexArray[_i++];
+        var _oldAx = _edgeArray[_i++];
+        var _oldAy = _edgeArray[_i++];
+        var _oldBx = _edgeArray[_i++];
+        var _oldBy = _edgeArray[_i++];
+        var _oldCx = _edgeArray[_i++];
+        var _oldCy = _edgeArray[_i++];
+        var _oldDx = _edgeArray[_i++];
+        var _oldDy = _edgeArray[_i++];
         
         //...and transform
         var _newAx = x + _oldAx*_xCos + _oldAy*_ySin;

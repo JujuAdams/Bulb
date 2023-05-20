@@ -3,7 +3,7 @@
 #macro __BULB_FORCE_PRODUCTION_MODE  false
 #macro __BULB_BUILD_TYPE             (__BULB_FORCE_PRODUCTION_MODE? "exe" : GM_build_type)
 #macro __BULB_DISK_CACHE_NAME        ((__BULB_BUILD_TYPE == "run")? "BulbCacheDev.dat" : "BulbCache.dat")
-#macro __BULB_ARRAY_VERTEX_SIZE      8
+#macro __BULB_ARRAY_EDGE_SIZE        8
 
 __BulbInitialize();
 

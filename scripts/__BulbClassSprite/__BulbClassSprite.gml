@@ -16,7 +16,7 @@ function __BulbClassSprite(_spriteIndex, _checkForTag = true) constructor
     __imageArray  = array_create(sprite_get_number(__spriteIndex), undefined);
     
     //Size of the circle that encompasses the shape
-    radius = 0;
+    __radius = 0;
     
     var _i = 0;
     repeat(array_length(__imageArray))
@@ -31,13 +31,13 @@ function __BulbClassSprite(_spriteIndex, _checkForTag = true) constructor
     
     static __TraceAll = function()
     {
-        radius = 0;
+        __radius = 0;
         
         var _i = 0;
         repeat(array_length(__imageArray))
         {
             __imageArray[@ _i].__GetEdgeArray();
-            radius = max(radius, __imageArray[_i].radius);
+            __radius = max(__radius, __imageArray[_i].__radius);
             ++_i;
         }
     }

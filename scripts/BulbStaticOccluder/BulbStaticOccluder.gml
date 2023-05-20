@@ -10,7 +10,7 @@ function BulbStaticOccluder(_renderer) constructor
     angle  = 0.0;
     
     //Arranged as repeating units of 8 elements: x1, y1, x2, y2, parent x1, parent y1, parent x2, parent y2
-    vertexArray = [];
+    __edgeArray = [];
     
     __destroyed = false;
     
@@ -23,14 +23,14 @@ function BulbStaticOccluder(_renderer) constructor
     {
         if (__destroyed) return;
         
-        array_push(vertexArray, _x1, _y1, _x2, _y2, _x3, _y3, _x4, _y4);
+        array_push(__edgeArray, _x1, _y1, _x2, _y2, _x3, _y3, _x4, _y4);
     }
     
     static ClearEdges = function()
     {
         if (__destroyed) return;
         
-        array_resize(vertexArray, 0);
+        array_resize(__edgeArray, 0);
     }
     
     static SetSprite = function(_sprite, _image)
