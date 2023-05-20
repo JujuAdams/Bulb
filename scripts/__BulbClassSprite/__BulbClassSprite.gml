@@ -3,7 +3,8 @@
 
 function __BulbClassSprite(_spriteIndex, _checkForTag = true) constructor
 {
-    global.__bulbSpriteDict[$ _spriteIndex] = self;
+    static __global = __BulbGlobal();
+    __global.__spriteDict[$ _spriteIndex] = self;
     
     if (!sprite_exists(_spriteIndex))
     {
@@ -40,7 +41,7 @@ function __BulbClassSprite(_spriteIndex, _checkForTag = true) constructor
         if (!BULB_TAG_ASSETS_ON_USE || (__BULB_BUILD_TYPE != "run")) return;
         
         var _spriteName = sprite_get_name(__spriteIndex);
-        var _path = global.__bulbProjectDirectory + "sprites/" + _spriteName + "/" + _spriteName + ".yy";
+        var _path = __global.__projectDirectory + "sprites/" + _spriteName + "/" + _spriteName + ".yy";
         
         if (!file_exists(_path))
         {

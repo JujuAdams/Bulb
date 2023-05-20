@@ -14,6 +14,9 @@ enum BULB_MODE
 
 function BulbRenderer(_ambientColour, _mode, _smooth) constructor
 {
+    static __vFormatHard = __BulbGlobal().__vFormatHard;
+    static __vFormatSoft = __BulbGlobal().__vFormatSoft;
+    
     //Assign the ambient colour used for the darkest areas of the screen. This can be changed on the fly
     ambientColor = _ambientColour;
     
@@ -370,7 +373,7 @@ function BulbRenderer(_ambientColour, _mode, _smooth) constructor
             //Add static shadow caster vertices to the relevant vertex buffer
             if (mode == BULB_MODE.SOFT_BM_ADD)
             {
-                vertex_begin(__staticVBuffer, global.__bulbVFormatSoft);
+                vertex_begin(__staticVBuffer, __vFormatSoft);
                 
                 var _array = __staticOccludersArray;
                 var _i = 0;
@@ -390,7 +393,7 @@ function BulbRenderer(_ambientColour, _mode, _smooth) constructor
             }
             else
             {
-                vertex_begin(__staticVBuffer, global.__bulbVFormatHard);
+                vertex_begin(__staticVBuffer, __vFormatHard);
                 
                 var _array = __staticOccludersArray;
                 var _i = 0;
@@ -422,7 +425,7 @@ function BulbRenderer(_ambientColour, _mode, _smooth) constructor
         //Add dynamic occluder vertices to the relevant vertex buffer
         if (mode == BULB_MODE.SOFT_BM_ADD)
         {
-            vertex_begin(_dynamicVBuffer, global.__bulbVFormatSoft);
+            vertex_begin(_dynamicVBuffer, __vFormatSoft);
             
             var _array = __dynamicOccludersArray;
             var _i = 0;
@@ -446,7 +449,7 @@ function BulbRenderer(_ambientColour, _mode, _smooth) constructor
         }
         else
         {
-            vertex_begin(_dynamicVBuffer, global.__bulbVFormatHard);
+            vertex_begin(_dynamicVBuffer, __vFormatHard);
             
             var _array = __dynamicOccludersArray;
             var _i = 0;

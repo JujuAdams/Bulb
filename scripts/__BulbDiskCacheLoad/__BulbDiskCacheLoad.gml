@@ -1,24 +1,26 @@
 function __BulbDiskCacheLoad()
 {
+    static __global = __BulbGlobal();
+    
     if (BULB_USE_DISK_CACHE)
     {
-        if (global.__bulbCacheBuffer == undefined)
+        if (_global.__cacheBuffer == undefined)
         {
             if (BULB_VERBOSE) var _t = get_timer();
             
             if (file_exists(__BULB_DISK_CACHE_NAME))
             {
-                global.__bulbCacheBuffer = buffer_load(__BULB_DISK_CACHE_NAME);
+                _global.__cacheBuffer = buffer_load(__BULB_DISK_CACHE_NAME);
             }
             else
             {
-                global.__bulbCacheBuffer = buffer_create(1024, buffer_grow, 1);
+                _global.__cacheBuffer = buffer_create(1024, buffer_grow, 1);
             }
             
-            global.__bulbCacheDict = {};
+            _global.__cacheDict = {};
             var _entryArray = [];
             
-            var _buffer = global.__bulbCacheBuffer;
+            var _buffer = _global.__cacheBuffer;
             
             var _pos = 0;
             var _byteSize = buffer_read(_buffer, buffer_u64);
@@ -103,9 +105,9 @@ function __BulbDiskCacheLoad()
                 }
                 
                 buffer_delete(_buffer);
-                global.__bulbCacheBuffer = _newBuffer;
-                buffer_seek(global.__bulbCacheBuffer, buffer_seek_start, _pos);
-                buffer_write(global.__bulbCacheBuffer, buffer_u64, 0);
+                _global.__cacheBuffer = _newBuffer;
+                buffer_seek(_global.__cacheBuffer, buffer_seek_start, _pos);
+                buffer_write(_global.__cacheBuffer, buffer_u64, 0);
                 
                 buffer_save_ext(_newBuffer, __BULB_DISK_CACHE_NAME, 0, buffer_tell(_newBuffer));
             }
@@ -115,7 +117,7 @@ function __BulbDiskCacheLoad()
             repeat(array_length(_entryArray))
             {
                 var _entry = _entryArray[_i];
-                global.__bulbCacheDict[$ _entry.__name] = _entry.__position;
+                _global.__cacheDict[$ _entry.__name] = _entry.__position;
                 ++_i;
             }
             

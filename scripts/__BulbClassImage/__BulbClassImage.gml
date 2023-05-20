@@ -3,6 +3,8 @@
 
 function __BulbClassImage(_spriteIndex, _imageIndex) constructor
 {
+    static __global = __BulbGlobal();
+    
     __spriteIndex = _spriteIndex;
     __imageIndex  = _imageIndex;
     
@@ -61,7 +63,7 @@ function __BulbClassImage(_spriteIndex, _imageIndex) constructor
         
         if (__onDisk == undefined)
         {
-            __onDisk = variable_struct_exists(global.__bulbCacheDict, __GetName());
+            __onDisk = variable_struct_exists(__global.__cacheDict, __GetName());
         }
         
         return __onDisk;
@@ -72,10 +74,10 @@ function __BulbClassImage(_spriteIndex, _imageIndex) constructor
         if (!BULB_USE_DISK_CACHE) return;
         if (!__DiskCheck()) return;
         
-        var _buffer = global.__bulbCacheBuffer;
+        var _buffer = __global.__cacheBuffer;
         var _oldTell = buffer_tell(_buffer);
         
-        var _bufferPos = global.__bulbCacheDict[$ __GetName()];
+        var _bufferPos = __global.__cacheDict[$ __GetName()];
         buffer_seek(_buffer, buffer_seek_start, _bufferPos);
         
         var _expectedFinalTell = _bufferPos + buffer_read(_buffer, buffer_u64);
@@ -157,7 +159,7 @@ function __BulbClassImage(_spriteIndex, _imageIndex) constructor
         
         __onDisk = true;
         
-        var _buffer = global.__bulbCacheBuffer;
+        var _buffer = __global.__cacheBuffer;
         
         buffer_seek(_buffer, buffer_seek_relative, -8);
         
@@ -189,7 +191,7 @@ function __BulbClassImage(_spriteIndex, _imageIndex) constructor
         buffer_poke(_buffer, _byteSizePosition, buffer_u64, _byteSize);
         buffer_write(_buffer, buffer_u64, 0);
         
-        if (!global.__bulbCachePauseSave) buffer_save_ext(_buffer, __BULB_DISK_CACHE_NAME, 0, buffer_tell(_buffer));
+        if (!__global.__cachePauseSave) buffer_save_ext(_buffer, __BULB_DISK_CACHE_NAME, 0, buffer_tell(_buffer));
     }
     
     static __GetHash = function(_buffer = undefined)

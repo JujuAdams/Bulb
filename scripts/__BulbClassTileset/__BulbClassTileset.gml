@@ -3,7 +3,10 @@
 
 function __BulbClassTileset(_tileset, _checkForTag = true) constructor
 {
-    global.__bulbTilesetDict[$ _tileset] = self;
+    static __global      = __BulbGlobal();
+    static __tilesetDict = __global.__tilesetDict;
+    
+    __tilesetDict[$ _tileset] = self;
     
     __tileset = _tileset;
     
@@ -126,7 +129,7 @@ function __BulbClassTileset(_tileset, _checkForTag = true) constructor
         
         if (__onDisk == undefined)
         {
-            __onDisk = variable_struct_exists(global.__bulbCacheDict, tileset_get_name(__tileset));
+            __onDisk = variable_struct_exists(__global.__cacheDict, tileset_get_name(__tileset));
         }
         
         return __onDisk;
@@ -137,10 +140,10 @@ function __BulbClassTileset(_tileset, _checkForTag = true) constructor
         if (!BULB_USE_DISK_CACHE) return;
         if (!__DiskCheck()) return;
         
-        var _buffer = global.__bulbCacheBuffer;
+        var _buffer = __global.__cacheBuffer;
         var _oldTell = buffer_tell(_buffer);
         
-        var _bufferPos = global.__bulbCacheDict[$ tileset_get_name(__tileset)];
+        var _bufferPos = __global.__cacheDict[$ tileset_get_name(__tileset)];
         buffer_seek(_buffer, buffer_seek_start, _bufferPos);
         
         var _expectedFinalTell = _bufferPos + buffer_read(_buffer, buffer_u64);
@@ -219,7 +222,7 @@ function __BulbClassTileset(_tileset, _checkForTag = true) constructor
         
         __onDisk = true;
         
-        var _buffer = global.__bulbCacheBuffer;
+        var _buffer = __global.__cacheBuffer;
         
         buffer_seek(_buffer, buffer_seek_relative, -8);
         
@@ -250,7 +253,7 @@ function __BulbClassTileset(_tileset, _checkForTag = true) constructor
         buffer_poke(_buffer, _byteSizePosition, buffer_u64, _byteSize);
         buffer_write(_buffer, buffer_u64, 0);
         
-        if (!global.__bulbCachePauseSave) buffer_save_ext(_buffer, __BULB_DISK_CACHE_NAME, 0, buffer_tell(_buffer));
+        if (!__global.__cachePauseSave) buffer_save_ext(_buffer, __BULB_DISK_CACHE_NAME, 0, buffer_tell(_buffer));
     }
     
     static __GetHash = function(_buffer = undefined)
@@ -338,7 +341,7 @@ function __BulbClassTileset(_tileset, _checkForTag = true) constructor
         if (!BULB_TAG_ASSETS_ON_USE || (__BULB_BUILD_TYPE != "run")) return;
         
         var _tilesetName = tileset_get_name(__tileset);
-        var _path = global.__bulbProjectDirectory + "tilesets/" + _tilesetName + "/" + _tilesetName + ".yy";
+        var _path = __global.__projectDirectory + "tilesets/" + _tilesetName + "/" + _tilesetName + ".yy";
         
         if (!file_exists(_path))
         {

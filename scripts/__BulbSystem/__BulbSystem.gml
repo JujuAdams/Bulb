@@ -15,30 +15,24 @@ function __BulbInitialize()
 
     __BulbTrace("Welcome to Bulb by @jujuadams! This is version " + __BULB_VERSION + ", " + __BULB_DATE);
     
+    static _global = __BulbGlobal();
+    
     //Create a couple vertex formats
     vertex_format_begin();
     vertex_format_add_position_3d();
     vertex_format_add_custom(vertex_type_float4, vertex_usage_normal);
-    global.__bulbVFormatHard = vertex_format_end();
+    _global.__vFormatHard = vertex_format_end();
     
     vertex_format_begin();
     vertex_format_add_position_3d();
     vertex_format_add_custom(vertex_type_float3, vertex_usage_texcoord);
-    global.__bulbVFormatSoft = vertex_format_end();
-    
-    global.__bulbSpriteDict  = {};
-    global.__bulbTilesetDict = {};
-    
-    global.__bulbProjectDirectory = undefined;
-    global.__bulbCacheBuffer      = undefined;
-    global.__bulbCacheDict        = {};
-    global.__bulbCachePauseSave   = false;
+    _global.__vFormatSoft = vertex_format_end();
     
     __BulbDiskCacheLoad();
     
     if (BULB_TRACE_TAGGED_ASSETS_ON_BOOT)
     {
-        global.__bulbCachePauseSave = true;
+        _global.__cachePauseSave = true;
         
         //Sprites
         if (BULB_VERBOSE) var _t = get_timer();
@@ -73,8 +67,8 @@ function __BulbInitialize()
         if (BULB_VERBOSE) __BulbTrace("Tileset trace ended (", (get_timer() - _t)/1000, "ms)");
         
         //Actually save the cache to disk now
-        global.__bulbCachePauseSave = false;
-        if (BULB_USE_DISK_CACHE) buffer_save_ext(global.__bulbCacheBuffer, __BULB_DISK_CACHE_NAME, 0, buffer_tell(global.__bulbCacheBuffer));
+        _global.__cachePauseSave = false;
+        if (BULB_USE_DISK_CACHE) buffer_save_ext(_global.__cacheBuffer, __BULB_DISK_CACHE_NAME, 0, buffer_tell(_global.__cacheBuffer));
     }
     
     if (BULB_TAG_ASSETS_ON_USE && (__BULB_BUILD_TYPE == "run"))
@@ -89,9 +83,27 @@ function __BulbInitialize()
         }
         else
         {
-            global.__bulbProjectDirectory = filename_path(GM_project_filename);
+            _global.__projectDirectory = filename_path(GM_project_filename);
         }
     }
+}
+
+function __BulbGlobal()
+{
+    static _struct = {
+        __vFormatHard: undefined,
+        __vFormatSoft: undefined,
+        
+        __spriteDict:  {},
+        __tilesetDict: {},
+        
+        __projectDirectory: undefined,
+        __cacheBuffer:      undefined,
+        __cacheDict:        {},
+        __cachePauseSave:   false,
+    };
+    
+    return _struct;
 }
 
 function __BulbTrace()

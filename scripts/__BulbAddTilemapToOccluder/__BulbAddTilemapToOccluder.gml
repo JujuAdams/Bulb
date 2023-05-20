@@ -3,8 +3,10 @@
 
 function __BulbAddTilemapToOccluder(_occluder, _tilemap)
 {
+    static _tilesetDict = __BulbGlobal().__tilesetDict;
+    
     var _tilesetIndex = tilemap_get_tileset(_tilemap);
-    var _tileDict = global.__bulbTilesetDict[$ _tilesetIndex];
+    var _tileDict = _tilesetDict[$ _tilesetIndex];
     
     var _tileset = __BulbGetTileset(_tilesetIndex);
     var _tileDict = _tileset.__GetTileDictionary();
