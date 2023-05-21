@@ -24,7 +24,7 @@ function BulbDynamicOccluder(_renderer) constructor
         __destroyed = true;
     }
     
-    static AddEdge = function(_x1, _y1, _x2, _y2, _x3 = _x1, _y3 = _y1, _x4 = _x2, _y4 = _y2)
+    static AddEdge = function(_x1, _y1, _x2, _y2)
     {
         if (__destroyed) return;
         
@@ -32,7 +32,8 @@ function BulbDynamicOccluder(_renderer) constructor
         //We apply x/y scaling in the __IsOnScreen() function
         __radius = sqrt(max(__radius, _x1*_x1 + _y1*_y1, _x2*_x2 + _y2*_y2));
         
-        array_push(__edgeArray, _x1, _y1, _x2, _y2, _x3, _y3, _x4, _y4);
+        array_push(__edgeArray, _x1, _y1, _x2, _y2,
+                                _x1, _y1, _x2, _y2);
     }
     
     static ClearEdges = function()
