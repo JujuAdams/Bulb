@@ -6,7 +6,7 @@
 
 **Constructor returns:** `BulbDirectionalLight` struct
 
-|Name      |Datatype    |Purpose                                                                       |
+|Argument  |Datatype    |Purpose                                                                       |
 |----------|------------|------------------------------------------------------------------------------|
 |`renderer`|renderer    |Renderer to add this occluder to                                              |
 |`angle`   |number      |Direction of the light                                                        |
@@ -37,7 +37,7 @@ The created struct has the following public member variables:
 
 **Returns:** N/A (`undefined`)
 
-|Name      |Datatype|Purpose                         |
+|Argument  |Datatype|Purpose                         |
 |----------|--------|--------------------------------|
 |`renderer`|renderer|Renderer to add this occluder to|
 
@@ -49,7 +49,7 @@ The created struct has the following public member variables:
 
 **Returns:** N/A (`undefined`)
 
-|Name      |Datatype|Purpose                         |
+|Argument  |Datatype|Purpose                         |
 |----------|--------|--------------------------------|
 |`renderer`|renderer|Renderer to add this occluder to|
 
@@ -61,8 +61,8 @@ The created struct has the following public member variables:
 
 **Returns:** N/A (`undefined`)
 
-|Name|Datatype|Purpose|
-|----|--------|-------|
-|None|        |       |
+|Argument|Datatype|Purpose|
+|--------|--------|-------|
+|None    |        |       |
 
 Instantly destroys the light and prevents it from being drawn.

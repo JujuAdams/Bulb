@@ -6,7 +6,7 @@
 
 **Constructor returns:** `BulbStaticOccluder` struct
 
-|Name      |Datatype|Purpose                         |
+|Argument  |Datatype|Purpose                         |
 |----------|--------|--------------------------------|
 |`renderer`|renderer|Renderer to add this occluder to|
 
@@ -43,12 +43,12 @@ The created struct has the following public member variables:
 
 **Returns:** N/A (`undefined`)
 
-|Name|Datatype|Purpose                                      |
-|----|--------|---------------------------------------------|
-|`x1`|number  |x-coordinate of the first vertex of the edge |
-|`y1`|number  |y-coordinate of the first vertex of the edge |
-|`x2`|number  |x-coordinate of the second vertex of the edge|
-|`y2`|number  |y-coordinate of the second vertex of the edge|
+|Argument|Datatype|Purpose                                      |
+|--------|--------|---------------------------------------------|
+|`x1`    |number  |x-coordinate of the first vertex of the edge |
+|`y1`    |number  |y-coordinate of the first vertex of the edge |
+|`x2`    |number  |x-coordinate of the second vertex of the edge|
+|`y2`    |number  |y-coordinate of the second vertex of the edge|
 
 Adds an occlusion edge (a shadow-casting line) to the occluder. Edges should be defined in a **clockwise** order.
 
@@ -60,7 +60,7 @@ Adds an occlusion edge (a shadow-casting line) to the occluder. Edges should be 
 
 **Returns:** N/A (`undefined`)
 
-|Name    |Datatype    |Purpose                                                                      |
+|Argument|Datatype    |Purpose                                                                      |
 |--------|------------|-----------------------------------------------------------------------------|
 |`sprite`|sprite index|Sprite to use for shadow casting                                             |
 |`image` |number      |Image index of the given sprite to use. Negative values are **not** supported|
@@ -75,7 +75,7 @@ Adds an occlusion edge (a shadow-casting line) to the occluder. Edges should be 
 
 **Returns:** N/A (`undefined`)
 
-|Name     |Datatype                 |Purpose                                                                                               |
+|Argument |Datatype                 |Purpose                                                                                               |
 |---------|-------------------------|------------------------------------------------------------------------------------------------------|
 |`tilemap`|tilemap ID, or layer name|Tilemap to use for occlusion. Alternatively, you can provide the name of a tilemap layer (as a string)|
 
@@ -89,7 +89,7 @@ Adds an occlusion edge (a shadow-casting line) to the occluder. Edges should be 
 
 **Returns:** N/A (`undefined`)
 
-|Name    |Datatype    |Purpose                                                                      |
+|Argument|Datatype    |Purpose                                                                      |
 |--------|------------|-----------------------------------------------------------------------------|
 |`sprite`|sprite index|Sprite to use for shadow casting                                             |
 |`image` |number      |Image index of the given sprite to use. Negative values are **not** supported|
@@ -104,7 +104,7 @@ Adds an occlusion edge (a shadow-casting line) to the occluder. Edges should be 
 
 **Returns:** N/A (`undefined`)
 
-|Name     |Datatype                 |Purpose                                                                                               |
+|Argument |Datatype                 |Purpose                                                                                               |
 |---------|-------------------------|------------------------------------------------------------------------------------------------------|
 |`tilemap`|tilemap ID, or layer name|Tilemap to use for occlusion. Alternatively, you can provide the name of a tilemap layer (as a string)|
 
@@ -118,9 +118,9 @@ Adds an occlusion edge (a shadow-casting line) to the occluder. Edges should be 
 
 **Returns:** N/A (`undefined`)
 
-|Name|Datatype|Purpose|
-|----|--------|-------|
-|None|        |       |
+|Argument|Datatype|Purpose|
+|--------|--------|-------|
+|None    |        |       |
 
 Removes all edges from the occluder and prepares it for redefinition.
 
@@ -132,7 +132,7 @@ Removes all edges from the occluder and prepares it for redefinition.
 
 **Returns:** N/A (`undefined`)
 
-|Name      |Datatype|Purpose                         |
+|Argument  |Datatype|Purpose                         |
 |----------|--------|--------------------------------|
 |`renderer`|renderer|Renderer to add this occluder to|
 
@@ -146,7 +146,7 @@ Removes all edges from the occluder and prepares it for redefinition.
 
 **Returns:** N/A (`undefined`)
 
-|Name      |Datatype|Purpose                              |
+|Argument  |Datatype|Purpose                              |
 |----------|--------|-------------------------------------|
 |`renderer`|renderer|Renderer to remove this occluder from|
 
@@ -162,8 +162,8 @@ Manually removing an occluder from a renderer is a relatively slow process and s
 
 **Returns:** N/A (`undefined`)
 
-|Name|Datatype|Purpose|
-|----|--------|-------|
-|None|        |       |
+|Argument|Datatype|Purpose|
+|--------|--------|-------|
+|None    |        |       |
 
 Destroys the occluder. The occluder will be removed from a renderer the next time you call `.RefreshStaticOccluders()` for that renderer.

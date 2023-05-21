@@ -6,7 +6,7 @@
 
 **Constructor returns:** `BulbShadowOverlay` struct
 
-|Name      |Datatype    |Purpose                                                                       |
+|Argument  |Datatype    |Purpose                                                                       |
 |----------|------------|------------------------------------------------------------------------------|
 |`renderer`|renderer    |Renderer to add this occluder to                                              |
 |`sprite`  |sprite index|Sprite to draw for the light                                                  |
@@ -44,7 +44,7 @@ The created struct has the following public member variables:
 
 **Returns:** N/A (`undefined`)
 
-|Name      |Datatype|Purpose                         |
+|Argument  |Datatype|Purpose                         |
 |----------|--------|--------------------------------|
 |`renderer`|renderer|Renderer to add this occluder to|
 
@@ -56,7 +56,7 @@ The created struct has the following public member variables:
 
 **Returns:** N/A (`undefined`)
 
-|Name      |Datatype|Purpose                         |
+|Argument  |Datatype|Purpose                         |
 |----------|--------|--------------------------------|
 |`renderer`|renderer|Renderer to add this occluder to|
 
@@ -68,8 +68,8 @@ The created struct has the following public member variables:
 
 **Returns:** N/A (`undefined`)
 
-|Name|Datatype|Purpose|
-|----|--------|-------|
-|None|        |       |
+|Argument|Datatype|Purpose|
+|--------|--------|-------|
+|None    |        |       |
 
 Instantly destroys the light and prevents it from being drawn.

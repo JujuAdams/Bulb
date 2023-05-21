@@ -6,7 +6,7 @@
 
 **Constructor returns:** `BulbRenderer` struct
 
-|Name           |Datatype|Purpose                                                                              |
+|Argument       |Datatype|Purpose                                                                              |
 |---------------|--------|-------------------------------------------------------------------------------------|
 |`ambientColour`|integer |Colour to use for fully shadowed (unlit) areas                                       |
 |`mode`         |integer |Rendering mode to use, from the `BULB_MODE` enum (see below)                         |
@@ -20,7 +20,7 @@
 
 ## BULB_MODE enum
 
-|Name                       |Functionality                                                                       |
+|Argument                   |Functionality                                                                       |
 |---------------------------|------------------------------------------------------------------------------------|
 |`.HARD_BM_ADD`             |Basic hard shadows with z-buffer stenciling, using the typical `bm_add` blend mode  |
 |`.HARD_BM_ADD_SELFLIGHTING`|As above, but allowing occluding objects to be internally lit but still cast shadows|
@@ -48,7 +48,7 @@ The created struct has the following public member variables:
 
 **Returns:** N/A (`undefined`)
 
-|Name      |Datatype|Purpose                                                  |
+|Argument  |Datatype|Purpose                                                  |
 |----------|--------|---------------------------------------------------------|
 |viewLeft  |number  |x-coordinate of the top-left corner of the rendering area|
 |viewTop   |number  |y-coordinate of the top-left corner of the rendering area|
@@ -65,9 +65,9 @@ Updates the internal lighting/shadow surface for the renderer struct.
 
 **Returns:** N/A (`undefined`)
 
-|Name  |Datatype    |Purpose                                         |
-|------|------------|------------------------------------------------|
-|camera|camera index|Camera to use to define the light rendering area|
+|Argument|Datatype    |Purpose                                         |
+|--------|------------|------------------------------------------------|
+|camera  |camera index|Camera to use to define the light rendering area|
 
 Updates the internal lighting/shadow surface for the renderer struct using the position and dimensions of the provided camera's viewport. Intended to be used alongside `.DrawOnCamera()`.
 
@@ -79,7 +79,7 @@ Updates the internal lighting/shadow surface for the renderer struct using the p
 
 **Returns:** N/A (`undefined`)
 
-|Name      |Datatype|Purpose                                                                                                      |
+|Argument  |Datatype|Purpose                                                                                                      |
 |----------|--------|-------------------------------------------------------------------------------------------------------------|
 |`x`       |number  |x-coordinate to draw at                                                                                      |
 |`y`       |number  |y-coordinate to draw at                                                                                      |
@@ -97,7 +97,7 @@ Draws the lighting/shadow surface at the given coordinates, and stretched if des
 
 **Returns:** N/A (`undefined`)
 
-|Name     |Datatype    |Purpose                                                                           |
+|Argument |Datatype    |Purpose                                                                           |
 |---------|------------|----------------------------------------------------------------------------------|
 |camera   |camera index|Camera to use as coordinates to draw the light surface                            |
 |`[alpha]`|number      |Alpha blend value to use, with `0.0` being completely invisible. Defaults to `1.0`|
@@ -112,9 +112,9 @@ Draws the lighting/shadow surface on the given camera. Intended to be used along
 
 **Returns:** Surface, the lighting surface currently being used by this renderer
 
-|Name|Datatype|Purpose|
-|----|--------|-------|
-|None|        |       |
+|Argument|Datatype|Purpose|
+|--------|--------|-------|
+|None    |        |       |
 
 This function may return `undefined` if no surface exists for the renderer.
 
@@ -126,9 +126,9 @@ This function may return `undefined` if no surface exists for the renderer.
 
 **Returns:** N/A (`undefined`)
 
-|Name|Datatype|Purpose|
-|----|--------|-------|
-|None|        |       |
+|Argument|Datatype|Purpose|
+|--------|--------|-------|
+|None    |        |       |
 
 Refreshes this renderer's static occluders, causing the renderer's output to reflect any changes made to its static occluders.
 
@@ -140,8 +140,8 @@ Refreshes this renderer's static occluders, causing the renderer's output to ref
 
 **Returns:** N/A (`undefined`)
 
-|Name|Datatype|Purpose|
-|----|--------|-------|
-|None|        |       |
+|Argument|Datatype|Purpose|
+|--------|--------|-------|
+|None    |        |       |
 
 Frees memory associated with the renderer struct (vertex buffers and a surface).
