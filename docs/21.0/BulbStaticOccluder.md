@@ -15,7 +15,7 @@ When created, a `BulbStaticOccluder` will be added to the given renderer. An occ
 Static occluders differ from dynamic occluders insofar that their edges, position, rotation, scaling, and group are only updated when either:
 
 1. The renderer performs its very first update
-2. [`.RefreshStaticOccluders()`](GML-Functions#bulbrendererambientcolour-mode-smooth-constructor) is called for the renderer.
+2. `.RefreshStaticOccluders()` is called for the renderer.
 
 Static occluders are therefore much more performant than dynamic occluders, but are better suited to use for unmoving objects such as walls and obstacles.
 
