@@ -31,13 +31,13 @@ Overlays are used as a way to further trim and tidy up lighting. Shadow overlays
 
 ## How do I get a basic scene up and running?
 
-The following is a basic setup guide using *dynamic* rather than *static* occluders.
+The following is a basic setup guide using *dynamic* rather than *static* occluders. In general, you will want to use static occluders as much as possible to improve performance.
 
 &nbsp;
 
 ### 1. Create a new project and import Bulb
 
-[See above](Quick-Start#how-do-i-import-bulb-into-my-game) for instructions on importing Bulb.
+[See above](Quick-Start#how-do-i-import-bulb-into-my-game) for instructions on importing Bulb. 
 
 &nbsp;
 
