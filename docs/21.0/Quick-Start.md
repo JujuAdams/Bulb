@@ -35,19 +35,19 @@ The following is a basic setup guide using *dynamic* rather than *static* occlud
 
 &nbsp;
 
-**1. Create a new project and import Bulb**
+### 1. Create a new project and import Bulb
 
 [See above](Setting-Up#how-do-i-import-bulb-into-my-game) for instructions on importing Bulb.
 
 &nbsp;
 
-**2. Create a new room**
+### 2. Create a new room
 
 Make sure that the room has a white background so you can see where the light is! All the objects we'll be adding should also have an instance placed in the room.
 
 &nbsp;
 
-**3. Create a [renderer](GML-Functions#bulbrendererambientcolour-mode-smooth-constructor)**
+### 3. Create a renderer
 
 In a new object called `objLightController`, we create a Bulb renderer. We choose a dark (but not pitch black) ambient colour to demonstrate lighting, and we choose a basic [unsmoothed lighting mode](GML-Functions#bulbrendererambientcolour-mode-smooth-constructor).
 
@@ -59,7 +59,7 @@ renderer = new BulbRenderer(c_dkgray, BULB_MODE.HARD_BM_MAX, false);
 
 &nbsp;
 
-**4. Call an update and draw method**
+### 4. Call an update and draw method
 
 In the Draw End event for `objLightController` we update and draw the renderer. We use the Draw End event to ensure the lighting surface is drawn over the top of everything else. The `.Update()` call ensures what's on the lighting surface matches the game state, and the `.Draw()` call draws the renderer's lighting surface.
 
@@ -74,7 +74,7 @@ renderer.Draw(0, 0);
 
 &nbsp;
 
-**5. Call the `.Free()` method**
+### 5. Call the `.Free()` method
 
 In `objLightController`'s Clean Up Event we call the all-important `.Free()` method to ensure we don't have a memory leak.
 
@@ -86,7 +86,7 @@ renderer.Free();
 
 &nbsp;
 
-**6. Add a light**
+### 6. Add a light
 
 In a new object called `objLight` we create a Room Start event (which is guaranteed to execute after `objLightController`'s Create event). In this event we define a light that uses `sprLight` to determine how it looks (if you need a quick light sprite, you can grab [a test sprite](https://github.com/JujuAdams/Bulb/blob/master/sprites/sLight512/719fe171-a783-4aae-9fda-bdd9933d9ae4.png) from the Bulb repo). Make sure that the origin of the sprite is set at the visual origin of the light sprite.
 
@@ -98,7 +98,7 @@ light = new BulbLight(objLightController.renderer, sprLight, 0, x, y);
 
 &nbsp;
 
-**7. Add an occluder**
+### 7. Add an occluder
 
 In a new object called `objPlayer` we create a Room Start event (which is guaranteed to execute after `objLightController`'s Create event). In this event we create an occluder and define the shadow-casting edges for that occluder. In the Step event of `objPlayer` we add some basic movement code and move the occluder to match the player's position.
 
