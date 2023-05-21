@@ -64,6 +64,8 @@ Adds an occlusion edge (a shadow-casting line) to the occluder. Edges should be 
 |`sprite`|sprite index|Sprite to use for shadow casting                                             |
 |`image` |number      |Image index of the given sprite to use. Negative values are **not** supported|
 
+!> Sprite-based occluders typically generate a lot of edges and carry a significant performance penalty. Use `.SetSprite()` sparingly.
+
 &nbsp;
 </details>
 
@@ -75,6 +77,8 @@ Adds an occlusion edge (a shadow-casting line) to the occluder. Edges should be 
 |Name     |Datatype                 |Purpose                                                                                               |
 |---------|-------------------------|------------------------------------------------------------------------------------------------------|
 |`tilemap`|tilemap ID, or layer name|Tilemap to use for occlusion. Alternatively, you can provide the name of a tilemap layer (as a string)|
+
+!> Tilemap-based occluders typically generate a lot of edges and carry a significant performance penalty. Use `.SetTilemap()` sparingly.
 
 &nbsp;
 </details>
@@ -89,6 +93,8 @@ Adds an occlusion edge (a shadow-casting line) to the occluder. Edges should be 
 |`sprite`|sprite index|Sprite to use for shadow casting                                             |
 |`image` |number      |Image index of the given sprite to use. Negative values are **not** supported|
 
+!> Sprite-based occluders typically generate a lot of edges and carry a significant performance penalty. Use `.AddSprite()` sparingly.
+
 &nbsp;
 </details>
 
@@ -100,6 +106,8 @@ Adds an occlusion edge (a shadow-casting line) to the occluder. Edges should be 
 |Name     |Datatype                 |Purpose                                                                                               |
 |---------|-------------------------|------------------------------------------------------------------------------------------------------|
 |`tilemap`|tilemap ID, or layer name|Tilemap to use for occlusion. Alternatively, you can provide the name of a tilemap layer (as a string)|
+
+!> Tilemap-based occluders typically generate a lot of edges and carry a significant performance penalty. Use `.AddTilemap()` sparingly.
 
 &nbsp;
 </details>
