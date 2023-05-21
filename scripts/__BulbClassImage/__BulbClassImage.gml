@@ -212,7 +212,7 @@ function __BulbClassImage(_spriteIndex, _imageIndex) constructor
         
         surface_set_target(_surface);
         draw_clear_alpha(c_black, 0.0);
-        draw_sprite(__spriteIndex, __imageIndex, 1 - sprite_get_xoffset(__spriteIndex), 1 - sprite_get_yoffset(__spriteIndex));
+        draw_sprite(__spriteIndex, __imageIndex, 1 + sprite_get_xoffset(__spriteIndex), 1 + sprite_get_yoffset(__spriteIndex));
         surface_reset_target();
         
         var _buffer = buffer_create(4*_surfaceWidth*_surfaceHeight, buffer_fixed, 1);
