@@ -35,10 +35,11 @@ The created struct has the following public member variables:
 
 &nbsp;
 
-The created struct has the following methods (click to expand):
+The created struct has the following methods:
 
-<details><summary><code>.AddEdge(x1, y1, x2, y2)</code></summary>
-&nbsp;
+## .AddEdge()
+
+`.AddEdge(x1, y1, x2, y2)`
 
 **Returns:** N/A (`undefined`)
 
@@ -52,10 +53,10 @@ The created struct has the following methods (click to expand):
 Adds an occlusion edge (a shadow-casting line) to the occluder. Edges should be defined in a **clockwise** order.
 
 &nbsp;
-</details>
 
-<details><summary><code>.SetSprite(sprite, image)</code></summary>
-&nbsp;
+## .SetSprite()
+
+`.SetSprite(sprite, image)`
 
 **Returns:** N/A (`undefined`)
 
@@ -67,10 +68,10 @@ Adds an occlusion edge (a shadow-casting line) to the occluder. Edges should be 
 !> Sprite-based occluders typically generate a lot of edges and carry a significant performance penalty. Use `.SetSprite()` sparingly.
 
 &nbsp;
-</details>
 
-<details><summary><code>.SetTilemap(tilemap)</code></summary>
-&nbsp;
+## .SetTilemap()
+
+`.SetTilemap(tilemap)`
 
 **Returns:** N/A (`undefined`)
 
@@ -81,10 +82,10 @@ Adds an occlusion edge (a shadow-casting line) to the occluder. Edges should be 
 !> Tilemap-based occluders typically generate a lot of edges and carry a significant performance penalty. Use `.SetTilemap()` sparingly.
 
 &nbsp;
-</details>
 
-<details><summary><code>.AddSprite(sprite, image)</code></summary>
-&nbsp;
+## .AddSprite()
+
+`.AddSprite(sprite, image)`
 
 **Returns:** N/A (`undefined`)
 
@@ -96,10 +97,10 @@ Adds an occlusion edge (a shadow-casting line) to the occluder. Edges should be 
 !> Sprite-based occluders typically generate a lot of edges and carry a significant performance penalty. Use `.AddSprite()` sparingly.
 
 &nbsp;
-</details>
 
-<details><summary><code>.AddTilemap(tilemap)</code></summary>
-&nbsp;
+## .AddTilemap()
+
+`.AddTilemap(tilemap)`
 
 **Returns:** N/A (`undefined`)
 
@@ -110,10 +111,10 @@ Adds an occlusion edge (a shadow-casting line) to the occluder. Edges should be 
 !> Tilemap-based occluders typically generate a lot of edges and carry a significant performance penalty. Use `.AddTilemap()` sparingly.
 
 &nbsp;
-</details>
 
-<details><summary><code>.ClearEdges()</code></summary>
-&nbsp;
+## .ClearEdges()
+
+`.ClearEdges()`
 
 **Returns:** N/A (`undefined`)
 
@@ -124,10 +125,10 @@ Adds an occlusion edge (a shadow-casting line) to the occluder. Edges should be 
 Removes all edges from the occluder and prepares it for redefinition.
 
 &nbsp;
-</details>
 
-<details><summary><code>.AddToRenderer(renderer)</code></summary>
-&nbsp;
+## .AddToRenderer()
+
+`.AddToRenderer(renderer)`
 
 **Returns:** N/A (`undefined`)
 
@@ -138,10 +139,10 @@ Removes all edges from the occluder and prepares it for redefinition.
 **Please note** that adding a static occluder will not affect a renderer's output until `.RefreshStaticOccluders()` is called for that renderer.
 
 &nbsp;
-</details>
 
-<details><summary><code>.RemoveFromRenderer(renderer)</code></summary>
-&nbsp;
+## .RemoveFromRenderer()
+
+`.RemoveFromRenderer(renderer)`
 
 **Returns:** N/A (`undefined`)
 
@@ -154,10 +155,10 @@ Manually removing an occluder from a renderer is a relatively slow process and s
 **Please note** that removing a static occluder will not affect a renderer's output until `.RefreshStaticOccluders()` is called for that renderer.
 
 &nbsp;
-</details>
 
-<details><summary><code>.Destroy()</code></summary>
-&nbsp;
+## .Destroy()
+
+`.Destroy()`
 
 **Returns:** N/A (`undefined`)
 
@@ -166,6 +167,3 @@ Manually removing an occluder from a renderer is a relatively slow process and s
 |None|        |       |
 
 Destroys the occluder. The occluder will be removed from a renderer the next time you call `.RefreshStaticOccluders()` for that renderer.
-
-&nbsp;
-</details>

@@ -37,7 +37,7 @@ The created struct has the following public member variables:
 
 &nbsp;
 
-The created struct has the following methods (click to expand):
+The created struct has the following methods:
 
 ## .AddToRenderer()
 

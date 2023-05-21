@@ -36,22 +36,11 @@ The created struct has the following public member variables:
 
 &nbsp;
 
-The created struct has the following methods (click to expand):
+The created struct has the following methods:
 
-<details><summary><code>.AddToRenderer(renderer)</code></summary>
-&nbsp;
+## .AddToRenderer()
 
-**Returns:** N/A (`undefined`)
-
-|Name      |Datatype|Purpose                         |
-|----------|--------|--------------------------------|
-|`renderer`|renderer|Renderer to add this occluder to|
-
-&nbsp;
-</details>
-
-<details><summary><code>.RemoveFromRenderer(renderer)</code></summary>
-&nbsp;
+`.AddToRenderer(renderer)`
 
 **Returns:** N/A (`undefined`)
 
@@ -60,10 +49,22 @@ The created struct has the following methods (click to expand):
 |`renderer`|renderer|Renderer to add this occluder to|
 
 &nbsp;
-</details>
 
-<details><summary><code>.Destroy()</code></summary>
+## .RemoveFromRenderer()
+
+`.RemoveFromRenderer(renderer)`
+
+**Returns:** N/A (`undefined`)
+
+|Name      |Datatype|Purpose                         |
+|----------|--------|--------------------------------|
+|`renderer`|renderer|Renderer to add this occluder to|
+
 &nbsp;
+
+## .Destroy()
+
+`.Destroy()`
 
 **Returns:** N/A (`undefined`)
 
@@ -72,6 +73,3 @@ The created struct has the following methods (click to expand):
 |None|        |       |
 
 Instantly destroys the light and prevents it from being drawn.
-
-&nbsp;
-</details>

@@ -42,36 +42,13 @@ The created struct has the following public member variables:
 
 &nbsp;
 
-The created struct has the following methods (click to expand):
-
-<details><summary><code>.SetAmbientColor(color)</code></summary>
-&nbsp;
-
-**Returns:** N/A (`undefined`)
-
-|Name |Datatype|Purpose                                       |
-|-----|--------|----------------------------------------------|
-|color|integer |Colour to use for fully shadowed (unlit) areas|
-
-Sets the ambient light colour.
+The created struct has the following methods:
 
 &nbsp;
-</details>
 
-<details><summary><code>.GetAmbientColor()</code></summary>
-&nbsp;
+## .Update()
 
-**Returns:** Integer, the ambient light colour
-
-|Name|Datatype|Purpose|
-|----|--------|-------|
-|None|        |       |
-
-&nbsp;
-</details>
-
-<details><summary><code>.Update(viewLeft, viewTop, viewWidth, viewHeight)</code></summary>
-&nbsp;
+`.Update(viewLeft, viewTop, viewWidth, viewHeight)`
 
 **Returns:** N/A (`undefined`)
 
@@ -85,10 +62,10 @@ Sets the ambient light colour.
 Updates the internal lighting/shadow surface for the renderer struct.
 
 &nbsp;
-</details>
 
-<details><summary><code>.UpdateFromCamera(camera)</code></summary>
-&nbsp;
+## .UpdateFromCamera()
+
+`.UpdateFromCamera(camera)`
 
 **Returns:** N/A (`undefined`)
 
@@ -99,10 +76,10 @@ Updates the internal lighting/shadow surface for the renderer struct.
 Updates the internal lighting/shadow surface for the renderer struct using the position and dimensions of the provided camera's viewport. Intended to be used alongside `.DrawOnCamera()`.
 
 &nbsp;
-</details>
 
-<details><summary><code>.Draw(x, y, [width], [height], [alpha])</code></summary>
-&nbsp;
+## .Draw()
+
+`.Draw(x, y, [width], [height], [alpha])`
 
 **Returns:** N/A (`undefined`)
 
@@ -117,12 +94,10 @@ Updates the internal lighting/shadow surface for the renderer struct using the p
 Draws the lighting/shadow surface at the given coordinates, and stretched if desired.
 
 &nbsp;
-</details>
 
-</details>
+## .DrawOnCamera()
 
-<details><summary><code>.DrawOnCamera(camera, [alpha])</code></summary>
-&nbsp;
+`.DrawOnCamera(camera, [alpha])`
 
 **Returns:** N/A (`undefined`)
 
@@ -134,10 +109,10 @@ Draws the lighting/shadow surface at the given coordinates, and stretched if des
 Draws the lighting/shadow surface on the given camera. Intended to be used alongside `.UpdateFromCamera()`.
 
 &nbsp;
-</details>
 
-<details><summary><code>.GetSurface()</code></summary>
-&nbsp;
+## .GetSurface()
+
+`.GetSurface()`
 
 **Returns:** Surface, the lighting surface currently being used by this renderer
 
@@ -148,10 +123,10 @@ Draws the lighting/shadow surface on the given camera. Intended to be used along
 This function may return `undefined` if no surface exists for the renderer.
 
 &nbsp;
-</details>
 
-<details><summary><code>.RefreshStaticOccluders()</code></summary>
-&nbsp;
+## .RefreshStaticOccluders()
+
+`.RefreshStaticOccluders()`
 
 **Returns:** N/A (`undefined`)
 
@@ -162,10 +137,10 @@ This function may return `undefined` if no surface exists for the renderer.
 Refreshes this renderer's static occluders, causing the renderer's output to reflect any changes made to its static occluders.
 
 &nbsp;
-</details>
 
-<details><summary><code>.Free()</code></summary>
-&nbsp;
+## .Free()
+
+`.Free()`
 
 **Returns:** N/A (`undefined`)
 
@@ -174,6 +149,3 @@ Refreshes this renderer's static occluders, causing the renderer's output to ref
 |None|        |       |
 
 Frees memory associated with the renderer struct (vertex buffers and a surface).
-
-&nbsp;
-</details>

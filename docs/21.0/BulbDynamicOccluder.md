@@ -31,10 +31,11 @@ The created struct has the following public member variables:
 
 &nbsp;
 
-The created struct has the following methods (click to expand):
+The created struct has the following methods:
 
-<details><summary><code>.AddEdge(x1, y1, x2, y2)</code></summary>
-&nbsp;
+## .AddEdge()
+
+`.AddEdge(x1, y1, x2, y2)`
 
 **Returns:** N/A (`undefined`)
 
@@ -45,13 +46,13 @@ The created struct has the following methods (click to expand):
 |`x2`|number  |x-coordinate of the second vertex of the edge|
 |`y2`|number  |y-coordinate of the second vertex of the edge|
 
-Adds an occlusion edge (a shadow-casting line) to the occluder. For use with self-lighting, edges should be defined in a **clockwise** order.
+Adds an occlusion edge (a shadow-casting line) to the occluder. Edges should be defined in a **clockwise** order.
 
 &nbsp;
-</details>
 
-<details><summary><code>.SetSprite(sprite, image)</code></summary>
-&nbsp;
+## .SetSprite()
+
+`.SetSprite(sprite, image)`
 
 **Returns:** N/A (`undefined`)
 
@@ -63,10 +64,10 @@ Adds an occlusion edge (a shadow-casting line) to the occluder. For use with sel
 !> Sprite-based occluders typically generate a lot of edges and carry a significant performance penalty. Use `.SetSprite()` sparingly.
 
 &nbsp;
-</details>
 
-<details><summary><code>.AddSprite(sprite, image)</code></summary>
-&nbsp;
+## .AddSprite()
+
+`.AddSprite(sprite, image)`
 
 **Returns:** N/A (`undefined`)
 
@@ -78,10 +79,10 @@ Adds an occlusion edge (a shadow-casting line) to the occluder. For use with sel
 !> Sprite-based occluders typically generate a lot of edges and carry a significant performance penalty. Use `.AddSprite()` sparingly.
 
 &nbsp;
-</details>
 
-<details><summary><code>.ClearEdges()</code></summary>
-&nbsp;
+## .ClearEdges()
+
+`.ClearEdges()`
 
 **Returns:** N/A (`undefined`)
 
@@ -92,36 +93,40 @@ Adds an occlusion edge (a shadow-casting line) to the occluder. For use with sel
 Removes all edges from the occluder and prepares it for redefinition.
 
 &nbsp;
-</details>
 
-<details><summary><code>.AddToRenderer(renderer)</code></summary>
-&nbsp;
+## .AddToRenderer()
 
-**Returns:** N/A (`undefined`)
-
-|Name      |Datatype|Purpose                         |
-|----------|--------|--------------------------------|
-|`renderer`|renderer|Renderer to add this occluder to|
-
-&nbsp;
-</details>
-
-<details><summary><code>.RemoveFromRenderer(renderer)</code></summary>
-&nbsp;
+`.AddToRenderer(renderer)`
 
 **Returns:** N/A (`undefined`)
 
 |Name      |Datatype|Purpose                         |
 |----------|--------|--------------------------------|
 |`renderer`|renderer|Renderer to add this occluder to|
+
+**Please note** that adding a static occluder will not affect a renderer's output until `.RefreshStaticOccluders()` is called for that renderer.
+
+&nbsp;
+
+## .RemoveFromRenderer()
+
+`.RemoveFromRenderer(renderer)`
+
+**Returns:** N/A (`undefined`)
+
+|Name      |Datatype|Purpose                              |
+|----------|--------|-------------------------------------|
+|`renderer`|renderer|Renderer to remove this occluder from|
 
 Manually removing an occluder from a renderer is a relatively slow process and should be avoided where possible.
 
-&nbsp;
-</details>
+**Please note** that removing a static occluder will not affect a renderer's output until `.RefreshStaticOccluders()` is called for that renderer.
 
-<details><summary><code>.Destroy()</code></summary>
 &nbsp;
+
+## .Destroy()
+
+`.Destroy()`
 
 **Returns:** N/A (`undefined`)
 
@@ -129,7 +134,4 @@ Manually removing an occluder from a renderer is a relatively slow process and s
 |----|--------|-------|
 |None|        |       |
 
-Instantly destroys the occluder and prevents it from casting shadows.
-
-&nbsp;
-</details>
+Destroys the occluder. The occluder will be removed from a renderer the next time you call `.RefreshStaticOccluders()` for that renderer.
