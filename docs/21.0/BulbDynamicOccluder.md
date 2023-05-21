@@ -60,6 +60,8 @@ Adds an occlusion edge (a shadow-casting line) to the occluder. For use with sel
 |`sprite`|sprite index|Sprite to use for shadow casting                                             |
 |`image` |number      |Image index of the given sprite to use. Negative values are **not** supported|
 
+!> Sprite-based occluders typically generate a lot of edges and carry a significant performance penalty. Use `.SetSprite()` sparingly.
+
 &nbsp;
 </details>
 
@@ -72,6 +74,8 @@ Adds an occlusion edge (a shadow-casting line) to the occluder. For use with sel
 |--------|------------|-----------------------------------------------------------------------------|
 |`sprite`|sprite index|Sprite to use for shadow casting                                             |
 |`image` |number      |Image index of the given sprite to use. Negative values are **not** supported|
+
+!> Sprite-based occluders typically generate a lot of edges and carry a significant performance penalty. Use `.AddSprite()` sparingly.
 
 &nbsp;
 </details>
