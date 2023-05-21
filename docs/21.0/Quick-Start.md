@@ -31,7 +31,7 @@ Overlays are used as a way to further trim and tidy up lighting. Shadow overlays
 
 ## How do I get a basic scene up and running?
 
-The following is a basic setup guide using a renderer without [groups](GML-Functions#bulbrendererwithgroupsambientcolour-mode-smooth-maxgroups-constructor) and using [dynamic](GML-Functions#bulbdynamicoccluderrenderer-constructor) rather than [static](GML-Functions#bulbstaticoccluderrenderer-constructor) occluders.
+The following is a basic setup guide using *dynamic* rather than *static* occluders.
 
 &nbsp;
 
