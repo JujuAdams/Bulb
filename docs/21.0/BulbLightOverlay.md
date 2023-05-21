@@ -39,7 +39,9 @@ The created struct has the following public member variables:
 
 The created struct has the following methods (click to expand):
 
-### .AddToRenderer(renderer)
+## .AddToRenderer()
+
+`.AddToRenderer(renderer)`
 
 **Returns:** N/A (`undefined`)
 
@@ -49,7 +51,9 @@ The created struct has the following methods (click to expand):
 
 &nbsp;
 
-### .RemoveFromRenderer(renderer)
+## .RemoveFromRenderer()
+
+`.RemoveFromRenderer(renderer)`
 
 **Returns:** N/A (`undefined`)
 
@@ -59,7 +63,9 @@ The created struct has the following methods (click to expand):
 
 &nbsp;
 
-### .Destroy()
+## .Destroy()
+
+`.Destroy()`
 
 **Returns:** N/A (`undefined`)
 
