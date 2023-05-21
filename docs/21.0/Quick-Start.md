@@ -37,7 +37,7 @@ The following is a basic setup guide using *dynamic* rather than *static* occlud
 
 ### 1. Create a new project and import Bulb
 
-[See above](Setting-Up#how-do-i-import-bulb-into-my-game) for instructions on importing Bulb.
+[See above](Quick-Start#how-do-i-import-bulb-into-my-game) for instructions on importing Bulb.
 
 &nbsp;
 
