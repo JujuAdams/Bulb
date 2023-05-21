@@ -20,6 +20,8 @@ When created, a `BulbLightOverlay` will be added to the given renderer. A light 
 
 &nbsp;
 
+## Member Variables
+
 The created struct has the following public member variables:
 
 |Variable |Datatype    |Purpose                                                                          |
@@ -36,8 +38,6 @@ The created struct has the following public member variables:
 |`visible`|boolean     |Whether to draw the light at all                                                 |
 
 &nbsp;
-
-The created struct has the following methods:
 
 ## .AddToRenderer()
 

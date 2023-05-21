@@ -20,6 +20,8 @@ When created, a `BulbShadowOverlay` will be added to the given renderer. An over
 
 &nbsp;
 
+## Member Variables
+
 The created struct has the following public member variables:
   
 |Variable |Datatype    |Purpose                                                                            |
@@ -35,8 +37,6 @@ The created struct has the following public member variables:
 |`visible`|boolean     |Whether to draw the overlay at all                                                 |
 
 &nbsp;
-
-The created struct has the following methods:
 
 ## .AddToRenderer()
 

@@ -17,6 +17,8 @@ When created, a `BulbDirectionalLight` will be added to the given renderer. A li
 
 &nbsp;
 
+## Member Variables
+
 The created struct has the following public member variables:
 
 |Variable      |Datatype      |Purpose                                                                          |
@@ -28,8 +30,6 @@ The created struct has the following public member variables:
 |`penumbraSize`|number        |Size of the penumbra when using the `BULB_MODE.SOFT_BM_ADD` rendering mode       |
 
 &nbsp;
-
-The created struct has the following methods:
 
 ## .AddToRenderer()
 

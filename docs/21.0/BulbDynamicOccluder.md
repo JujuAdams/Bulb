@@ -18,6 +18,8 @@ When dynamic occluders are drawn is controlled, in part, by `BULB_DYNAMIC_OCCLUD
 
 &nbsp;
 
+## Member Variables
+
 The created struct has the following public member variables:
 
 |Variable     |Datatype|Purpose                                                             |
@@ -30,8 +32,6 @@ The created struct has the following public member variables:
 |`angle`      |number  |Rotation of the occluder's edges, relative to its position          |
 
 &nbsp;
-
-The created struct has the following methods:
 
 ## .AddEdge()
 

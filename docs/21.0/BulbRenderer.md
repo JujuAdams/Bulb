@@ -12,15 +12,13 @@
 |`mode`         |integer |Rendering mode to use, from the `BULB_MODE` enum (see below)                         |
 |`smooth`       |boolean |Whether to render lights with texture filtering on, smoothing out the resulting image|
 
-A renderer struct will allocate three vertex buffers and a surface for its use.
-
-!> Remember to call the `.Free()` method when discarding a renderer struct otherwise you will create a memory leak.
+!> A renderer struct will allocate vertex buffers and surfaces for its use. Remember to call the `.Free()` method when discarding a renderer struct otherwise you will create a memory leak.
 
 !> You must free and recreate your renderer when changing rooms.
 
 &nbsp;
 
-The `BULB_MODE` enum contains the following elements:
+## `BULB_MODE` enum
 
 |Name                       |Functionality                                                                       |
 |---------------------------|------------------------------------------------------------------------------------|
@@ -32,6 +30,8 @@ The `BULB_MODE` enum contains the following elements:
 
 &nbsp;
 
+## Member Variables
+
 The created struct has the following public member variables:
 
 |Variable       |Datatype|Purpose                                                                              |
@@ -39,10 +39,6 @@ The created struct has the following public member variables:
 |`ambientColor` |integer |Colour to use for fully shadowed (unlit) areas                                       |
 |`mode`         |integer |Rendering mode to use, from the `BULB_MODE` enum (see below)                         |
 |`smooth`       |boolean |Whether to render lights with texture filtering on, smoothing out the resulting image|
-
-&nbsp;
-
-The created struct has the following methods:
 
 &nbsp;
 
