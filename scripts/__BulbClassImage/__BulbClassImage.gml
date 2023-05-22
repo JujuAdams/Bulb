@@ -49,7 +49,7 @@ function __BulbClassImage(_spriteIndex, _imageIndex) constructor
             var _result = __BulbTraceBufferToEdgeArray(_buffer,
                                                        sprite_get_width(__spriteIndex) + 2, sprite_get_height(__spriteIndex) + 2, 2,
                                                        -1 - sprite_get_xoffset(__spriteIndex), -1 - sprite_get_yoffset(__spriteIndex),
-                                                       false, true);
+                                                       false, true, BULB_TRACE_EPSILON);
             
             __edgeArray = _result.__edgeArray;
             __radius    = _result.__radius;

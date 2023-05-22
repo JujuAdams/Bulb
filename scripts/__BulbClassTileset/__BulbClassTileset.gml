@@ -64,7 +64,7 @@ function __BulbClassTileset(_tileset, _checkForTag = true) constructor
             //We'll likely need the hash later so we can save a bit of time by calculating it now
             if (BULB_USE_DISK_CACHE && (__BULB_BUILD_TYPE == "run")) __GetHash(_buffer);
             
-            var _result = __BulbTraceBufferToEdgeArray(_buffer, __textureWidth, __textureHeight, 0, 0, 0, false, false, 1);
+            var _result = __BulbTraceBufferToEdgeArray(_buffer, __textureWidth, __textureHeight, 0, 0, 0, false, false, BULB_TRACE_EPSILON);
             var _rawEdgeArray = _result.__edgeArray;
             
             buffer_delete(_buffer);
