@@ -132,7 +132,7 @@ function BulbRenderer(_ambientColour, _mode, _smooth) constructor
         var _cameraCY = _cameraT + 0.5*_cameraH;
         
         //Construct our wipe/static/dynamic vertex buffers
-        __UpdateVertexBuffers(_cameraL, _cameraT, _cameraR, _cameraB, _cameraW, _cameraH);
+        __UpdateVertexBuffers(_cameraL, _cameraT, _cameraR, _cameraB);
         
         //Create accumulating lighting __surface
         var _surface = GetSurface();
@@ -356,7 +356,7 @@ function BulbRenderer(_ambientColour, _mode, _smooth) constructor
     
     #region Update vertex buffers
     
-    static __UpdateVertexBuffers = function(_cameraL, _cameraT, _cameraR, _cameraB, _cameraW, _cameraH)
+    static __UpdateVertexBuffers = function(_cameraL, _cameraT, _cameraR, _cameraB)
     {
         if (__freed) return undefined;
         
@@ -498,6 +498,8 @@ function BulbRenderer(_ambientColour, _mode, _smooth) constructor
             AccumulateHardLights(_cameraL, _cameraT, _cameraR, _cameraB, _cameraCX, _cameraCY, _cameraW, _cameraH, _normalCoeff);
         }
         
+        
+        
         //Now draw shadow overlay sprites, if we have any
         var _size = array_length(__shadowOverlayArray);
         if (_size > 0)
@@ -624,7 +626,7 @@ function BulbRenderer(_ambientColour, _mode, _smooth) constructor
     {
         if (__freed) return undefined;
         
-        static _u_vLight       = shader_get_uniform(__shdBulbSoftShadows,            "u_vLight"      );
+        static _u_vLight = shader_get_uniform(__shdBulbSoftShadows, "u_vLight");
         static _directional_u_vLightVector = shader_get_uniform(__shdBulbSoftShadowsDirectional, "u_vLightVector");
         
         var _staticVBuffer  = __staticVBuffer;
