@@ -138,12 +138,15 @@ function BulbRenderer(_ambientColour, _mode, _smooth) constructor
         var _surface = GetSurface();
         surface_set_target(_surface);
         
+        //Why do we need a negative height? No one knows
+        matrix_set(matrix_projection, matrix_build_projection_ortho(_cameraW, -_cameraH, -16000, 16000));
+        
         gpu_set_cullmode(cull_noculling);
         
         //Really we should use the view matrix for this, but GameMaker's sprite culling is fucked
         //If we use a proper view matrix then lighting sprites are culling, leading to no lighting being drawn
-        _worldMatrix[@ 12] = -_cameraL;
-        _worldMatrix[@ 13] = -_cameraT;
+        _worldMatrix[@ 12] = -_cameraL + 0.5*(__surfaceWidth  - _cameraW);
+        _worldMatrix[@ 13] = -_cameraT + 0.5*(__surfaceHeight - _cameraH);
         matrix_set(matrix_world, _worldMatrix);
         
         //Record the current texture filter state, then set our new filter state
