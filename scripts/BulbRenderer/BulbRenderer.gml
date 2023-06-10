@@ -138,8 +138,15 @@ function BulbRenderer(_ambientColour, _mode, _smooth) constructor
         var _surface = GetSurface();
         surface_set_target(_surface);
         
-        //Why do we need a negative height? No one knows
-        matrix_set(matrix_projection, matrix_build_projection_ortho(_cameraW, -_cameraH, -16000, 16000));
+        //Build a projection matrix
+        var _projMatrix = matrix_build_projection_ortho(_cameraW, _cameraH, -16000, 16000);
+        
+        //Fix GameMaker's shit
+        if (__BULB_ON_DIRECTX) _projMatrix[@ 5] *= -1;
+        _projMatrix[@ 14] = 0;
+        
+        //Apply the new projection matrix
+        matrix_set(matrix_projection, _projMatrix);
         
         gpu_set_cullmode(cull_noculling);
         

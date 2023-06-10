@@ -5,6 +5,11 @@
 #macro __BULB_DISK_CACHE_NAME        ((__BULB_BUILD_TYPE == "run")? "BulbCacheDev.dat" : "BulbCache.dat")
 #macro __BULB_ARRAY_EDGE_SIZE        8
 
+#macro __BULB_ON_DIRECTX  ((os_type == os_windows) || (os_type == os_xboxone) || (os_type == os_xboxseriesxs) || (os_type == os_uwp) || (os_type == os_win8native) || (os_type == os_winphone) || (os_type == os_operagx))
+#macro __BULB_ON_MOBILE   ((os_type == os_ios) || (os_type == os_android) || (os_type == os_tvos))
+#macro __BULB_ON_WEB      (os_browser != browser_not_a_browser)
+#macro __BULB_ON_OPENGL   (!__BULB_ON_DIRECTX || __BULB_ON_WEB)
+
 __BulbInitialize();
 
 function __BulbInitialize()
