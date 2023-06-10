@@ -848,6 +848,7 @@ function BulbRenderer(_ambientColour, _mode, _smooth) constructor
                             else
                             {
                                 //Just draw the sprite, no fancy stuff here
+                                gpu_set_zfunc(cmpfunc_always);
                                 draw_sprite_ext(sprite, image,
                                                 x, y,
                                                 xscale, yscale, angle,
