@@ -1,6 +1,6 @@
 <p align="center"><img src="https://raw.githubusercontent.com/JujuAdams/Bulb/master/LOGO.png" style="display:block; margin:auto; width:300px"></p>
 
-<h1 align="center">21.0.2 alpha</h1>
+<h1 align="center">21.0.3 alpha</h1>
 
 <p align="center">2D lighting and shadows for GameMaker 2022 LTS by <b>@jujuadams</b></p>
 
