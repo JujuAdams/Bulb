@@ -169,3 +169,42 @@ Frees memory associated with the renderer struct (vertex buffers and a surface).
 
 &nbsp;
 </details>
+
+<details><summary><code>.GetSurfacePixel(worldX, worldY, viewLeft, viewTop, viewWidth, viewHeight)</code></summary>
+&nbsp;
+
+**Returns:** Colour, the colour of the lighting at the position in world space
+
+|Name      |Datatype|Purpose                                                  |
+|----------|--------|---------------------------------------------------------|
+|worldX    |real    |x-coordinate of the position to sample                   |
+|worldY    |real    |y-coordinate of the position to sample                   |
+|viewLeft  |real    |x-coordinate of the top-left corner of the rendering area|
+|viewTop   |real    |y-coordinate of the top-left corner of the rendering area|
+|viewWidth |real    |Width of the rendering area                              |
+|viewHeight|real    |Height of the rendering area                             |
+
+If you sample a colour outside the view, this function will return black (`0`).
+
+!> This function is quite slow. Use it sparingly.
+
+&nbsp;
+</details>
+
+<details><summary><code>.GetSurfacePixelFromCamera(worldX, worldY, camera)</code></summary>
+&nbsp;
+
+**Returns:** Colour, the colour of the lighting at the position in world space
+
+|Name  |Datatype|Purpose                               |
+|------|--------|--------------------------------------|
+|worldX|real    |x-coordinate of the position to sample|
+|worldY|real    |y-coordinate of the position to sample|
+|camera|[camera index](https://docs2.yoyogames.com/source/_build/3_scripting/4_gml_reference/cameras%20and%20display/cameras/index.html)|Camera to use to define the light rendering area|
+
+If you sample a colour outside the view, this function will return black (`0`).
+
+!> This function is quite slow. Use it sparingly.
+
+&nbsp;
+</details>
