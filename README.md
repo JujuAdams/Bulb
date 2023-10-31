@@ -1,7 +1,7 @@
 <p align="center"><img src="https://raw.githubusercontent.com/JujuAdams/Bulb/master/LOGO.png" style="display:block; margin:auto; width:300px"></p>
 <h1 align="center">Bulb 20.3.0</h1>
 
-<p align="center">2D lighting and shadows for GameMaker 2022 LTS by <a href="https://www.jujuadams.com/" target="_blank">Juju Adams</a></p>
+<p align="center">2D lighting and shadows for GameMaker 2022 LTS</p>
 
 &nbsp;
 
