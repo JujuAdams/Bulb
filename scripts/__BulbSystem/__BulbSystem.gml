@@ -1,8 +1,8 @@
-#macro __BULB_VERSION         "20.4.0 alpha"
-#macro __BULB_DATE            "2023-05-14"
+#macro __BULB_VERSION         "20.4.0"
+#macro __BULB_DATE            "2023-10-31"
 #macro __BULB_ZFAR            1
 
-__BulbTrace("Welcome to Bulb by @jujuadams! This is version " + __BULB_VERSION + ", " + __BULB_DATE);
+__BulbTrace("Welcome to Bulb by Juju Adams! This is version " + __BULB_VERSION + ", " + __BULB_DATE);
 
 //Create a couple vertex formats
 vertex_format_begin();
