@@ -22,6 +22,8 @@ The `BULB_MODE` enum contains the following elements:
 |`.HARD_BM_MAX_SELFLIGHTING`|As above, but using `bm_max` to reduce bloom                                        |
 |`.SOFT_BM_ADD`             |Soft shadows using `bm_add`                                                         |
 
+!> `BULB_MODE.SOFT_BM_ADD` uses up a lot of GPU bandwidth. Lower-end GPUs may become saturated and struggle to keep a consistent framerate. Make sure to test thoroughly and offer graphics options if you're using this rendering mode.
+
 The created struct has the following public member variables:
 
 |Variable       |Datatype|Purpose                                                                                                                                                                   |
