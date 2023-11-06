@@ -12,7 +12,7 @@
 
 When created, a `BulbLight` will be added to the given renderer. A light can be added (and removed) from multiple renderers as you see fit.
 
-**Please note** that you must maintain a reference to a created `BulbLight` yourself. Bulb tracks lights using a **weak reference** such that when you discard the reference to the light, the light is also automatically removed from the renderer. This makes memory management a lot safer, but does require that you keep your own strong reference to keep a light alive.
+?> You must maintain a reference to a created `BulbLight` yourself. Bulb tracks lights using a **weak reference** such that when you discard the reference to the light, the light is also automatically removed from the renderer. This makes memory management a lot safer, but does require that you keep your own strong reference to keep a light alive.
 
 The created struct has the following public member variables:
 
@@ -42,18 +42,6 @@ The created struct has the following methods (click to expand):
 |Name      |Datatype                                                                   |Purpose                      |
 |----------|---------------------------------------------------------------------------|-----------------------------|
 |`renderer`|[renderer](GML-Functions#bulbrendererambientcolour-mode-smooth-constructor)|Renderer to add this light to|
-
-&nbsp;
-</details>
-
-<details><summary><code>.RemoveFromRenderer(renderer)</code></summary>
-&nbsp;
-
-**Returns:** N/A (`undefined`)
-
-|Name      |Datatype                                                                   |Purpose                            |
-|----------|---------------------------------------------------------------------------|-----------------------------------|
-|`renderer`|[renderer](GML-Functions#bulbrendererambientcolour-mode-smooth-constructor)|Renderer to removed this light from|
 
 &nbsp;
 </details>
