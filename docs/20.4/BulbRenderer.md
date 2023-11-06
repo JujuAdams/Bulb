@@ -10,9 +10,7 @@
 
 A renderer struct will allocate three vertex buffers and a surface for its use.
 
-**Remember to call the `.Free()` method when discarding a renderer struct otherwise you will create a memory leak.**
-
-**You must free and recreate your renderer when changing rooms.**
+!> Remember to call the `.Free()` method when discarding a renderer struct otherwise you will create a memory leak. You must free and recreate your renderer when changing rooms.
 
 The `BULB_MODE` enum contains the following elements:
 
@@ -58,6 +56,39 @@ Sets the ambient light colour.
 |Name|Datatype|Purpose|
 |----|--------|-------|
 |None|        |       |
+
+&nbsp;
+</details>
+
+<details><summary><code>.SetSurfaceDimensions(width, height)</code></summary>
+&nbsp;
+
+**Returns:** N/A (`undefined`)
+
+|Name  |Datatype|Purpose                         |
+|------|--------|--------------------------------|
+|width |integer |Width of the surface, in pixels |
+|height|integer |Height of the surface, in pixels|
+
+Sets the size of the light surface and clipping surface to the provided width and height.
+
+?> This function is optional and is provided to force a surface resolution for e.g. improving performance by reducing lighting accuracy.
+
+&nbsp;
+</details>
+
+<details><summary><code>.SetSurfaceDimensionsFromCamera(camera)</code></summary>
+&nbsp;
+
+**Returns:** N/A (`undefined`)
+
+|Name|Datatype|Purpose|
+|----|--------|-------|
+|camera|[camera index](https://docs2.yoyogames.com/source/_build/3_scripting/4_gml_reference/cameras%20and%20display/cameras/index.html)|Camera to use to define the surface dimensions|
+
+Sets the size of the light surface and clipping surface to the dimensions of the specified camera.
+
+?> This function is optional and is provided to force a surface resolution.
 
 &nbsp;
 </details>
@@ -128,20 +159,6 @@ Draws the lighting/shadow surface on the given camera. Intended to be used along
 &nbsp;
 </details>
 
-<details><summary><code>.GetSurface()</code></summary>
-&nbsp;
-
-**Returns:** Surface, the lighting surface currently being used by this renderer
-
-|Name|Datatype|Purpose|
-|----|--------|-------|
-|None|        |       |
-
-This function may return `undefined` if no surface exists for the renderer.
-
-&nbsp;
-</details>
-
 <details><summary><code>.RefreshStaticOccluders()</code></summary>
 &nbsp;
 
@@ -166,6 +183,20 @@ Refreshes this renderer's [static occluders](GML-Functions#bulbstaticoccluderren
 |None|        |       |
 
 Frees memory associated with the renderer struct (vertex buffers and a surface).
+
+&nbsp;
+</details>
+
+<details><summary><code>.GetSurface()</code></summary>
+&nbsp;
+
+**Returns:** Surface, the lighting surface currently being used by this renderer
+
+|Name|Datatype|Purpose|
+|----|--------|-------|
+|None|        |       |
+
+This function may return `undefined` if no surface exists for the renderer.
 
 &nbsp;
 </details>
@@ -205,6 +236,61 @@ If you sample a colour outside the view, this function will return black (`0`).
 If you sample a colour outside the view, this function will return black (`0`).
 
 !> This function is quite slow. Use it sparingly.
+
+&nbsp;
+</details>
+
+<details><summary><code>.SetClippingSurface(clipisShadow, clipAlpha, clipInvert, hsvValueToAlpha)</code></summary>
+&nbsp;
+
+**Returns:** N/A (`undefined`)
+
+|Name               |Datatype|Purpose|
+|-------------------|--------|-------|
+|clipisShadow       |boolean |Whether the clipped areas should be rendered as shadow. Setting this to value will adjust the alpha value of clipped pixels instead|
+|clipAlpha          |number  |The strength of the clipping effect. A value of `0` will perform no clipping, a value of `1` will maximise clipping|
+|\[clipInvert\]     |boolean |Whether to invert clipping such that high alpha areas remove light. Defaults to `false`|
+|\[hsvValueToAlpha\]|boolean |Whether to use the HSV value component as the masking factor. Defaults to `false`      |
+
+&nbsp;
+</details>
+
+<details><summary><code>.GetClippingSurface()</code></summary>
+&nbsp;
+
+**Returns:** Surface, the clipping surface currently being used by this renderer
+
+|Name|Datatype|Purpose|
+|----|--------|-------|
+|None|        |       |
+
+This function may return `undefined` if no clipping surface exists for the renderer.
+
+&nbsp;
+</details>
+
+<details><summary><code>.CopyClippingSurface(surface)</code></summary>
+&nbsp;
+
+**Returns:** N/A (`undefined`)
+
+|Name   |Datatype|Purpose                               |
+|-------|--------|--------------------------------------|
+|surface|surface |Surface to copy the clipping data from|
+
+&nbsp;
+</details>
+
+<details><summary><code>.RemoveClippingSurface()</code></summary>
+&nbsp;
+
+**Returns:** N/A (`undefined`)
+
+|Name|Datatype|Purpose|
+|----|--------|-------|
+|None|        |       |
+
+Removes the clipping surface from the renderer.
 
 &nbsp;
 </details>
