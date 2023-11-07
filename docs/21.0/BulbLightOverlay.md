@@ -39,7 +39,7 @@ The created struct has the following public member variables:
 
 &nbsp;
 
-## .AddToRenderer()
+## .AddToRenderer
 
 `.AddToRenderer(renderer)`
 
@@ -51,7 +51,7 @@ The created struct has the following public member variables:
 
 &nbsp;
 
-## .RemoveFromRenderer()
+## .RemoveFromRenderer
 
 `.RemoveFromRenderer(renderer)`
 
@@ -63,7 +63,7 @@ The created struct has the following public member variables:
 
 &nbsp;
 
-## .Destroy()
+## .Destroy
 
 `.Destroy()`
 

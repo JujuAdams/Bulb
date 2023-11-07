@@ -93,7 +93,7 @@ In a new object called `objLight` we create a Room Start event (which is guarant
 ```GML
 ///Room Start Event for objLight
 
-light = new BulbLight(objLightController.renderer, sprLight, 0, x, y);
+light = new BulbPointLight(objLightController.renderer, sprLight, 0, x, y);
 ```
 
 &nbsp;

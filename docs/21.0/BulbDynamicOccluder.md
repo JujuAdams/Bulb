@@ -33,7 +33,7 @@ The created struct has the following public member variables:
 
 &nbsp;
 
-## .AddEdge()
+## .AddEdge
 
 `.AddEdge(x1, y1, x2, y2)`
 
@@ -50,7 +50,7 @@ Adds an occlusion edge (a shadow-casting line) to the occluder. Edges should be 
 
 &nbsp;
 
-## .SetSprite()
+## .SetSprite
 
 `.SetSprite(sprite, image)`
 
@@ -65,7 +65,7 @@ Adds an occlusion edge (a shadow-casting line) to the occluder. Edges should be 
 
 &nbsp;
 
-## .AddSprite()
+## .AddSprite
 
 `.AddSprite(sprite, image)`
 
@@ -80,7 +80,7 @@ Adds an occlusion edge (a shadow-casting line) to the occluder. Edges should be 
 
 &nbsp;
 
-## .ClearEdges()
+## .ClearEdges
 
 `.ClearEdges()`
 
@@ -94,7 +94,7 @@ Removes all edges from the occluder and prepares it for redefinition.
 
 &nbsp;
 
-## .AddToRenderer()
+## .AddToRenderer
 
 `.AddToRenderer(renderer)`
 
@@ -104,11 +104,9 @@ Removes all edges from the occluder and prepares it for redefinition.
 |----------|--------|--------------------------------|
 |`renderer`|renderer|Renderer to add this occluder to|
 
-**Please note** that adding a static occluder will not affect a renderer's output until `.RefreshStaticOccluders()` is called for that renderer.
-
 &nbsp;
 
-## .RemoveFromRenderer()
+## .RemoveFromRenderer
 
 `.RemoveFromRenderer(renderer)`
 
@@ -120,11 +118,9 @@ Removes all edges from the occluder and prepares it for redefinition.
 
 Manually removing an occluder from a renderer is a relatively slow process and should be avoided where possible.
 
-**Please note** that removing a static occluder will not affect a renderer's output until `.RefreshStaticOccluders()` is called for that renderer.
-
 &nbsp;
 
-## .Destroy()
+## .Destroy
 
 `.Destroy()`
 
@@ -133,5 +129,3 @@ Manually removing an occluder from a renderer is a relatively slow process and s
 |Argument|Datatype|Purpose|
 |--------|--------|-------|
 |None    |        |       |
-
-Destroys the occluder. The occluder will be removed from a renderer the next time you call `.RefreshStaticOccluders()` for that renderer.

@@ -6,10 +6,10 @@
 
 **Constructor returns:** `BulbDirectionalLight` struct
 
-|Argument  |Datatype    |Purpose                                                                       |
-|----------|------------|------------------------------------------------------------------------------|
-|`renderer`|renderer    |Renderer to add this occluder to                                              |
-|`angle`   |number      |Direction of the light                                                        |
+|Argument  |Datatype    |Purpose                      |
+|----------|------------|-----------------------------|
+|`renderer`|renderer    |Renderer to add this light to|
+|`angle`   |number      |Direction of the light       |
 
 When created, a `BulbDirectionalLight` will be added to the given renderer. A light can be added (and removed) from multiple renderers as you see fit.
 

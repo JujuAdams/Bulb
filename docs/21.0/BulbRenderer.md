@@ -44,7 +44,7 @@ The created struct has the following public member variables:
 
 &nbsp;
 
-## .Update()
+## .Update
 
 `.Update(viewLeft, viewTop, viewWidth, viewHeight)`
 
@@ -61,7 +61,7 @@ Updates the internal lighting/shadow surface for the renderer struct.
 
 &nbsp;
 
-## .UpdateFromCamera()
+## .UpdateFromCamera
 
 `.UpdateFromCamera(camera)`
 
@@ -75,7 +75,7 @@ Updates the internal lighting/shadow surface for the renderer struct using the p
 
 &nbsp;
 
-## .Draw()
+## .Draw
 
 `.Draw(x, y, [width], [height], [alpha])`
 
@@ -93,7 +93,7 @@ Draws the lighting/shadow surface at the given coordinates, and stretched if des
 
 &nbsp;
 
-## .DrawOnCamera()
+## .DrawOnCamera
 
 `.DrawOnCamera(camera, [alpha])`
 
@@ -108,7 +108,7 @@ Draws the lighting/shadow surface on the given camera. Intended to be used along
 
 &nbsp;
 
-## .GetSurface()
+## .GetSurface
 
 `.GetSurface()`
 
@@ -122,7 +122,7 @@ This function may return `undefined` if no surface exists for the renderer.
 
 &nbsp;
 
-## .RefreshStaticOccluders()
+## .RefreshStaticOccluders
 
 `.RefreshStaticOccluders()`
 
@@ -136,7 +136,7 @@ Refreshes this renderer's static occluders, causing the renderer's output to ref
 
 &nbsp;
 
-## .Free()
+## .Free
 
 `.Free()`
 
