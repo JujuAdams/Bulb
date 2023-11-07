@@ -1,4 +1,6 @@
-# Quick Start
+# Quick Start Guide
+
+&nbsp;
 
 ## How do I import Bulb into my game?
 
@@ -8,41 +10,44 @@ GameMaker Studio 2 allows you to import assets, including scripts and shaders, d
 
 ## How does Bulb work?
 
-Bulb is comprised of three main components:
+Bulb is comprised of four main components:
 
-1. [Renderers](GML-Functions#bulbrendererambientcolour-mode-smooth-constructor)
-2. [Lights](GML-Functions#bulblightrenderer-sprite-image-x-y-constructor)
-3. Occluders ([dynamic](GML-Functions#bulbdynamicoccluderrenderer-constructor) and [static](GML-Functions#bulbstaticoccluderrenderer-constructor))
+1. Renderers
+2. Lights (point and directional)
+3. Occluders (static and dynamic)
+4. Overlays (shadows and lights)
 
-Renderers act as the main "controllers" for Bulb's lighting system. Lights and occluders work together to create areas of light and shadow, and both lights and occluders must be added to the same renderer to affect each other. Renderers contain a [surface](https://manual.yoyogames.com/GameMaker_Language/GML_Reference/Drawing/Surfaces/Surfaces.htm) that is used to hold lighting data, and they also contain a handful of [vertex buffers](https://manual.yoyogames.com/Additional_Information/Guide_To_Primitives_And_Vertex_Building.htm) that are used to hold occluder geometry in a format that's fast for a GPU to render.
+Renderers act as the main "controllers" for Bulb's lighting system. Lights and occluders work together to create areas of light and shadow, and both lights and occluders must be added to the same renderer to affect each other. Overlays are drawn last and allow you to further tweak the appearance of the overall lighting output. Renderers contain a [surface](https://manual.yoyogames.com/GameMaker_Language/GML_Reference/Drawing/Surfaces/Surfaces.htm) that is used to hold lighting data, and they also contain a handful of [vertex buffers](https://manual.yoyogames.com/Additional_Information/Guide_To_Primitives_And_Vertex_Building.htm) that are used to hold occluder geometry in a format that's fast for a GPU to render.
 
 Renderers must be updated regularly (typically once a frame) in order for the lighting information on their surface to be up-to-date with the current game state. Renderers must also be manually instructed to draw their surface for that surface to be visible. We'll cover how to do this below. Finally, renderers **must have their memory freed manually** by calling their `.Free()` method when you don't need the renderer any more. Not calling `.Free()` will result in a memory leak that may end up crashing your game.
 
-Lights are sprite-based point sources. They can be rotated, scaled, translated, coloured etc. as you see fit by adjusting their [member variables](GML-Functions#bulblightrenderer-sprite-image-x-y-constructor). As mentioned above, lights must be added to a renderer to be visible. Lighting sprites respect the origin of a sprite so directional lights, whilst internally considered point sources within Bulb, are supported by moving the sprite's origin.
+The standard Bulb lights emit light shaped by using a sprite and cast shadows emitting from a single point. They can be rotated, scaled, translated, coloured etc. as you see fit by adjusting their member variables. As mentioned above, lights must be added to a renderer to be visible. Lighting sprites respect the origin of a sprite so conical lights, whilst internally considered point sources within Bulb, are supported by moving the sprite's origin. A sunlight light source, also known as a directional light, is also available in Bulb.
 
-Occluders are defined as a series of shadow-casting edges ("lines") that are typically arranged into polygons. Occluders can be scaled and rotated by adjusting their [member variables](GML-Functions#bulbdynamicoccluderrenderer-constructor). There are two subtypes of occluder - "static" and "dynamic". Dynamic occluders can be added and removed to/from a renderer, and can be moved or otherwise transformed, every frame without any extra work. Static occluders are not as flexible but are much faster. You can read more about [how static occluders work](GML-Functions#bulbstaticoccluderrenderer-constructor) in the technical documentation.
+Occluders are defined as a series of shadow-casting edges ("lines") that are typically arranged into polygons. Occluders can be scaled and rotated by adjusting their member variables. There are two subtypes of occluder - "static" and "dynamic". Dynamic occluders can be added and removed to/from a renderer, and can be moved or otherwise transformed, every frame without any extra work. Static occluders are not as flexible but are much faster.
+
+Overlays are used as a way to further trim and tidy up lighting. Shadow overlays can be used to "delete" regions of light from the scene. This is useful in platformers to create the illusion of depth by allowing assets to be positioned between the camera and the lighting plane, and it can be used in top-down games with perspective to shadow the tops of tall objects. Light overlays are rendered at the very end of the pipeline and can be used for emissive glows or to highlight critical gameplay components, such as a chest or key that the player needs to progress.
 
 &nbsp;
 
 ## How do I get a basic scene up and running?
 
-The following is a basic setup guide using a renderer without [groups](GML-Functions#bulbrendererwithgroupsambientcolour-mode-smooth-maxgroups-constructor) and using [dynamic](GML-Functions#bulbdynamicoccluderrenderer-constructor) rather than [static](GML-Functions#bulbstaticoccluderrenderer-constructor) occluders.
+The following is a basic setup guide using *dynamic* rather than *static* occluders. In general, you will want to use static occluders as much as possible to improve performance.
 
 &nbsp;
 
-**1. Create a new project and import Bulb**
+### 1. Create a new project and import Bulb
 
-[See above](Setting-Up#how-do-i-import-bulb-into-my-game) for instructions on importing Bulb.
+[See above](Quick-Start#how-do-i-import-bulb-into-my-game) for instructions on importing Bulb. 
 
 &nbsp;
 
-**2. Create a new room**
+### 2. Create a new room
 
 Make sure that the room has a white background so you can see where the light is! All the objects we'll be adding should also have an instance placed in the room.
 
 &nbsp;
 
-**3. Create a [renderer](GML-Functions#bulbrendererambientcolour-mode-smooth-constructor)**
+### 3. Create a renderer
 
 In a new object called `objLightController`, we create a Bulb renderer. We choose a dark (but not pitch black) ambient colour to demonstrate lighting, and we choose a basic [unsmoothed lighting mode](GML-Functions#bulbrendererambientcolour-mode-smooth-constructor).
 
@@ -54,7 +59,7 @@ renderer = new BulbRenderer(c_dkgray, BULB_MODE.HARD_BM_MAX, false);
 
 &nbsp;
 
-**4. Call an update and draw method**
+### 4. Call an update and draw method
 
 In the Draw End event for `objLightController` we update and draw the renderer. We use the Draw End event to ensure the lighting surface is drawn over the top of everything else. The `.Update()` call ensures what's on the lighting surface matches the game state, and the `.Draw()` call draws the renderer's lighting surface.
 
@@ -69,7 +74,7 @@ renderer.Draw(0, 0);
 
 &nbsp;
 
-**5. Call the `.Free()` method**
+### 5. Call the `.Free()` method
 
 In `objLightController`'s Clean Up Event we call the all-important `.Free()` method to ensure we don't have a memory leak.
 
@@ -81,7 +86,7 @@ renderer.Free();
 
 &nbsp;
 
-**6. Add a [light](GML-Functions#bulblightrenderer-sprite-image-x-y-constructor)**
+### 6. Add a light
 
 In a new object called `objLight` we create a Room Start event (which is guaranteed to execute after `objLightController`'s Create event). In this event we define a light that uses `sprLight` to determine how it looks (if you need a quick light sprite, you can grab [a test sprite](https://github.com/JujuAdams/Bulb/blob/master/sprites/sLight512/719fe171-a783-4aae-9fda-bdd9933d9ae4.png) from the Bulb repo). Make sure that the origin of the sprite is set at the visual origin of the light sprite.
 
@@ -93,13 +98,13 @@ light = new BulbLight(objLightController.renderer, sprLight, 0, x, y);
 
 &nbsp;
 
-**7. Add an [occluder](GML-Functions#bulbdynamicoccluderrenderer-constructor)**
+### 7. Add an occluder
 
 In a new object called `objPlayer` we create a Room Start event (which is guaranteed to execute after `objLightController`'s Create event). In this event we create an occluder and define the shadow-casting edges for that occluder. In the Step event of `objPlayer` we add some basic movement code and move the occluder to match the player's position.
 
 The code below uses `objPlayer`'s bounding box. For this to work, `objPlayer` must be given a sprite.
 
-*Please note that for Bulb's [self-lighting modes]() occluder edges should be defined in a **clockwise** direction. It's good practice to stick to this convention even if you're not using self-lighting.*
+?> Please note that Bulb's edges should be defined in a **clockwise** direction.
 
 ```GML
 ///Room Start Event for objPlayer
