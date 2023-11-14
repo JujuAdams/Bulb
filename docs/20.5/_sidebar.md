@@ -10,6 +10,7 @@
 - [BulbSunlight](BulbSunlight)
 - [BulbDynamicOccluder](BulbDynamicOccluder)
 - [BulbStaticOccluder](BulbStaticOccluder)
+- [BulbAmbienceSprite](BulbAmbienceSprite)
 - [BulbShadowOverlay](BulbShadowOverlay)
 - [BulbLightOverlay](BulbLightOverlay)
 - [BulbMakeBitmask](BulbMakeBitmask)
