@@ -46,6 +46,7 @@
     {"id":{"name":"oPlayer2","path":"objects/oPlayer2/oPlayer2.yy",},"order":1,},
     {"id":{"name":"rmTestSoft","path":"rooms/rmTestSoft/rmTestSoft.yy",},"order":2,},
     {"id":{"name":"oShadowOverlay","path":"objects/oShadowOverlay/oShadowOverlay.yy",},"order":8,},
+    {"id":{"name":"oAmbientUnderlay","path":"objects/oAmbientUnderlay/oAmbientUnderlay.yy",},"order":9,},
     {"id":{"name":"oStaticOccluderAlt2","path":"objects/oStaticOccluderAlt2/oStaticOccluderAlt2.yy",},"order":5,},
     {"id":{"name":"oStaticOccluder","path":"objects/oStaticOccluder/oStaticOccluder.yy",},"order":4,},
     {"id":{"name":"__shdBulbHSVValueToAlpha","path":"shaders/__shdBulbHSVValueToAlpha/__shdBulbHSVValueToAlpha.yy",},"order":10,},
