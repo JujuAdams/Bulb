@@ -158,7 +158,7 @@ function BulbRendererWithGroups(_ambientColour, _mode, _smooth, _maxGroups) cons
         draw_clear(ambientColor);
         
         //If we're not forcing deferred rendering everywhere, update those lights
-        AccumulateLights(_cameraL, _cameraT, _cameraR, _cameraB, _cameraCX, _cameraCY, _cameraW, _cameraH);
+        __AccumulateLights(_cameraL, _cameraT, _cameraR, _cameraB, _cameraCX, _cameraCY, _cameraW, _cameraH);
         
         if (__clipEnabled) __ApplyClippingSurface();
         
@@ -551,7 +551,7 @@ function BulbRendererWithGroups(_ambientColour, _mode, _smooth, _maxGroups) cons
     
     #region Accumulate lights
     
-    static AccumulateLights = function(_cameraL, _cameraT, _cameraR, _cameraB, _cameraCX, _cameraCY, _cameraW, _cameraH)
+    static __AccumulateLights = function(_cameraL, _cameraT, _cameraR, _cameraB, _cameraCX, _cameraCY, _cameraW, _cameraH)
     {
         if (__freed) return undefined;
         
@@ -608,11 +608,11 @@ function BulbRendererWithGroups(_ambientColour, _mode, _smooth, _maxGroups) cons
         ///////////Iterate over all non-deferred lights...
         if (mode == BULB_MODE.SOFT_BM_ADD)
         {
-            AccumulateSoftLights(_cameraL, _cameraT, _cameraR, _cameraB, _cameraCX, _cameraCY, _cameraW, _cameraH, _vp_matrix);
+            __AccumulateSoftLights(_cameraL, _cameraT, _cameraR, _cameraB, _cameraCX, _cameraCY, _cameraW, _cameraH, _vp_matrix);
         }
         else
         {
-            AccumulateHardLights(_cameraL, _cameraT, _cameraR, _cameraB, _cameraCX, _cameraCY, _cameraW, _cameraH, _vp_matrix);
+            __AccumulateHardLights(_cameraL, _cameraT, _cameraR, _cameraB, _cameraCX, _cameraCY, _cameraW, _cameraH, _vp_matrix);
         }
         
         //Reset culling so we can draw sprites normally
@@ -742,7 +742,7 @@ function BulbRendererWithGroups(_ambientColour, _mode, _smooth, _maxGroups) cons
     
     #region Accumulate soft lights
     
-    static AccumulateSoftLights = function(_cameraL, _cameraT, _cameraR, _cameraB, _cameraCX, _cameraCY, _cameraW, _cameraH, _vp_matrix)
+    static __AccumulateSoftLights = function(_cameraL, _cameraT, _cameraR, _cameraB, _cameraCX, _cameraCY, _cameraW, _cameraH, _vp_matrix)
     {
         if (__freed) return undefined;
         
@@ -942,7 +942,7 @@ function BulbRendererWithGroups(_ambientColour, _mode, _smooth, _maxGroups) cons
     
     #region Accumulate hard lights
     
-    static AccumulateHardLights = function(_cameraL, _cameraT, _cameraR, _cameraB, _cameraCX, _cameraCY, _cameraW, _cameraH, _vp_matrix)
+    static __AccumulateHardLights = function(_cameraL, _cameraT, _cameraR, _cameraB, _cameraCX, _cameraCY, _cameraW, _cameraH, _vp_matrix)
     {
         if (__freed) return undefined;
         

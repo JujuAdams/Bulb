@@ -34,6 +34,7 @@ function BulbRenderer(_ambientColour, _mode, _smooth) constructor
     __dynamicOccludersArray = [];
     __lightsArray           = [];
     __sunlightArray         = [];
+    __ambienceSpriteArray   = [];
     __shadowOverlayArray    = [];
     __lightOverlayArray     = [];
     
@@ -160,7 +161,7 @@ function BulbRenderer(_ambientColour, _mode, _smooth) constructor
         draw_clear(ambientColor);
         
         //If we're not forcing deferred rendering everywhere, update those lights
-        AccumulateLights(_cameraL, _cameraT, _cameraR, _cameraB, _cameraCX, _cameraCY, _cameraW, _cameraH);
+        __AccumulateLights(_cameraL, _cameraT, _cameraR, _cameraB, _cameraCX, _cameraCY, _cameraW, _cameraH);
         
         if (__clipEnabled) __ApplyClippingSurface();
         
@@ -500,22 +501,74 @@ function BulbRenderer(_ambientColour, _mode, _smooth) constructor
     
     #region Accumulate lights
     
-    static AccumulateLights = function(_cameraL, _cameraT, _cameraR, _cameraB, _cameraCX, _cameraCY, _cameraW, _cameraH)
+    static __AccumulateLights = function(_cameraL, _cameraT, _cameraR, _cameraB, _cameraCX, _cameraCY, _cameraW, _cameraH)
     {
         if (__freed) return undefined;
+        
+        __AccumulateAmbienceSprite(_cameraL, _cameraT, _cameraR, _cameraB);
         
         var _normalCoeff = ((mode == BULB_MODE.HARD_BM_ADD_SELFLIGHTING) || (mode == BULB_MODE.HARD_BM_MAX_SELFLIGHTING))? -1 : 1;
         
         //Iterate over all non-deferred lights...
         if (mode == BULB_MODE.SOFT_BM_ADD)
         {
-            AccumulateSoftLights(_cameraL, _cameraT, _cameraR, _cameraB, _cameraCX, _cameraCY, _cameraW, _cameraH, _normalCoeff);
+            __AccumulateSoftLights(_cameraL, _cameraT, _cameraR, _cameraB, _cameraCX, _cameraCY, _cameraW, _cameraH, _normalCoeff);
         }
         else
         {
-            AccumulateHardLights(_cameraL, _cameraT, _cameraR, _cameraB, _cameraCX, _cameraCY, _cameraW, _cameraH, _normalCoeff);
+            __AccumulateHardLights(_cameraL, _cameraT, _cameraR, _cameraB, _cameraCX, _cameraCY, _cameraW, _cameraH, _normalCoeff);
         }
         
+        __AccumulateShadowOverlay(_cameraL, _cameraT, _cameraR, _cameraB);
+        __AccumulateLightOverlay(_cameraL, _cameraT, _cameraR, _cameraB);
+        
+        //Restore default behaviour
+        gpu_set_colorwriteenable(true, true, true, true);
+        gpu_set_blendmode(bm_normal);
+    }
+    
+    static __AccumulateAmbienceSprite = function(_cameraL, _cameraT, _cameraR, _cameraB)
+    {
+        //Now draw shadow overlay sprites, if we have any
+        var _size = array_length(__ambienceSpriteArray);
+        if (_size > 0)
+        {
+            gpu_set_colorwriteenable(true, true, true, false);
+            
+            var _i = 0;
+            repeat(_size)
+            {
+                var _weak = __ambienceSpriteArray[_i];
+                if (!weak_ref_alive(_weak) || _weak.ref.__destroyed)
+                {
+                    array_delete(__ambienceSpriteArray, _i, 1);
+                }
+                else
+                {
+                    with(_weak.ref)
+                    {
+                        if (visible)
+                        {
+                            __CheckSpriteDimensions();
+                            
+                            //If this light is active, do some drawing
+                            if (__IsOnScreen(_cameraL, _cameraT, _cameraR, _cameraB))
+                            {
+                                draw_sprite_ext(sprite, image, x, y, xscale, yscale, angle, blend, alpha);
+                            }
+                        }
+                    }
+                    
+                    ++_i;
+                }
+            }
+            
+            gpu_set_colorwriteenable(true, true, true, true);
+        }
+    }
+    
+    static __AccumulateShadowOverlay = function(_cameraL, _cameraT, _cameraR, _cameraB)
+    {
         //Now draw shadow overlay sprites, if we have any
         var _size = array_length(__shadowOverlayArray);
         if (_size > 0)
@@ -579,12 +632,12 @@ function BulbRenderer(_ambientColour, _mode, _smooth) constructor
         }
         else
         {
-            //If we're not drawing any shadow overlays, reset what shader we're using
             shader_reset();
         }
-        
-        
-        
+    }
+    
+    static __AccumulateLightOverlay = function(_cameraL, _cameraT, _cameraR, _cameraB)
+    {
         //Finally, draw light overlay sprites too
         //We use the overarching blend mode for the renderer
         if ((mode == BULB_MODE.HARD_BM_MAX) || (mode == BULB_MODE.HARD_BM_MAX_SELFLIGHTING))
@@ -626,19 +679,13 @@ function BulbRenderer(_ambientColour, _mode, _smooth) constructor
                 ++_i;
             }
         }
-        
-        
-        
-        //Restore default behaviour
-        gpu_set_colorwriteenable(true, true, true, true);
-        gpu_set_blendmode(bm_normal);
     }
     
     #endregion
     
     #region Accumulate soft lights
     
-    static AccumulateSoftLights = function(_cameraL, _cameraT, _cameraR, _cameraB, _cameraCX, _cameraCY, _cameraW, _cameraH, _normalCoeff)
+    static __AccumulateSoftLights = function(_cameraL, _cameraT, _cameraR, _cameraB, _cameraCX, _cameraCY, _cameraW, _cameraH, _normalCoeff)
     {
         if (__freed) return undefined;
         
@@ -765,7 +812,7 @@ function BulbRenderer(_ambientColour, _mode, _smooth) constructor
     
     #region Accumulate hard lights
     
-    static AccumulateHardLights = function(_cameraL, _cameraT, _cameraR, _cameraB, _cameraCX, _cameraCY, _cameraW, _cameraH, _normalCoeff)
+    static __AccumulateHardLights = function(_cameraL, _cameraT, _cameraR, _cameraB, _cameraCX, _cameraCY, _cameraW, _cameraH, _normalCoeff)
     {
         if (__freed) return undefined;
         
