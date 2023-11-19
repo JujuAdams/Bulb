@@ -3,7 +3,7 @@
 <p align="center">2D lighting and shadows for GameMaker 2022 LTS by <a href="https://www.jujuadams.com/" target="_blank">Juju Adams</a></p>
 
 <p align="center"><a href="https://github.com/JujuAdams/Bulb/releases/" target="_blank">Download the .yymps</a></p>
-<p align="center">Talk about Bulb on the <a href="https://discord.gg/8krYCqr" target="_blank">Discord server</a></p>
+<p align="center">Talk about Bulb on the <a href="https://discord.gg/8ESK9Z2Y7D" target="_blank">Discord server</a></p>
 
 ---
 
