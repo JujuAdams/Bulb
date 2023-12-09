@@ -1,6 +1,6 @@
-#macro __BULB_VERSION         "21.0.0"
-#macro __BULB_DATE            "2023-12-09"
-#macro __BULB_ZFAR            1
+#macro __BULB_VERSION  "21.0.1"
+#macro __BULB_DATE     "2023-12-09"
+#macro __BULB_ZFAR     1
 
 __BulbTrace("Welcome to Bulb by Juju Adams! This is version " + __BULB_VERSION + ", " + __BULB_DATE);
 
