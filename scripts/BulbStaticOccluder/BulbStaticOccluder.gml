@@ -11,8 +11,6 @@ function BulbStaticOccluder(_renderer) constructor
     
     vertexArray = [];
     
-    bitmask = BULB_DEFAULT_STATIC_BITMASK;
-    
     __destroyed = false;
     
     static Destroy = function()
