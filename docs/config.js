@@ -22,8 +22,8 @@
 const config = {
 	name: 'Bulb',
 	description: '2D lighting and shadows for GameMaker 2022 LTS',
-	latestVersion: '20.5',
-	otherVersions: ['20.4', '20.2'],
+	latestVersion: '21.0',
+	otherVersions: ['20.5', '20.4', '20.2'],
 	favicon: 'assets/favicon.ico',
 	themeColor: '#7ed6b7',
 };

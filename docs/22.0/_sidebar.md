@@ -5,12 +5,9 @@
 ---
 
 - [BulbRenderer](BulbRenderer)
-- [BulbRendererWithGroups](BulbRendererWithGroups)
-- [BulbLight](BulbLight)
-- [BulbSunlight](BulbSunlight)
+- [BulbPointLight](BulbPointLight)
+- [BulbDirectionalLight](BulbDirectionalLight)
 - [BulbDynamicOccluder](BulbDynamicOccluder)
 - [BulbStaticOccluder](BulbStaticOccluder)
-- [BulbAmbienceSprite](BulbAmbienceSprite)
 - [BulbShadowOverlay](BulbShadowOverlay)
 - [BulbLightOverlay](BulbLightOverlay)
-- [BulbMakeBitmask](BulbMakeBitmask)

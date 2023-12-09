@@ -27,13 +27,15 @@ Static occluders are therefore much more performant than dynamic occluders, but 
 
 The created struct has the following public member variables:
 
-|Variable|Datatype|Purpose                                                             |
-|--------|--------|--------------------------------------------------------------------|
-|`x`     |number  |x-position of the occluder                                          |
-|`y`     |number  |x-position of the occluder                                          |
-|`xscale`|number  |Horizontal scaling of the occluder's edges, relative to its position|
-|`yscale`|number  |Vertical scaling of the occluder's edges, relative to its position  |
-|`angle` |number  |Rotation of the occluder's edges, relative to its position          |
+|Variable     |Datatype      |Purpose                                                                                                                                                                                                                                                                                                                                              |
+|-------------|--------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+|`x`          |number        |x-position of the occluder                                                                                                                                                                                                                                                                                                                           |
+|`y`          |number        |x-position of the occluder                                                                                                                                                                                                                                                                                                                           |
+|`xscale`     |number        |Horizontal scaling of the occluder's edges, relative to its position                                                                                                                                                                                                                                                                                 |
+|`yscale`     |number        |Vertical scaling of the occluder's edges, relative to its position                                                                                                                                                                                                                                                                                   |
+|`angle`      |number        |Rotation of the occluder's edges, relative to its position                                                                                                                                                                                                                                                                                           |
+|`vertexArray`|array         |Array of edges, arranged as sequential sets of 4 coordinates (`x1, y1, x2, y2`)                                                                                                                                                                                                                                                                      |
+|`bitmask`    |64-bit integer|Which groups to include this occluder in. [BulbMakeBitmask()](GML-Functions#bulbmakebitmaskgroup1-group2-group3-) can be used to generate bitmasks. **N.B.** If you'd like to change what group a static occluder is in, you must call [`.RefreshStaticOccluders()`](GML-Functions#bulbrendererambientcolour-mode-smooth-constructor) on the renderer|
 
 &nbsp;
 
@@ -51,64 +53,6 @@ The created struct has the following public member variables:
 |`y2`    |number  |y-coordinate of the second vertex of the edge|
 
 Adds an occlusion edge (a shadow-casting line) to the occluder. Edges should be defined in a **clockwise** order.
-
-&nbsp;
-
-## .SetSprite
-
-`.SetSprite(sprite, image)`
-
-**Returns:** N/A (`undefined`)
-
-|Argument|Datatype    |Purpose                                                                      |
-|--------|------------|-----------------------------------------------------------------------------|
-|`sprite`|sprite index|Sprite to use for shadow casting                                             |
-|`image` |number      |Image index of the given sprite to use. Negative values are **not** supported|
-
-!> Sprite-based occluders typically generate a lot of edges and carry a significant performance penalty. Use `.SetSprite()` sparingly.
-
-&nbsp;
-
-## .SetTilemap
-
-`.SetTilemap(tilemap)`
-
-**Returns:** N/A (`undefined`)
-
-|Argument |Datatype                 |Purpose                                                                                               |
-|---------|-------------------------|------------------------------------------------------------------------------------------------------|
-|`tilemap`|tilemap ID, or layer name|Tilemap to use for occlusion. Alternatively, you can provide the name of a tilemap layer (as a string)|
-
-!> Tilemap-based occluders typically generate a lot of edges and carry a significant performance penalty. Use `.SetTilemap()` sparingly.
-
-&nbsp;
-
-## .AddSprite
-
-`.AddSprite(sprite, image)`
-
-**Returns:** N/A (`undefined`)
-
-|Argument|Datatype    |Purpose                                                                      |
-|--------|------------|-----------------------------------------------------------------------------|
-|`sprite`|sprite index|Sprite to use for shadow casting                                             |
-|`image` |number      |Image index of the given sprite to use. Negative values are **not** supported|
-
-!> Sprite-based occluders typically generate a lot of edges and carry a significant performance penalty. Use `.AddSprite()` sparingly.
-
-&nbsp;
-
-## .AddTilemap
-
-`.AddTilemap(tilemap)`
-
-**Returns:** N/A (`undefined`)
-
-|Argument |Datatype                 |Purpose                                                                                               |
-|---------|-------------------------|------------------------------------------------------------------------------------------------------|
-|`tilemap`|tilemap ID, or layer name|Tilemap to use for occlusion. Alternatively, you can provide the name of a tilemap layer (as a string)|
-
-!> Tilemap-based occluders typically generate a lot of edges and carry a significant performance penalty. Use `.AddTilemap()` sparingly.
 
 &nbsp;
 
