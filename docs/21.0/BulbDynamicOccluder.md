@@ -22,16 +22,15 @@ When dynamic occluders are drawn is controlled, in part, by `BULB_DYNAMIC_OCCLUD
 
 The created struct has the following public member variables:
 
-|Variable     |Datatype      |Purpose                                                                                                                                                 |
-|-------------|--------------|--------------------------------------------------------------------------------------------------------------------------------------------------------|
-|`visible`    |boolean       |Whether to draw the occluder at all                                                                                                                     |
-|`x`          |number        |x-position of the occluder                                                                                                                              |
-|`y`          |number        |x-position of the occluder                                                                                                                              |
-|`xscale`     |number        |Horizontal scaling of the occluder's edges, relative to its position                                                                                    |
-|`yscale`     |number        |Vertical scaling of the occluder's edges, relative to its position                                                                                      |
-|`angle`      |number        |Rotation of the occluder's edges, relative to its position                                                                                              |
-|`vertexArray`|array         |Array of edges, arranged as sequential sets of 4 coordinates (`x1, y1, x2, y2`)                                                                   |
-|`bitmask`    |64-bit integer|Which groups to include this occluder in. [BulbMakeBitmask()](GML-Functions#bulbmakebitmaskgroup1-group2-group3-) can be used to generate bitmasks|
+|Variable     |Datatype      |Purpose                                                                        |
+|-------------|--------------|-------------------------------------------------------------------------------|
+|`visible`    |boolean       |Whether to draw the occluder at all                                            |
+|`x`          |number        |x-position of the occluder                                                     |
+|`y`          |number        |x-position of the occluder                                                     |
+|`xscale`     |number        |Horizontal scaling of the occluder's edges, relative to its position           |
+|`yscale`     |number        |Vertical scaling of the occluder's edges, relative to its position             |
+|`angle`      |number        |Rotation of the occluder's edges, relative to its position                     |
+|`vertexArray`|array         |Array of edges, arranged as sequential sets of 4 coordinates (`x1, y1, x2, y2`)|
 
 &nbsp;
 

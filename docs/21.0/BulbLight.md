@@ -38,7 +38,6 @@ The created struct has the following public member variables:
 |`visible`     |boolean       |Whether to draw the light at all                                                 |
 |`castShadows` |boolean       |Whether the light casts shadow. Not casting shadows is much faster!              |
 |`penumbraSize`|number        |Size of the penumbra when using the `BULB_MODE.SOFT_BM_ADD` rendering mode       |
-|`bitmask`     |64-bit integer|Which groups of occluders to render for this light. [BulbMakeBitmask()](GML-Functions#bulbmakebitmaskgroup1-group2-group3-) can be used to generate bitmasks|
 
 &nbsp;
 

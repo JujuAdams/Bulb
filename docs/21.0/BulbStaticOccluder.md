@@ -12,7 +12,7 @@
 
 When created, a `BulbStaticOccluder` will be added to the given renderer. An occluder can be added (and removed) from multiple renderers as you see fit.
 
-Static occluders differ from dynamic occluders insofar that their edges, position, rotation, scaling, and group are only updated when either:
+Static occluders differ from dynamic occluders insofar that their edges, position, rotation, and scaling are only updated when either:
 
 1. The renderer performs its very first update
 2. `.RefreshStaticOccluders()` is called for the renderer.
@@ -27,15 +27,14 @@ Static occluders are therefore much more performant than dynamic occluders, but 
 
 The created struct has the following public member variables:
 
-|Variable     |Datatype      |Purpose                                                                                                                                                                                                                                                                                                                                              |
-|-------------|--------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-|`x`          |number        |x-position of the occluder                                                                                                                                                                                                                                                                                                                           |
-|`y`          |number        |x-position of the occluder                                                                                                                                                                                                                                                                                                                           |
-|`xscale`     |number        |Horizontal scaling of the occluder's edges, relative to its position                                                                                                                                                                                                                                                                                 |
-|`yscale`     |number        |Vertical scaling of the occluder's edges, relative to its position                                                                                                                                                                                                                                                                                   |
-|`angle`      |number        |Rotation of the occluder's edges, relative to its position                                                                                                                                                                                                                                                                                           |
-|`vertexArray`|array         |Array of edges, arranged as sequential sets of 4 coordinates (`x1, y1, x2, y2`)                                                                                                                                                                                                                                                                      |
-|`bitmask`    |64-bit integer|Which groups to include this occluder in. [BulbMakeBitmask()](GML-Functions#bulbmakebitmaskgroup1-group2-group3-) can be used to generate bitmasks. **N.B.** If you'd like to change what group a static occluder is in, you must call [`.RefreshStaticOccluders()`](GML-Functions#bulbrendererambientcolour-mode-smooth-constructor) on the renderer|
+|Variable     |Datatype      |Purpose                                                                        |
+|-------------|--------------|-------------------------------------------------------------------------------|
+|`x`          |number        |x-position of the occluder                                                     |
+|`y`          |number        |x-position of the occluder                                                     |
+|`xscale`     |number        |Horizontal scaling of the occluder's edges, relative to its position           |
+|`yscale`     |number        |Vertical scaling of the occluder's edges, relative to its position             |
+|`angle`      |number        |Rotation of the occluder's edges, relative to its position                     |
+|`vertexArray`|array         |Array of edges, arranged as sequential sets of 4 coordinates (`x1, y1, x2, y2`)|
 
 &nbsp;
 
