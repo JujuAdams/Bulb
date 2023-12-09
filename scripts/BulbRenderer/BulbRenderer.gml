@@ -909,6 +909,10 @@ function BulbRenderer(_ambientColour, _mode, _smooth) constructor
                             }
                             else
                             {
+                                //Ensure any previous changes to the z-buffer don't leak across
+                                gpu_set_colorwriteenable(true, true, true, false);
+                                gpu_set_zfunc(cmpfunc_always);
+                                
                                 //Just draw the sprite, no fancy stuff here
                                 draw_sprite_ext(sprite, image,
                                                 x, y,
