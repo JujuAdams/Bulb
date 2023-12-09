@@ -13,17 +13,13 @@ function BulbLight(_renderer, _sprite, _image, _x, _y) constructor
     xprevious = x;
     yprevious = y;
     
-    sprite         = _sprite;
-    image          = _image;
-    xscale         = 1.0;
-    yscale         = 1.0;
-    xscaleprevious = xscale;
-    yscaleprevious = yscale;
-    angle          = 0.0;
-    blend          = c_white;
-    alpha          = 1.0;
-    
-    bitmask = BULB_DEFAULT_LIGHT_BITMASK;
+    sprite = _sprite;
+    image  = _image;
+    xscale = 1.0;
+    yscale = 1.0;
+    angle  = 0.0;
+    blend  = c_white;
+    alpha  = 1.0;
     
     penumbraSize = 0.0;
     

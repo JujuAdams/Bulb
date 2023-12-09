@@ -9,8 +9,6 @@ function BulbSunlight(_renderer, _angle) constructor
     blend = c_white;
     alpha = 1.0;
     
-    bitmask = BULB_DEFAULT_LIGHT_BITMASK;
-    
     penumbraSize = 0.0;
     
     __oldSprite = undefined;
