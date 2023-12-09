@@ -8,13 +8,13 @@ __BulbTrace("Welcome to Bulb by Juju Adams! This is version " + __BULB_VERSION +
 vertex_format_begin();
 vertex_format_add_position_3d();
 vertex_format_add_normal();
-global.__bulb_format_3d_normal = vertex_format_end();
+global.__bulbFormat3DNormal = vertex_format_end();
 
 vertex_format_begin();
 vertex_format_add_position_3d();
 vertex_format_add_normal();
 vertex_format_add_texcoord();
-global.__bulb_format_3d_normal_tex = vertex_format_end();
+global.__bulbFormat3DNormalTex = vertex_format_end();
 
 
 
