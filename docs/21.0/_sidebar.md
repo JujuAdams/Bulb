@@ -5,7 +5,7 @@
 ---
 
 - [BulbRenderer](BulbRenderer)
-- [BulbLight](BulbLight)
+- [BulbPointLight](BulbPointLight)
 - [BulbSunlight](BulbSunlight)
 - [BulbDynamicOccluder](BulbDynamicOccluder)
 - [BulbStaticOccluder](BulbStaticOccluder)
