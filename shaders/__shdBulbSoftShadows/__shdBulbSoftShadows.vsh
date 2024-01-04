@@ -1,6 +1,6 @@
 precision highp float;
 
-#define MAX_LENGTH 50.0
+#define MAX_LENGTH 500.0
 
 attribute vec3 in_Position;
 attribute vec3 in_Normal;
