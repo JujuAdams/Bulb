@@ -2,9 +2,9 @@
 
 &nbsp;
 
-`BulbPointLight(renderer, sprite, image, x, y)` ***constructor***
+`BulbLight(renderer, sprite, image, x, y)` ***constructor***
 
-**Constructor returns:** `BulbPointLight` struct
+**Constructor returns:** `BulbLight` struct
 
 |Argument  |Datatype    |Purpose                                                                       |
 |----------|------------|------------------------------------------------------------------------------|
@@ -14,9 +14,9 @@
 |`x`       |number      |x-position of the light                                                       |
 |`y`       |number      |y-position of the light                                                       |
 
-When created, a `BulbPointLight` will be added to the given renderer. A light can be added (and removed) from multiple renderers as you see fit.
+When created, a `BulbLight` will be added to the given renderer. A light can be added (and removed) from multiple renderers as you see fit.
 
-?> You must maintain a reference to a created `BulbPointLight` yourself. Bulb tracks lights using a **weak reference** such that when you discard the reference to the light, the light is also automatically removed from the renderer. This makes memory management a lot safer, but does require that you keep your own strong reference to keep a light alive.
+?> You must maintain a reference to a created `BulbLight` yourself. Bulb tracks lights using a **weak reference** such that when you discard the reference to the light, the light is also automatically removed from the renderer. This makes memory management a lot safer, but does require that you keep your own strong reference to keep a light alive.
 
 &nbsp;
 
