@@ -2,7 +2,7 @@
 
 &nbsp;
 
-`BulbShadowOverlay(renderer, sprite, image, x, y)` ***constructor***
+`BulbShadowOverlay(renderer)` ***constructor***
 
 **Constructor returns:** `BulbShadowOverlay` struct
 
