@@ -8,6 +8,7 @@
 
 &nbsp;
 
+- ### Got questions? [Make a new issue!](https://github.com/JujuAdams/Bulb/issues/new)
 - ### [Download the .yymps](https://github.com/JujuAdams/Bulb/releases/)
 - ### Read the [documentation](http://jujuadams.github.io/Bulb)
 - ### You may also like [borup’s lighting engine](https://github.com/borup3/Lighting-System-2D), [YoYoGames’ DIY explanation](https://gamemaker.io/en/tutorials/coffee-break-tutorial-simple-lighting-gml), and [Aura 2](https://marketplace.yoyogames.com/assets/5229/aura-2-0-lighting-engine)
