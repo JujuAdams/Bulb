@@ -12,6 +12,8 @@
 |`mode`         |integer |Rendering mode to use, from the `BULB_MODE` enum (see below)                         |
 |`smooth`       |boolean |Whether to render lights with texture filtering on, smoothing out the resulting image|
 
+Setting the `smooth` argument to `true` will turn on bilinear texture filtering when calling `.Draw()` and `.DrawOnCamera()`. This may result in light bleed if you're using a low resolution camera or have set a low resolution surface size with `.SetSurfaceDimensions()`. This is especially noticeable with self-lighting rendering modes. Typically you wil want to set `smooth` to `false` for low resolution lighting as a result.
+
 !> A renderer struct will allocate vertex buffers and surfaces for its use. Remember to call the `.Free()` method when discarding a renderer struct otherwise you will create a memory leak.
 
 !> You must free and recreate your renderer when changing rooms.
