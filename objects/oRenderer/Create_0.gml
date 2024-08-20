@@ -11,7 +11,7 @@ application_surface_draw_enable(false);
 lighting = new BulbRenderer();
 lighting.ambientColor = make_colour_rgb(50, 50, 80);
 lighting.selfLighting = true;
-lighting.soft = false;
+lighting.soft = true;
 lighting.smooth = true;
 
 lighting.hdr = true;

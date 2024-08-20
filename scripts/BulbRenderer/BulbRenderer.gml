@@ -22,11 +22,11 @@ function BulbRenderer() constructor
     hdrAmbientInGammaSpace = false;
     
     //The smoothing mode controls texture filtering both when accumulating lights and when drawing the resulting surface
-    smooth = gpu_get_tex_filter();
+    smooth = true;
     
     selfLighting = false;
     
-    soft = false;
+    soft = true;
     
     hdr         = false;
     hdrExposure = 1;
