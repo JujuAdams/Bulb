@@ -17,7 +17,6 @@ function BulbRenderer() constructor
     __oldSoft = undefined;
     __oldHDR  = undefined;
     
-    
     surfaceWidth  = -1;
     surfaceHeight = -1;
     
@@ -34,14 +33,7 @@ function BulbRenderer() constructor
     __shadowOverlayArray    = [];
     __lightOverlayArray     = [];
     
-    __freed   = false;
-    
-    __clipEnabled      = false;
-    __clipSurface      = undefined;
-    __clipIsShadow     = true;
-    __clipAlpha        = 1.0;
-    __clipInvert       = false;
-    __clipValueToAlpha = false;
+    __freed = false;
     
     __hdrSurface = undefined;
     
@@ -64,29 +56,6 @@ function BulbRenderer() constructor
         surfaceHeight = _height;
         
         GetSurface();
-        GetClippingSurface();
-    }
-    
-    static SetClippingSurface = function(_clipIsShadow, _clipAlpha, _clipInvert = false, _hsvValueToAlpha = false)
-    {
-        __clipEnabled      = true;
-        __clipIsShadow     = _clipIsShadow;
-        __clipAlpha        = _clipAlpha;
-        __clipInvert       = _clipInvert;
-        __clipValueToAlpha = _hsvValueToAlpha;
-    }
-    
-    static RemoveClippingSurface = function()
-    {
-        __clipEnabled = false;
-        __FreeClipSurface();
-    }
-    
-    static CopyClippingSurface = function(_surface)
-    {
-        gpu_set_blendmode_ext(bm_one, bm_zero);
-        surface_copy(GetClippingSurface(), 0, 0, _surface);
-        gpu_set_blendmode(bm_normal);
     }
     
     static UpdateFromCamera = function(_camera)
@@ -161,12 +130,10 @@ function BulbRenderer() constructor
         gpu_set_tex_filter(smooth);
         
         //Clear the __surface with the ambient colour
-        draw_clear(__GetAmbientColour());
+        draw_clear(ambientColor);
         
         //If we're not forcing deferred rendering everywhere, update those lights
         __AccumulateLights(_cameraL, _cameraT, _cameraR, _cameraB, _cameraCX, _cameraCY, _cameraW, _cameraH);
-        
-        if (__clipEnabled) __ApplyClippingSurface();
         
         //Restore the old filter state
         gpu_set_tex_filter(_old_tex_filter);
@@ -313,38 +280,6 @@ function BulbRenderer() constructor
         return __surface;
     }
     
-    static GetClippingSurface = function()
-    {
-        if (__freed || !__clipEnabled) return undefined;
-        if ((surfaceWidth <= 0) || (surfaceHeight <= 0)) return undefined;
-        
-        if ((__clipSurface != undefined) && ((surface_get_width(__clipSurface) != surfaceWidth) || (surface_get_height(__clipSurface) != surfaceHeight)))
-        {
-            surface_free(__clipSurface);
-            __clipSurface = undefined;
-        }
-        
-        if ((__clipSurface == undefined) || !surface_exists(__clipSurface))
-        {
-            __clipSurface = surface_create(surfaceWidth, surfaceHeight);
-            
-            surface_set_target(__clipSurface);
-            
-            if (__clipInvert)
-            {
-                draw_clear_alpha(c_black, 0.0);
-            }
-            else
-            {
-                draw_clear_alpha(c_white, 1.0);
-            }
-            
-            surface_reset_target();
-        }
-        
-        return __clipSurface;
-    }
-    
     static RefreshStaticOccluders = function()
     {
         if (__freed) return undefined;
@@ -360,13 +295,12 @@ function BulbRenderer() constructor
     {
         __FreeVertexBuffers();
         __FreeSurface();
-        __FreeClipSurface();
         __FreeHDRSurface();
         
         __freed = true;
     }
     
-    static GetSurfacePixel = function(_worldX, _worldY, _cameraL, _cameraT, _cameraW, _cameraH)
+    static GetLightValue = function(_worldX, _worldY, _cameraL, _cameraT, _cameraW, _cameraH)
     {
         var _surface = GetSurface();
         var _x = (_worldX - _cameraL) * (surface_get_width( _surface) / _cameraW);
@@ -429,7 +363,7 @@ function BulbRenderer() constructor
         return _colour;
     }
     
-    static GetSurfacePixelFromCamera = function(_worldX, _worldY, _camera)
+    static GetLightValueFromCamera = function(_worldX, _worldY, _camera)
     {
         //Deploy PROPER MATHS in case the dev is using matrices
         
@@ -443,7 +377,7 @@ function BulbRenderer() constructor
         var _cameraLeft       = _cameraX - _cameraViewWidth/2;
         var _cameraTop        = _cameraY - _cameraViewHeight/2;
         
-        return GetSurfacePixel(_worldX, _worldY, _cameraLeft, _cameraTop,  _cameraViewWidth, _cameraViewHeight);
+        return GetLightValue(_worldX, _worldY, _cameraLeft, _cameraTop,  _cameraViewWidth, _cameraViewHeight);
     }
     
     #endregion
@@ -472,15 +406,6 @@ function BulbRenderer() constructor
         }
     }
     
-    static __FreeClipSurface = function()
-    {
-        if ((__clipSurface != undefined) && surface_exists(__clipSurface))
-        {
-            surface_free(__clipSurface);
-            __clipSurface = undefined;
-        }
-    }
-    
     static __FreeHDRSurface = function()
     {
         if ((__hdrSurface != undefined) && surface_exists(__hdrSurface))
@@ -488,21 +413,6 @@ function BulbRenderer() constructor
             surface_free(__hdrSurface);
             __hdrSurface = undefined;
         }
-    }
-    
-    static __GetAmbientColour = function()
-    {
-        if (not hdr) return ambientColor;
-        
-        var _red   = colour_get_red(  ambientColor);
-        var _green = colour_get_green(ambientColor);
-        var _blue  = colour_get_blue( ambientColor);
-        
-        _red   = 255*power(_red/255,   2.2);
-        _green = 255*power(_green/255, 2.2);
-        _blue  = 255*power(_blue/255,  2.2);
-        
-        return make_color_rgb(_red, _green, _blue);
     }
     
     #region Update vertex buffers
@@ -651,6 +561,8 @@ function BulbRenderer() constructor
             __AccumulateHardLights(_cameraL, _cameraT, _cameraR, _cameraB, _cameraCX, _cameraCY, _cameraW, _cameraH, _normalCoeff);
         }
         
+        shader_reset();
+        
         __AccumulateShadowOverlay(_cameraL, _cameraT, _cameraR, _cameraB);
         __AccumulateLightOverlay(_cameraL, _cameraT, _cameraR, _cameraB);
         
@@ -705,22 +617,12 @@ function BulbRenderer() constructor
         var _size = array_length(__shadowOverlayArray);
         if (_size > 0)
         {
-            if (BULB_SHADOW_OVERLAY_HSV_VALUE_TO_ALPHA)
-            {
-                shader_set(__shdBulbHSVValueToAlpha);
-            }
-            else
-            {
-                //Leverage the fog system to force the colour of the sprites we draw (alpha channel passes through)
-                shader_reset();
-                gpu_set_fog(true, __GetAmbientColour(), 0, 0);
-            }
+            //Leverage the fog system to force the colour of the sprites we draw (alpha channel passes through)
+            gpu_set_fog(true, ambientColor, 0, 0);
             
             //Don't touch the alpha channel
-            //TODO - We may need to adjust the alpha channel for use with sharing occlusion values
             gpu_set_colorwriteenable(true, true, true, false);
             
-            var _ambientColor = __GetAmbientColour();
             var _i = 0;
             repeat(_size)
             {
@@ -740,9 +642,7 @@ function BulbRenderer() constructor
                             //If this light is active, do some drawing
                             if (__IsOnScreen(_cameraL, _cameraT, _cameraR, _cameraB))
                             {
-                                //We send the ambient colour over as well even though we have fogging on
-                                //This allow us to colour the sprite when using the __shdBulbHSVValueToAlpha shader
-                                draw_sprite_ext(sprite, image, x, y, xscale, yscale, angle, _ambientColor, alpha);
+                                draw_sprite_ext(sprite, image, x, y, xscale, yscale, angle, c_white, alpha);
                             }
                         }
                     }
@@ -751,20 +651,9 @@ function BulbRenderer() constructor
                 }
             }
             
-            if (BULB_SHADOW_OVERLAY_HSV_VALUE_TO_ALPHA)
-            {
-                //Don't use the value->alpha shader carry on
-                shader_reset();
-            }
-            else
-            {
-                //We're already using the default GM shader, though let's reset the fog value
-                gpu_set_fog(false, c_fuchsia, 0, 0);
-            }
-        }
-        else
-        {
-            shader_reset();
+            //Reset render state
+            gpu_set_fog(false, c_white, 0, 0);
+            gpu_set_colorwriteenable(true, true, true, true);
         }
     }
     
@@ -804,6 +693,10 @@ function BulbRenderer() constructor
                 ++_i;
             }
         }
+        
+        //Reset render state
+        gpu_set_fog(false, c_white, 0, 0);
+        gpu_set_colorwriteenable(true, true, true, true);
     }
     
     #endregion
@@ -1087,49 +980,11 @@ function BulbRenderer() constructor
             }
         }
         
+        shader_reset();
         gpu_set_zfunc(cmpfunc_lessequal);
         gpu_set_blendmode(bm_normal);
         gpu_set_ztestenable(false);
         gpu_set_zwriteenable(false);
-    }
-    
-    #endregion
-    
-    #region Clip Surface
-    
-    static __ApplyClippingSurface = function()
-    {
-        if (__freed || !__clipEnabled) return undefined;
-        
-        var _clipSurface = GetClippingSurface();
-        if (_clipSurface != undefined)
-        {
-            if (!__clipInvert) //Intended to be (!__clipInvert)
-            {
-                //Use an inverse alpha so that we paint visible areas onto the clip surface
-                //Inverted mode should use GameMaker's standard alpha blending
-                //...this makes sense if you think about it, trust me
-                gpu_set_blendmode_ext(bm_inv_src_alpha, bm_src_alpha);
-            }
-            
-            gpu_set_colorwriteenable(true, true, true, false);
-            
-            if (__clipValueToAlpha)
-            {
-                //Apply the HSV value->alpha conversion shader if so desired
-                shader_set(__shdBulbHSVValueToAlpha);
-                draw_surface_ext(_clipSurface, 0, 0, 1, 1, 0, __clipIsShadow? __GetAmbientColour() : c_white, __clipAlpha);
-                shader_reset();
-            }
-            else
-            {
-                draw_surface_ext(_clipSurface, 0, 0, 1, 1, 0, __clipIsShadow? __GetAmbientColour() : c_white, __clipAlpha);
-            }
-            
-            //Reset GPU state
-            gpu_set_blendmode(bm_normal);
-            gpu_set_colorwriteenable(true, true, true, true);
-        }
     }
     
     #endregion

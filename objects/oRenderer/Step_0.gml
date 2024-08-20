@@ -15,7 +15,13 @@ if ((keyboard_check(ord("T"))) && (fps_real > 61) && (fps > 55)) instance_create
 if (keyboard_check_pressed(ord("1"))) with(oLightDiscoooo) light.visible = !light.visible;
 if (keyboard_check_pressed(ord("2"))) lighting.soft = !lighting.soft;
 if (keyboard_check_pressed(ord("3"))) lighting.selfLighting = !lighting.selfLighting;
-if (keyboard_check_pressed(ord("4"))) lighting.hdr = !lighting.hdr;
+
+if (keyboard_check_pressed(ord("4")))
+{
+    lighting.hdr = !lighting.hdr;
+    lighting.ambientColor = lighting.hdr? hdrAmbientColor : ldrAmbientColor;
+}
+
 if (keyboard_check_pressed(ord("5"))) lighting.hdrTonemap = (lighting.hdrTonemap + 1) mod 4;
 
 //Update debug timers
