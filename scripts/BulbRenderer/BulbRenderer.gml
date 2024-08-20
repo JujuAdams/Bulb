@@ -17,7 +17,7 @@ function BulbRenderer(_ambientColour, _mode, _smooth) constructor
     //Assign the ambient colour used for the darkest areas of the screen. This can be changed on the fly
     ambientColor = _ambientColour;
     
-    //The smoothing mode controls texture filtering both when accumulating lights and when drawing the resulting __surface
+    //The smoothing mode controls texture filtering both when accumulating lights and when drawing the resulting surface
     smooth = _smooth;
     
     mode = _mode;
@@ -28,7 +28,7 @@ function BulbRenderer(_ambientColour, _mode, _smooth) constructor
     //Initialise variables used and updated in .__UpdateVertexBuffers()
     __staticVBuffer  = undefined; //Vertex buffer describing the geometry of static occluder objects
     __dynamicVBuffer = undefined; //As above but for dynamic shadow occluders. This is updated every step
-    __surface        = undefined; //Screen-space __surface for final accumulation of lights
+    __surface        = undefined; //Screen-space surface for final accumulation of lights
     
     __staticOccludersArray  = [];
     __dynamicOccludersArray = [];
@@ -47,6 +47,9 @@ function BulbRenderer(_ambientColour, _mode, _smooth) constructor
     __clipAlpha        = 1.0;
     __clipInvert       = false;
     __clipValueToAlpha = false;
+    
+    __hdrSurface = undefined;
+    __hdrTonemappingShader = __shdBulbLinearToGamma;
     
     
     
@@ -238,6 +241,55 @@ function BulbRenderer(_ambientColour, _mode, _smooth) constructor
         }
     }
     
+    static DrawLitSurface = function(_surface, _x, _y, _width, _height)
+    {
+        var _surfaceWidth  = surface_get_width( _surface);
+        var _surfaceHeight = surface_get_height(_surface);
+        
+        __GetHDRSurface(_surfaceWidth, _surfaceHeight);
+        
+        gpu_set_colorwriteenable(true, true, true, false);
+        
+        shader_set(__shdBulbGammaToLinear);
+        surface_copy(__hdrSurface, 0, 0, _surface);
+        shader_reset();
+        
+        surface_set_target(__hdrSurface);
+        gpu_set_blendmode_ext(bm_zero, bm_src_color);
+        draw_surface_stretched(__surface, 0, 0, _surfaceWidth, _surfaceHeight);
+        gpu_set_blendmode(bm_normal);
+        surface_reset_target();
+        
+        gpu_set_colorwriteenable(true, true, true, true);
+        
+        shader_set(__hdrTonemappingShader);
+        draw_surface_stretched(__hdrSurface, _x, _y, _width, _height);
+        shader_reset();
+    }
+    
+    static __GetHDRSurface = function(_width, _height)
+    {
+        if (__freed) return undefined;
+        if ((_width <= 0) || (_height <= 0)) return undefined;
+        
+        if ((__hdrSurface != undefined) && ((surface_get_width(__hdrSurface) != _width) || (surface_get_height(__hdrSurface) != _height)))
+        {
+            surface_free(__hdrSurface);
+            __hdrSurface = undefined;
+        }
+        
+        if ((__hdrSurface == undefined) || !surface_exists(__hdrSurface))
+        {
+            __hdrSurface = surface_create(_width, _height); //, surface_format_rgba16);
+            
+            surface_set_target(__hdrSurface);
+            draw_clear(c_black);
+            surface_reset_target();
+        }
+        
+        return __hdrSurface;
+    }
+    
     static GetSurface = function()
     {
         if (__freed) return undefined;
@@ -309,6 +361,7 @@ function BulbRenderer(_ambientColour, _mode, _smooth) constructor
         __FreeVertexBuffers();
         __FreeSurface();
         __FreeClipSurface();
+        __FreeHDRSurface();
         
         __freed = true;
     }
@@ -370,6 +423,15 @@ function BulbRenderer(_ambientColour, _mode, _smooth) constructor
         {
             surface_free(__clipSurface);
             __clipSurface = undefined;
+        }
+    }
+    
+    static __FreeHDRSurface = function()
+    {
+        if ((__hdrSurface != undefined) && surface_exists(__hdrSurface))
+        {
+            surface_free(__hdrSurface);
+            __hdrSurface = undefined;
         }
     }
     

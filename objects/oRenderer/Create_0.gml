@@ -28,3 +28,5 @@ sunlight = new BulbSunlight(lighting, 45);
 sunlight.blend = c_red;
 sunlight.alpha = 0.4;
 sunlight.penumbraSize = 5;
+
+application_surface_draw_enable(false);
