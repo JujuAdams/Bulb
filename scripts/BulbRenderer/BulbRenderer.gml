@@ -190,8 +190,6 @@ function BulbRenderer() constructor
         
         if (hdr)
         {
-            draw_surface_stretched(application_surface, _x, _y, _width, _height);
-            
             var _surfaceWidth  = surface_get_width( _surface);
             var _surfaceHeight = surface_get_height(_surface);
             
@@ -234,7 +232,7 @@ function BulbRenderer() constructor
         }
         else
         {
-            draw_surface_stretched(application_surface, _x, _y, _width, _height);
+            draw_surface_stretched(_surface, _x, _y, _width, _height);
         }
             
         if (_textureFiltering != undefined)
