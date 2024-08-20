@@ -18,7 +18,8 @@ lighting.soft = false;
 lighting.smooth = true;
 lighting.hdr = true;
 lighting.hdrExposure = 1;
-lighting.hdrBloomIntensity = 0.3;
+lighting.hdrBloomIntensity = 0.2;
+lighting.hdrBloomIterations = 5;
 lighting.SetSurfaceDimensionsFromCamera(camera);
 
 //Set up a vertex buffer for drawing the diffuse base texture for the walls

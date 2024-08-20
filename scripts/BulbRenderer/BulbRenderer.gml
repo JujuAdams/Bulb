@@ -207,12 +207,13 @@ function BulbRenderer() constructor
             
             gpu_set_colorwriteenable(true, true, true, true);
             
-            if (hdrBloomIntensity > 0)
+            if ((hdrBloomIntensity > 0) && (hdrBloomIterations >= 1))
             {
                 __bloomSurfaceA = surface_create(_surfaceWidth div  2, _surfaceHeight div  2, surface_rgba16float);
                 __bloomSurfaceB = surface_create(_surfaceWidth div  4, _surfaceHeight div  4, surface_rgba16float);
                 __bloomSurfaceC = surface_create(_surfaceWidth div  8, _surfaceHeight div  8, surface_rgba16float);
                 __bloomSurfaceD = surface_create(_surfaceWidth div 16, _surfaceHeight div 16, surface_rgba16float);
+                __bloomSurfaceE = surface_create(_surfaceWidth div 32, _surfaceHeight div 32, surface_rgba16float);
                 
                 gpu_set_tex_filter(true);
                 
@@ -224,41 +225,65 @@ function BulbRenderer() constructor
                 shader_reset();
                 surface_reset_target();
                 
-                surface_set_target(__bloomSurfaceB);
-                shader_set(__shdBulbKawaseDown);
-                shader_set_uniform_f(shader_get_uniform(__shdBulbKawaseDown, "u_vTexel"), texture_get_texel_width(surface_get_texture(__bloomSurfaceB)), texture_get_texel_height(surface_get_texture(__bloomSurfaceB)));
-                draw_surface_stretched(__bloomSurfaceA, 0, 0, _surfaceWidth div 4, _surfaceHeight div 4);
-                surface_reset_target();
-                
-                surface_set_target(__bloomSurfaceC);
-                shader_set(__shdBulbKawaseDown);
-                shader_set_uniform_f(shader_get_uniform(__shdBulbKawaseDown, "u_vTexel"), texture_get_texel_width(surface_get_texture(__bloomSurfaceC)), texture_get_texel_height(surface_get_texture(__bloomSurfaceC)));
-                draw_surface_stretched(__bloomSurfaceB, 0, 0, _surfaceWidth div 8, _surfaceHeight div 8);
-                surface_reset_target();
-                
-                surface_set_target(__bloomSurfaceD);
-                shader_set(__shdBulbKawaseDown);
-                shader_set_uniform_f(shader_get_uniform(__shdBulbKawaseDown, "u_vTexel"), texture_get_texel_width(surface_get_texture(__bloomSurfaceD)), texture_get_texel_height(surface_get_texture(__bloomSurfaceD)));
-                draw_surface_stretched(__bloomSurfaceC, 0, 0, _surfaceWidth div 16, _surfaceHeight div 16);
-                surface_reset_target();
-                
-                surface_set_target(__bloomSurfaceC);
-                shader_set(__shdBulbKawaseUp);
-                shader_set_uniform_f(shader_get_uniform(__shdBulbKawaseUp, "u_vTexel"), texture_get_texel_width(surface_get_texture(__bloomSurfaceB)), texture_get_texel_height(surface_get_texture(__bloomSurfaceB)));
-                draw_surface_stretched(__bloomSurfaceD, 0, 0, _surfaceWidth div 8, _surfaceHeight div 8);
-                surface_reset_target();
-                
-                surface_set_target(__bloomSurfaceB);
-                shader_set(__shdBulbKawaseUp);
-                shader_set_uniform_f(shader_get_uniform(__shdBulbKawaseUp, "u_vTexel"), texture_get_texel_width(surface_get_texture(__bloomSurfaceB)), texture_get_texel_height(surface_get_texture(__bloomSurfaceB)));
-                draw_surface_stretched(__bloomSurfaceC, 0, 0, _surfaceWidth div 4, _surfaceHeight div 4);
-                surface_reset_target();
-                
-                surface_set_target(__bloomSurfaceA);
-                shader_set(__shdBulbKawaseUp);
-                shader_set_uniform_f(shader_get_uniform(__shdBulbKawaseUp, "u_vTexel"), texture_get_texel_width(surface_get_texture(__bloomSurfaceA)), texture_get_texel_height(surface_get_texture(__bloomSurfaceA)));
-                draw_surface_stretched(__bloomSurfaceB, 0, 0, _surfaceWidth div 2, _surfaceHeight div 2);
-                surface_reset_target();
+                if (hdrBloomIterations >= 2)
+                {
+                    surface_set_target(__bloomSurfaceB);
+                    shader_set(__shdBulbKawaseDown);
+                    shader_set_uniform_f(shader_get_uniform(__shdBulbKawaseDown, "u_vTexel"), texture_get_texel_width(surface_get_texture(__bloomSurfaceB)), texture_get_texel_height(surface_get_texture(__bloomSurfaceB)));
+                    draw_surface_stretched(__bloomSurfaceA, 0, 0, _surfaceWidth div 4, _surfaceHeight div 4);
+                    surface_reset_target();
+                    
+                    if (hdrBloomIterations >= 3)
+                    {
+                        surface_set_target(__bloomSurfaceC);
+                        shader_set(__shdBulbKawaseDown);
+                        shader_set_uniform_f(shader_get_uniform(__shdBulbKawaseDown, "u_vTexel"), texture_get_texel_width(surface_get_texture(__bloomSurfaceC)), texture_get_texel_height(surface_get_texture(__bloomSurfaceC)));
+                        draw_surface_stretched(__bloomSurfaceB, 0, 0, _surfaceWidth div 8, _surfaceHeight div 8);
+                        surface_reset_target();
+                        
+                        if (hdrBloomIterations >= 4)
+                        {
+                            surface_set_target(__bloomSurfaceD);
+                            shader_set(__shdBulbKawaseDown);
+                            shader_set_uniform_f(shader_get_uniform(__shdBulbKawaseDown, "u_vTexel"), texture_get_texel_width(surface_get_texture(__bloomSurfaceD)), texture_get_texel_height(surface_get_texture(__bloomSurfaceD)));
+                            draw_surface_stretched(__bloomSurfaceC, 0, 0, _surfaceWidth div 16, _surfaceHeight div 16);
+                            surface_reset_target();
+                            
+                            if (hdrBloomIterations >= 5)
+                            {
+                                surface_set_target(__bloomSurfaceE);
+                                shader_set(__shdBulbKawaseDown);
+                                shader_set_uniform_f(shader_get_uniform(__shdBulbKawaseDown, "u_vTexel"), texture_get_texel_width(surface_get_texture(__bloomSurfaceE)), texture_get_texel_height(surface_get_texture(__bloomSurfaceE)));
+                                draw_surface_stretched(__bloomSurfaceD, 0, 0, _surfaceWidth div 32, _surfaceHeight div 32);
+                                surface_reset_target();
+                                
+                                surface_set_target(__bloomSurfaceD);
+                                shader_set(__shdBulbKawaseUp);
+                                shader_set_uniform_f(shader_get_uniform(__shdBulbKawaseUp, "u_vTexel"), texture_get_texel_width(surface_get_texture(__bloomSurfaceE)), texture_get_texel_height(surface_get_texture(__bloomSurfaceE)));
+                                draw_surface_stretched(__bloomSurfaceE, 0, 0, _surfaceWidth div 16, _surfaceHeight div 16);
+                                surface_reset_target();
+                            }
+                            
+                            surface_set_target(__bloomSurfaceC);
+                            shader_set(__shdBulbKawaseUp);
+                            shader_set_uniform_f(shader_get_uniform(__shdBulbKawaseUp, "u_vTexel"), texture_get_texel_width(surface_get_texture(__bloomSurfaceD)), texture_get_texel_height(surface_get_texture(__bloomSurfaceD)));
+                            draw_surface_stretched(__bloomSurfaceD, 0, 0, _surfaceWidth div 8, _surfaceHeight div 8);
+                            surface_reset_target();
+                        }
+                        
+                        surface_set_target(__bloomSurfaceB);
+                        shader_set(__shdBulbKawaseUp);
+                        shader_set_uniform_f(shader_get_uniform(__shdBulbKawaseUp, "u_vTexel"), texture_get_texel_width(surface_get_texture(__bloomSurfaceC)), texture_get_texel_height(surface_get_texture(__bloomSurfaceC)));
+                        draw_surface_stretched(__bloomSurfaceC, 0, 0, _surfaceWidth div 4, _surfaceHeight div 4);
+                        surface_reset_target();
+                    }
+                    
+                    surface_set_target(__bloomSurfaceA);
+                    shader_set(__shdBulbKawaseUp);
+                    shader_set_uniform_f(shader_get_uniform(__shdBulbKawaseUp, "u_vTexel"), texture_get_texel_width(surface_get_texture(__bloomSurfaceB)), texture_get_texel_height(surface_get_texture(__bloomSurfaceB)));
+                    draw_surface_stretched(__bloomSurfaceB, 0, 0, _surfaceWidth div 2, _surfaceHeight div 2);
+                    surface_reset_target();
+                }
                 
                 surface_set_target(__hdrSurface);
                 
