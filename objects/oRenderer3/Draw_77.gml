@@ -1,0 +1,1 @@
+BulbDrawLitApplicationSurface(lighting);

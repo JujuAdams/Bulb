@@ -1,26 +1,20 @@
-/// @param ambientColour
-/// @param mode
-/// @param smooth
-
-enum BULB_MODE
-{
-    HARD_BM_ADD,
-    HARD_BM_ADD_SELFLIGHTING,
-    HARD_BM_MAX,
-    HARD_BM_MAX_SELFLIGHTING,
-    SOFT_BM_ADD,
-    __SIZE
-}
-
-function BulbRenderer(_ambientColour, _mode, _smooth) constructor
+function BulbRenderer() constructor
 {
     //Assign the ambient colour used for the darkest areas of the screen. This can be changed on the fly
-    ambientColor = _ambientColour;
+    ambientColor = c_black;
     
     //The smoothing mode controls texture filtering both when accumulating lights and when drawing the resulting surface
-    smooth = _smooth;
+    smooth = gpu_get_tex_filter();
     
-    mode = _mode;
+    selfLighting = false;
+    
+    soft = false;
+    __oldSoft = undefined;
+    
+    hdr = false;
+    __oldHDR = undefined;
+    
+    hdrTonemap = BULB_TONEMAP_REINHARD_WHITEPOINT;
     
     surfaceWidth  = -1;
     surfaceHeight = -1;
@@ -39,7 +33,6 @@ function BulbRenderer(_ambientColour, _mode, _smooth) constructor
     __lightOverlayArray     = [];
     
     __freed   = false;
-    __oldMode = undefined;
     
     __clipEnabled      = false;
     __clipSurface      = undefined;
@@ -49,7 +42,6 @@ function BulbRenderer(_ambientColour, _mode, _smooth) constructor
     __clipValueToAlpha = false;
     
     __hdrSurface = undefined;
-    __hdrTonemappingShader = __shdBulbLinearToGamma;
     
     
     
@@ -95,16 +87,6 @@ function BulbRenderer(_ambientColour, _mode, _smooth) constructor
         gpu_set_blendmode(bm_normal);
     }
     
-    static SetAmbientColor = function(_color)
-    {
-        ambientColor = _color;
-    }
-    
-    static GetAmbientColor = function()
-    {
-        return ambientColor;
-    }
-    
     static UpdateFromCamera = function(_camera)
     {
         //Deploy PROPER MATHS in case the dev is using matrices
@@ -131,10 +113,26 @@ function BulbRenderer(_ambientColour, _mode, _smooth) constructor
         if (surfaceWidth  <= 0) surfaceWidth  = _cameraW;
         if (surfaceHeight <= 0) surfaceHeight = _cameraH;
         
-        if (mode != __oldMode)
+        if (soft != __oldSoft)
         {
-            __oldMode = mode;
+            __oldSoft = soft;
             __FreeVertexBuffers();
+        }
+        
+        if (hdr != __oldHDR)
+        {
+            __oldHDR = hdr;
+            
+            if (__surface != undefined)
+            {
+                surface_free(__surface);
+                __surface = undefined;
+            }
+            
+            if (not hdr)
+            {
+                __FreeHDRSurface();
+            }
         }
         
         var _cameraR  = _cameraL + _cameraW;
@@ -161,7 +159,7 @@ function BulbRenderer(_ambientColour, _mode, _smooth) constructor
         gpu_set_tex_filter(smooth);
         
         //Clear the __surface with the ambient colour
-        draw_clear(ambientColor);
+        draw_clear(__GetAmbientColour());
         
         //If we're not forcing deferred rendering everywhere, update those lights
         __AccumulateLights(_cameraL, _cameraT, _cameraR, _cameraB, _cameraCX, _cameraCY, _cameraW, _cameraH);
@@ -175,96 +173,97 @@ function BulbRenderer(_ambientColour, _mode, _smooth) constructor
         matrix_set(matrix_world, matrix_build_identity());
     }
     
-    /// @param camera
-    /// @param [alpha]
-    static DrawOnCamera = function()
+    static DrawLitSurface = function(_surface, _x, _y, _width, _height, _textureFiltering = undefined, _alphaBlend = undefined)
     {
-        var _camera = argument[0];
-        var _alpha  = ((argument_count > 1) && (argument[1] != undefined))? argument[1] : undefined;
+        var _oldTextureFiltering = gpu_get_tex_filter();
         
-        var _viewMatrix = camera_get_view_mat(_camera);
-        var _projMatrix = camera_get_proj_mat(_camera);
-        
-        //Deploy PROPER MATHS in case the dev is using matrices
-        var _cameraX          = -_viewMatrix[12];
-        var _cameraY          = -_viewMatrix[13];
-        var _cameraViewWidth  = round(abs(2/_projMatrix[0]));
-        var _cameraViewHeight = round(abs(2/_projMatrix[5]));
-        var _cameraLeft       = _cameraX - _cameraViewWidth/2;
-        var _cameraTop        = _cameraY - _cameraViewHeight/2;
-        
-        return Draw(_cameraLeft, _cameraTop, _cameraViewWidth, _cameraViewHeight, _alpha);
-    }
-    
-    /// @param x
-    /// @param y
-    /// @param [width]
-    /// @param [height]
-    /// @param [alpha]
-    static Draw = function()
-    {
-        if (__freed) return undefined;
-        
-        var _x      = argument[0];
-        var _y      = argument[1];
-        var _width  = ((argument_count > 2) && (argument[2] != undefined))? argument[2] : surfaceWidth;
-        var _height = ((argument_count > 3) && (argument[3] != undefined))? argument[3] : surfaceHeight;
-        var _alpha  = ((argument_count > 4) && (argument[4] != undefined))? argument[4] : 1.0;
-        
-        if ((__surface != undefined) && surface_exists(__surface))
+        if (_textureFiltering != undefined)
         {
-            //Record the current texture filter state, then set our new filter state
-            var _old_tex_filter = gpu_get_tex_filter();
-            gpu_set_tex_filter(smooth);
+            gpu_set_tex_filter(_textureFiltering);
+        }
+        
+        if (_alphaBlend != undefined)
+        {
+            var _oldAlphaBlend = gpu_get_tex_filter();
+            gpu_set_blendenable(_alphaBlend);
+        }
+        
+        if (hdr)
+        {
+            draw_surface_stretched(application_surface, _x, _y, _width, _height);
+            
+            var _surfaceWidth  = surface_get_width( _surface);
+            var _surfaceHeight = surface_get_height(_surface);
+            
+            __GetHDRSurface(_surfaceWidth, _surfaceHeight);
             
             gpu_set_colorwriteenable(true, true, true, false);
             
-            if (_alpha == 1.0)
+            shader_set(__shdBulbGammaToLinear);
+            surface_copy(__hdrSurface, 0, 0, _surface);
+            shader_reset();
+            
+            surface_set_target(__hdrSurface);
+            gpu_set_blendmode_ext(bm_zero, bm_src_color);
+            draw_surface_stretched(__surface, 0, 0, _surfaceWidth, _surfaceHeight);
+            gpu_set_blendmode(bm_normal);
+            surface_reset_target();
+            
+            gpu_set_colorwriteenable(true, true, true, true);
+            
+            if (hdrTonemap == BULB_TONEMAP_REINHARD)
             {
-                //Don't use the shader if we don't have to!
-                gpu_set_blendmode_ext(bm_dest_color, bm_zero);
-                draw_surface_stretched(__surface, _x, _y, _width, _height);
+                var _shader = __shdBulbTonemapReinhard;
+            }
+            else if (hdrTonemap == BULB_TONEMAP_REINHARD_WHITEPOINT)
+            {
+                var _shader = __shdBulbTonemapReinhardWhitepoint;
+            }
+            else if (hdrTonemap == BULB_TONEMAP_ACES)
+            {
+                var _shader = __shdBulbTonemapACES;
             }
             else
             {
-                gpu_set_blendmode_ext(bm_dest_color, bm_inv_src_alpha);
-                shader_set(__shdBulbFinalRender);
-                draw_surface_stretched_ext(__surface, _x, _y, _width, _height, c_white, _alpha);
-                shader_reset();
+                var _shader = __shdBulbLinearToGamma;
             }
             
-            gpu_set_blendmode(bm_normal);
-            gpu_set_colorwriteenable(true, true, true, true);
-            
-            //Restore the old filter state
-            gpu_set_tex_filter(_old_tex_filter);
+            shader_set(_shader);
+            draw_surface_stretched(__hdrSurface, _x, _y, _width, _height);
+            shader_reset();
         }
-    }
-    
-    static DrawLitSurface = function(_surface, _x, _y, _width, _height)
-    {
-        var _surfaceWidth  = surface_get_width( _surface);
-        var _surfaceHeight = surface_get_height(_surface);
+        else
+        {
+            draw_surface_stretched(application_surface, _x, _y, _width, _height);
+        }
+            
+        if (_textureFiltering != undefined)
+        {
+            gpu_set_tex_filter(_oldTextureFiltering);
+        }
         
-        __GetHDRSurface(_surfaceWidth, _surfaceHeight);
+        if (_alphaBlend != undefined)
+        {
+            gpu_set_blendenable(_oldAlphaBlend);
+        }
         
-        gpu_set_colorwriteenable(true, true, true, false);
-        
-        shader_set(__shdBulbGammaToLinear);
-        surface_copy(__hdrSurface, 0, 0, _surface);
-        shader_reset();
-        
-        surface_set_target(__hdrSurface);
-        gpu_set_blendmode_ext(bm_zero, bm_src_color);
-        draw_surface_stretched(__surface, 0, 0, _surfaceWidth, _surfaceHeight);
-        gpu_set_blendmode(bm_normal);
-        surface_reset_target();
-        
-        gpu_set_colorwriteenable(true, true, true, true);
-        
-        shader_set(__hdrTonemappingShader);
-        draw_surface_stretched(__hdrSurface, _x, _y, _width, _height);
-        shader_reset();
+        if (not hdr)
+        {
+            if ((__surface != undefined) && surface_exists(__surface))
+            {
+                gpu_set_tex_filter(smooth);
+                gpu_set_blendmode_ext(bm_dest_color, bm_zero);
+                gpu_set_colorwriteenable(true, true, true, false);
+                
+                draw_surface_stretched(__surface, _x, _y, _width, _height);
+                
+                gpu_set_tex_filter(_oldTextureFiltering);
+                gpu_set_blendmode(bm_normal);
+                gpu_set_colorwriteenable(true, true, true, true);
+                
+                //Restore the old filter state
+            }
+        }
     }
     
     static __GetHDRSurface = function(_width, _height)
@@ -280,7 +279,7 @@ function BulbRenderer(_ambientColour, _mode, _smooth) constructor
         
         if ((__hdrSurface == undefined) || !surface_exists(__hdrSurface))
         {
-            __hdrSurface = surface_create(_width, _height); //, surface_format_rgba16);
+            __hdrSurface = surface_create(_width, _height, surface_rgba16float);
             
             surface_set_target(__hdrSurface);
             draw_clear(c_black);
@@ -303,7 +302,7 @@ function BulbRenderer(_ambientColour, _mode, _smooth) constructor
         
         if ((__surface == undefined) || !surface_exists(__surface))
         {
-            __surface = surface_create(surfaceWidth, surfaceHeight);
+            __surface = surface_create(surfaceWidth, surfaceHeight, hdr? surface_rgba16float : surface_rgba8unorm);
             
             surface_set_target(__surface);
             draw_clear_alpha(c_black, 1.0);
@@ -371,7 +370,18 @@ function BulbRenderer(_ambientColour, _mode, _smooth) constructor
         var _surface = GetSurface();
         var _x = (_worldX - _cameraL) * (surface_get_width( _surface) / _cameraW);
         var _y = (_worldY - _cameraT) * (surface_get_height(_surface) / _cameraH);
-        return surface_getpixel_ext(_surface, _x, _y);
+        
+        var _result = surface_getpixel_ext(_surface, _x, _y);
+        if (not is_array(_result))
+        {
+            var _colour = _result;
+        }
+        else
+        {
+            var _colour = c_white; //TODO
+        }
+        
+        return _colour;
     }
     
     static GetSurfacePixelFromCamera = function(_worldX, _worldY, _camera)
@@ -435,6 +445,44 @@ function BulbRenderer(_ambientColour, _mode, _smooth) constructor
         }
     }
     
+    static __GetAmbientColour = function()
+    {
+        if (not hdr) return ambientColor;
+        
+        if (hdrTonemap == BULB_TONEMAP_REINHARD)
+        {
+            
+        }
+        else if (hdrTonemap == BULB_TONEMAP_REINHARD)
+        {
+            
+        }
+        else if (hdrTonemap == BULB_TONEMAP_REINHARD)
+        {
+            
+        }
+        else
+        {
+            var _red   = colour_get_red(  ambientColor);
+            var _green = colour_get_green(ambientColor);
+            var _blue  = colour_get_blue( ambientColor);
+            
+            _red   /= 255;
+            _green /= 255;
+            _blue  /= 255;
+            
+            _red   = power(_red,   2.2);
+            _green = power(_green, 2.2);
+            _blue  = power(_blue,  2.2);
+            
+            _red   *= 255;
+            _green *= 255;
+            _blue  *= 255;
+            
+            return make_color_rgb(_red, _green, _blue);
+        }
+    }
+    
     #region Update vertex buffers
     
     static __UpdateVertexBuffers = function(_cameraL, _cameraT, _cameraR, _cameraB, _cameraW, _cameraH)
@@ -455,7 +503,7 @@ function BulbRenderer(_ambientColour, _mode, _smooth) constructor
             var _staticVBuffer = __staticVBuffer;
             
             //Add static shadow caster vertices to the relevant vertex buffer
-            if (mode == BULB_MODE.SOFT_BM_ADD)
+            if (soft)
             {
                 vertex_begin(__staticVBuffer, global.__bulbFormat3DNormalTex);
                 
@@ -507,7 +555,7 @@ function BulbRenderer(_ambientColour, _mode, _smooth) constructor
         var _dynamicVBuffer = __dynamicVBuffer;
         
         //Add dynamic occluder vertices to the relevant vertex buffer
-        if (mode == BULB_MODE.SOFT_BM_ADD)
+        if (soft)
         {
             vertex_begin(_dynamicVBuffer, global.__bulbFormat3DNormalTex);
             
@@ -569,10 +617,10 @@ function BulbRenderer(_ambientColour, _mode, _smooth) constructor
         
         __AccumulateAmbienceSprite(_cameraL, _cameraT, _cameraR, _cameraB);
         
-        var _normalCoeff = ((mode == BULB_MODE.HARD_BM_ADD_SELFLIGHTING) || (mode == BULB_MODE.HARD_BM_MAX_SELFLIGHTING))? -1 : 1;
+        var _normalCoeff = selfLighting? -1 : 1;
         
         //Iterate over all non-deferred lights...
-        if (mode == BULB_MODE.SOFT_BM_ADD)
+        if (soft)
         {
             __AccumulateSoftLights(_cameraL, _cameraT, _cameraR, _cameraB, _cameraCX, _cameraCY, _cameraW, _cameraH, _normalCoeff);
         }
@@ -643,14 +691,14 @@ function BulbRenderer(_ambientColour, _mode, _smooth) constructor
             {
                 //Leverage the fog system to force the colour of the sprites we draw (alpha channel passes through)
                 shader_reset();
-                gpu_set_fog(true, ambientColor, 0, 0);
+                gpu_set_fog(true, __GetAmbientColour(), 0, 0);
             }
             
             //Don't touch the alpha channel
             //TODO - We may need to adjust the alpha channel for use with sharing occlusion values
             gpu_set_colorwriteenable(true, true, true, false);
             
-            var _ambientColor = ambientColor;
+            var _ambientColor = __GetAmbientColour();
             var _i = 0;
             repeat(_size)
             {
@@ -702,14 +750,7 @@ function BulbRenderer(_ambientColour, _mode, _smooth) constructor
     {
         //Finally, draw light overlay sprites too
         //We use the overarching blend mode for the renderer
-        if ((mode == BULB_MODE.HARD_BM_MAX) || (mode == BULB_MODE.HARD_BM_MAX_SELFLIGHTING))
-        {
-            gpu_set_blendmode(bm_max);
-        }
-        else
-        {
-            gpu_set_blendmode(bm_add);
-        }
+        gpu_set_blendmode(bm_add);
         
         //Don't touch the alpha channel though
         gpu_set_colorwriteenable(true, true, true, false);
@@ -888,16 +929,8 @@ function BulbRenderer(_ambientColour, _mode, _smooth) constructor
         
         //bm_max requires some trickery with alpha to get good-looking results
         //Determine the blend mode and "default" shader accordingly
-        if ((mode == BULB_MODE.HARD_BM_MAX) || (mode == BULB_MODE.HARD_BM_MAX_SELFLIGHTING))
-        {
-            var _resetShader = __shdBulbPremultiplyAlpha;
-            gpu_set_blendmode(bm_max);
-        }
-        else
-        {
-            var _resetShader = __shdBulbPassThrough;
-            gpu_set_blendmode(bm_add);
-        }
+        var _resetShader = __shdBulbPassThrough;
+        gpu_set_blendmode(bm_add);
         
         //Set up the coefficient to flip normals
         //We use this to control self-lighting
@@ -1063,12 +1096,12 @@ function BulbRenderer(_ambientColour, _mode, _smooth) constructor
             {
                 //Apply the HSV value->alpha conversion shader if so desired
                 shader_set(__shdBulbHSVValueToAlpha);
-                draw_surface_ext(_clipSurface, 0, 0, 1, 1, 0, __clipIsShadow? ambientColor : c_white, __clipAlpha);
+                draw_surface_ext(_clipSurface, 0, 0, 1, 1, 0, __clipIsShadow? __GetAmbientColour() : c_white, __clipAlpha);
                 shader_reset();
             }
             else
             {
-                draw_surface_ext(_clipSurface, 0, 0, 1, 1, 0, __clipIsShadow? ambientColor : c_white, __clipAlpha);
+                draw_surface_ext(_clipSurface, 0, 0, 1, 1, 0, __clipIsShadow? __GetAmbientColour() : c_white, __clipAlpha);
             }
             
             //Reset GPU state

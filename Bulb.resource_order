@@ -1,5 +1,7 @@
 {
-  "FolderOrderSettings":[],
+  "FolderOrderSettings":[
+    {"name":"Tonemapping Shaders","order":15,"path":"folders/Bulb/(System)/(Pay no attention to that man behind the curtain)/Tonemapping Shaders.yy",},
+  ],
   "ResourceOrderSettings":[
     {"name":"oAmbientUnderlay","order":9,"path":"objects/oAmbientUnderlay/oAmbientUnderlay.yy",},
     {"name":"oDynamicOccluder","order":5,"path":"objects/oDynamicOccluder/oDynamicOccluder.yy",},
@@ -19,6 +21,7 @@
     {"name":"rmTestWithGroups","order":3,"path":"rooms/rmTestWithGroups/rmTestWithGroups.yy",},
     {"name":"__BulbAddOcclusionHard","order":1,"path":"scripts/__BulbAddOcclusionHard/__BulbAddOcclusionHard.yy",},
     {"name":"__BulbAddOcclusionSoft","order":2,"path":"scripts/__BulbAddOcclusionSoft/__BulbAddOcclusionSoft.yy",},
+    {"name":"__BulbConstants","order":1,"path":"scripts/__BulbConstants/__BulbConstants.yy",},
     {"name":"BulbAmbienceSprite","order":6,"path":"scripts/BulbAmbienceSprite/BulbAmbienceSprite.yy",},
     {"name":"BulbDrawLitApplicationSurface","order":9,"path":"scripts/BulbDrawLitApplicationSurface/BulbDrawLitApplicationSurface.yy",},
     {"name":"BulbDynamicOccluder","order":4,"path":"scripts/BulbDynamicOccluder/BulbDynamicOccluder.yy",},
@@ -35,11 +38,13 @@
     {"name":"__shdBulbHardShadows","order":3,"path":"shaders/__shdBulbHardShadows/__shdBulbHardShadows.yy",},
     {"name":"__shdBulbHardShadowsSunlight","order":4,"path":"shaders/__shdBulbHardShadowsSunlight/__shdBulbHardShadowsSunlight.yy",},
     {"name":"__shdBulbHSVValueToAlpha","order":10,"path":"shaders/__shdBulbHSVValueToAlpha/__shdBulbHSVValueToAlpha.yy",},
-    {"name":"__shdBulbLinearToGamma","order":13,"path":"shaders/__shdBulbLinearToGamma/__shdBulbLinearToGamma.yy",},
     {"name":"__shdBulbPassThrough","order":8,"path":"shaders/__shdBulbPassThrough/__shdBulbPassThrough.yy",},
     {"name":"__shdBulbPremultiplyAlpha","order":7,"path":"shaders/__shdBulbPremultiplyAlpha/__shdBulbPremultiplyAlpha.yy",},
     {"name":"__shdBulbSoftShadows","order":5,"path":"shaders/__shdBulbSoftShadows/__shdBulbSoftShadows.yy",},
     {"name":"__shdBulbSoftShadowsSunlight","order":6,"path":"shaders/__shdBulbSoftShadowsSunlight/__shdBulbSoftShadowsSunlight.yy",},
+    {"name":"__shdBulbTonemapACES","order":3,"path":"shaders/__shdBulbTonemapACES/__shdBulbTonemapACES.yy",},
+    {"name":"__shdBulbTonemapReinhard","order":1,"path":"shaders/__shdBulbTonemapReinhard/__shdBulbTonemapReinhard.yy",},
+    {"name":"__shdBulbTonemapReinhardWhitepoint","order":2,"path":"shaders/__shdBulbTonemapReinhardWhitepoint/__shdBulbTonemapReinhardWhitepoint.yy",},
     {"name":"shdPremultiplyAlpha","order":7,"path":"shaders/shdPremultiplyAlpha/shdPremultiplyAlpha.yy",},
     {"name":"__sprBulbPixel","order":11,"path":"sprites/__sprBulbPixel/__sprBulbPixel.yy",},
     {"name":"sDynamicBlock","order":1,"path":"sprites/sDynamicBlock/sDynamicBlock.yy",},

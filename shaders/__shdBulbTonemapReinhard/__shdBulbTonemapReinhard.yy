@@ -1,7 +1,7 @@
 {
   "$GMShader":"",
-  "%Name":"__shdBulbLinearToGamma",
-  "name":"__shdBulbLinearToGamma",
+  "%Name":"__shdBulbTonemapReinhard",
+  "name":"__shdBulbTonemapReinhard",
   "parent":{
     "name":"Tonemapping Shaders",
     "path":"folders/Bulb/(System)/(Pay no attention to that man behind the curtain)/Tonemapping Shaders.yy",

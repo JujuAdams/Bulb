@@ -15,20 +15,17 @@ function DebugOverlay()
         _str += "\nstatic occluders = " + string(array_length(lighting.__staticOccludersArray));
         _str += "\ndynamic occluders = " + string(array_length(lighting.__dynamicOccludersArray)) + "\n";
         
-        switch(lighting.mode)
-        {
-            case BULB_MODE.HARD_BM_ADD: _str += "\nrender mode = Hard z-clip, bm_add"; break;
-            case BULB_MODE.HARD_BM_ADD_SELFLIGHTING: _str += "\nrender mode = Hard z-clip, bm_add, self-lighting"; break;
-            case BULB_MODE.HARD_BM_MAX: _str += "\nrender mode = Hard z-clip, bm_max"; break;
-            case BULB_MODE.HARD_BM_MAX_SELFLIGHTING: _str += "\nrender mode = Hard z-clip, bm_max, self-lighting"; break;
-            case BULB_MODE.SOFT_BM_ADD: _str += "\nrender mode = Soft alpha-clip, bm_add"; break;
-        }
+        _str += "\nsoft = " + (lighting.soft? "true" : "false");
+        _str += "\nself-lighting = " + (lighting.selfLighting? "true" : "false");
+        _str += "\nHDR = " + (lighting.hdr? "true" : "false");
         
         draw_text(5, 25, _str);
         
         draw_set_valign(fa_bottom);
         var _str = "1: Toggle lights";
-        _str += "\n2: Cycle render mode";
+        _str += "\n2: Toggle soft shadow mode";
+        _str += "\n3: Toggle self-lighting";
+        _str += "\n4: Toggle HDR";
         _str += "\nL: Create new disco light";
         _str += "\nArrows/WASD: Move";
         _str += "\nLeft click: Fire plasma";
@@ -37,14 +34,7 @@ function DebugOverlay()
     }
     else
     {
-        switch(lighting.mode)
-        {
-            case BULB_MODE.HARD_BM_ADD: var _mode = "Hard z-clip, bm_add"; break
-            case BULB_MODE.HARD_BM_ADD_SELFLIGHTING: var _mode = "Hard z-clip, bm_add, self-lighting"; break
-            case BULB_MODE.HARD_BM_MAX: var _mode = "Hard z-clip, bm_max"; break;
-            case BULB_MODE.HARD_BM_MAX_SELFLIGHTING: var _mode = "Hard z-clip, bm_max, self-lighting"; break;
-            case BULB_MODE.SOFT_BM_ADD: var _mode = "Soft alpha-clip, bm_add"; break;
-        }
+        var _mode = (lighting.soft? "soft shadows" : "hard shadows") + (lighting.selfLighting? ", self-lighting" : "") + (lighting.hdr? ", HDR" : "");
         
         draw_set_halign(fa_center);
         draw_text(display_get_gui_width()*0.5, 5, "FPS = " + string_format(fps, 2, 0) + " / " + _mode + " = " + string_format(smoothedDrawEndTime, 4, 0) + "us");
