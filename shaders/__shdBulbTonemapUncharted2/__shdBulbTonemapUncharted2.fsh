@@ -12,13 +12,14 @@ vec3 Uncharted2(vec3 color)
     float E = 0.02;
     float F = 0.30;
     
-    color *= 16.0;
     return ((color*(A*color+C*B)+D*E)/(color*(A*color+B)+D*F))-E/F;
 }
 
 void main()
 {
     gl_FragColor = v_vColour*texture2D(gm_BaseTexture, v_vTexcoord);
-    gl_FragColor.rgb = Uncharted2(u_fExposure*gl_FragColor.rgb);
+    
+    gl_FragColor.rgb = Uncharted2(u_fExposure*2.0*gl_FragColor.rgb);
+    
     gl_FragColor.rgb = pow(gl_FragColor.rgb, vec3(1.0/2.2));
 }

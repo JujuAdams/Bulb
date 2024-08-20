@@ -3,11 +3,13 @@ function DebugOverlay()
     var _tonemapName = "???";
     switch(lighting.hdrTonemap)
     {
-        case BULB_TONEMAP_NONE:              _tonemapName = "No Tonemapping"     break;
-        case BULB_TONEMAP_REINHARD:          _tonemapName = "Reinhard";          break;
-        case BULB_TONEMAP_REINHARD_EXTENDED: _tonemapName = "Reinhard Extended"; break;
-        case BULB_TONEMAP_ACES:              _tonemapName = "ACES";              break;
-        case BULB_TONEMAP_UNCHARTED2:        _tonemapName = "Uncharted 2";       break;
+        case BULB_TONEMAP_NONE:              _tonemapName = "No Tonemapping"         break;
+        case BULB_TONEMAP_REINHARD:          _tonemapName = "Reinhard";              break;
+        case BULB_TONEMAP_REINHARD_EXTENDED: _tonemapName = "Reinhard Extended";     break;
+        case BULB_TONEMAP_UNCHARTED2:        _tonemapName = "Uncharted 2";           break;
+        case BULB_TONEMAP_ACES:              _tonemapName = "ACES";                  break;
+        case BULB_TONEMAP_UNREAL3:           _tonemapName = "Unreal 3";              break;
+        case BULB_TONEMAP_HBD:               _tonemapName = "Heji & Burgess-Dawson"; break;
     }
     
     draw_set_color(c_white);

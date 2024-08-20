@@ -30,7 +30,7 @@ function BulbRenderer() constructor
     
     hdr         = false;
     hdrExposure = 1;
-    hdrTonemap  = BULB_TONEMAP_ACES;
+    hdrTonemap  = BULB_TONEMAP_HBD;
     
     hdrBloomIntensity   = 0;
     hdrBloomIterations  = 3;
@@ -317,7 +317,15 @@ function BulbRenderer() constructor
             }
             else if (hdrTonemap == BULB_TONEMAP_UNCHARTED2)
             {
-                var _shader = __shdBulbTonemapACES;
+                var _shader = __shdBulbTonemapUncharted2;
+            }
+            else if (hdrTonemap == BULB_TONEMAP_UNREAL3)
+            {
+                var _shader = __shdBulbTonemapUnreal3;
+            }
+            else if (hdrTonemap == BULB_TONEMAP_HBD)
+            {
+                var _shader = __shdBulbTonemapHBD;
             }
             else
             {

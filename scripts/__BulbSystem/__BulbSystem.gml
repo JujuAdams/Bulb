@@ -10,6 +10,7 @@
 // http://mynameismjp.wordpress.com/2010/04/30/a-closer-look-at-tone-mapping/
 // http://renderwonk.com/publications/s2010-color-course/
 // https://mini.gmshaders.com/p/tonemaps
+// http://filmicworlds.com/blog/filmic-tonemapping-operators/
 
 #macro __BULB_ZFAR  1
 
