@@ -11,7 +11,8 @@ vec3 Uncharted2(vec3 color)
     float D = 0.20;
     float E = 0.02;
     float F = 0.30;
-
+    
+    color *= 16.0;
     return ((color*(A*color+C*B)+D*E)/(color*(A*color+B)+D*F))-E/F;
 }
 
