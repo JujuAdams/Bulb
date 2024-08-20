@@ -31,6 +31,10 @@ function BulbRenderer() constructor
     hdrExposure = 1;
     hdrTonemap  = BULB_TONEMAP_REINHARD_EXTENDED;
     
+    hdrBloomIntensity   = 0;
+    hdrBloomThesholdMin = 0.6;
+    hdrBloomThesholdMax = 0.8;
+    
     __oldSoft = undefined;
     __oldHDR  = undefined;
     
@@ -167,18 +171,11 @@ function BulbRenderer() constructor
     
     static DrawLitSurface = function(_surface, _x, _y, _width, _height, _textureFiltering = undefined, _alphaBlend = undefined)
     {
+        static _u_fIntensity = shader_get_uniform(__shdBulbIntensity, "u_fIntensity");
+        static _u_vThreshold = shader_get_uniform(__shdBulbKawaseDownWithThreshold, "u_vThreshold");
+        
         var _oldTextureFiltering = gpu_get_tex_filter();
-        
-        if (_textureFiltering != undefined)
-        {
-            gpu_set_tex_filter(_textureFiltering);
-        }
-        
-        if (_alphaBlend != undefined)
-        {
-            var _oldAlphaBlend = gpu_get_tex_filter();
-            gpu_set_blendenable(_alphaBlend);
-        }
+        var _oldAlphaBlend       = gpu_get_tex_filter();
         
         if (hdr)
         {
@@ -186,6 +183,10 @@ function BulbRenderer() constructor
             var _surfaceHeight = surface_get_height(_surface);
             
             __GetHDRSurface(_surfaceWidth, _surfaceHeight);
+            
+            surface_set_target(__hdrSurface);
+            draw_clear(c_black);
+            surface_reset_target();
             
             gpu_set_colorwriteenable(true, true, true, false);
             
@@ -195,11 +196,85 @@ function BulbRenderer() constructor
             
             surface_set_target(__hdrSurface);
             gpu_set_blendmode_ext(bm_zero, bm_src_color);
+            shader_set(__shdBulbIntensity);
+            
+            shader_set_uniform_f(_u_fIntensity, hdrExposure);
             draw_surface_stretched(__lightSurface, 0, 0, _surfaceWidth, _surfaceHeight);
+            
             gpu_set_blendmode(bm_normal);
             surface_reset_target();
+            shader_reset();
             
             gpu_set_colorwriteenable(true, true, true, true);
+            
+            if (hdrBloomIntensity > 0)
+            {
+                __bloomSurfaceA = surface_create(_surfaceWidth div  2, _surfaceHeight div  2, surface_rgba16float);
+                __bloomSurfaceB = surface_create(_surfaceWidth div  4, _surfaceHeight div  4, surface_rgba16float);
+                __bloomSurfaceC = surface_create(_surfaceWidth div  8, _surfaceHeight div  8, surface_rgba16float);
+                __bloomSurfaceD = surface_create(_surfaceWidth div 16, _surfaceHeight div 16, surface_rgba16float);
+                
+                gpu_set_tex_filter(true);
+                
+                surface_set_target(__bloomSurfaceA);
+                shader_set(__shdBulbKawaseDownWithThreshold);
+                shader_set_uniform_f(_u_vThreshold, hdrBloomThesholdMin, hdrBloomThesholdMax);
+                shader_set_uniform_f(shader_get_uniform(__shdBulbKawaseDownWithThreshold, "u_vTexel"), texture_get_texel_width(surface_get_texture(__bloomSurfaceA)), texture_get_texel_height(surface_get_texture(__bloomSurfaceA)));
+                draw_surface_stretched(__hdrSurface, 0, 0, _surfaceWidth div 2, _surfaceHeight div 2);
+                shader_reset();
+                surface_reset_target();
+                
+                surface_set_target(__bloomSurfaceB);
+                shader_set(__shdBulbKawaseDown);
+                shader_set_uniform_f(shader_get_uniform(__shdBulbKawaseDown, "u_vTexel"), texture_get_texel_width(surface_get_texture(__bloomSurfaceB)), texture_get_texel_height(surface_get_texture(__bloomSurfaceB)));
+                draw_surface_stretched(__bloomSurfaceA, 0, 0, _surfaceWidth div 4, _surfaceHeight div 4);
+                surface_reset_target();
+                
+                surface_set_target(__bloomSurfaceC);
+                shader_set(__shdBulbKawaseDown);
+                shader_set_uniform_f(shader_get_uniform(__shdBulbKawaseDown, "u_vTexel"), texture_get_texel_width(surface_get_texture(__bloomSurfaceC)), texture_get_texel_height(surface_get_texture(__bloomSurfaceC)));
+                draw_surface_stretched(__bloomSurfaceB, 0, 0, _surfaceWidth div 8, _surfaceHeight div 8);
+                surface_reset_target();
+                
+                surface_set_target(__bloomSurfaceD);
+                shader_set(__shdBulbKawaseDown);
+                shader_set_uniform_f(shader_get_uniform(__shdBulbKawaseDown, "u_vTexel"), texture_get_texel_width(surface_get_texture(__bloomSurfaceD)), texture_get_texel_height(surface_get_texture(__bloomSurfaceD)));
+                draw_surface_stretched(__bloomSurfaceC, 0, 0, _surfaceWidth div 16, _surfaceHeight div 16);
+                surface_reset_target();
+                
+                surface_set_target(__bloomSurfaceC);
+                shader_set(__shdBulbKawaseUp);
+                shader_set_uniform_f(shader_get_uniform(__shdBulbKawaseUp, "u_vTexel"), texture_get_texel_width(surface_get_texture(__bloomSurfaceB)), texture_get_texel_height(surface_get_texture(__bloomSurfaceB)));
+                draw_surface_stretched(__bloomSurfaceD, 0, 0, _surfaceWidth div 8, _surfaceHeight div 8);
+                surface_reset_target();
+                
+                surface_set_target(__bloomSurfaceB);
+                shader_set(__shdBulbKawaseUp);
+                shader_set_uniform_f(shader_get_uniform(__shdBulbKawaseUp, "u_vTexel"), texture_get_texel_width(surface_get_texture(__bloomSurfaceB)), texture_get_texel_height(surface_get_texture(__bloomSurfaceB)));
+                draw_surface_stretched(__bloomSurfaceC, 0, 0, _surfaceWidth div 4, _surfaceHeight div 4);
+                surface_reset_target();
+                
+                surface_set_target(__bloomSurfaceA);
+                shader_set(__shdBulbKawaseUp);
+                shader_set_uniform_f(shader_get_uniform(__shdBulbKawaseUp, "u_vTexel"), texture_get_texel_width(surface_get_texture(__bloomSurfaceA)), texture_get_texel_height(surface_get_texture(__bloomSurfaceA)));
+                draw_surface_stretched(__bloomSurfaceB, 0, 0, _surfaceWidth div 2, _surfaceHeight div 2);
+                surface_reset_target();
+                
+                surface_set_target(__hdrSurface);
+                
+                gpu_set_blendmode(bm_add);
+                shader_set(__shdBulbIntensity);
+                shader_set_uniform_f(_u_fIntensity, hdrBloomIntensity);
+                draw_surface_stretched_ext(__bloomSurfaceA, 0, 0, _surfaceWidth, _surfaceHeight, c_white, 1);
+                
+                gpu_set_blendmode(bm_normal);
+                shader_reset();
+                
+                surface_free(__bloomSurfaceA);
+                surface_free(__bloomSurfaceB);
+                
+                surface_reset_target();
+            }
             
             if (hdrTonemap == BULB_TONEMAP_REINHARD)
             {
@@ -219,7 +294,9 @@ function BulbRenderer() constructor
             }
             
             shader_set(_shader);
-            shader_set_uniform_f(shader_get_uniform(_shader, "u_fExposure"), hdrExposure);
+            shader_set_uniform_f(shader_get_uniform(_shader, "u_fExposure"), 1);
+            if (_textureFiltering != undefined) gpu_set_tex_filter(_textureFiltering);
+            if (_alphaBlend != undefined) gpu_set_blendenable(_alphaBlend);
             draw_surface_stretched(__hdrSurface, _x, _y, _width, _height);
             shader_reset();
         }
@@ -227,34 +304,26 @@ function BulbRenderer() constructor
         {
             draw_surface_stretched(_surface, _x, _y, _width, _height);
         }
-            
-        if (_textureFiltering != undefined)
-        {
-            gpu_set_tex_filter(_oldTextureFiltering);
-        }
-        
-        if (_alphaBlend != undefined)
-        {
-            gpu_set_blendenable(_oldAlphaBlend);
-        }
         
         if (not hdr)
         {
             if ((__lightSurface != undefined) && surface_exists(__lightSurface))
             {
                 gpu_set_tex_filter(smooth);
+                gpu_set_blendenable(true);
+                
                 gpu_set_blendmode_ext(bm_dest_color, bm_zero);
                 gpu_set_colorwriteenable(true, true, true, false);
                 
                 draw_surface_stretched(__lightSurface, _x, _y, _width, _height);
                 
-                gpu_set_tex_filter(_oldTextureFiltering);
                 gpu_set_blendmode(bm_normal);
                 gpu_set_colorwriteenable(true, true, true, true);
-                
-                //Restore the old filter state
             }
         }
+        
+        gpu_set_tex_filter(_oldTextureFiltering);
+        gpu_set_blendenable(_oldAlphaBlend);
     }
     
     static __GetHDRSurface = function(_width, _height)
@@ -404,6 +473,10 @@ function BulbRenderer() constructor
     }
     
     #endregion
+    
+    
+    
+    
     
     static __FreeVertexBuffers = function()
     {
@@ -682,9 +755,9 @@ function BulbRenderer() constructor
     
     static __AccumulateLightOverlay = function(_cameraL, _cameraT, _cameraR, _cameraB)
     {
-        static _u_fLightIntensity = shader_get_uniform(__shdBulbLight, "u_fLightIntensity");
+        static _u_fIntensity = shader_get_uniform(__shdBulbIntensity, "u_fIntensity");
         
-        shader_set(__shdBulbLight);
+        shader_set(__shdBulbIntensity);
         
         //We use the overarching blend mode for the renderer
         gpu_set_blendmode(bm_add);
@@ -711,7 +784,7 @@ function BulbRenderer() constructor
                         //If this light is active, do some drawing
                         if (__IsOnScreen(_cameraL, _cameraT, _cameraR, _cameraB))
                         {
-                            shader_set_uniform_f(_u_fLightIntensity, intensity);
+                            shader_set_uniform_f(_u_fIntensity, intensity);
                             draw_sprite_ext(sprite, image, x, y, xscale, yscale, angle, blend, 1);
                         }
                     }
@@ -735,14 +808,14 @@ function BulbRenderer() constructor
     {
         if (__freed) return undefined;
         
-        static _u_vLight                = shader_get_uniform(__shdBulbSoftShadows,         "u_vLight"         );
-        static _sunlight_u_vLightVector = shader_get_uniform(__shdBulbSoftShadowsSunlight, "u_vLightVector"   );
-        static _u_fLightIntensity       = shader_get_uniform(__shdBulbLight,               "u_fLightIntensity");
+        static _u_vLight                = shader_get_uniform(__shdBulbSoftShadows,         "u_vLight"      );
+        static _sunlight_u_vLightVector = shader_get_uniform(__shdBulbSoftShadowsSunlight, "u_vLightVector");
+        static _u_fIntensity            = shader_get_uniform(__shdBulbIntensity,           "u_fIntensity"  );
         
         var _staticVBuffer  = __staticVBuffer;
         var _dynamicVBuffer = __dynamicVBuffer;
         
-        shader_set(__shdBulbLight);
+        shader_set(__shdBulbIntensity);
         
         var _i = 0;
         repeat(array_length(__lightsArray))
@@ -788,8 +861,8 @@ function BulbRenderer() constructor
                                 gpu_set_blendmode_ext(bm_dest_alpha, bm_one);
                                 
                                 //Draw light sprite
-                                shader_set(__shdBulbLight);
-                                shader_set_uniform_f(_u_fLightIntensity, intensity);
+                                shader_set(__shdBulbIntensity);
+                                shader_set_uniform_f(_u_fIntensity, intensity);
                                 draw_sprite_ext(sprite, image,
                                                 x, y,
                                                 xscale, yscale, angle,
@@ -799,7 +872,7 @@ function BulbRenderer() constructor
                             {
                                 //No shadows - draw the light sprite normally
                                 gpu_set_blendmode(bm_add);
-                                shader_set_uniform_f(_u_fLightIntensity, intensity);
+                                shader_set_uniform_f(_u_fIntensity, intensity);
                                 draw_sprite_ext(sprite, image,
                                                 x, y,
                                                 xscale, yscale, angle,
@@ -847,8 +920,8 @@ function BulbRenderer() constructor
                         gpu_set_blendmode_ext(bm_dest_alpha, bm_one);
                         
                         //Draw light sprite
-                        shader_set(__shdBulbLight);
-                        shader_set_uniform_f(_u_fLightIntensity, intensity);
+                        shader_set(__shdBulbIntensity);
+                        shader_set_uniform_f(_u_fIntensity, intensity);
                         draw_sprite_ext(__sprBulbPixel, 0, _cameraL, _cameraT, _cameraW+1, _cameraH+1, 0, blend, 1);
                     }
                 }
@@ -873,7 +946,7 @@ function BulbRenderer() constructor
         static _u_fNormalCoeff          = shader_get_uniform(__shdBulbHardShadows,         "u_fNormalCoeff"   );
         static _sunlight_u_vLightVector = shader_get_uniform(__shdBulbHardShadowsSunlight, "u_vLightVector"   );
         static _sunlight_u_fNormalCoeff = shader_get_uniform(__shdBulbHardShadowsSunlight, "u_fNormalCoeff"   );
-        static _u_fLightIntensity       = shader_get_uniform(__shdBulbLight,               "u_fLightIntensity");
+        static _u_fIntensity            = shader_get_uniform(__shdBulbIntensity,           "u_fIntensity"     );
         
         var _staticVBuffer  = __staticVBuffer;
         var _dynamicVBuffer = __dynamicVBuffer;
@@ -895,7 +968,7 @@ function BulbRenderer() constructor
         }
         
         //Set our default shader
-        shader_set(__shdBulbLight);
+        shader_set(__shdBulbIntensity);
         
         //And switch on z-testing. We'll use z-testing for stenciling
         gpu_set_ztestenable(true);
@@ -946,8 +1019,8 @@ function BulbRenderer() constructor
                                 gpu_set_zfunc(cmpfunc_lessequal);
                                 
                                 //Reset shader and draw the light itself, but "behind" the shadows
-                                shader_set(__shdBulbLight);
-                                shader_set_uniform_f(_u_fLightIntensity, intensity);
+                                shader_set(__shdBulbIntensity);
+                                shader_set_uniform_f(_u_fIntensity, intensity);
                                 draw_sprite_ext(sprite, image,
                                                 x, y,
                                                 xscale, yscale, angle,
@@ -960,7 +1033,7 @@ function BulbRenderer() constructor
                                 gpu_set_zfunc(cmpfunc_always);
                                 
                                 //Just draw the sprite, no fancy stuff here
-                                shader_set_uniform_f(_u_fLightIntensity, intensity);
+                                shader_set_uniform_f(_u_fIntensity, intensity);
                                 draw_sprite_ext(sprite, image,
                                                 x, y,
                                                 xscale, yscale, angle,
@@ -1008,8 +1081,8 @@ function BulbRenderer() constructor
                         gpu_set_zfunc(cmpfunc_lessequal);
                         
                         //Reset shader and draw the light itself, but "behind" the shadows
-                        shader_set(__shdBulbLight);
-                        shader_set_uniform_f(_u_fLightIntensity, intensity);
+                        shader_set(__shdBulbIntensity);
+                        shader_set_uniform_f(_u_fIntensity, intensity);
                         draw_sprite_ext(__sprBulbPixel, 0, _cameraL, _cameraT, _cameraW+1, _cameraH+1, 0, blend, 1);
                     }
                 }
