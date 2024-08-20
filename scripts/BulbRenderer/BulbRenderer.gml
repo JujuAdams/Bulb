@@ -9,12 +9,14 @@ function BulbRenderer() constructor
     selfLighting = false;
     
     soft = false;
+    
+    hdr         = false;
+    hdrExposure = 1;
+    hdrTonemap  = BULB_TONEMAP_REINHARD_EXTENDED;
+    
     __oldSoft = undefined;
+    __oldHDR  = undefined;
     
-    hdr = false;
-    __oldHDR = undefined;
-    
-    hdrTonemap = BULB_TONEMAP_REINHARD_WHITEPOINT;
     
     surfaceWidth  = -1;
     surfaceHeight = -1;
@@ -213,9 +215,9 @@ function BulbRenderer() constructor
             {
                 var _shader = __shdBulbTonemapReinhard;
             }
-            else if (hdrTonemap == BULB_TONEMAP_REINHARD_WHITEPOINT)
+            else if (hdrTonemap == BULB_TONEMAP_REINHARD_EXTENDED)
             {
-                var _shader = __shdBulbTonemapReinhardWhitepoint;
+                var _shader = __shdBulbTonemapReinhardExtended;
             }
             else if (hdrTonemap == BULB_TONEMAP_ACES)
             {
@@ -227,6 +229,7 @@ function BulbRenderer() constructor
             }
             
             shader_set(_shader);
+            shader_set_uniform_f(shader_get_uniform(_shader, "u_fExposure"), hdrExposure);
             draw_surface_stretched(__hdrSurface, _x, _y, _width, _height);
             shader_reset();
         }
@@ -376,33 +379,49 @@ function BulbRenderer() constructor
         }
         else
         {
-            _result[3] = clamp(_result[3], 0, 1);
+            _result[0] *= hdrExposure;
+            _result[1] *= hdrExposure;
+            _result[2] *= hdrExposure;
+            _result[3]  = clamp(_result[3], 0, 1); //Clamp the alpha channel
             
-            _result[0] = power(_result[0], 1/2.2);
-            _result[1] = power(_result[1], 1/2.2);
-            _result[2] = power(_result[2], 1/2.2);
+            static _funcLuminance = function(_red, _green, _blue)
+            {
+                return 0.2126*_red + 0.7152*_green + 0.0722*_blue;
+            }
             
-            //if (hdrTonemap == BULB_TONEMAP_REINHARD)
-            //{
-            //    
-            //}
-            //else if (hdrTonemap == BULB_TONEMAP_REINHARD)
-            //{
-            //    
-            //}
-            //else if (hdrTonemap == BULB_TONEMAP_REINHARD)
-            //{
-            //    
-            //}
-            //else
-            //{
-            //    
-            //}
+            if (hdrTonemap == BULB_TONEMAP_REINHARD)
+            {
+                var _luminance    = _funcLuminance(_result[0], _result[1], _result[2]);
+                var _luminanceNew = _luminance / (1 + _luminance);
+                
+                _result[0] *= _luminanceNew / _luminance;
+                _result[1] *= _luminanceNew / _luminance;
+                _result[2] *= _luminanceNew / _luminance;
+            }
+            else if (hdrTonemap == BULB_TONEMAP_REINHARD_EXTENDED)
+            {
+                var _luminance    = _funcLuminance(_result[0], _result[1], _result[2]);
+                var _luminanceNew = _luminance * (1.0 + (_luminance / (4*4))) / (1 + _luminance);
+                
+                _result[0] *= _luminanceNew / _luminance;
+                _result[1] *= _luminanceNew / _luminance;
+                _result[2] *= _luminanceNew / _luminance;
+            }
+            else if (hdrTonemap == BULB_TONEMAP_ACES)
+            {
+                var _r = _result[0];
+                var _g = _result[1];
+                var _b = _result[2];
+                
+                _result[0] = (_r*(2.51*_r + 0.03)) / (_r*(2.43*_r + 0.59) + 0.14);
+                _result[1] = (_g*(2.51*_g + 0.03)) / (_g*(2.43*_g + 0.59) + 0.14);
+                _result[2] = (_b*(2.51*_b + 0.03)) / (_b*(2.43*_b + 0.59) + 0.14);
+            }
             
-            _result[0] = 255*clamp(_result[0], 0, 1);
-            _result[1] = 255*clamp(_result[1], 0, 1);
-            _result[2] = 255*clamp(_result[2], 0, 1);
-            _result[3] = 255*clamp(_result[3], 0, 1);
+            _result[0] = 255*clamp(power(_result[0], 1/2.2), 0, 1);
+            _result[1] = 255*clamp(power(_result[1], 1/2.2), 0, 1);
+            _result[2] = 255*clamp(power(_result[2], 1/2.2), 0, 1);
+            _result[3] = 255*clamp(, 0, 1);
             
             var _colour = (_result[3] << 24) | (_result[2] << 16) | (_result[1] << 8) | _result[0];
         }
@@ -479,34 +498,9 @@ function BulbRenderer() constructor
         var _green = colour_get_green(ambientColor);
         var _blue  = colour_get_blue( ambientColor);
         
-        _red   /= 255;
-        _green /= 255;
-        _blue  /= 255;
-        
-        if (hdrTonemap == BULB_TONEMAP_REINHARD)
-        {
-            
-        }
-        else if (hdrTonemap == BULB_TONEMAP_REINHARD_WHITEPOINT)
-        {
-            
-        }
-        else if (hdrTonemap == BULB_TONEMAP_ACES)
-        {
-            
-        }
-        else
-        {
-            
-            _red   = power(_red,   2.2);
-            _green = power(_green, 2.2);
-            _blue  = power(_blue,  2.2);
-            
-        }
-        
-        _red   *= 255;
-        _green *= 255;
-        _blue  *= 255;
+        _red   = 255*power(_red/255,   2.2);
+        _green = 255*power(_green/255, 2.2);
+        _blue  = 255*power(_blue/255,  2.2);
         
         return make_color_rgb(_red, _green, _blue);
     }

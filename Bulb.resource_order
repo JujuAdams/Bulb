@@ -44,7 +44,7 @@
     {"name":"__shdBulbSoftShadowsSunlight","order":6,"path":"shaders/__shdBulbSoftShadowsSunlight/__shdBulbSoftShadowsSunlight.yy",},
     {"name":"__shdBulbTonemapACES","order":3,"path":"shaders/__shdBulbTonemapACES/__shdBulbTonemapACES.yy",},
     {"name":"__shdBulbTonemapReinhard","order":1,"path":"shaders/__shdBulbTonemapReinhard/__shdBulbTonemapReinhard.yy",},
-    {"name":"__shdBulbTonemapReinhardWhitepoint","order":2,"path":"shaders/__shdBulbTonemapReinhardWhitepoint/__shdBulbTonemapReinhardWhitepoint.yy",},
+    {"name":"__shdBulbTonemapReinhardExtended","order":2,"path":"shaders/__shdBulbTonemapReinhardExtended/__shdBulbTonemapReinhardExtended.yy",},
     {"name":"shdPremultiplyAlpha","order":7,"path":"shaders/shdPremultiplyAlpha/shdPremultiplyAlpha.yy",},
     {"name":"__sprBulbPixel","order":11,"path":"sprites/__sprBulbPixel/__sprBulbPixel.yy",},
     {"name":"sDynamicBlock","order":1,"path":"sprites/sDynamicBlock/sDynamicBlock.yy",},

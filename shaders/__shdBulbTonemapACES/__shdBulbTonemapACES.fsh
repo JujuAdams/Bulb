@@ -1,6 +1,8 @@
 varying vec2 v_vTexcoord;
 varying vec4 v_vColour;
 
+uniform float u_fExposure;
+
 vec3 ACES(vec3 color)
 {
     // Narkowicz 2015, "ACES Filmic Tone Mapping Curve"
@@ -15,6 +17,6 @@ vec3 ACES(vec3 color)
 void main()
 {
     gl_FragColor = v_vColour*texture2D(gm_BaseTexture, v_vTexcoord);
-    gl_FragColor.rgb = ACES(gl_FragColor.rgb);
+    gl_FragColor.rgb = ACES(u_fExposure*gl_FragColor.rgb);
     gl_FragColor.rgb = pow(gl_FragColor.rgb, vec3(1.0/2.2));
 }

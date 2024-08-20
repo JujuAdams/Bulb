@@ -1,5 +1,14 @@
 function DebugOverlay()
 {
+    var _tonemapName = "???";
+    switch(lighting.hdrTonemap)
+    {
+        case BULB_TONEMAP_NONE:              _tonemapName = "No Tonemapping"     break;
+        case BULB_TONEMAP_REINHARD:          _tonemapName = "Reinhard";          break;
+        case BULB_TONEMAP_REINHARD_EXTENDED: _tonemapName = "Reinhard Extended"; break;
+        case BULB_TONEMAP_ACES:              _tonemapName = "ACES";              break;
+    }
+    
     draw_set_color(c_white);
     shader_set(shdPremultiplyAlpha);
     gpu_set_blendenable(false);
@@ -18,6 +27,7 @@ function DebugOverlay()
         _str += "\nsoft = " + (lighting.soft? "true" : "false");
         _str += "\nself-lighting = " + (lighting.selfLighting? "true" : "false");
         _str += "\nHDR = " + (lighting.hdr? "true" : "false");
+        _str += "\nHDR tonemap = " + _tonemapName;
         
         draw_text(5, 25, _str);
         
@@ -26,6 +36,7 @@ function DebugOverlay()
         _str += "\n2: Toggle soft shadow mode";
         _str += "\n3: Toggle self-lighting";
         _str += "\n4: Toggle HDR";
+        _str += "\n5: Change HDR tonemapping";
         _str += "\nL: Create new disco light";
         _str += "\nArrows/WASD: Move";
         _str += "\nLeft click: Fire plasma";
@@ -34,7 +45,7 @@ function DebugOverlay()
     }
     else
     {
-        var _mode = (lighting.soft? "soft shadows" : "hard shadows") + (lighting.selfLighting? ", self-lighting" : "") + (lighting.hdr? ", HDR" : "");
+        var _mode = (lighting.soft? "soft shadows" : "hard shadows") + (lighting.selfLighting? ", self-lighting" : "") + (lighting.hdr? (", HDR (" + _tonemapName + ")") : "");
         
         draw_set_halign(fa_center);
         draw_text(display_get_gui_width()*0.5, 5, "FPS = " + string_format(fps, 2, 0) + " / " + _mode + " = " + string_format(smoothedDrawEndTime, 4, 0) + "us");
@@ -48,7 +59,7 @@ function DebugOverlay()
     //Always credit properly :)
     draw_set_halign(fa_right);
     var _str = "v" + __BULB_VERSION + "   " + __BULB_DATE;
-    _str += "\nJuju Adams - @jujuadams";
+    _str += "\nJuju Adams";
     _str += "\nAfter work by xot / John Leffingwell";
     _str += "\nThanks to @Mordwaith and Alexey Mihailov (@LexPest)";
     draw_text(display_get_gui_width() - 5, display_get_gui_height() - 5, _str);

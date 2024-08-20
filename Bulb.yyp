@@ -74,7 +74,7 @@
     {"id":{"name":"__shdBulbSoftShadowsSunlight","path":"shaders/__shdBulbSoftShadowsSunlight/__shdBulbSoftShadowsSunlight.yy",},},
     {"id":{"name":"__shdBulbTonemapACES","path":"shaders/__shdBulbTonemapACES/__shdBulbTonemapACES.yy",},},
     {"id":{"name":"__shdBulbTonemapReinhard","path":"shaders/__shdBulbTonemapReinhard/__shdBulbTonemapReinhard.yy",},},
-    {"id":{"name":"__shdBulbTonemapReinhardWhitepoint","path":"shaders/__shdBulbTonemapReinhardWhitepoint/__shdBulbTonemapReinhardWhitepoint.yy",},},
+    {"id":{"name":"__shdBulbTonemapReinhardExtended","path":"shaders/__shdBulbTonemapReinhardExtended/__shdBulbTonemapReinhardExtended.yy",},},
     {"id":{"name":"shdPremultiplyAlpha","path":"shaders/shdPremultiplyAlpha/shdPremultiplyAlpha.yy",},},
     {"id":{"name":"__sprBulbPixel","path":"sprites/__sprBulbPixel/__sprBulbPixel.yy",},},
     {"id":{"name":"sDynamicBlock","path":"sprites/sDynamicBlock/sDynamicBlock.yy",},},
