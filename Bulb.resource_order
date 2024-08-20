@@ -37,7 +37,7 @@
     {"name":"__shdBulbGammaToLinear","order":12,"path":"shaders/__shdBulbGammaToLinear/__shdBulbGammaToLinear.yy",},
     {"name":"__shdBulbHardShadows","order":3,"path":"shaders/__shdBulbHardShadows/__shdBulbHardShadows.yy",},
     {"name":"__shdBulbHardShadowsSunlight","order":4,"path":"shaders/__shdBulbHardShadowsSunlight/__shdBulbHardShadowsSunlight.yy",},
-    {"name":"__shdBulbPassThrough","order":8,"path":"shaders/__shdBulbPassThrough/__shdBulbPassThrough.yy",},
+    {"name":"__shdBulbLight","order":8,"path":"shaders/__shdBulbLight/__shdBulbLight.yy",},
     {"name":"__shdBulbSoftShadows","order":5,"path":"shaders/__shdBulbSoftShadows/__shdBulbSoftShadows.yy",},
     {"name":"__shdBulbSoftShadowsSunlight","order":6,"path":"shaders/__shdBulbSoftShadowsSunlight/__shdBulbSoftShadowsSunlight.yy",},
     {"name":"__shdBulbTonemapACES","order":3,"path":"shaders/__shdBulbTonemapACES/__shdBulbTonemapACES.yy",},

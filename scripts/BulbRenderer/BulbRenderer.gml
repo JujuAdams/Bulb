@@ -682,9 +682,9 @@ function BulbRenderer() constructor
     
     static __AccumulateLightOverlay = function(_cameraL, _cameraT, _cameraR, _cameraB)
     {
-        static _u_fLightIntensity = shader_get_uniform(__shdBulbPassThrough, "u_fLightIntensity");
+        static _u_fLightIntensity = shader_get_uniform(__shdBulbLight, "u_fLightIntensity");
         
-        shader_set(__shdBulbPassThrough);
+        shader_set(__shdBulbLight);
         
         //We use the overarching blend mode for the renderer
         gpu_set_blendmode(bm_add);
@@ -737,12 +737,12 @@ function BulbRenderer() constructor
         
         static _u_vLight                = shader_get_uniform(__shdBulbSoftShadows,         "u_vLight"         );
         static _sunlight_u_vLightVector = shader_get_uniform(__shdBulbSoftShadowsSunlight, "u_vLightVector"   );
-        static _u_fLightIntensity       = shader_get_uniform(__shdBulbPassThrough,         "u_fLightIntensity");
+        static _u_fLightIntensity       = shader_get_uniform(__shdBulbLight,               "u_fLightIntensity");
         
         var _staticVBuffer  = __staticVBuffer;
         var _dynamicVBuffer = __dynamicVBuffer;
         
-        shader_set(__shdBulbPassThrough);
+        shader_set(__shdBulbLight);
         
         var _i = 0;
         repeat(array_length(__lightsArray))
@@ -788,7 +788,7 @@ function BulbRenderer() constructor
                                 gpu_set_blendmode_ext(bm_dest_alpha, bm_one);
                                 
                                 //Draw light sprite
-                                shader_set(__shdBulbPassThrough);
+                                shader_set(__shdBulbLight);
                                 shader_set_uniform_f(_u_fLightIntensity, intensity);
                                 draw_sprite_ext(sprite, image,
                                                 x, y,
@@ -847,7 +847,7 @@ function BulbRenderer() constructor
                         gpu_set_blendmode_ext(bm_dest_alpha, bm_one);
                         
                         //Draw light sprite
-                        shader_set(__shdBulbPassThrough);
+                        shader_set(__shdBulbLight);
                         shader_set_uniform_f(_u_fLightIntensity, intensity);
                         draw_sprite_ext(__sprBulbPixel, 0, _cameraL, _cameraT, _cameraW+1, _cameraH+1, 0, blend, 1);
                     }
@@ -873,7 +873,7 @@ function BulbRenderer() constructor
         static _u_fNormalCoeff          = shader_get_uniform(__shdBulbHardShadows,         "u_fNormalCoeff"   );
         static _sunlight_u_vLightVector = shader_get_uniform(__shdBulbHardShadowsSunlight, "u_vLightVector"   );
         static _sunlight_u_fNormalCoeff = shader_get_uniform(__shdBulbHardShadowsSunlight, "u_fNormalCoeff"   );
-        static _u_fLightIntensity       = shader_get_uniform(__shdBulbPassThrough,         "u_fLightIntensity");
+        static _u_fLightIntensity       = shader_get_uniform(__shdBulbLight,               "u_fLightIntensity");
         
         var _staticVBuffer  = __staticVBuffer;
         var _dynamicVBuffer = __dynamicVBuffer;
@@ -895,7 +895,7 @@ function BulbRenderer() constructor
         }
         
         //Set our default shader
-        shader_set(__shdBulbPassThrough);
+        shader_set(__shdBulbLight);
         
         //And switch on z-testing. We'll use z-testing for stenciling
         gpu_set_ztestenable(true);
@@ -946,7 +946,7 @@ function BulbRenderer() constructor
                                 gpu_set_zfunc(cmpfunc_lessequal);
                                 
                                 //Reset shader and draw the light itself, but "behind" the shadows
-                                shader_set(__shdBulbPassThrough);
+                                shader_set(__shdBulbLight);
                                 shader_set_uniform_f(_u_fLightIntensity, intensity);
                                 draw_sprite_ext(sprite, image,
                                                 x, y,
@@ -1008,7 +1008,7 @@ function BulbRenderer() constructor
                         gpu_set_zfunc(cmpfunc_lessequal);
                         
                         //Reset shader and draw the light itself, but "behind" the shadows
-                        shader_set(__shdBulbPassThrough);
+                        shader_set(__shdBulbLight);
                         shader_set_uniform_f(_u_fLightIntensity, intensity);
                         draw_sprite_ext(__sprBulbPixel, 0, _cameraL, _cameraT, _cameraW+1, _cameraH+1, 0, blend, 1);
                     }
