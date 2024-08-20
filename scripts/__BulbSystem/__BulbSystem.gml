@@ -1,3 +1,16 @@
+// HDR references:
+// https://www.shadertoy.com/view/WdjSW3
+// https://knarkowicz.wordpress.com/2016/01/06/aces-filmic-tone-mapping-curve/
+// https://64.github.io/tonemapping/
+// http://slideshare.net/ozlael/hable-john-uncharted2-hdr-lighting
+// http://filmicgames.com/archives/75
+// http://filmicgames.com/archives/183
+// http://filmicgames.com/archives/190
+// http://imdoingitwrong.wordpress.com/2010/08/19/why-reinhard-desaturates-my-blacks-3/
+// http://mynameismjp.wordpress.com/2010/04/30/a-closer-look-at-tone-mapping/
+// http://renderwonk.com/publications/s2010-color-course/
+// https://mini.gmshaders.com/p/tonemaps
+
 #macro __BULB_VERSION  "21.0.1"
 #macro __BULB_DATE     "2023-12-09"
 #macro __BULB_ZFAR     1
