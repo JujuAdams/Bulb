@@ -376,7 +376,35 @@ function BulbRenderer() constructor
         }
         else
         {
-            var _colour = c_white; //TODO
+            _result[3] = clamp(_result[3], 0, 1);
+            
+            _result[0] = power(_result[0], 1/2.2);
+            _result[1] = power(_result[1], 1/2.2);
+            _result[2] = power(_result[2], 1/2.2);
+            
+            //if (hdrTonemap == BULB_TONEMAP_REINHARD)
+            //{
+            //    
+            //}
+            //else if (hdrTonemap == BULB_TONEMAP_REINHARD)
+            //{
+            //    
+            //}
+            //else if (hdrTonemap == BULB_TONEMAP_REINHARD)
+            //{
+            //    
+            //}
+            //else
+            //{
+            //    
+            //}
+            
+            _result[0] = 255*clamp(_result[0], 0, 1);
+            _result[1] = 255*clamp(_result[1], 0, 1);
+            _result[2] = 255*clamp(_result[2], 0, 1);
+            _result[3] = 255*clamp(_result[3], 0, 1);
+            
+            var _colour = (_result[3] << 24) | (_result[2] << 16) | (_result[1] << 8) | _result[0];
         }
         
         return _colour;
