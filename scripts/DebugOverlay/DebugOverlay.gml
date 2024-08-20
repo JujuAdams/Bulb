@@ -7,6 +7,7 @@ function DebugOverlay()
         case BULB_TONEMAP_REINHARD:          _tonemapName = "Reinhard";          break;
         case BULB_TONEMAP_REINHARD_EXTENDED: _tonemapName = "Reinhard Extended"; break;
         case BULB_TONEMAP_ACES:              _tonemapName = "ACES";              break;
+        case BULB_TONEMAP_UNCHARTED2:        _tonemapName = "Uncharted 2";       break;
     }
     
     draw_set_color(c_white);

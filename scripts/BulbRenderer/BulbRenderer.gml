@@ -19,6 +19,7 @@ function BulbRenderer() constructor
     
     //Assign the ambient colour used for the darkest areas of the screen. This can be changed on the fly
     ambientColor = c_black;
+    hdrAmbientInGammaSpace = false;
     
     //The smoothing mode controls texture filtering both when accumulating lights and when drawing the resulting surface
     smooth = gpu_get_tex_filter();
@@ -29,9 +30,10 @@ function BulbRenderer() constructor
     
     hdr         = false;
     hdrExposure = 1;
-    hdrTonemap  = BULB_TONEMAP_REINHARD_EXTENDED;
+    hdrTonemap  = BULB_TONEMAP_ACES;
     
     hdrBloomIntensity   = 0;
+    hdrBloomIterations  = 3;
     hdrBloomThesholdMin = 0.6;
     hdrBloomThesholdMax = 0.8;
     
@@ -157,7 +159,7 @@ function BulbRenderer() constructor
         gpu_set_tex_filter(smooth);
         
         //Clear the light surface with the ambient colour
-        draw_clear(ambientColor);
+        draw_clear(__GetAmbientColor());
         
         //If we're not forcing deferred rendering everywhere, update those lights
         __AccumulateLights(_cameraL, _cameraT, _cameraR, _cameraB, _cameraCX, _cameraCY, _cameraW, _cameraH);
@@ -310,6 +312,10 @@ function BulbRenderer() constructor
                 var _shader = __shdBulbTonemapReinhardExtended;
             }
             else if (hdrTonemap == BULB_TONEMAP_ACES)
+            {
+                var _shader = __shdBulbTonemapACES;
+            }
+            else if (hdrTonemap == BULB_TONEMAP_UNCHARTED2)
             {
                 var _shader = __shdBulbTonemapACES;
             }
@@ -501,7 +507,14 @@ function BulbRenderer() constructor
     
     
     
-    
+    static __GetAmbientColor = function()
+    {
+        if ((not hdr) || (not hdrAmbientInGammaSpace)) return ambientColor;
+        
+        return make_color_rgb(255*power(color_get_red(  ambientColor)/255, 2.2),
+                              255*power(color_get_green(ambientColor)/255, 2.2),
+                              255*power(color_get_blue( ambientColor)/255, 2.2));
+    }
     
     static __FreeVertexBuffers = function()
     {
@@ -739,7 +752,7 @@ function BulbRenderer() constructor
         if (_size > 0)
         {
             //Leverage the fog system to force the colour of the sprites we draw (alpha channel passes through)
-            gpu_set_fog(true, ambientColor, 0, 0);
+            gpu_set_fog(true, __GetAmbientColor(), 0, 0);
             
             //Don't touch the alpha channel
             gpu_set_colorwriteenable(true, true, true, false);

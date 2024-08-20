@@ -7,19 +7,18 @@ view_set_camera(0, camera);
 //We'll be drawing the application surface ourselves (see Post-Draw event)
 application_surface_draw_enable(false);
 
-ldrAmbientColor = make_colour_rgb(50, 50, 80);
-hdrAmbientColor = make_colour_rgb(7, 7, 20);
-
 //Start the lighting system
 lighting = new BulbRenderer();
-lighting.ambientColor = hdrAmbientColor;
+lighting.ambientColor = make_colour_rgb(50, 50, 80);
 lighting.selfLighting = true;
 lighting.soft = false;
 lighting.smooth = true;
+
 lighting.hdr = true;
-lighting.hdrExposure = 1;
+lighting.hdrAmbientInGammaSpace = true;
 lighting.hdrBloomIntensity = 0.2;
-lighting.hdrBloomIterations = 5;
+lighting.hdrBloomIterations = 3;
+
 lighting.SetSurfaceDimensionsFromCamera(camera);
 
 //Set up a vertex buffer for drawing the diffuse base texture for the walls

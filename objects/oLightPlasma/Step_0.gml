@@ -1,4 +1,4 @@
-if (false && destroying)
+if (destroying)
 {
     light.intensity -= 0.2;
     
@@ -9,8 +9,6 @@ if (false && destroying)
         instance_destroy();
     }
 }
-
-light.intensity = lerp(5, 25, 0.5 + 0.5*dsin(current_time/4));
 
 light.x = x;
 light.y = y;

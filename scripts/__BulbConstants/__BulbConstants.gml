@@ -7,3 +7,4 @@
 #macro BULB_TONEMAP_REINHARD           1
 #macro BULB_TONEMAP_REINHARD_EXTENDED  2
 #macro BULB_TONEMAP_ACES               3
+#macro BULB_TONEMAP_UNCHARTED2         4
