@@ -5,9 +5,9 @@ function BulbSunlight(_renderer, _angle) constructor
 {
     visible = true;
     
-    angle = _angle;
-    blend = c_white;
-    alpha = 1.0;
+    angle     = _angle;
+    blend     = c_white;
+    intensity = 1.0;
     
     penumbraSize = 0.0;
     

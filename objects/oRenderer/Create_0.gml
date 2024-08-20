@@ -14,7 +14,7 @@ lighting.selfLighting = true;
 lighting.soft = false;
 lighting.smooth = true;
 lighting.hdr = true;
-lighting.hdrTonemap = BULB_TONEMAP_NONE;
+lighting.hdrExposure = 2;
 lighting.SetSurfaceDimensionsFromCamera(camera);
 
 //Set up a vertex buffer for drawing the diffuse base texture for the walls
@@ -32,7 +32,7 @@ alarm_set(0, 30);
 
 sunlight = new BulbSunlight(lighting, 45);
 sunlight.blend = c_red;
-sunlight.alpha = 0.4;
+sunlight.intensity = 1;
 sunlight.penumbraSize = 5;
 
 application_surface_draw_enable(false);

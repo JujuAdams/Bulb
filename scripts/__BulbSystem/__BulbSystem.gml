@@ -11,25 +11,9 @@
 // http://renderwonk.com/publications/s2010-color-course/
 // https://mini.gmshaders.com/p/tonemaps
 
-#macro __BULB_VERSION  "21.0.1"
-#macro __BULB_DATE     "2023-12-09"
-#macro __BULB_ZFAR     1
+#macro __BULB_ZFAR  1
 
-__BulbTrace("Welcome to Bulb by Juju Adams! This is version " + __BULB_VERSION + ", " + __BULB_DATE);
-
-//Create a couple vertex formats
-vertex_format_begin();
-vertex_format_add_position_3d();
-vertex_format_add_normal();
-global.__bulbFormat3DNormal = vertex_format_end();
-
-vertex_format_begin();
-vertex_format_add_position_3d();
-vertex_format_add_normal();
-vertex_format_add_texcoord();
-global.__bulbFormat3DNormalTex = vertex_format_end();
-
-
+__BulbTrace("Welcome to Bulb by Juju Adams! This is version " + BULB_VERSION + ", " + BULB_DATE);
 
 function __BulbTrace()
 {

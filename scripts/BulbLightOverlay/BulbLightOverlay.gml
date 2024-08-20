@@ -7,13 +7,13 @@ function BulbLightOverlay(_renderer) constructor
     x = 0;
     y = 0;
     
-    sprite = undefined;
-    image  = 0;
-    xscale = 1.0;
-    yscale = 1.0;
-    angle  = 0.0;
-    blend  = c_white;
-    alpha  = 1.0;
+    sprite    = undefined;
+    image     = 0;
+    xscale    = 1.0;
+    yscale    = 1.0;
+    angle     = 0.0;
+    blend     = c_white;
+    intensity = 1.0;
     
     __oldSprite = undefined;
     __radius    = 0;

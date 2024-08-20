@@ -5,8 +5,8 @@
   "isDnD":false,
   "name":"__BulbConstants",
   "parent":{
-    "name":"(System)",
-    "path":"folders/Bulb/(System).yy",
+    "name":"Bulb",
+    "path":"folders/Bulb.yy",
   },
   "resourceType":"GMScript",
   "resourceVersion":"2.0",

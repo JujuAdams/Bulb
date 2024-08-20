@@ -58,7 +58,7 @@ function DebugOverlay()
     
     //Always credit properly :)
     draw_set_halign(fa_right);
-    var _str = "v" + __BULB_VERSION + "   " + __BULB_DATE;
+    var _str = "v" + BULB_VERSION + "   " + BULB_DATE;
     _str += "\nJuju Adams";
     _str += "\nAfter work by xot / John Leffingwell";
     _str += "\nThanks to @Mordwaith and Alexey Mihailov (@LexPest)";
