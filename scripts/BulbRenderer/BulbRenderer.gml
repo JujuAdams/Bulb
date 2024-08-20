@@ -475,38 +475,40 @@ function BulbRenderer() constructor
     {
         if (not hdr) return ambientColor;
         
+        var _red   = colour_get_red(  ambientColor);
+        var _green = colour_get_green(ambientColor);
+        var _blue  = colour_get_blue( ambientColor);
+        
+        _red   /= 255;
+        _green /= 255;
+        _blue  /= 255;
+        
         if (hdrTonemap == BULB_TONEMAP_REINHARD)
         {
             
         }
-        else if (hdrTonemap == BULB_TONEMAP_REINHARD)
+        else if (hdrTonemap == BULB_TONEMAP_REINHARD_WHITEPOINT)
         {
             
         }
-        else if (hdrTonemap == BULB_TONEMAP_REINHARD)
+        else if (hdrTonemap == BULB_TONEMAP_ACES)
         {
             
         }
         else
         {
-            var _red   = colour_get_red(  ambientColor);
-            var _green = colour_get_green(ambientColor);
-            var _blue  = colour_get_blue( ambientColor);
-            
-            _red   /= 255;
-            _green /= 255;
-            _blue  /= 255;
             
             _red   = power(_red,   2.2);
             _green = power(_green, 2.2);
             _blue  = power(_blue,  2.2);
             
-            _red   *= 255;
-            _green *= 255;
-            _blue  *= 255;
-            
-            return make_color_rgb(_red, _green, _blue);
         }
+        
+        _red   *= 255;
+        _green *= 255;
+        _blue  *= 255;
+        
+        return make_color_rgb(_red, _green, _blue);
     }
     
     #region Update vertex buffers
