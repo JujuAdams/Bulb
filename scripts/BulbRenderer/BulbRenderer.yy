@@ -1,11 +1,13 @@
 {
-  "resourceType": "GMScript",
-  "resourceVersion": "1.0",
-  "name": "BulbRenderer",
-  "isDnD": false,
-  "isCompatibility": false,
-  "parent": {
-    "name": "Bulb",
-    "path": "folders/Bulb.yy",
+  "$GMScript":"v1",
+  "%Name":"BulbRenderer",
+  "isCompatibility":false,
+  "isDnD":false,
+  "name":"BulbRenderer",
+  "parent":{
+    "name":"Bulb",
+    "path":"folders/Bulb.yy",
   },
+  "resourceType":"GMScript",
+  "resourceVersion":"2.0",
 }

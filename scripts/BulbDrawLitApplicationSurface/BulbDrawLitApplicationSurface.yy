@@ -1,11 +1,13 @@
 {
-  "resourceType": "GMScript",
-  "resourceVersion": "1.0",
-  "name": "BulbDrawLitApplicationSurface",
-  "isDnD": false,
-  "isCompatibility": false,
-  "parent": {
-    "name": "Bulb",
-    "path": "folders/Bulb.yy",
+  "$GMScript":"v1",
+  "%Name":"BulbDrawLitApplicationSurface",
+  "isCompatibility":false,
+  "isDnD":false,
+  "name":"BulbDrawLitApplicationSurface",
+  "parent":{
+    "name":"Bulb",
+    "path":"folders/Bulb.yy",
   },
+  "resourceType":"GMScript",
+  "resourceVersion":"2.0",
 }

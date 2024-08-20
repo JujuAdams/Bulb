@@ -1,12 +1,13 @@
 {
-  "isDnD": false,
-  "isCompatibility": false,
-  "parent": {
-    "name": "Example",
-    "path": "folders/Example.yy",
+  "$GMScript":"v1",
+  "%Name":"DebugOverlay",
+  "isCompatibility":false,
+  "isDnD":false,
+  "name":"DebugOverlay",
+  "parent":{
+    "name":"Example",
+    "path":"folders/Example.yy",
   },
-  "resourceVersion": "1.0",
-  "name": "DebugOverlay",
-  "tags": [],
-  "resourceType": "GMScript",
+  "resourceType":"GMScript",
+  "resourceVersion":"2.0",
 }

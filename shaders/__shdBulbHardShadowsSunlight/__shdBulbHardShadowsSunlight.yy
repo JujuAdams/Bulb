@@ -1,10 +1,12 @@
 {
-  "resourceType": "GMShader",
-  "resourceVersion": "1.0",
-  "name": "__shdBulbHardShadowsSunlight",
-  "type": 1,
-  "parent": {
-    "name": "(Pay no attention to that man behind the curtain)",
-    "path": "folders/Bulb/(System)/(Pay no attention to that man behind the curtain).yy",
+  "$GMShader":"",
+  "%Name":"__shdBulbHardShadowsSunlight",
+  "name":"__shdBulbHardShadowsSunlight",
+  "parent":{
+    "name":"(Pay no attention to that man behind the curtain)",
+    "path":"folders/Bulb/(System)/(Pay no attention to that man behind the curtain).yy",
   },
+  "resourceType":"GMShader",
+  "resourceVersion":"2.0",
+  "type":1,
 }
