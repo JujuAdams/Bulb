@@ -8,11 +8,9 @@ function BulbLight(_renderer, _sprite, _image, _x, _y) constructor
 {
     visible = true;
     
-    x         = _x;
-    y         = _y;
-    z         = BULB_DEFAULT_LIGHT_Z;
-    xprevious = x;
-    yprevious = y;
+    x = _x;
+    y = _y;
+    z = BULB_DEFAULT_LIGHT_Z;
     
     sprite    = _sprite;
     image     = _image;
