@@ -13,6 +13,7 @@ lighting.ambientColor = make_colour_rgb(50, 50, 80);
 lighting.selfLighting = true;
 lighting.soft = true;
 lighting.smooth = true;
+lighting.normalMapped = true;
 
 lighting.hdr = true;
 lighting.hdrAmbientInGammaSpace = true;

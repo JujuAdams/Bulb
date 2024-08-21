@@ -1,0 +1,13 @@
+{
+  "$GMScript":"v1",
+  "%Name":"BulbSpriteNormalDraw",
+  "isCompatibility":false,
+  "isDnD":false,
+  "name":"BulbSpriteNormalDraw",
+  "parent":{
+    "name":"Bulb",
+    "path":"folders/Bulb.yy",
+  },
+  "resourceType":"GMScript",
+  "resourceVersion":"2.0",
+}
