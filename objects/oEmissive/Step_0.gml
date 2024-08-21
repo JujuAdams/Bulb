@@ -1,0 +1,1 @@
+light.intensity = lerp(2, 20, 0.5 + 0.5*dsin(current_time/20));

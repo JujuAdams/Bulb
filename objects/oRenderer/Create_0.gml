@@ -16,7 +16,8 @@ lighting.smooth = true;
 
 lighting.hdr = true;
 lighting.hdrAmbientInGammaSpace = true;
-lighting.hdrBloomIntensity = 0.2;
+lighting.hdrBloomIntensity = 0.05;
+lighting.hdrBloomIterations = 4;
 
 lighting.SetSurfaceDimensionsFromCamera(camera);
 
