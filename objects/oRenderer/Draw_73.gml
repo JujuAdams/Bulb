@@ -3,6 +3,11 @@ lighting.UpdateFromCamera(camera);
 
 lighting.NormalSurfaceClear();
 lighting.NormalSurfaceStartDraw();
-BulbSpriteNormalDrawExt(sNormalMap, 0,  260, 360, 2, 2, 0);
-BulbSpriteNormalDrawExt(sNormalMap, 0,  640, 360, -0.9, -0.9, -current_time/50);
+camera_apply(view_get_camera(0));
+
+with(oNormal)
+{
+    BulbSpriteNormalDrawSelf();
+}
+
 lighting.NormalSurfaceEndDraw();

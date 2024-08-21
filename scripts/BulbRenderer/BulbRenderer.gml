@@ -329,6 +329,7 @@ function BulbRenderer() constructor
         __FreeLightSurface();
         __FreeHDRSurface();
         __FreeBloomSurfaces();
+        __FreeNormalSurface();
         
         var _nullFunc = function() {}
         
@@ -338,8 +339,12 @@ function BulbRenderer() constructor
         __FreeBloomSurfaces = _nullFunc;
         
         //__BulbRendererDefineNormal()
-        __GetNormalSurface  = _nullFunc;
-        __FreeNormalSurface = _nullFunc;
+        NormalSurfaceClear     = _nullFunc;
+        NormalSurfaceStartDraw = _nullFunc;
+        NormalSurfaceEndDraw   = _nullFunc;
+        GetNormalSurface       = _nullFunc;
+        DrawNormalSurfaceDebug = _nullFunc;
+        __FreeNormalSurface    = _nullFunc;
         
         //__BulbRendererDefineOverlayUnderlay()
         __AccumulateAmbienceSprite = _nullFunc;

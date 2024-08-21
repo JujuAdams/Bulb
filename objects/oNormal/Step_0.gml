@@ -1,0 +1,1 @@
+image_angle = current_time/25;

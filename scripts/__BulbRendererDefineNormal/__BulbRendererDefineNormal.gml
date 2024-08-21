@@ -13,16 +13,21 @@ function __BulbRendererDefineNormal()
     
     NormalSurfaceClear = function()
     {
+        if (not normalMapped)
+        {
+            __BulbError("Cannot call .NormalSurfaceClear(), `normalMapped` is not set to `true`");
+        }
+        
         surface_set_target(GetNormalSurface());
-        draw_clear(c_black);
+        draw_clear(#0000FF);
         surface_reset_target();
     }
     
-    NormalSurfaceStartDraw = function(_alphaThreshold = normalMapAlphaThreshold)
+    NormalSurfaceStartDraw = function()
     {
         if (not normalMapped)
         {
-            __BulbError("Cannot call .NormalSurfaceStartDraw(), .normalMapped is not set to `true`");
+            __BulbError("Cannot call .NormalSurfaceStartDraw(), `normalMapped` is not set to `true`");
         }
         
         static _u_fAlphaThreshold = shader_get_uniform(__shdBulbNormal, "u_fAlphaThreshold");
@@ -36,7 +41,7 @@ function __BulbRendererDefineNormal()
     {
         if (not normalMapped)
         {
-            __BulbError("Cannot call .NormalSurfaceEndDraw(), .normalMapped is not set to `true`");
+            __BulbError("Cannot call .NormalSurfaceEndDraw(), `normalMapped` is not set to `true`");
         }
         
         surface_reset_target();
@@ -47,7 +52,7 @@ function __BulbRendererDefineNormal()
     {
         if (not normalMapped)
         {
-            __BulbError("Cannot call .GetNormalSurface(), .normalMapped is not set to `true`");
+            __BulbError("Cannot call .GetNormalSurface(), `normalMapped` is not set to `true`");
         }
         
         if ((surfaceWidth <= 0) || (surfaceHeight <= 0)) return undefined;

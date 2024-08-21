@@ -7,11 +7,14 @@ function __BulbRendererDefineAccumulateSoft()
         static _u_vLight                = shader_get_uniform(__shdBulbSoftShadows,         "u_vLight"      );
         static _sunlight_u_vLightVector = shader_get_uniform(__shdBulbSoftShadowsSunlight, "u_vLightVector");
         static _u_fIntensity            = shader_get_uniform(__shdBulbIntensity,           "u_fIntensity"  );
+        static _u_vInfo                 = shader_get_uniform(__shdBulbLightWithNormalMap,  "u_vInfo"       );
         
         var _staticVBuffer  = __staticVBuffer;
         var _dynamicVBuffer = __dynamicVBuffer;
         
-        shader_set(__shdBulbIntensity);
+        shader_set(__shdBulbLightWithNormalMap);
+        texture_set_stage(shader_get_sampler_index(__shdBulbLightWithNormalMap, "u_sNormalMap"), surface_get_texture(GetNormalSurface()));
+        shader_set_uniform_f(shader_get_uniform(__shdBulbLightWithNormalMap, "u_vCamera"), _cameraCX, _cameraCY, _cameraW/2, _cameraH/2);
         
         var _i = 0;
         repeat(array_length(__lightsArray))
@@ -57,8 +60,8 @@ function __BulbRendererDefineAccumulateSoft()
                                 gpu_set_blendmode_ext(bm_dest_alpha, bm_one);
                                 
                                 //Draw light sprite
-                                shader_set(__shdBulbIntensity);
-                                shader_set_uniform_f(_u_fIntensity, intensity);
+                                shader_set(__shdBulbLightWithNormalMap);
+                                shader_set_uniform_f(_u_vInfo, x, y, z, intensity);
                                 draw_sprite_ext(sprite, image,
                                                 x, y,
                                                 xscale, yscale, angle,
@@ -68,7 +71,7 @@ function __BulbRendererDefineAccumulateSoft()
                             {
                                 //No shadows - draw the light sprite normally
                                 gpu_set_blendmode(bm_add);
-                                shader_set_uniform_f(_u_fIntensity, intensity);
+                                shader_set_uniform_f(_u_vInfo, x, y, z, intensity);
                                 draw_sprite_ext(sprite, image,
                                                 x, y,
                                                 xscale, yscale, angle,
