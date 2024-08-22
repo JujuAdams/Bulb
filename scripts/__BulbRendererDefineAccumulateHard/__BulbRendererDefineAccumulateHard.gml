@@ -39,7 +39,8 @@ function __BulbRendererDefineAccumulateHard()
         gpu_set_stencil_enable(true);
         gpu_set_stencil_pass(stencilop_replace);
         gpu_set_stencil_fail(stencilop_keep);
-        var _stencil = 1;
+        gpu_set_stencil_func(cmpfunc_always);
+        var _stencil = 0;
         
         var _i = 0;
         repeat(array_length(__lightsArray))
@@ -62,13 +63,18 @@ function __BulbRendererDefineAccumulateHard()
                         {
                             if (castShadows)
                             {
+                                ++_stencil;
+                                if (_stencil >= 256)
+                                {
+                                    draw_clear_stencil(0);
+                                    _stencil = 1;
+                                }
+                                
                                 gpu_set_stencil_ref(_stencil);
                                 
                                 //Stencil out shadow areas
                                 shader_set(__shdBulbHardShadows);
                                 shader_set_uniform_f(_u_vLight, x, y);
-                                
-                                gpu_set_stencil_func(cmpfunc_always);
                                 
                                 vertex_submit(_staticVBuffer,  pr_trianglelist, -1);
                                 vertex_submit(_dynamicVBuffer, pr_trianglelist, -1);
@@ -78,29 +84,14 @@ function __BulbRendererDefineAccumulateHard()
                                 shader_set_uniform_f(_u_fIntensity, intensity);
                                 
                                 gpu_set_stencil_func(cmpfunc_greater);
-                                
-                                draw_sprite_ext(sprite, image,
-                                                x, y,
-                                                xscale, yscale, angle,
-                                                blend, 1);
-                                
-                                ++_stencil;
-                                if (_stencil >= 256)
-                                {
-                                    draw_clear_stencil(0);
-                                    _stencil = 0;
-                                }
+                                draw_sprite_ext(sprite, image, x, y, xscale, yscale, angle, blend, 1);
+                                gpu_set_stencil_func(cmpfunc_always);
                             }
                             else
                             {
-                                gpu_set_stencil_enable(false);
-                                
                                 //Just draw the sprite, no fancy stuff here
                                 shader_set_uniform_f(_u_fIntensity, intensity);
-                                draw_sprite_ext(sprite, image,
-                                                x, y,
-                                                xscale, yscale, angle,
-                                                blend, 1);
+                                draw_sprite_ext(sprite, image, x, y, xscale, yscale, angle, blend, 1);
                             }
                         }
                     }
@@ -109,6 +100,8 @@ function __BulbRendererDefineAccumulateHard()
                 ++_i;
             }
         }
+        
+        gpu_set_stencil_enable(true);
         
         var _i = 0;
         repeat(array_length(__sunlightArray))
@@ -124,13 +117,18 @@ function __BulbRendererDefineAccumulateHard()
                 {
                     if (visible)
                     {
+                        ++_stencil;
+                        if (_stencil >= 256)
+                        {
+                            draw_clear_stencil(0);
+                            _stencil = 1;
+                        }
+                        
                         gpu_set_stencil_ref(_stencil);
                         
                         //Stencil out shadow areas
                         shader_set(__shdBulbHardShadowsSunlight);
                         shader_set_uniform_f(_sunlight_u_vLightVector, dcos(angle), -dsin(angle));
-                                
-                        gpu_set_stencil_func(cmpfunc_always);
                         
                         vertex_submit(_staticVBuffer,  pr_trianglelist, -1);
                         vertex_submit(_dynamicVBuffer, pr_trianglelist, -1);
@@ -140,15 +138,8 @@ function __BulbRendererDefineAccumulateHard()
                         shader_set_uniform_f(_u_fIntensity, intensity);
                                 
                         gpu_set_stencil_func(cmpfunc_greater);
-                        
                         draw_sprite_ext(__sprBulbPixel, 0, _cameraL, _cameraT, _cameraW+1, _cameraH+1, 0, blend, 1);
-                        
-                        ++_stencil;
-                        if (_stencil >= 256)
-                        {
-                            draw_clear_stencil(0);
-                            _stencil = 1;
-                        }
+                        gpu_set_stencil_func(cmpfunc_always);
                     }
                 }
                 
