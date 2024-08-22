@@ -30,8 +30,8 @@
   "resourceVersion":"2.0",
   "solid":false,
   "spriteId":{
-    "name":"sNormalMap",
-    "path":"sprites/sNormalMap/sNormalMap.yy",
+    "name":"sPyramidNormal",
+    "path":"sprites/sPyramidNormal/sPyramidNormal.yy",
   },
   "spriteMaskId":null,
   "visible":false,
