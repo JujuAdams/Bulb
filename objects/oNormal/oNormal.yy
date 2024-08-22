@@ -30,9 +30,9 @@
   "resourceVersion":"2.0",
   "solid":false,
   "spriteId":{
-    "name":"sPyramidNormal",
-    "path":"sprites/sPyramidNormal/sPyramidNormal.yy",
+    "name":"sPyramid",
+    "path":"sprites/sPyramid/sPyramid.yy",
   },
   "spriteMaskId":null,
-  "visible":false,
+  "visible":true,
 }

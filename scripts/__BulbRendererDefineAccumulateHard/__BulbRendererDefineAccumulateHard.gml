@@ -13,6 +13,7 @@ function __BulbRendererDefineAccumulateHard()
         var _staticVBuffer  = __staticVBuffer;
         var _dynamicVBuffer = __dynamicVBuffer;
         
+        
         //bm_max requires some trickery with alpha to get good-looking results
         //Determine the blend mode and "default" shader accordingly
         gpu_set_blendmode(bm_add);
@@ -32,10 +33,13 @@ function __BulbRendererDefineAccumulateHard()
         //Set our default shader
         shader_set(__shdBulbIntensity);
         
-        //And switch on z-testing. We'll use z-testing for stenciling
-        gpu_set_ztestenable(true);
-        gpu_set_zwriteenable(true);
-        gpu_set_zfunc(cmpfunc_lessequal);
+        gpu_set_colorwriteenable(true, true, true, false);
+        
+        draw_clear_stencil(0);
+        gpu_set_stencil_enable(true);
+        gpu_set_stencil_pass(stencilop_replace);
+        gpu_set_stencil_fail(stencilop_keep);
+        var _stencil = 1;
         
         var _i = 0;
         repeat(array_length(__lightsArray))
@@ -58,41 +62,38 @@ function __BulbRendererDefineAccumulateHard()
                         {
                             if (castShadows)
                             {
-                                //Turn off all RGBA writing, leaving only z-writing
-                                gpu_set_colorwriteenable(false, false, false, false);
-                                
-                                //Guarantee that we're going to write to the z-buffer with the next operations
-                                gpu_set_zfunc(cmpfunc_always);
-                                
-                                //Reset z-buffer
-                                draw_sprite_ext(sprite, image,
-                                                x, y,
-                                                xscale, yscale, angle,
-                                                c_black, 1);
+                                gpu_set_stencil_ref(_stencil);
                                 
                                 //Stencil out shadow areas
                                 shader_set(__shdBulbHardShadows);
                                 shader_set_uniform_f(_u_vLight, x, y);
+                                
+                                gpu_set_stencil_func(cmpfunc_always);
+                                
                                 vertex_submit(_staticVBuffer,  pr_trianglelist, -1);
                                 vertex_submit(_dynamicVBuffer, pr_trianglelist, -1);
-                                
-                                //Swap to drawing RGB data (no alpha to make the output surface tidier)
-                                gpu_set_colorwriteenable(true, true, true, false);
-                                gpu_set_zfunc(cmpfunc_lessequal);
                                 
                                 //Reset shader and draw the light itself, but "behind" the shadows
                                 shader_set(__shdBulbIntensity);
                                 shader_set_uniform_f(_u_fIntensity, intensity);
+                                
+                                gpu_set_stencil_func(cmpfunc_greater);
+                                
                                 draw_sprite_ext(sprite, image,
                                                 x, y,
                                                 xscale, yscale, angle,
                                                 blend, 1);
+                                
+                                ++_stencil;
+                                if (_stencil >= 256)
+                                {
+                                    draw_clear_stencil(0);
+                                    _stencil = 0;
+                                }
                             }
                             else
                             {
-                                //Ensure any previous changes to the z-buffer don't leak across
-                                gpu_set_colorwriteenable(true, true, true, false);
-                                gpu_set_zfunc(cmpfunc_always);
+                                gpu_set_stencil_enable(false);
                                 
                                 //Just draw the sprite, no fancy stuff here
                                 shader_set_uniform_f(_u_fIntensity, intensity);
@@ -123,29 +124,31 @@ function __BulbRendererDefineAccumulateHard()
                 {
                     if (visible)
                     {
-                        //Turn off all RGBA writing, leaving only z-writing
-                        gpu_set_colorwriteenable(false, false, false, false);
-                        
-                        //Guarantee that we're going to write to the z-buffer with the next operations
-                        gpu_set_zfunc(cmpfunc_always);
-                        
-                        //Full surface clear of the z-buffer
-                        draw_sprite_ext(__sprBulbPixel, 0, _cameraL, _cameraT, _cameraW+1, _cameraH+1, 0, c_black, 0);
+                        gpu_set_stencil_ref(_stencil);
                         
                         //Stencil out shadow areas
                         shader_set(__shdBulbHardShadowsSunlight);
                         shader_set_uniform_f(_sunlight_u_vLightVector, dcos(angle), -dsin(angle));
+                                
+                        gpu_set_stencil_func(cmpfunc_always);
+                        
                         vertex_submit(_staticVBuffer,  pr_trianglelist, -1);
                         vertex_submit(_dynamicVBuffer, pr_trianglelist, -1);
-                        
-                        //Swap to drawing RGB data (no alpha to make the output surface tidier)
-                        gpu_set_colorwriteenable(true, true, true, false);
-                        gpu_set_zfunc(cmpfunc_lessequal);
                         
                         //Reset shader and draw the light itself, but "behind" the shadows
                         shader_set(__shdBulbIntensity);
                         shader_set_uniform_f(_u_fIntensity, intensity);
+                                
+                        gpu_set_stencil_func(cmpfunc_greater);
+                        
                         draw_sprite_ext(__sprBulbPixel, 0, _cameraL, _cameraT, _cameraW+1, _cameraH+1, 0, blend, 1);
+                        
+                        ++_stencil;
+                        if (_stencil >= 256)
+                        {
+                            draw_clear_stencil(0);
+                            _stencil = 1;
+                        }
                     }
                 }
                 
@@ -154,9 +157,8 @@ function __BulbRendererDefineAccumulateHard()
         }
         
         shader_reset();
-        gpu_set_zfunc(cmpfunc_lessequal);
+        gpu_set_colorwriteenable(true, true, true, true);
         gpu_set_blendmode(bm_normal);
-        gpu_set_ztestenable(false);
-        gpu_set_zwriteenable(false);
+        gpu_set_stencil_enable(false);
     }
 }
