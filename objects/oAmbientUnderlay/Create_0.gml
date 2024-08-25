@@ -1,4 +1,4 @@
-ambient = new BulbAmbienceSprite(oRenderer.lighting);
+ambient = new BulbAmbienceSprite(oRendererPar.lighting);
 ambient.sprite = sprite_index;
 ambient.x      = x;
 ambient.y      = y;

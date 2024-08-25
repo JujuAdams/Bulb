@@ -1,4 +1,4 @@
-light = new BulbLight(oRenderer.lighting, sLightTorch, 0, x, y);
+light = new BulbLight(oRendererPar.lighting, sLightTorch, 0, x, y);
 light.z = 100;
 light.penumbraSize = 30;
 light.yscale = 0.5;

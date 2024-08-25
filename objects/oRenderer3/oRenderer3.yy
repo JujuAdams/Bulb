@@ -16,7 +16,10 @@
     "name":"rmTestSoft",
     "path":"folders/Example/rmTestSoft.yy",
   },
-  "parentObjectId":null,
+  "parentObjectId":{
+    "name":"oRendererPar",
+    "path":"objects/oRendererPar/oRendererPar.yy",
+  },
   "persistent":false,
   "physicsAngularDamping":0.1,
   "physicsDensity":0.5,

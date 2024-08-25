@@ -4,38 +4,14 @@ function __BulbRendererDefineAccumulateHard()
 {
     __AccumulateHardLights = function(_cameraL, _cameraT, _cameraR, _cameraB, _cameraCX, _cameraCY, _cameraW, _cameraH, _normalCoeff)
     {
-        static _u_vLight                = shader_get_uniform(__shdBulbHardShadows,         "u_vLight"         );
-        static _u_fNormalCoeff          = shader_get_uniform(__shdBulbHardShadows,         "u_fNormalCoeff"   );
-        static _sunlight_u_vLightVector = shader_get_uniform(__shdBulbHardShadowsSunlight, "u_vLightVector"   );
-        static _sunlight_u_fNormalCoeff = shader_get_uniform(__shdBulbHardShadowsSunlight, "u_fNormalCoeff"   );
-        static _u_fIntensity            = shader_get_uniform(__shdBulbIntensity,           "u_fIntensity"     );
-        static _u_fZ                    = shader_get_uniform(__shdBulbIntensity,           "u_fZ"             );
+        static _u_vLight                = shader_get_uniform(__shdBulbHardShadows,           "u_vLight"      );
+        static _u_fNormalCoeff          = shader_get_uniform(__shdBulbHardShadows,           "u_fNormalCoeff");
+        static _sunlight_u_vLightVector = shader_get_uniform(__shdBulbHardShadowsSunlight,   "u_vLightVector");
+        static _sunlight_u_fNormalCoeff = shader_get_uniform(__shdBulbHardShadowsSunlight,   "u_fNormalCoeff");
+        static _u_fIntensity            = shader_get_uniform(__shdBulbLightWithoutNormalMap, "u_fIntensity"  );
         
         var _staticVBuffer  = __staticVBuffer;
         var _dynamicVBuffer = __dynamicVBuffer;
-        
-        draw_clear_depth(0);
-        gpu_set_ztestenable(true);
-        
-        // <-- Test
-        gpu_set_zfunc(cmpfunc_always);
-        var _oldDepth = gpu_get_depth();
-        gpu_set_depth(1);
-        
-        gpu_set_colorwriteenable(false, false, false, false);
-        gpu_set_zwriteenable(true);
-        
-        draw_sprite_ext(__sprBulbPixel, 0, _cameraCX, _cameraCY, 100, 100, 0, c_white, 1);
-        
-        gpu_set_colorwriteenable(true, true, true, true);
-        gpu_set_zwriteenable(false);
-        gpu_set_depth(_oldDepth);
-        // Test -->
-        
-        gpu_set_zfunc(cmpfunc_greaterequal);
-        
-        
-        
         
         //bm_max requires some trickery with alpha to get good-looking results
         //Determine the blend mode and "default" shader accordingly
@@ -104,9 +80,8 @@ function __BulbRendererDefineAccumulateHard()
                                 vertex_submit(_dynamicVBuffer, pr_trianglelist, -1);
                                 
                                 //Reset shader and draw the light itself, but "behind" the shadows
-                                shader_set(__shdBulbIntensity);
+                                shader_set(__shdBulbLightWithoutNormalMap);
                                 shader_set_uniform_f(_u_fIntensity, intensity);
-                                shader_set_uniform_f(_u_fZ, z);
                                 
                                 gpu_set_stencil_func(cmpfunc_greater);
                                 draw_sprite_ext(sprite, image, x, y, xscale, yscale, angle, blend, 1);
@@ -116,7 +91,6 @@ function __BulbRendererDefineAccumulateHard()
                             {
                                 //Just draw the sprite, no fancy stuff here
                                 shader_set_uniform_f(_u_fIntensity, intensity);
-                                shader_set_uniform_f(_u_fZ, z);
                                 draw_sprite_ext(sprite, image, x, y, xscale, yscale, angle, blend, 1);
                             }
                         }
@@ -160,9 +134,8 @@ function __BulbRendererDefineAccumulateHard()
                         vertex_submit(_dynamicVBuffer, pr_trianglelist, -1);
                         
                         //Reset shader and draw the light itself, but "behind" the shadows
-                        shader_set(__shdBulbIntensity);
+                        shader_set(__shdBulbLightWithoutNormalMap);
                         shader_set_uniform_f(_u_fIntensity, intensity);
-                        shader_set_uniform_f(_u_fZ, z);
                                 
                         gpu_set_stencil_func(cmpfunc_greater);
                         draw_sprite_ext(__sprBulbPixel, 0, _cameraL, _cameraT, _cameraW+1, _cameraH+1, 0, blend, 1);
@@ -176,7 +149,6 @@ function __BulbRendererDefineAccumulateHard()
         
         shader_reset();
         gpu_set_colorwriteenable(true, true, true, true);
-        gpu_set_ztestenable(false);
         gpu_set_blendmode(bm_normal);
         gpu_set_stencil_enable(false);
     }

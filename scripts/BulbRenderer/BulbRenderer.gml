@@ -158,7 +158,7 @@ function BulbRenderer() constructor
         static _u_vThreshold = shader_get_uniform(__shdBulbKawaseDownWithThreshold, "u_vThreshold");
         
         var _oldTextureFiltering = gpu_get_tex_filter();
-        var _oldAlphaBlend       = gpu_get_tex_filter();
+        var _oldAlphaBlend       = gpu_get_blendenable();
         
         if (hdr)
         {

@@ -68,7 +68,7 @@ function __BulbRendererDefineNormal()
             __normalSurface = surface_create(surfaceWidth, surfaceHeight, surface_rgba16float);
             
             surface_set_target(__normalSurface);
-            draw_clear(c_black);
+            draw_clear(#0000FF);
             surface_reset_target();
         }
         

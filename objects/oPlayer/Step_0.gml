@@ -19,9 +19,9 @@ if (mouse_check_button(mb_left) and (alarm_get(0) <= 0))
 }
 
 //Update camera position
-camera_set_view_pos(oRenderer.camera,
-                    round(x - 0.5*camera_get_view_width( oRenderer.camera)),
-                    round(y - 0.5*camera_get_view_height(oRenderer.camera)));
+camera_set_view_pos(oRendererPar.camera,
+                    round(x - 0.5*camera_get_view_width( oRendererPar.camera)),
+                    round(y - 0.5*camera_get_view_height(oRendererPar.camera)));
 
 //Make sure the light tracks the player
 light.x = x;

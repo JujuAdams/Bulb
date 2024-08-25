@@ -4,10 +4,10 @@ function __BulbRendererDefineAccumulateSoft()
 {
     __AccumulateSoftLights = function(_cameraL, _cameraT, _cameraR, _cameraB, _cameraCX, _cameraCY, _cameraW, _cameraH, _normalCoeff)
     {
-        static _u_vLight                = shader_get_uniform(__shdBulbSoftShadows,         "u_vLight"      );
-        static _sunlight_u_vLightVector = shader_get_uniform(__shdBulbSoftShadowsSunlight, "u_vLightVector");
-        static _u_fIntensity            = shader_get_uniform(__shdBulbIntensity,           "u_fIntensity"  );
-        static _u_vInfo                 = shader_get_uniform(__shdBulbLightWithNormalMap,  "u_vInfo"       );
+        static _u_vLight                = shader_get_uniform(__shdBulbSoftShadows,           "u_vLight"      );
+        static _sunlight_u_vLightVector = shader_get_uniform(__shdBulbSoftShadowsSunlight,   "u_vLightVector");
+        static _u_vInfo                 = shader_get_uniform(__shdBulbLightWithNormalMap,    "u_vInfo"       );
+        static _u_vSunInfo              = shader_get_uniform(__shdBulbSunlightWithNormalMap, "u_vInfo"       );
         
         var _staticVBuffer  = __staticVBuffer;
         var _dynamicVBuffer = __dynamicVBuffer;
@@ -119,8 +119,8 @@ function __BulbRendererDefineAccumulateSoft()
                         gpu_set_blendmode_ext(bm_dest_alpha, bm_one);
                         
                         //Draw light sprite
-                        shader_set(__shdBulbIntensity);
-                        shader_set_uniform_f(_u_fIntensity, intensity);
+                        shader_set(__shdBulbSunlightWithNormalMap);
+                        shader_set_uniform_f(_u_vSunInfo, dcos(angle), -dsin(angle), BULB_DEFAULT_LIGHT_Z, intensity);
                         draw_sprite_ext(__sprBulbPixel, 0, _cameraL, _cameraT, _cameraW+1, _cameraH+1, 0, blend, 1);
                     }
                 }
