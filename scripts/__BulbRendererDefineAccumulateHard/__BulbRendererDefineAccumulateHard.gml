@@ -114,7 +114,17 @@ function __BulbRendererDefineAccumulateHard()
                             else
                             {
                                 //Just draw the sprite, no fancy stuff here
-                                shader_set_uniform_f(_u_fIntensity, intensity);
+                                if (_rendererNormalMap && normalMap)
+                                {
+                                    shader_set(__shdBulbLightWithNormalMap);
+                                    shader_set_uniform_f(_shdBulbLightWithNormalMap_u_vInfo, x, y, normalMapZ, intensity);
+                                }
+                                else
+                                {
+                                    shader_set(__shdBulbLightWithoutNormalMap);
+                                    shader_set_uniform_f(_shdBulbLightWithoutNormalMap_u_fIntensity, intensity);
+                                }
+                                
                                 draw_sprite_ext(sprite, image, x, y, xscale, yscale, angle, blend, 1);
                             }
                         }

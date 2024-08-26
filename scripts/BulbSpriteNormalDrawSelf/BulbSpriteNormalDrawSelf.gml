@@ -1,6 +1,8 @@
 // Feather disable all
 
-function BulbSpriteNormalDrawSelf()
+/// @param [spriteIndex]
+
+function BulbSpriteNormalDrawSelf(_spriteIndex = sprite_index)
 {
-    BulbSpriteNormalDrawExt(sprite_index, image_index, x, y, image_xscale, image_yscale, image_angle);
+    BulbSpriteNormalDrawExt(_spriteIndex, image_index, x, y, image_xscale, image_yscale, image_angle);
 }

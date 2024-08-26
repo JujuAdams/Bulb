@@ -96,6 +96,7 @@
     {"id":{"name":"__shdBulbLinearToGamma","path":"shaders/__shdBulbLinearToGamma/__shdBulbLinearToGamma.yy",},},
     {"id":{"name":"__shdBulbNormal","path":"shaders/__shdBulbNormal/__shdBulbNormal.yy",},},
     {"id":{"name":"__shdBulbNormalSurfaceDebug","path":"shaders/__shdBulbNormalSurfaceDebug/__shdBulbNormalSurfaceDebug.yy",},},
+    {"id":{"name":"__shdBulbNormalUp","path":"shaders/__shdBulbNormalUp/__shdBulbNormalUp.yy",},},
     {"id":{"name":"__shdBulbSoftShadows","path":"shaders/__shdBulbSoftShadows/__shdBulbSoftShadows.yy",},},
     {"id":{"name":"__shdBulbSoftShadowsSunlight","path":"shaders/__shdBulbSoftShadowsSunlight/__shdBulbSoftShadowsSunlight.yy",},},
     {"id":{"name":"__shdBulbSunlightWithNormalMap","path":"shaders/__shdBulbSunlightWithNormalMap/__shdBulbSunlightWithNormalMap.yy",},},

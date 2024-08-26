@@ -6,8 +6,8 @@
 //Create a basic vertex format
 vertex_format_begin();
 vertex_format_add_position();
-vertex_format_add_texcoord();
 vertex_format_add_colour();
+vertex_format_add_texcoord();
 global.__vertex_cake_format = vertex_format_end();
 
 function VertexCake() constructor
@@ -59,13 +59,13 @@ function VertexCake() constructor
                 var _lb = matrix_transform_vertex(_matrix,                         0, sprite_get_height(_sprite), 0);
                 var _rb = matrix_transform_vertex(_matrix, sprite_get_width(_sprite), sprite_get_height(_sprite), 0);
             
-                vertex_position(_vbuff,   _lt[0], _lt[1]); vertex_texcoord(_vbuff,   _uvs[0], _uvs[1]); vertex_colour(_vbuff,   c_white, 1);
-                vertex_position(_vbuff,   _rt[0], _rt[1]); vertex_texcoord(_vbuff,   _uvs[2], _uvs[1]); vertex_colour(_vbuff,   c_white, 1);
-                vertex_position(_vbuff,   _lb[0], _lb[1]); vertex_texcoord(_vbuff,   _uvs[0], _uvs[3]); vertex_colour(_vbuff,   c_white, 1);
-            
-                vertex_position(_vbuff,   _rt[0], _rt[1]); vertex_texcoord(_vbuff,   _uvs[2], _uvs[1]); vertex_colour(_vbuff,   c_white, 1);
-                vertex_position(_vbuff,   _rb[0], _rb[1]); vertex_texcoord(_vbuff,   _uvs[2], _uvs[3]); vertex_colour(_vbuff,   c_white, 1);
-                vertex_position(_vbuff,   _lb[0], _lb[1]); vertex_texcoord(_vbuff,   _uvs[0], _uvs[3]); vertex_colour(_vbuff,   c_white, 1);
+                vertex_position(_vbuff,   _lt[0], _lt[1]); vertex_colour(_vbuff,   c_white, 1); vertex_texcoord(_vbuff,   _uvs[0], _uvs[1]);
+                vertex_position(_vbuff,   _rt[0], _rt[1]); vertex_colour(_vbuff,   c_white, 1); vertex_texcoord(_vbuff,   _uvs[2], _uvs[1]);
+                vertex_position(_vbuff,   _lb[0], _lb[1]); vertex_colour(_vbuff,   c_white, 1); vertex_texcoord(_vbuff,   _uvs[0], _uvs[3]);
+                                                          
+                vertex_position(_vbuff,   _rt[0], _rt[1]); vertex_colour(_vbuff,   c_white, 1); vertex_texcoord(_vbuff,   _uvs[2], _uvs[1]);
+                vertex_position(_vbuff,   _rb[0], _rb[1]); vertex_colour(_vbuff,   c_white, 1); vertex_texcoord(_vbuff,   _uvs[2], _uvs[3]);
+                vertex_position(_vbuff,   _lb[0], _lb[1]); vertex_colour(_vbuff,   c_white, 1); vertex_texcoord(_vbuff,   _uvs[0], _uvs[3]);
             }
         
             vertex_end(_vbuff);
