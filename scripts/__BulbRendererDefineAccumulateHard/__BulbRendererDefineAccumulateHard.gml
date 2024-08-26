@@ -157,9 +157,16 @@ function __BulbRendererDefineAccumulateHard()
                         vertex_submit(_staticVBuffer,  pr_trianglelist, -1);
                         vertex_submit(_dynamicVBuffer, pr_trianglelist, -1);
                         
-                        //Reset shader and draw the light itself, but "behind" the shadows
-                        shader_set(__shdBulbLightWithoutNormalMap);
-                        shader_set_uniform_f(_shdBulbLightWithoutNormalMap_u_fIntensity, intensity);
+                        if (_rendererNormalMap && normalMap)
+                        {
+                            shader_set(__shdBulbSunlightWithNormalMap);
+                            shader_set_uniform_f(_shdBulbSunlightWithNormalMap_u_vSunInfo, dcos(angle), -dsin(angle), normalMapZ, intensity);
+                        }
+                        else
+                        {
+                            shader_set(__shdBulbLightWithoutNormalMap);
+                            shader_set_uniform_f(_shdBulbLightWithoutNormalMap_u_fIntensity, intensity);
+                        }
                                 
                         gpu_set_stencil_func(cmpfunc_greater);
                         draw_sprite_ext(__sprBulbPixel, 0, _cameraL, _cameraT, _cameraW+1, _cameraH+1, 0, blend, 1);
