@@ -19,7 +19,7 @@ function BulbRenderer() constructor
     
     //Assign the ambient colour used for the darkest areas of the screen. This can be changed on the fly
     ambientColor = c_black;
-    hdrAmbientInGammaSpace = false;
+    ambientInGammaSpace = false;
     
     //The smoothing mode controls texture filtering both when accumulating lights and when drawing the resulting surface
     smooth = true;
@@ -374,10 +374,31 @@ function BulbRenderer() constructor
     
     __GetAmbientColor = function()
     {
-        if ((hdrTonemap == BULB_TONEMAP_BAD_GAMMA) || (not hdrAmbientInGammaSpace)) return ambientColor;
-        
-        return make_color_rgb(255*power(color_get_red(  ambientColor)/255, BULB_GAMMA),
-                              255*power(color_get_green(ambientColor)/255, BULB_GAMMA),
-                              255*power(color_get_blue( ambientColor)/255, BULB_GAMMA));
+        if (hdrTonemap == BULB_TONEMAP_BAD_GAMMA)
+        {
+            if (ambientInGammaSpace)
+            {
+                return ambientColor;
+            }
+            else
+            {
+                return make_color_rgb(255*power(color_get_red(  ambientColor)/255, 1/BULB_GAMMA),
+                                      255*power(color_get_green(ambientColor)/255, 1/BULB_GAMMA),
+                                      255*power(color_get_blue( ambientColor)/255, 1/BULB_GAMMA));
+            }
+        }
+        else
+        {
+            if (ambientInGammaSpace)
+            {
+                return make_color_rgb(255*power(color_get_red(  ambientColor)/255, BULB_GAMMA),
+                                      255*power(color_get_green(ambientColor)/255, BULB_GAMMA),
+                                      255*power(color_get_blue( ambientColor)/255, BULB_GAMMA));
+            }
+            else
+            {
+                return ambientColor;
+            }
+        }
     }
 }
