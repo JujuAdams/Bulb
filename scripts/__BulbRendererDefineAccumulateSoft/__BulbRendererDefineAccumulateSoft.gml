@@ -4,17 +4,23 @@ function __BulbRendererDefineAccumulateSoft()
 {
     __AccumulateSoftLights = function(_cameraL, _cameraT, _cameraR, _cameraB, _cameraCX, _cameraCY, _cameraW, _cameraH, _normalCoeff)
     {
-        static _u_vLight                = shader_get_uniform(__shdBulbSoftShadows,           "u_vLight"      );
-        static _sunlight_u_vLightVector = shader_get_uniform(__shdBulbSoftShadowsSunlight,   "u_vLightVector");
-        static _u_vInfo                 = shader_get_uniform(__shdBulbLightWithNormalMap,    "u_vInfo"       );
-        static _u_vSunInfo              = shader_get_uniform(__shdBulbSunlightWithNormalMap, "u_vInfo"       );
+        static _u_vLight                                      = shader_get_uniform(__shdBulbSoftShadows,              "u_vLight"      );
+        static _sunlight_u_vLightVector                       = shader_get_uniform(__shdBulbSoftShadowsSunlight,      "u_vLightVector");
+        static _shdBulbLightWithNormalMap_u_vInfo             = shader_get_uniform(__shdBulbLightWithNormalMap,       "u_vInfo"       );
+        static _shdBulbLightWithoutNormalMap_u_fIntensity     = shader_get_uniform(__shdBulbLightWithoutNormalMap,    "u_fIntensity"  );
+        static _shdBulbSunlightWithNormalMap_u_vSunInfo       = shader_get_uniform(__shdBulbSunlightWithNormalMap,    "u_vInfo"       );
+        static _sshdBulbSunlightWithoutNormalMap_u_fIntensity = shader_get_uniform(__shdBulbSunlightWithoutNormalMap, "u_fIntensity"  );
         
         var _staticVBuffer  = __staticVBuffer;
         var _dynamicVBuffer = __dynamicVBuffer;
         
-        shader_set(__shdBulbLightWithNormalMap);
-        texture_set_stage(shader_get_sampler_index(__shdBulbLightWithNormalMap, "u_sNormalMap"), surface_get_texture(GetNormalSurface()));
-        shader_set_uniform_f(shader_get_uniform(__shdBulbLightWithNormalMap, "u_vCamera"), _cameraCX, _cameraCY, _cameraW/2, _cameraH/2);
+        var _rendererNormalMap = normalMap;
+        if (_rendererNormalMap)
+        {
+            shader_set(__shdBulbLightWithNormalMap);
+            texture_set_stage(shader_get_sampler_index(__shdBulbLightWithNormalMap, "u_sNormalMap"), surface_get_texture(GetNormalSurface()));
+            shader_set_uniform_f(shader_get_uniform(__shdBulbLightWithNormalMap, "u_vCamera"), _cameraCX, _cameraCY, _cameraW/2, _cameraH/2);
+        }
         
         var _i = 0;
         repeat(array_length(__lightsArray))
@@ -60,8 +66,17 @@ function __BulbRendererDefineAccumulateSoft()
                                 gpu_set_blendmode_ext(bm_dest_alpha, bm_one);
                                 
                                 //Draw light sprite
-                                shader_set(__shdBulbLightWithNormalMap);
-                                shader_set_uniform_f(_u_vInfo, x, y, normalMapZ, intensity);
+                                if (_rendererNormalMap && normalMap)
+                                {
+                                    shader_set(__shdBulbLightWithNormalMap);
+                                    shader_set_uniform_f(_shdBulbLightWithNormalMap_u_vInfo, x, y, normalMapZ, intensity);
+                                }
+                                else
+                                {
+                                    shader_set(__shdBulbLightWithoutNormalMap);
+                                    shader_set_uniform_f(_shdBulbLightWithoutNormalMap_u_fIntensity, intensity);
+                                }
+                                
                                 draw_sprite_ext(sprite, image,
                                                 x, y,
                                                 xscale, yscale, angle,
@@ -71,7 +86,18 @@ function __BulbRendererDefineAccumulateSoft()
                             {
                                 //No shadows - draw the light sprite normally
                                 gpu_set_blendmode(bm_add);
-                                shader_set_uniform_f(_u_vInfo, x, y, normalMapZ, intensity);
+                                
+                                if (_rendererNormalMap && normalMap)
+                                {
+                                    shader_set(__shdBulbLightWithNormalMap);
+                                    shader_set_uniform_f(_shdBulbLightWithNormalMap_u_vInfo, x, y, normalMapZ, intensity);
+                                }
+                                else
+                                {
+                                    shader_set(__shdBulbLightWithoutNormalMap);
+                                    shader_set_uniform_f(_shdBulbLightWithoutNormalMap_u_fIntensity, intensity);
+                                }
+                                
                                 draw_sprite_ext(sprite, image,
                                                 x, y,
                                                 xscale, yscale, angle,
@@ -119,8 +145,17 @@ function __BulbRendererDefineAccumulateSoft()
                         gpu_set_blendmode_ext(bm_dest_alpha, bm_one);
                         
                         //Draw light sprite
-                        shader_set(__shdBulbSunlightWithNormalMap);
-                        shader_set_uniform_f(_u_vSunInfo, dcos(angle), -dsin(angle), normalMapZ, intensity);
+                        if (_rendererNormalMap && normalMap)
+                        {
+                            shader_set(__shdBulbSunlightWithNormalMap);
+                            shader_set_uniform_f(_shdBulbSunlightWithNormalMap_u_vSunInfo, dcos(angle), -dsin(angle), normalMapZ, intensity);
+                        }
+                        else
+                        {
+                            shader_set(__shdBulbSunlightWithoutNormalMap);
+                            shader_set_uniform_f(_sshdBulbSunlightWithoutNormalMap_u_fIntensity, intensity);
+                        }
+                        
                         draw_sprite_ext(__sprBulbPixel, 0, _cameraL, _cameraT, _cameraW+1, _cameraH+1, 0, blend, 1);
                     }
                 }

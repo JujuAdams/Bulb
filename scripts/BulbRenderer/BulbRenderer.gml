@@ -111,7 +111,7 @@ function BulbRenderer() constructor
             __FreeBloomSurfaces();
         }
         
-        if ((not normalMapped) && __oldNormalMapped)
+        if ((not normalMap) && __oldNormalMap)
         {
             __FreeNormalSurface();
         }

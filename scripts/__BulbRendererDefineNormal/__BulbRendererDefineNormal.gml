@@ -2,8 +2,8 @@
 
 function __BulbRendererDefineNormal()
 {
-    normalMapped = false;
-    __oldNormalMapped = undefined;
+    normalMap = BULB_DEFAULT_USE_NORMAL_MAP;
+    __oldNormalMap = undefined;
     
     normalMapAlphaThreshold = BULB_DEFAULT_NORMAL_MAP_ALPHA_THRESHOLD;
     
@@ -13,9 +13,9 @@ function __BulbRendererDefineNormal()
     
     NormalSurfaceClear = function()
     {
-        if (not normalMapped)
+        if (not normalMap)
         {
-            __BulbError("Cannot call .NormalSurfaceClear(), `normalMapped` is not set to `true`");
+            __BulbError("Cannot call .NormalSurfaceClear(), `normalMap` is not set to `true`");
         }
         
         surface_set_target(GetNormalSurface());
@@ -25,9 +25,9 @@ function __BulbRendererDefineNormal()
     
     NormalSurfaceStartDraw = function()
     {
-        if (not normalMapped)
+        if (not normalMap)
         {
-            __BulbError("Cannot call .NormalSurfaceStartDraw(), `normalMapped` is not set to `true`");
+            __BulbError("Cannot call .NormalSurfaceStartDraw(), `normalMap` is not set to `true`");
         }
         
         static _u_fAlphaThreshold = shader_get_uniform(__shdBulbNormal, "u_fAlphaThreshold");
@@ -39,9 +39,9 @@ function __BulbRendererDefineNormal()
     
     NormalSurfaceEndDraw = function()
     {
-        if (not normalMapped)
+        if (not normalMap)
         {
-            __BulbError("Cannot call .NormalSurfaceEndDraw(), `normalMapped` is not set to `true`");
+            __BulbError("Cannot call .NormalSurfaceEndDraw(), `normalMap` is not set to `true`");
         }
         
         surface_reset_target();
@@ -50,9 +50,9 @@ function __BulbRendererDefineNormal()
     
     GetNormalSurface = function()
     {
-        if (not normalMapped)
+        if (not normalMap)
         {
-            __BulbError("Cannot call .GetNormalSurface(), `normalMapped` is not set to `true`");
+            __BulbError("Cannot call .GetNormalSurface(), `normalMap` is not set to `true`");
         }
         
         if ((surfaceWidth <= 0) || (surfaceHeight <= 0)) return undefined;

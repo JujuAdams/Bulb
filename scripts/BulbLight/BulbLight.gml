@@ -10,6 +10,8 @@ function BulbLight(_renderer, _sprite, _image, _x, _y) constructor
     
     x = _x;
     y = _y;
+    
+    normalMap  = BULB_DEFAULT_USE_NORMAL_MAP;
     normalMapZ = BULB_DEFAULT_NORMAL_MAP_Z;
     
     sprite    = _sprite;
