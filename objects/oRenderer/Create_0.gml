@@ -14,6 +14,11 @@ lighting.selfLighting = true;
 lighting.soft = true;
 lighting.smooth = true;
 
+//Turn on normal maps
+//This would typically be done using the `BULB_DEFAULT_USE_NORMAL_MAP`
+lighting.normalMap = true;
+
+//Set up HDR
 lighting.hdr = true;
 lighting.hdrAmbientInGammaSpace = true;
 lighting.hdrBloomIntensity = 0.05;
@@ -38,3 +43,7 @@ sunlight = new BulbSunlight(lighting, 45);
 sunlight.blend = c_red;
 sunlight.intensity = 1;
 sunlight.penumbraSize = 5;
+
+//Turn on normal maps for this light
+//This would typically be done using the `BULB_DEFAULT_USE_NORMAL_MAP`
+sunlight.normalMap = true;

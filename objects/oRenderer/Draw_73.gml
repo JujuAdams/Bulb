@@ -11,7 +11,7 @@ if (lighting.normalMap)
     
     draw_sprite_tiled(sFloorNormal, 0, 0, 0);
     
-    with(oNormal)
+    with(oPyramid)
     {
         BulbNormalMapDrawSelf(sPyramidNormal);
     }

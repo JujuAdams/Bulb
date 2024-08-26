@@ -7,3 +7,7 @@ direction = random(360);
 light = new BulbLight(oRendererPar.lighting, sLight512, 0, x, y);
 light.penumbraSize = 30;
 light.blend = make_colour_hsv(blendCycle, 230, 230);
+
+//Turn on normal maps for this light
+//This would typically be done using the `BULB_DEFAULT_USE_NORMAL_MAP`
+light.normalMap = true;
