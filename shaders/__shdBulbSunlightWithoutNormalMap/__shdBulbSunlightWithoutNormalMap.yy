@@ -1,7 +1,7 @@
 {
   "$GMShader":"",
-  "%Name":"__shdBulbSunlightWithNormalMap",
-  "name":"__shdBulbSunlightWithNormalMap",
+  "%Name":"__shdBulbSunlightWithoutNormalMap",
+  "name":"__shdBulbSunlightWithoutNormalMap",
   "parent":{
     "name":"Light",
     "path":"folders/Bulb/(System)/(Pay no attention to that man behind the curtain)/Shaders/Light.yy",

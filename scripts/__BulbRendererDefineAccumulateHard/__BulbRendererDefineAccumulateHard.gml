@@ -10,6 +10,12 @@ function __BulbRendererDefineAccumulateHard()
         static _sunlight_u_fNormalCoeff = shader_get_uniform(__shdBulbHardShadowsSunlight,   "u_fNormalCoeff");
         static _u_fIntensity            = shader_get_uniform(__shdBulbLightWithoutNormalMap, "u_fIntensity"  );
         
+        var _oldStencilRef       = gpu_get_stencil_ref();
+        var _oldStencilFunc      = gpu_get_stencil_func();
+        var _oldStencilPass      = gpu_get_stencil_pass();
+        var _oldStencilFail      = gpu_get_stencil_fail();
+        var _oldStencilDepthFail = gpu_get_stencil_depth_fail();
+        
         var _staticVBuffer  = __staticVBuffer;
         var _dynamicVBuffer = __dynamicVBuffer;
         
@@ -150,6 +156,12 @@ function __BulbRendererDefineAccumulateHard()
         shader_reset();
         gpu_set_colorwriteenable(true, true, true, true);
         gpu_set_blendmode(bm_normal);
+        
         gpu_set_stencil_enable(false);
+        gpu_set_stencil_ref(_oldStencilRef);
+        gpu_set_stencil_func(_oldStencilFunc);
+        gpu_set_stencil_pass(_oldStencilPass);
+        gpu_set_stencil_fail(_oldStencilFail);
+        gpu_set_stencil_depth_fail(_oldStencilDepthFail);
     }
 }

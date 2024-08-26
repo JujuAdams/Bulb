@@ -3,8 +3,8 @@
   "%Name":"__shdBulbHardShadowsSunlight",
   "name":"__shdBulbHardShadowsSunlight",
   "parent":{
-    "name":"(Pay no attention to that man behind the curtain)",
-    "path":"folders/Bulb/(System)/(Pay no attention to that man behind the curtain).yy",
+    "name":"Shadow",
+    "path":"folders/Bulb/(System)/(Pay no attention to that man behind the curtain)/Shaders/Shadow.yy",
   },
   "resourceType":"GMShader",
   "resourceVersion":"2.0",

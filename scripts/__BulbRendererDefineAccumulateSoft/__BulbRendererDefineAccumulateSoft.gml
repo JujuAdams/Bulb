@@ -61,7 +61,7 @@ function __BulbRendererDefineAccumulateSoft()
                                 
                                 //Draw light sprite
                                 shader_set(__shdBulbLightWithNormalMap);
-                                shader_set_uniform_f(_u_vInfo, x, y, BULB_DEFAULT_LIGHT_Z, intensity);
+                                shader_set_uniform_f(_u_vInfo, x, y, normalMapZ, intensity);
                                 draw_sprite_ext(sprite, image,
                                                 x, y,
                                                 xscale, yscale, angle,
@@ -71,7 +71,7 @@ function __BulbRendererDefineAccumulateSoft()
                             {
                                 //No shadows - draw the light sprite normally
                                 gpu_set_blendmode(bm_add);
-                                shader_set_uniform_f(_u_vInfo, x, y, BULB_DEFAULT_LIGHT_Z, intensity);
+                                shader_set_uniform_f(_u_vInfo, x, y, normalMapZ, intensity);
                                 draw_sprite_ext(sprite, image,
                                                 x, y,
                                                 xscale, yscale, angle,
@@ -120,7 +120,7 @@ function __BulbRendererDefineAccumulateSoft()
                         
                         //Draw light sprite
                         shader_set(__shdBulbSunlightWithNormalMap);
-                        shader_set_uniform_f(_u_vSunInfo, dcos(angle), -dsin(angle), BULB_DEFAULT_LIGHT_Z, intensity);
+                        shader_set_uniform_f(_u_vSunInfo, dcos(angle), -dsin(angle), normalMapZ, intensity);
                         draw_sprite_ext(__sprBulbPixel, 0, _cameraL, _cameraT, _cameraW+1, _cameraH+1, 0, blend, 1);
                     }
                 }

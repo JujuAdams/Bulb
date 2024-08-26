@@ -3,8 +3,8 @@
   "%Name":"__shdBulbKawaseUp",
   "name":"__shdBulbKawaseUp",
   "parent":{
-    "name":"(Pay no attention to that man behind the curtain)",
-    "path":"folders/Bulb/(System)/(Pay no attention to that man behind the curtain).yy",
+    "name":"Kawase",
+    "path":"folders/Bulb/(System)/(Pay no attention to that man behind the curtain)/Shaders/Kawase.yy",
   },
   "resourceType":"GMShader",
   "resourceVersion":"2.0",

@@ -4,7 +4,7 @@
 function BulbSunlight(_renderer, _angle) constructor
 {
     visible = true;
-    z = BULB_DEFAULT_LIGHT_Z;
+    normalMapZ = BULB_DEFAULT_NORMAL_MAP_Z;
     
     angle     = _angle;
     blend     = c_white;
