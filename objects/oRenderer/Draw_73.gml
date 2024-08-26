@@ -13,7 +13,7 @@ if (lighting.normalMap)
     
     with(oNormal)
     {
-        BulbSpriteNormalDrawSelf(sPyramidNormal);
+        BulbNormalMapDrawSelf(sPyramidNormal);
     }
     
     BulbNormalMapShaderSet(true);
@@ -22,7 +22,7 @@ if (lighting.normalMap)
     
     with(oDynamicOccluder)
     {
-        BulbSpriteNormalDrawSelf();
+        BulbNormalMapDrawSelf();
     }
     
     surface_reset_target()

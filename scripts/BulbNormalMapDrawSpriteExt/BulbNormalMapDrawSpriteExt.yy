@@ -1,9 +1,9 @@
 {
   "$GMScript":"v1",
-  "%Name":"BulbSpriteNormalDrawSelf",
+  "%Name":"BulbNormalMapDrawSpriteExt",
   "isCompatibility":false,
   "isDnD":false,
-  "name":"BulbSpriteNormalDrawSelf",
+  "name":"BulbNormalMapDrawSpriteExt",
   "parent":{
     "name":"Normal Map",
     "path":"folders/Bulb/Normal Map.yy",

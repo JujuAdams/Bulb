@@ -8,7 +8,7 @@
 /// @param yScale
 /// @param angle
 
-function BulbSpriteNormalDrawExt(_sprite, _image, _x, _y, _xScale, _yScale, _angle)
+function BulbNormalMapDrawSpriteExt(_sprite, _image, _x, _y, _xScale, _yScale, _angle)
 {
     var _color = ((frac(_angle/360)*256*256*64) << 2)
                | (((1000000*_xScale) >> 63) & 0x1)
