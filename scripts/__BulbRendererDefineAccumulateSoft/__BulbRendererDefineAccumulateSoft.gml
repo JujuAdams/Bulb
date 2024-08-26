@@ -4,8 +4,8 @@ function __BulbRendererDefineAccumulateSoft()
 {
     __AccumulateSoftLights = function(_cameraL, _cameraT, _cameraR, _cameraB, _cameraCX, _cameraCY, _cameraW, _cameraH, _normalCoeff)
     {
-        static _u_vLight                                      = shader_get_uniform(__shdBulbSoftShadows,              "u_vLight"      );
-        static _sunlight_u_vLightVector                       = shader_get_uniform(__shdBulbSoftShadowsSunlight,      "u_vLightVector");
+        static _shdBulbSoftShadows_u_vLight                   = shader_get_uniform(__shdBulbSoftShadows,              "u_vLight"      );
+        static _shdBulbSoftShadowsSunlight_u_vLightVector     = shader_get_uniform(__shdBulbSoftShadowsSunlight,      "u_vLightVector");
         static _shdBulbLightWithNormalMap_u_vInfo             = shader_get_uniform(__shdBulbLightWithNormalMap,       "u_vInfo"       );
         static _shdBulbLightWithoutNormalMap_u_fIntensity     = shader_get_uniform(__shdBulbLightWithoutNormalMap,    "u_fIntensity"  );
         static _shdBulbSunlightWithNormalMap_u_vSunInfo       = shader_get_uniform(__shdBulbSunlightWithNormalMap,    "u_vInfo"       );
@@ -57,7 +57,7 @@ function __BulbRendererDefineAccumulateSoft()
                                 gpu_set_blendmode(bm_subtract);
                                 
                                 shader_set(__shdBulbSoftShadows);
-                                shader_set_uniform_f(_u_vLight, x, y, penumbraSize);
+                                shader_set_uniform_f(_shdBulbSoftShadows_u_vLight, x, y, penumbraSize);
                                 vertex_submit(_staticVBuffer,  pr_trianglelist, -1);
                                 vertex_submit(_dynamicVBuffer, pr_trianglelist, -1);
                                 
@@ -136,7 +136,7 @@ function __BulbRendererDefineAccumulateSoft()
                         gpu_set_blendmode(bm_subtract);
                         
                         shader_set(__shdBulbSoftShadowsSunlight);
-                        shader_set_uniform_f(_sunlight_u_vLightVector, dcos(angle), -dsin(angle), penumbraSize);
+                        shader_set_uniform_f(_shdBulbSoftShadowsSunlight_u_vLightVector, dcos(angle), -dsin(angle), penumbraSize);
                         vertex_submit(_staticVBuffer,  pr_trianglelist, -1);
                         vertex_submit(_dynamicVBuffer, pr_trianglelist, -1);
                         
