@@ -13,7 +13,6 @@ lighting.ambientColor = make_colour_rgb(50, 50, 80);
 lighting.selfLighting = true;
 lighting.soft = true;
 lighting.smooth = true;
-lighting.normalMap = true;
 
 staticBlocks = new VertexCake();
 staticBlocks.Bake(oStaticOccluder, sStaticBlock, 0, true);

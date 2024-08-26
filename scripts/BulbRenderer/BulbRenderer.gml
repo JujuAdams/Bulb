@@ -113,7 +113,7 @@ function BulbRenderer() constructor
         
         if ((not normalMap) && __oldNormalMap)
         {
-            __FreeNormalSurface();
+            __FreeNormalMapSurface();
         }
         
         var _cameraR  = _cameraL + _cameraW;
@@ -329,7 +329,7 @@ function BulbRenderer() constructor
         __FreeLightSurface();
         __FreeHDRSurface();
         __FreeBloomSurfaces();
-        __FreeNormalSurface();
+        __FreeNormalMapSurface();
         
         var _nullFunc = function() {}
         
@@ -339,12 +339,9 @@ function BulbRenderer() constructor
         __FreeBloomSurfaces = _nullFunc;
         
         //__BulbRendererDefineNormal()
-        NormalSurfaceClear     = _nullFunc;
-        NormalSurfaceStartDraw = _nullFunc;
-        NormalSurfaceEndDraw   = _nullFunc;
-        GetNormalSurface       = _nullFunc;
-        DrawNormalSurfaceDebug = _nullFunc;
-        __FreeNormalSurface    = _nullFunc;
+        GetNormalMapSurface    = _nullFunc;
+        DrawNormalMapDebug     = _nullFunc;
+        __FreeNormalMapSurface = _nullFunc;
         
         //__BulbRendererDefineOverlayUnderlay()
         __AccumulateAmbienceSprite = _nullFunc;

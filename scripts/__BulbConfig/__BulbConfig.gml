@@ -7,7 +7,7 @@
 //macro to <true> will solve near-light problems but does incur a slight performance penalty.
 #macro BULB_COMPENSATE_FOR_NEAR_OCCLUDERS  false
 
-#macro BULB_DEFAULT_NORMAL_MAP_ALPHA_THRESHOLD  0.5
+#macro BULB_NORMAL_MAP_ALPHA_THRESHOLD  0.5
 
 #macro BULB_DEFAULT_NORMAL_MAP_Z  0.2
 

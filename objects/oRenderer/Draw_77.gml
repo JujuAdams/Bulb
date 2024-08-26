@@ -4,5 +4,5 @@ drawEndTime = get_timer() - _t;
 
 if (keyboard_check(ord("N")))
 {
-    lighting.DrawNormalSurfaceDebug(0, 0, 1280, 720);
+    lighting.DrawNormalMapDebug(0, 0, 1280, 720);
 }

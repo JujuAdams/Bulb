@@ -1,9 +1,9 @@
 {
   "$GMScript":"v1",
-  "%Name":"BulbSpriteNormalDrawSelf",
+  "%Name":"BulbNormalMapShaderReset",
   "isCompatibility":false,
   "isDnD":false,
-  "name":"BulbSpriteNormalDrawSelf",
+  "name":"BulbNormalMapShaderReset",
   "parent":{
     "name":"Normal Map",
     "path":"folders/Bulb/Normal Map.yy",

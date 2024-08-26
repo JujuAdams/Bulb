@@ -5,8 +5,8 @@
   "isDnD":false,
   "name":"BulbSpriteNormalDrawExt",
   "parent":{
-    "name":"Bulb",
-    "path":"folders/Bulb.yy",
+    "name":"Normal Map",
+    "path":"folders/Bulb/Normal Map.yy",
   },
   "resourceType":"GMScript",
   "resourceVersion":"2.0",

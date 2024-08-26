@@ -3,8 +3,10 @@ lighting.UpdateFromCamera(camera);
 
 if (lighting.normalMap)
 {
-    lighting.NormalSurfaceClear();
-    lighting.NormalSurfaceStartDraw();
+    surface_set_target(lighting.GetNormalMapSurface());
+    BulbNormalMapShaderSet();
+    BulbNormalMapClear();
+    
     camera_apply(view_get_camera(0));
     
     draw_sprite_tiled(sFloorNormal, 0, 0, 0);
@@ -14,5 +16,6 @@ if (lighting.normalMap)
         BulbSpriteNormalDrawExt(sPyramidNormal, image_index, x, y, image_xscale, image_yscale, image_angle);
     }
     
-    lighting.NormalSurfaceEndDraw();
+    surface_reset_target()
+    BulbNormalMapShaderReset();
 }

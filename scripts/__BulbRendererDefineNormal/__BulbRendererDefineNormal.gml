@@ -5,54 +5,15 @@ function __BulbRendererDefineNormal()
     normalMap = BULB_DEFAULT_USE_NORMAL_MAP;
     __oldNormalMap = undefined;
     
-    normalMapAlphaThreshold = BULB_DEFAULT_NORMAL_MAP_ALPHA_THRESHOLD;
-    
     __normalSurface = undefined;
     
     
     
-    NormalSurfaceClear = function()
+    GetNormalMapSurface = function()
     {
         if (not normalMap)
         {
-            __BulbError("Cannot call .NormalSurfaceClear(), `normalMap` is not set to `true`");
-        }
-        
-        surface_set_target(GetNormalSurface());
-        draw_clear(#0000FF);
-        surface_reset_target();
-    }
-    
-    NormalSurfaceStartDraw = function()
-    {
-        if (not normalMap)
-        {
-            __BulbError("Cannot call .NormalSurfaceStartDraw(), `normalMap` is not set to `true`");
-        }
-        
-        static _u_fAlphaThreshold = shader_get_uniform(__shdBulbNormal, "u_fAlphaThreshold");
-        
-        surface_set_target(GetNormalSurface());
-        shader_set(__shdBulbNormal);
-        shader_set_uniform_f(_u_fAlphaThreshold, normalMapAlphaThreshold);
-    }
-    
-    NormalSurfaceEndDraw = function()
-    {
-        if (not normalMap)
-        {
-            __BulbError("Cannot call .NormalSurfaceEndDraw(), `normalMap` is not set to `true`");
-        }
-        
-        surface_reset_target();
-        shader_reset();
-    }
-    
-    GetNormalSurface = function()
-    {
-        if (not normalMap)
-        {
-            __BulbError("Cannot call .GetNormalSurface(), `normalMap` is not set to `true`");
+            __BulbError("Cannot call .GetNormalMapSurface(), `normalMap` is not set to `true`");
         }
         
         if ((surfaceWidth <= 0) || (surfaceHeight <= 0)) return undefined;
@@ -68,21 +29,21 @@ function __BulbRendererDefineNormal()
             __normalSurface = surface_create(surfaceWidth, surfaceHeight, surface_rgba16float);
             
             surface_set_target(__normalSurface);
-            draw_clear(#0000FF);
+            BulbNormalMapClear();
             surface_reset_target();
         }
         
         return __normalSurface;
     }
     
-    DrawNormalSurfaceDebug = function(_x, _y, _width, _height)
+    DrawNormalMapDebug = function(_x, _y, _width, _height)
     {
         shader_set(__shdBulbNormalSurfaceDebug);
-        draw_surface_stretched(GetNormalSurface(), _x, _y, _width, _height);
+        draw_surface_stretched(GetNormalMapSurface(), _x, _y, _width, _height);
         shader_reset();
     }
     
-    __FreeNormalSurface = function()
+    __FreeNormalMapSurface = function()
     {
         if ((__normalSurface != undefined) && surface_exists(__normalSurface))
         {
