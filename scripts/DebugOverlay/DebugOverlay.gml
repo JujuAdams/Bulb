@@ -3,7 +3,8 @@ function DebugOverlay()
     var _tonemapName = "???";
     switch(renderer.hdrTonemap)
     {
-        case BULB_TONEMAP_NONE:              _tonemapName = "No Tonemapping"         break;
+        case BULB_TONEMAP_BAD_GAMMA:         _tonemapName = "Bad Gamma!"             break;
+        case BULB_TONEMAP_CLAMP:             _tonemapName = "Clamp"                  break;
         case BULB_TONEMAP_REINHARD:          _tonemapName = "Reinhard";              break;
         case BULB_TONEMAP_REINHARD_EXTENDED: _tonemapName = "Reinhard Extended";     break;
         case BULB_TONEMAP_UNCHARTED2:        _tonemapName = "Uncharted 2";           break;
@@ -29,8 +30,8 @@ function DebugOverlay()
         
         _str += "\nsoft = " + (renderer.soft? "true" : "false");
         _str += "\nself-renderer = " + (renderer.selfLighting? "true" : "false");
+        _str += "\ntonemap = " + _tonemapName;
         _str += "\nHDR = " + (renderer.hdr? "true" : "false");
-        _str += "\nHDR tonemap = " + _tonemapName;
         
         draw_text(5, 25, _str);
         
@@ -40,6 +41,7 @@ function DebugOverlay()
         _str += "\n3: Toggle self-renderer";
         _str += "\n4: Toggle HDR";
         _str += "\n5: Change HDR tonemapping";
+        _str += "\n6: Toggle normal map";
         _str += "\nL: Create new disco light";
         _str += "\nArrows/WASD: Move";
         _str += "\nLeft click: Fire plasma";
@@ -48,7 +50,10 @@ function DebugOverlay()
     }
     else
     {
-        var _mode = (renderer.soft? "soft shadows" : "hard shadows") + (renderer.selfLighting? ", self-renderer" : "") + (renderer.hdr? (", HDR (" + _tonemapName + ")") : "");
+        var _mode = (renderer.soft? "soft" : "hard")
+                  + (renderer.selfLighting? ", self-lighting" : "")
+                  + ", tonemap=" + _tonemapName
+                  + (renderer.hdr? ", HDR" : "");
         
         draw_set_halign(fa_center);
         draw_text(display_get_gui_width()*0.5, 5, "FPS = " + string_format(fps, 2, 0) + " / " + _mode);

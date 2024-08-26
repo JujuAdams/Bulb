@@ -92,9 +92,9 @@ function __BulbRendererDefineLight()
                 _result[2] = (_b*(2.51*_b + 0.03)) / (_b*(2.43*_b + 0.59) + 0.14);
             }
             
-            _result[0] = 255*clamp(power(_result[0], 1/2.2), 0, 1);
-            _result[1] = 255*clamp(power(_result[1], 1/2.2), 0, 1);
-            _result[2] = 255*clamp(power(_result[2], 1/2.2), 0, 1);
+            _result[0] = 255*clamp(power(_result[0], 1/BULB_GAMMA), 0, 1);
+            _result[1] = 255*clamp(power(_result[1], 1/BULB_GAMMA), 0, 1);
+            _result[2] = 255*clamp(power(_result[2], 1/BULB_GAMMA), 0, 1);
             _result[3] = 255*clamp(, 0, 1);
             
             var _colour = (_result[3] << 24) | (_result[2] << 16) | (_result[1] << 8) | _result[0];

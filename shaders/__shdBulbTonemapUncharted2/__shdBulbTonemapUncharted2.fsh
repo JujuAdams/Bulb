@@ -3,6 +3,8 @@ varying vec4 v_vColour;
 
 uniform float u_fExposure;
 
+const float gamma = 2.2;
+
 vec3 Uncharted2(vec3 color)
 {
     float A = 0.15;
@@ -21,5 +23,5 @@ void main()
     
     gl_FragColor.rgb = Uncharted2(u_fExposure*2.0*gl_FragColor.rgb);
     
-    gl_FragColor.rgb = pow(gl_FragColor.rgb, vec3(1.0/2.2));
+    gl_FragColor.rgb = pow(gl_FragColor.rgb, vec3(1.0/gamma));
 }

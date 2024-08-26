@@ -160,6 +160,40 @@ function BulbRenderer() constructor
         var _oldTextureFiltering = gpu_get_tex_filter();
         var _oldAlphaBlend       = gpu_get_blendenable();
         
+        var _hdrTonemap = hdrTonemap;
+        if (_hdrTonemap == BULB_TONEMAP_CLAMP)
+        {
+            var _shader = __shdBulbTonemapClamp;
+        }
+        else if (_hdrTonemap == BULB_TONEMAP_REINHARD)
+        {
+            var _shader = __shdBulbTonemapReinhard;
+        }
+        else if (_hdrTonemap == BULB_TONEMAP_REINHARD_EXTENDED)
+        {
+            var _shader = __shdBulbTonemapReinhardExtended;
+        }
+        else if (_hdrTonemap == BULB_TONEMAP_ACES)
+        {
+            var _shader = __shdBulbTonemapACES;
+        }
+        else if (_hdrTonemap == BULB_TONEMAP_UNCHARTED2)
+        {
+            var _shader = __shdBulbTonemapUncharted2;
+        }
+        else if (_hdrTonemap == BULB_TONEMAP_UNREAL3)
+        {
+            var _shader = __shdBulbTonemapUnreal3;
+        }
+        else if (_hdrTonemap == BULB_TONEMAP_HBD)
+        {
+            var _shader = __shdBulbTonemapHBD;
+        }
+        else
+        {
+            var _shader = __shdBulbTonemapBadGamma;
+        }
+        
         if (hdr)
         {
             var _surfaceWidth  = surface_get_width( _surface);
@@ -261,35 +295,6 @@ function BulbRenderer() constructor
                 surface_reset_target();
             }
             
-            if (hdrTonemap == BULB_TONEMAP_REINHARD)
-            {
-                var _shader = __shdBulbTonemapReinhard;
-            }
-            else if (hdrTonemap == BULB_TONEMAP_REINHARD_EXTENDED)
-            {
-                var _shader = __shdBulbTonemapReinhardExtended;
-            }
-            else if (hdrTonemap == BULB_TONEMAP_ACES)
-            {
-                var _shader = __shdBulbTonemapACES;
-            }
-            else if (hdrTonemap == BULB_TONEMAP_UNCHARTED2)
-            {
-                var _shader = __shdBulbTonemapUncharted2;
-            }
-            else if (hdrTonemap == BULB_TONEMAP_UNREAL3)
-            {
-                var _shader = __shdBulbTonemapUnreal3;
-            }
-            else if (hdrTonemap == BULB_TONEMAP_HBD)
-            {
-                var _shader = __shdBulbTonemapHBD;
-            }
-            else
-            {
-                var _shader = __shdBulbLinearToGamma;
-            }
-            
             shader_set(_shader);
             shader_set_uniform_f(shader_get_uniform(_shader, "u_fExposure"), 1);
             if (_textureFiltering != undefined) gpu_set_tex_filter(_textureFiltering);
@@ -300,10 +305,7 @@ function BulbRenderer() constructor
         else
         {
             draw_surface_stretched(_surface, _x, _y, _width, _height);
-        }
-        
-        if (not hdr)
-        {
+            
             if ((__lightSurface != undefined) && surface_exists(__lightSurface))
             {
                 gpu_set_tex_filter(smooth);
@@ -312,7 +314,10 @@ function BulbRenderer() constructor
                 gpu_set_blendmode_ext(bm_dest_color, bm_zero);
                 gpu_set_colorwriteenable(true, true, true, false);
                 
+                shader_set(_shader);
+                shader_set_uniform_f(shader_get_uniform(_shader, "u_fExposure"), hdrExposure);
                 draw_surface_stretched(__lightSurface, _x, _y, _width, _height);
+                shader_reset();
                 
                 gpu_set_blendmode(bm_normal);
                 gpu_set_colorwriteenable(true, true, true, true);
@@ -369,10 +374,10 @@ function BulbRenderer() constructor
     
     __GetAmbientColor = function()
     {
-        if ((not hdr) || (not hdrAmbientInGammaSpace)) return ambientColor;
+        if ((hdrTonemap == BULB_TONEMAP_BAD_GAMMA) || (not hdrAmbientInGammaSpace)) return ambientColor;
         
-        return make_color_rgb(255*power(color_get_red(  ambientColor)/255, 2.2),
-                              255*power(color_get_green(ambientColor)/255, 2.2),
-                              255*power(color_get_blue( ambientColor)/255, 2.2));
+        return make_color_rgb(255*power(color_get_red(  ambientColor)/255, BULB_GAMMA),
+                              255*power(color_get_green(ambientColor)/255, BULB_GAMMA),
+                              255*power(color_get_blue( ambientColor)/255, BULB_GAMMA));
     }
 }
