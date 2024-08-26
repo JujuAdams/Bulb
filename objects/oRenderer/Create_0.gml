@@ -7,27 +7,27 @@ view_set_camera(0, camera);
 //We'll be drawing the application surface ourselves (see Post-Draw event)
 application_surface_draw_enable(false);
 
-//Start the lighting system
-lighting = new BulbRenderer();
-lighting.ambientColor = make_colour_rgb(50, 50, 80);
-lighting.selfLighting = true;
-lighting.soft = true;
-lighting.smooth = true;
+//Start the renderer system
+renderer = new BulbRenderer();
+renderer.SetSurfaceDimensionsFromCamera(camera);
+
+renderer.ambientColor = make_colour_rgb(50, 50, 80);
+renderer.selfLighting = true;
+renderer.soft = true;
+renderer.smooth = true;
 
 //Turn on normal maps
 //This would typically be done using the `BULB_DEFAULT_USE_NORMAL_MAP`
-lighting.normalMap = true;
+renderer.normalMap = true;
 
 //Set up HDR
-lighting.hdr = true;
-lighting.hdrAmbientInGammaSpace = true;
-lighting.hdrBloomIntensity = 0.05;
-lighting.hdrBloomIterations = 4;
-
-lighting.SetSurfaceDimensionsFromCamera(camera);
+renderer.hdr = true;
+renderer.hdrAmbientInGammaSpace = true;
+renderer.hdrBloomIntensity = 0.05;
+renderer.hdrBloomIterations = 4;
 
 //Set up a vertex buffer for drawing the diffuse base texture for the walls
-//This isn't strictly part of the lighting example
+//This isn't strictly part of the renderer example
 staticBlocks = new VertexCake();
 staticBlocks.Bake(oStaticOccluder, sStaticBlock, 0, true);
 
@@ -38,12 +38,3 @@ smoothedDrawEndTime = 300;
 smoothedFrameTime = 1;
 smoothedFPS = 1000;
 alarm_set(0, 30);
-
-sunlight = new BulbSunlight(lighting, 45);
-sunlight.blend = c_red;
-sunlight.intensity = 1;
-sunlight.penumbraSize = 5;
-
-//Turn on normal maps for this light
-//This would typically be done using the `BULB_DEFAULT_USE_NORMAL_MAP`
-sunlight.normalMap = true;

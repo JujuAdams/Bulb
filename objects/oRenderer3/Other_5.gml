@@ -3,4 +3,4 @@ camera_destroy(camera);
 
 staticBlocks.Free();
 
-lighting.Free();
+renderer.Free();

@@ -124,13 +124,13 @@ function BulbRenderer() constructor
         //Construct our wipe/static/dynamic vertex buffers
         __UpdateVertexBuffers(_cameraL, _cameraT, _cameraR, _cameraB, _cameraW, _cameraH);
         
-        //Create accumulating lighting surface
+        //Create accumulating renderer surface
         surface_set_target(GetLightSurface());
         
         gpu_set_cullmode(cull_noculling);
         
         //Really we should use the view matrix for this, but GameMaker's sprite culling is fucked
-        //If we use a proper view matrix then lighting sprites are culling, leading to no lighting being drawn
+        //If we use a proper view matrix then renderer sprites are culling, leading to no renderer being drawn
         _worldMatrix[@ 12] = -_cameraL;
         _worldMatrix[@ 13] = -_cameraT;
         matrix_set(matrix_world, _worldMatrix);

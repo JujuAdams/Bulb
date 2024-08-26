@@ -51,6 +51,7 @@
     {"id":{"name":"oShadowOverlay","path":"objects/oShadowOverlay/oShadowOverlay.yy",},},
     {"id":{"name":"oStaticOccluder","path":"objects/oStaticOccluder/oStaticOccluder.yy",},},
     {"id":{"name":"oStaticOccluder3","path":"objects/oStaticOccluder3/oStaticOccluder3.yy",},},
+    {"id":{"name":"oSunlight","path":"objects/oSunlight/oSunlight.yy",},},
     {"id":{"name":"rmInit","path":"rooms/rmInit/rmInit.yy",},},
     {"id":{"name":"rmTest","path":"rooms/rmTest/rmTest.yy",},},
     {"id":{"name":"rmTestSoft","path":"rooms/rmTestSoft/rmTestSoft.yy",},},

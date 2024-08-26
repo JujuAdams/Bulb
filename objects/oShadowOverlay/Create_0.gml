@@ -1,4 +1,4 @@
-shadow = new BulbShadowOverlay(oRendererPar.lighting);
+shadow = new BulbShadowOverlay(oRendererPar.renderer);
 shadow.sprite = sprite_index;
 shadow.x      = x;
 shadow.y      = y;

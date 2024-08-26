@@ -2,7 +2,7 @@
 // https://www.shadertoy.com/view/WdjSW3
 // https://knarkowicz.wordpress.com/2016/01/06/aces-filmic-tone-mapping-curve/
 // https://64.github.io/tonemapping/
-// http://slideshare.net/ozlael/hable-john-uncharted2-hdr-lighting
+// http://slideshare.net/ozlael/hable-john-uncharted2-hdr-renderer
 // http://filmicgames.com/archives/75
 // http://filmicgames.com/archives/183
 // http://filmicgames.com/archives/190

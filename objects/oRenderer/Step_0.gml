@@ -13,10 +13,10 @@ if (keyboard_check_pressed(ord("O"))) instance_create_depth(oPlayer.x, oPlayer.y
 if ((keyboard_check(ord("T"))) && (fps_real > 61) && (fps > 55)) instance_create_depth(oPlayer.x, oPlayer.y, 0, oLightDiscoooo);
 
 if (keyboard_check_pressed(ord("1"))) with(oLightDiscoooo) light.visible = !light.visible;
-if (keyboard_check_pressed(ord("2"))) lighting.soft = !lighting.soft;
-if (keyboard_check_pressed(ord("3"))) lighting.selfLighting = !lighting.selfLighting;
-if (keyboard_check_pressed(ord("4"))) lighting.hdr = !lighting.hdr;
-if (keyboard_check_pressed(ord("5"))) lighting.hdrTonemap = (lighting.hdrTonemap + 1) mod 7;
+if (keyboard_check_pressed(ord("2"))) renderer.soft = !renderer.soft;
+if (keyboard_check_pressed(ord("3"))) renderer.selfLighting = !renderer.selfLighting;
+if (keyboard_check_pressed(ord("4"))) renderer.hdr = !renderer.hdr;
+if (keyboard_check_pressed(ord("5"))) renderer.hdrTonemap = (renderer.hdrTonemap + 1) mod 7;
 
 //Update debug timers
 if (alarm_get(1) < 0)
@@ -29,5 +29,3 @@ if (alarm_get(1) < 0)
     
     smoothedDrawEndTime = lerp(smoothedDrawEndTime, drawEndTime, 0.005);
 }
-
-sunlight.angle += 0.1;

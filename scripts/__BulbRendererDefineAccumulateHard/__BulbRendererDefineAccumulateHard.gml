@@ -35,7 +35,7 @@ function __BulbRendererDefineAccumulateHard()
         gpu_set_blendmode(bm_add);
         
         //Set up the coefficient to flip normals
-        //We use this to control self-lighting
+        //We use this to control self-renderer
         shader_set(__shdBulbHardShadows);
         shader_set_uniform_f(_shdBulbHardShadows_u_fNormalCoeff, _normalCoeff);
         

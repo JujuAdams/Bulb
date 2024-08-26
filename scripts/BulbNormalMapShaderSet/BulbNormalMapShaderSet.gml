@@ -1,8 +1,8 @@
 // Feather disable all
 
-/// @param forceUpNormal
+/// @param [forceFlat=false]
 
-function BulbNormalMapShaderSet(_forceUpNormal)
+function BulbNormalMapShaderSet(_forceFlat = false)
 {
-    shader_set(_forceUpNormal? __shdBulbNormalUp : __shdBulbNormal);
+    shader_set(_forceFlat? __shdBulbNormalUp : __shdBulbNormal);
 }

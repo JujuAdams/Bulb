@@ -1,1 +1,1 @@
-lighting.UpdateFromCamera(camera);
+renderer.UpdateFromCamera(camera);

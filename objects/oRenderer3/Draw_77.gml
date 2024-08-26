@@ -1,1 +1,1 @@
-BulbDrawLitApplicationSurface(lighting);
+BulbDrawLitApplicationSurface(renderer);
