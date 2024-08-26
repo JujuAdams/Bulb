@@ -1,6 +1,5 @@
-var _t = get_timer();
+//Draw the application surface to the screen
 BulbDrawLitApplicationSurface(renderer);
-drawEndTime = get_timer() - _t;
 
 if (keyboard_check(ord("N")))
 {

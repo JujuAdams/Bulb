@@ -20,7 +20,7 @@ function DebugOverlay()
     if (showDebug)
     {
         draw_set_halign(fa_center);
-        draw_text(display_get_gui_width()*0.5, 25, "FPS = " + string_format(fps_real, 4, 0) + "," + string_format(smoothedFrameTime, 2, 2) + "ms / .Draw() = " + string_format(smoothedDrawEndTime, 4, 0) + "us");
+        draw_text(display_get_gui_width()*0.5, 25, "FPS = " + string_format(fps_real, 4, 0) + "," + string_format(smoothedFrameTime, 2, 2) + "ms");
         
         draw_set_halign(fa_left);
         var _str = "lights = " + string(array_length(renderer.__lightsArray));
@@ -51,7 +51,7 @@ function DebugOverlay()
         var _mode = (renderer.soft? "soft shadows" : "hard shadows") + (renderer.selfLighting? ", self-renderer" : "") + (renderer.hdr? (", HDR (" + _tonemapName + ")") : "");
         
         draw_set_halign(fa_center);
-        draw_text(display_get_gui_width()*0.5, 5, "FPS = " + string_format(fps, 2, 0) + " / " + _mode + " = " + string_format(smoothedDrawEndTime, 4, 0) + "us");
+        draw_text(display_get_gui_width()*0.5, 5, "FPS = " + string_format(fps, 2, 0) + " / " + _mode);
         
         draw_set_halign(fa_left);
         draw_set_valign(fa_bottom);

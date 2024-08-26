@@ -17,6 +17,7 @@ if (keyboard_check_pressed(ord("2"))) renderer.soft = !renderer.soft;
 if (keyboard_check_pressed(ord("3"))) renderer.selfLighting = !renderer.selfLighting;
 if (keyboard_check_pressed(ord("4"))) renderer.hdr = !renderer.hdr;
 if (keyboard_check_pressed(ord("5"))) renderer.hdrTonemap = (renderer.hdrTonemap + 1) mod 7;
+if (keyboard_check_pressed(ord("6"))) renderer.normalMap = !renderer.normalMap;
 
 //Update debug timers
 if (alarm_get(1) < 0)
@@ -26,6 +27,4 @@ if (alarm_get(1) < 0)
         smoothedFrameTime = lerp(smoothedFrameTime, 1000/fps_real, 0.005);
         smoothedFPS = lerp(smoothedFPS, fps_real, 0.005);
     }
-    
-    smoothedDrawEndTime = lerp(smoothedDrawEndTime, drawEndTime, 0.005);
 }
