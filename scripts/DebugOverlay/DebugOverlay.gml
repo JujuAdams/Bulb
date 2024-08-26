@@ -3,14 +3,14 @@ function DebugOverlay()
     var _tonemapName = "???";
     switch(renderer.hdrTonemap)
     {
-        case BULB_TONEMAP_BAD_GAMMA:         _tonemapName = "Bad Gamma!"             break;
-        case BULB_TONEMAP_CLAMP:             _tonemapName = "Clamp"                  break;
-        case BULB_TONEMAP_REINHARD:          _tonemapName = "Reinhard";              break;
-        case BULB_TONEMAP_REINHARD_EXTENDED: _tonemapName = "Reinhard Extended";     break;
-        case BULB_TONEMAP_UNCHARTED2:        _tonemapName = "Uncharted 2";           break;
-        case BULB_TONEMAP_ACES:              _tonemapName = "ACES";                  break;
-        case BULB_TONEMAP_UNREAL3:           _tonemapName = "Unreal 3";              break;
-        case BULB_TONEMAP_HBD:               _tonemapName = "Heji & Burgess-Dawson"; break;
+        case BULB_TONEMAP_BAD_GAMMA:         _tonemapName = "\"Bad Gamma!\""             break;
+        case BULB_TONEMAP_CLAMP:             _tonemapName = "\"Clamp\""                  break;
+        case BULB_TONEMAP_REINHARD:          _tonemapName = "\"Reinhard\"";              break;
+        case BULB_TONEMAP_REINHARD_EXTENDED: _tonemapName = "\"Reinhard Extended\"";     break;
+        case BULB_TONEMAP_UNCHARTED2:        _tonemapName = "\"Uncharted 2\"";           break;
+        case BULB_TONEMAP_ACES:              _tonemapName = "\"ACES\"";                  break;
+        case BULB_TONEMAP_UNREAL3:           _tonemapName = "\"Unreal 3\"";              break;
+        case BULB_TONEMAP_HBD:               _tonemapName = "\"Heji & Burgess-Dawson\""; break;
     }
     
     draw_set_color(c_white);
@@ -56,7 +56,7 @@ function DebugOverlay()
                   + (renderer.hdr? ", HDR" : "");
         
         draw_set_halign(fa_center);
-        draw_text(display_get_gui_width()*0.5, 5, "FPS = " + string_format(fps, 2, 0) + " / " + _mode);
+        draw_text(display_get_gui_width()*0.5, 5, _mode + " // " + "FPS = " + string_format(fps, 2, 0));
         
         draw_set_halign(fa_left);
         draw_set_valign(fa_bottom);
