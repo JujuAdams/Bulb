@@ -36,6 +36,10 @@ renderer.hdr = true;
 renderer.hdrBloomIntensity = 0.05;
 renderer.hdrBloomIterations = 4;
 
+//Copy the HDR tonemap across to LDR. You normally want to stick to `BULB_TONEMAP_CLAMP` when nont
+//in HDR mode. For the sake of example, however, we want the two tonemaps to match.
+renderer.ldrTonemap = renderer.hdrTonemap;
+
 ////////////////////////////
 //                        //
 //  Example-related code  //

@@ -16,7 +16,12 @@ if (keyboard_check_pressed(ord("1"))) with(oLightDiscoooo) light.visible = !ligh
 if (keyboard_check_pressed(ord("2"))) renderer.soft = !renderer.soft;
 if (keyboard_check_pressed(ord("3"))) renderer.selfLighting = !renderer.selfLighting;
 if (keyboard_check_pressed(ord("4"))) renderer.hdr = !renderer.hdr;
-if (keyboard_check_pressed(ord("5"))) renderer.hdrTonemap = (renderer.hdrTonemap + 1) mod 8;
+if (keyboard_check_pressed(ord("5")))
+{
+    renderer.hdrTonemap = (renderer.hdrTonemap + 1) mod 8;
+    renderer.ldrTonemap = renderer.hdrTonemap;
+}
+
 if (keyboard_check_pressed(ord("6"))) renderer.normalMap = !renderer.normalMap;
 
 //Update debug timers

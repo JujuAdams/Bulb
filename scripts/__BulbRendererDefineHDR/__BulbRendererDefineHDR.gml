@@ -3,7 +3,6 @@
 function __BulbRendererDefineHDR()
 {
     hdr         = false;
-    hdrExposure = 1;
     hdrTonemap  = BULB_TONEMAP_HBD;
     
     hdrBloomIntensity   = 0;

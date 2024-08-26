@@ -53,9 +53,9 @@ function __BulbRendererDefineLight()
         }
         else
         {
-            _result[0] *= hdrExposure;
-            _result[1] *= hdrExposure;
-            _result[2] *= hdrExposure;
+            _result[0] *= exposure;
+            _result[1] *= exposure;
+            _result[2] *= exposure;
             _result[3]  = clamp(_result[3], 0, 1); //Clamp the alpha channel
             
             static _funcLuminance = function(_red, _green, _blue)
@@ -63,7 +63,8 @@ function __BulbRendererDefineLight()
                 return 0.2126*_red + 0.7152*_green + 0.0722*_blue;
             }
             
-            if (hdrTonemap == BULB_TONEMAP_REINHARD)
+            var _tonemap = GetTonemap();
+            if (_tonemap == BULB_TONEMAP_REINHARD)
             {
                 var _luminance    = _funcLuminance(_result[0], _result[1], _result[2]);
                 var _luminanceNew = _luminance / (1 + _luminance);
@@ -72,7 +73,7 @@ function __BulbRendererDefineLight()
                 _result[1] *= _luminanceNew / _luminance;
                 _result[2] *= _luminanceNew / _luminance;
             }
-            else if (hdrTonemap == BULB_TONEMAP_REINHARD_EXTENDED)
+            else if (_tonemap == BULB_TONEMAP_REINHARD_EXTENDED)
             {
                 var _luminance    = _funcLuminance(_result[0], _result[1], _result[2]);
                 var _luminanceNew = _luminance * (1.0 + (_luminance / (4*4))) / (1 + _luminance);
@@ -81,7 +82,7 @@ function __BulbRendererDefineLight()
                 _result[1] *= _luminanceNew / _luminance;
                 _result[2] *= _luminanceNew / _luminance;
             }
-            else if (hdrTonemap == BULB_TONEMAP_ACES)
+            else if (_tonemap == BULB_TONEMAP_ACES)
             {
                 var _r = _result[0];
                 var _g = _result[1];

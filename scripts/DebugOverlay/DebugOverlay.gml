@@ -1,7 +1,7 @@
 function DebugOverlay()
 {
     var _tonemapName = "???";
-    switch(renderer.hdrTonemap)
+    switch(renderer.GetTonemap())
     {
         case BULB_TONEMAP_BAD_GAMMA:         _tonemapName = "\"Bad Gamma!\""             break;
         case BULB_TONEMAP_CLAMP:             _tonemapName = "\"Clamp\""                  break;

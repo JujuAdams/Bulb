@@ -29,6 +29,9 @@ function BulbRenderer() constructor
     soft = true;
     __oldSoft = undefined;
     
+    exposure   = 1;
+    ldrTonemap = BULB_TONEMAP_CLAMP;
+    
     surfaceWidth  = -1;
     surfaceHeight = -1;
     
@@ -160,7 +163,7 @@ function BulbRenderer() constructor
         var _oldTextureFiltering = gpu_get_tex_filter();
         var _oldAlphaBlend       = gpu_get_blendenable();
         
-        var _hdrTonemap = hdrTonemap;
+        var _hdrTonemap = GetTonemap();
         if (_hdrTonemap == BULB_TONEMAP_CLAMP)
         {
             var _shader = __shdBulbTonemapClamp;
@@ -215,7 +218,7 @@ function BulbRenderer() constructor
             gpu_set_blendmode_ext(bm_zero, bm_src_color);
             shader_set(__shdBulbIntensity);
             
-            shader_set_uniform_f(_u_fIntensity, hdrExposure);
+            shader_set_uniform_f(_u_fIntensity, exposure);
             draw_surface_stretched(__lightSurface, 0, 0, _surfaceWidth, _surfaceHeight);
             
             gpu_set_blendmode(bm_normal);
@@ -315,7 +318,7 @@ function BulbRenderer() constructor
                 gpu_set_colorwriteenable(true, true, true, false);
                 
                 shader_set(_shader);
-                shader_set_uniform_f(shader_get_uniform(_shader, "u_fExposure"), hdrExposure);
+                shader_set_uniform_f(shader_get_uniform(_shader, "u_fExposure"), exposure);
                 draw_surface_stretched(__lightSurface, _x, _y, _width, _height);
                 shader_reset();
                 
@@ -372,9 +375,14 @@ function BulbRenderer() constructor
         __AccumulateLights      = _nullFunc;
     }
     
+    GetTonemap = function()
+    {
+        return hdr? hdrTonemap : ldrTonemap;
+    }
+    
     __GetAmbientColor = function()
     {
-        if (hdrTonemap == BULB_TONEMAP_BAD_GAMMA)
+        if (GetTonemap() == BULB_TONEMAP_BAD_GAMMA)
         {
             if (ambientInGammaSpace)
             {
