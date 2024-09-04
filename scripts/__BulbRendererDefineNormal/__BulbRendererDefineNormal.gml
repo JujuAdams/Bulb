@@ -26,7 +26,7 @@ function __BulbRendererDefineNormal()
         
         if ((__normalSurface == undefined) || !surface_exists(__normalSurface))
         {
-            __normalSurface = surface_create(surfaceWidth, surfaceHeight, surface_rgba16float);
+            __normalSurface = surface_create(surfaceWidth, surfaceHeight);
             
             surface_set_target(__normalSurface);
             BulbNormalMapClear();
