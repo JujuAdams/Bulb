@@ -1,12 +1,10 @@
 {
-  "$GMShader":"",
-  "%Name":"shdPremultiplyAlpha",
-  "name":"shdPremultiplyAlpha",
-  "parent":{
-    "name":"Example",
-    "path":"folders/Example.yy",
+  "resourceType": "GMShader",
+  "resourceVersion": "1.0",
+  "name": "shdPremultiplyAlpha",
+  "type": 1,
+  "parent": {
+    "name": "Example",
+    "path": "folders/Example.yy",
   },
-  "resourceType":"GMShader",
-  "resourceVersion":"2.0",
-  "type":1,
 }

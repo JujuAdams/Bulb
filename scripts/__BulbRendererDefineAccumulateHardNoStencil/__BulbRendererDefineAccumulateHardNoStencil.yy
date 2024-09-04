@@ -1,7 +1,7 @@
 {
   "resourceType": "GMScript",
   "resourceVersion": "1.0",
-  "name": "__BulbRendererDefineAccumulateSoft",
+  "name": "__BulbRendererDefineAccumulateHardNoStencil",
   "isDnD": false,
   "isCompatibility": false,
   "parent": {

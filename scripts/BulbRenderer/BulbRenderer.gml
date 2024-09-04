@@ -71,7 +71,7 @@ function BulbRenderer() constructor
     __BulbRendererDefineNormal();
     __BulbRendererDefineOverlayUnderlay();
     __BulbRendererDefineAccumulateSoft();
-    __BulbRendererDefineAccumulateHard();
+    if (_system.__hasStencil) __BulbRendererDefineAccumulateHard() else __BulbRendererDefineAccumulateHardNoStencil();
     __BulbRendererDefineVertexBuffers();
     __BulbRendererDefineLight();
     

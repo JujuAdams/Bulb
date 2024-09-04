@@ -1,13 +1,11 @@
 {
-  "$GMScript":"v1",
-  "%Name":"BulbSunlight",
-  "isCompatibility":false,
-  "isDnD":false,
-  "name":"BulbSunlight",
-  "parent":{
-    "name":"Bulb",
-    "path":"folders/Bulb.yy",
+  "resourceType": "GMScript",
+  "resourceVersion": "1.0",
+  "name": "BulbSunlight",
+  "isDnD": false,
+  "isCompatibility": false,
+  "parent": {
+    "name": "Bulb",
+    "path": "folders/Bulb.yy",
   },
-  "resourceType":"GMScript",
-  "resourceVersion":"2.0",
 }

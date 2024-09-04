@@ -1,12 +1,10 @@
 {
-  "$GMShader":"",
-  "%Name":"__shdBulbGammaToLinear",
-  "name":"__shdBulbGammaToLinear",
-  "parent":{
-    "name":"Shaders",
-    "path":"folders/Bulb/(System)/(Pay no attention to that man behind the curtain)/Shaders.yy",
+  "resourceType": "GMShader",
+  "resourceVersion": "1.0",
+  "name": "__shdBulbGammaToLinear",
+  "type": 1,
+  "parent": {
+    "name": "Shaders",
+    "path": "folders/Bulb/(System)/(Pay no attention to that man behind the curtain)/Shaders.yy",
   },
-  "resourceType":"GMShader",
-  "resourceVersion":"2.0",
-  "type":1,
 }

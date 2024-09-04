@@ -36,6 +36,18 @@ function __BulbSystem()
             __BulbTrace("HDR not available");
             __hdrAvailable = false;
         }
+        
+        try
+        {
+            gpu_get_stencil_ref();
+            __BulbTrace("GPU stencil functions available");
+            __hasStencil = true;
+        }
+        catch(_error)
+        {
+            __BulbTrace("GPU stencil functions not available");
+            __hasStencil = false;
+        }
     }
     
     return _system;
