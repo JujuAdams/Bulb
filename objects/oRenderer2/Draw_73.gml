@@ -1,0 +1,1 @@
+renderer.UpdateFromCamera(camera);
