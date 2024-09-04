@@ -47,9 +47,8 @@ renderer.ldrTonemap = renderer.hdrTonemap;
 ////////////////////////////
 
 //Set up a vertex buffer for drawing the diffuse base texture for the walls
-//This isn't strictly part of the renderer example
+//We populate this in the Room Start event
 staticBlocks = new VertexCake();
-staticBlocks.Bake(oStaticOccluder, sStaticBlock, 0, true);
 
 //Some debug values
 showDebug = false;
