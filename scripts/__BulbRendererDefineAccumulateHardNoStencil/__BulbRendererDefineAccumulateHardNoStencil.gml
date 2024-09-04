@@ -13,12 +13,6 @@ function __BulbRendererDefineAccumulateHardNoStencil()
         static _shdBulbSunlightWithNormalMap_u_vSunInfo       = shader_get_uniform(__shdBulbSunlightWithNormalMap,    "u_vInfo"       );
         static _sshdBulbSunlightWithoutNormalMap_u_fIntensity = shader_get_uniform(__shdBulbSunlightWithoutNormalMap, "u_fIntensity"  );
         
-        var _oldStencilRef       = gpu_get_stencil_ref();
-        var _oldStencilFunc      = gpu_get_stencil_func();
-        var _oldStencilPass      = gpu_get_stencil_pass();
-        var _oldStencilFail      = gpu_get_stencil_fail();
-        var _oldStencilDepthFail = gpu_get_stencil_depth_fail();
-        
         var _staticVBuffer  = __staticVBuffer;
         var _dynamicVBuffer = __dynamicVBuffer;
         
@@ -47,17 +41,13 @@ function __BulbRendererDefineAccumulateHardNoStencil()
         }
         
         //Set our default shader
-        shader_set(__shdBulbIntensity);
-        
+        shader_reset();
         gpu_set_colorwriteenable(true, true, true, false);
         
-        draw_clear_stencil(0);
-        gpu_set_stencil_enable(true);
-        gpu_set_stencil_pass(stencilop_replace);
-        gpu_set_stencil_fail(stencilop_keep);
-        gpu_set_stencil_depth_fail(stencilop_keep);
-        gpu_set_stencil_func(cmpfunc_always);
-        var _stencil = 0;
+        //And switch on z-testing. We'll use z-testing for stenciling
+        gpu_set_ztestenable(true);
+        gpu_set_zwriteenable(true);
+        gpu_set_zfunc(cmpfunc_lessequal);
         
         var _i = 0;
         repeat(array_length(__lightsArray))
@@ -80,22 +70,29 @@ function __BulbRendererDefineAccumulateHardNoStencil()
                         {
                             if (castShadows)
                             {
-                                ++_stencil;
-                                if (_stencil >= 256)
-                                {
-                                    draw_clear_stencil(0);
-                                    _stencil = 1;
-                                }
+                                //Turn off all RGBA writing, leaving only z-writing
+                                gpu_set_colorwriteenable(false, false, false, false);
                                 
-                                gpu_set_stencil_ref(_stencil);
+                                //Guarantee that we're going to write to the z-buffer with the next operations
+                                gpu_set_zfunc(cmpfunc_always);
+                                
+                                //Reset z-buffer
+                                draw_sprite_ext(sprite, image,
+                                                x, y,
+                                                xscale, yscale, angle,
+                                                c_black, 1);
                                 
                                 //Stencil out shadow areas
                                 shader_set(__shdBulbHardShadows);
                                 shader_set_uniform_f(_shdBulbHardShadows_u_vLight, x, y);
-                                
                                 vertex_submit(_staticVBuffer,  pr_trianglelist, -1);
                                 vertex_submit(_dynamicVBuffer, pr_trianglelist, -1);
                                 
+                                //Swap to drawing RGB data (no alpha to make the output surface tidier)
+                                gpu_set_colorwriteenable(true, true, true, false);
+                                gpu_set_zfunc(cmpfunc_lessequal);
+                                
+                                //Reset shader and draw the light itself, but "behind" the shadows
                                 if (_rendererNormalMap && normalMap)
                                 {
                                     shader_set(__shdBulbLightWithNormalMap);
@@ -107,9 +104,7 @@ function __BulbRendererDefineAccumulateHardNoStencil()
                                     shader_set_uniform_f(_shdBulbLightWithoutNormalMap_u_fIntensity, intensity);
                                 }
                                 
-                                gpu_set_stencil_func(cmpfunc_greater);
                                 draw_sprite_ext(sprite, image, x, y, xscale, yscale, angle, blend, 1);
-                                gpu_set_stencil_func(cmpfunc_always);
                             }
                             else
                             {
@@ -135,8 +130,6 @@ function __BulbRendererDefineAccumulateHardNoStencil()
             }
         }
         
-        gpu_set_stencil_enable(true);
-        
         var _i = 0;
         repeat(array_length(__sunlightArray))
         {
@@ -151,22 +144,26 @@ function __BulbRendererDefineAccumulateHardNoStencil()
                 {
                     if (visible)
                     {
-                        ++_stencil;
-                        if (_stencil >= 256)
-                        {
-                            draw_clear_stencil(0);
-                            _stencil = 1;
-                        }
+                        //Turn off all RGBA writing, leaving only z-writing
+                        gpu_set_colorwriteenable(false, false, false, false);
                         
-                        gpu_set_stencil_ref(_stencil);
+                        //Guarantee that we're going to write to the z-buffer with the next operations
+                        gpu_set_zfunc(cmpfunc_always);
+                        
+                        //Full surface clear of the z-buffer
+                        draw_sprite_ext(__sprBulbPixel, 0, _cameraL, _cameraT, _cameraW+1, _cameraH+1, 0, c_black, 0);
                         
                         //Stencil out shadow areas
                         shader_set(__shdBulbHardShadowsSunlight);
                         shader_set_uniform_f(_shdBulbHardShadowsSunlight_u_vLightVector, dcos(angle), -dsin(angle));
-                        
                         vertex_submit(_staticVBuffer,  pr_trianglelist, -1);
                         vertex_submit(_dynamicVBuffer, pr_trianglelist, -1);
                         
+                        //Swap to drawing RGB data (no alpha to make the output surface tidier)
+                        gpu_set_colorwriteenable(true, true, true, false);
+                        gpu_set_zfunc(cmpfunc_lessequal);
+                        
+                        //Reset shader and draw the light itself, but "behind" the shado
                         if (_rendererNormalMap && normalMap)
                         {
                             shader_set(__shdBulbSunlightWithNormalMap);
@@ -177,10 +174,9 @@ function __BulbRendererDefineAccumulateHardNoStencil()
                             shader_set(__shdBulbLightWithoutNormalMap);
                             shader_set_uniform_f(_shdBulbLightWithoutNormalMap_u_fIntensity, intensity);
                         }
-                                
-                        gpu_set_stencil_func(cmpfunc_greater);
+                        
+                        
                         draw_sprite_ext(__sprBulbPixel, 0, _cameraL, _cameraT, _cameraW+1, _cameraH+1, 0, blend, 1);
-                        gpu_set_stencil_func(cmpfunc_always);
                     }
                 }
                 
@@ -192,11 +188,8 @@ function __BulbRendererDefineAccumulateHardNoStencil()
         gpu_set_colorwriteenable(true, true, true, true);
         gpu_set_blendmode(bm_normal);
         
-        gpu_set_stencil_enable(false);
-        gpu_set_stencil_ref(_oldStencilRef);
-        gpu_set_stencil_func(_oldStencilFunc);
-        gpu_set_stencil_pass(_oldStencilPass);
-        gpu_set_stencil_fail(_oldStencilFail);
-        gpu_set_stencil_depth_fail(_oldStencilDepthFail);
+        gpu_set_zfunc(cmpfunc_lessequal);
+        gpu_set_ztestenable(false);
+        gpu_set_zwriteenable(false);
     }
 }

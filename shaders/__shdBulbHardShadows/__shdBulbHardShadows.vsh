@@ -14,4 +14,5 @@ void main()
     float finalLength = MAX_LENGTH*step(u_fNormalCoeff*dot(delta, in_Normal.xy), 0.0);
     
     gl_Position = gm_Matrices[MATRIX_WORLD_VIEW_PROJECTION]*vec4(in_Position.xy + in_Position.z*finalLength*delta, 0.0, 1.0);
+    gl_Position.z = 0.0;
 }
