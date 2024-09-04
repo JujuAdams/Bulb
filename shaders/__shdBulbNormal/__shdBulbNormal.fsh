@@ -26,5 +26,5 @@ void main()
 	float cosine = cos(angle);
     mat2  matrix = mat2(cosine, -sine, sine, cosine)*(mat2(1.0 - 2.0*xFlip, 0.0, 0.0, 1.0 - 2.0*yFlip));
     
-    gl_FragColor.rg = matrix*gl_FragColor.rg;
+    gl_FragColor.rg = 0.5 + 0.5*(matrix*gl_FragColor.rg);
 }

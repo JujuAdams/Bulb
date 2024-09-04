@@ -38,9 +38,7 @@ function __BulbRendererDefineNormal()
     
     DrawNormalMapDebug = function(_x, _y, _width, _height)
     {
-        shader_set(__shdBulbNormalSurfaceDebug);
         draw_surface_stretched(GetNormalMapSurface(), _x, _y, _width, _height);
-        shader_reset();
     }
     
     __FreeNormalMapSurface = function()

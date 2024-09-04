@@ -19,5 +19,5 @@ void main()
     vec4 normalSample = texture2D(u_sNormalMap, 0.5 + 0.5*objectPos);
     
     gl_FragColor = v_vColour*texture2D(gm_BaseTexture, v_vTexcoord);
-    gl_FragColor.rgb *= u_vInfo.w*max(0.0, dot(normalize(lightPos - vec3(objectPos, 0.0)), normalSample.xyz));
+    gl_FragColor.rgb *= u_vInfo.w*max(0.0, dot(normalize(lightPos - vec3(objectPos, 0.0)), 2.0*normalSample.xyz - 1.0));
 }

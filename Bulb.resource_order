@@ -61,7 +61,6 @@
     {"name":"__shdBulbLightWithNormalMap","order":1,"path":"shaders/__shdBulbLightWithNormalMap/__shdBulbLightWithNormalMap.yy",},
     {"name":"__shdBulbLinearToGamma","order":3,"path":"shaders/__shdBulbLinearToGamma/__shdBulbLinearToGamma.yy",},
     {"name":"__shdBulbNormal","order":5,"path":"shaders/__shdBulbNormal/__shdBulbNormal.yy",},
-    {"name":"__shdBulbNormalSurfaceDebug","order":7,"path":"shaders/__shdBulbNormalSurfaceDebug/__shdBulbNormalSurfaceDebug.yy",},
     {"name":"__shdBulbNormalUp","order":6,"path":"shaders/__shdBulbNormalUp/__shdBulbNormalUp.yy",},
     {"name":"__shdBulbSoftShadows","order":2,"path":"shaders/__shdBulbSoftShadows/__shdBulbSoftShadows.yy",},
     {"name":"__shdBulbSoftShadowsSunlight","order":3,"path":"shaders/__shdBulbSoftShadowsSunlight/__shdBulbSoftShadowsSunlight.yy",},
