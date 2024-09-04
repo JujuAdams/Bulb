@@ -24,7 +24,9 @@ function __BulbRendererDefineLight()
             //Only try to create an HDR surface if floating point surfaces are available
             if (_system.__hdrAvailable)
             {
-                __lightSurface = surface_create(surfaceWidth, surfaceHeight, hdr? surface_rgba16float : surface_rgba8unorm);
+                //Work around compile error in LTS
+                var _surface_create = surface_create;
+                __lightSurface = _surface_create(surfaceWidth, surfaceHeight, hdr? surface_rgba16float : surface_rgba8unorm);
             }
             else
             {

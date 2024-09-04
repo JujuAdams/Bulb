@@ -275,13 +275,16 @@ function BulbRenderer() constructor
                     var _bloomWidth  = _surfaceWidth;
                     var _bloomHeight = _surfaceHeight;
                     
+                    //Work around compile error in LTS
+                    var _surface_create = surface_create;
+                    
                     var _i = 0;
                     repeat(hdrBloomIterations)
                     {
                         _bloomWidth  = _bloomWidth  div 2;
                         _bloomHeight = _bloomHeight div 2;
                         
-                        __bloomSurfaceArray[_i] = surface_create(_bloomWidth, _bloomHeight, surface_rgba16float);
+                        __bloomSurfaceArray[_i] = _surface_create(_bloomWidth, _bloomHeight, surface_rgba16float);
                         
                         ++_i;
                     }

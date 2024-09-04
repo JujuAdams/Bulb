@@ -33,7 +33,9 @@ function __BulbRendererDefineHDR()
         
         if ((__hdrSurface == undefined) || !surface_exists(__hdrSurface))
         {
-            __hdrSurface = surface_create(_width, _height, surface_rgba16float);
+            //Work around compile error in LTS
+            var _surface_create = surface_create;
+            __hdrSurface = _surface_create(_width, _height, surface_rgba16float);
             
             surface_set_target(__hdrSurface);
             draw_clear(c_black);
