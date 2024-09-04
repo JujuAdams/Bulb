@@ -24,6 +24,18 @@ function __BulbSystem()
     _system = {};
     with(_system)
     {
+        try
+        {
+            var _ = surface_rgba16float;
+            
+            __BulbTrace("HDR available");
+            __hdrAvailable = true;
+        }
+        catch(_error)
+        {
+            __BulbTrace("HDR not available");
+            __hdrAvailable = false;
+        }
     }
     
     return _system;

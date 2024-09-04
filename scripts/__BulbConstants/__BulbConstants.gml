@@ -13,3 +13,5 @@
 #macro BULB_TONEMAP_BAD_GAMMA          7
 
 #macro BULB_GAMMA  2.2
+
+#macro BULB_HDR_AVAILABLE  (__BulbSystem().__hdrAvailable)

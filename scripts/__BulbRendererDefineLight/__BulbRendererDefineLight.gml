@@ -21,7 +21,15 @@ function __BulbRendererDefineLight()
         
         if ((__lightSurface == undefined) || !surface_exists(__lightSurface))
         {
-            __lightSurface = surface_create(surfaceWidth, surfaceHeight, hdr? surface_rgba16float : surface_rgba8unorm);
+            //Only try to create an HDR surface if floating point surfaces are available
+            if (_system.__hdrAvailable)
+            {
+                __lightSurface = surface_create(surfaceWidth, surfaceHeight, hdr? surface_rgba16float : surface_rgba8unorm);
+            }
+            else
+            {
+                __lightSurface = surface_create(surfaceWidth, surfaceHeight);
+            }
             
             surface_set_target(__lightSurface);
             draw_clear_alpha(c_black, 1.0);

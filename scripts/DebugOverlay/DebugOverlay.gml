@@ -31,7 +31,7 @@ function DebugOverlay()
         _str += "\nsoft = " + (renderer.soft? "true" : "false");
         _str += "\nself-renderer = " + (renderer.selfLighting? "true" : "false");
         _str += "\ntonemap = " + _tonemapName;
-        _str += "\nHDR = " + (renderer.hdr? "true" : "false");
+        _str += "\nHDR = " + ((renderer.hdr && BULB_HDR_AVAILABLE)? "true" : "false");
         
         draw_text(5, 25, _str);
         
@@ -53,7 +53,7 @@ function DebugOverlay()
         var _mode = (renderer.soft? "soft" : "hard")
                   + (renderer.selfLighting? ", self-lighting" : "")
                   + ", tonemap=" + _tonemapName
-                  + (renderer.hdr? ", HDR" : "");
+                  + ((renderer.hdr && BULB_HDR_AVAILABLE)? ", HDR" : "");
         
         draw_set_halign(fa_center);
         draw_text(display_get_gui_width()*0.5, 5, _mode + " // " + "FPS = " + string_format(fps, 2, 0));

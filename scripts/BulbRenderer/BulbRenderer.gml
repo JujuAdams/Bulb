@@ -30,6 +30,8 @@
 
 function BulbRenderer() constructor
 {
+    static _system = __BulbSystem();
+    
     static _vformat3DNormal = (function()
     {
         vertex_format_begin();
@@ -117,15 +119,20 @@ function BulbRenderer() constructor
         if (surfaceWidth  <= 0) surfaceWidth  = _cameraW;
         if (surfaceHeight <= 0) surfaceHeight = _cameraH;
         
+        //Force a regeneration of vertex buffers if we're swapped between hard/soft lights
         if (soft != __oldSoft)
         {
             __oldSoft = soft;
             __FreeVertexBuffers();
         }
         
-        if (hdr != __oldHDR)
+        //Determine whether we actually want HDR
+        var _hdr = (hdr && _system.__hdrAvailable);
+        
+        //Force regeneration/freeing of surfaces if the HDR state has changed
+        if (_hdr != __oldHDR)
         {
-            __oldHDR = hdr;
+            __oldHDR = _hdr;
             
             if (__lightSurface != undefined)
             {
@@ -133,17 +140,19 @@ function BulbRenderer() constructor
                 __lightSurface = undefined;
             }
             
-            if (not hdr)
+            if (not _hdr)
             {
                 __FreeHDRSurface();
             }
         }
         
-        if ((not hdr) || (hdrBloomIterations != __oldHDRBloomIterations))
+        //Manage bloom surfaces if the number of iterations has changed
+        if ((not _hdr) || (hdrBloomIterations != __oldHDRBloomIterations))
         {
             __FreeBloomSurfaces();
         }
         
+        //Free up memory if the normal map state has changed
         if ((not normalMap) && __oldNormalMap)
         {
             __FreeNormalMapSurface();
@@ -227,7 +236,7 @@ function BulbRenderer() constructor
             var _shader = __shdBulbTonemapBadGamma;
         }
         
-        if (hdr)
+        if (hdr && _system.__hdrAvailable)
         {
             var _surfaceWidth  = surface_get_width( _surface);
             var _surfaceHeight = surface_get_height(_surface);
@@ -407,7 +416,7 @@ function BulbRenderer() constructor
     
     GetTonemap = function()
     {
-        return hdr? hdrTonemap : ldrTonemap;
+        return (hdr && _system.__hdrAvailable)? hdrTonemap : ldrTonemap;
     }
     
     __GetAmbientColor = function()
