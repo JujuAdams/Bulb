@@ -39,8 +39,8 @@ function DebugOverlay()
         var _str = "1: Toggle lights";
         _str += "\n2: Toggle soft shadow mode";
         _str += "\n3: Toggle self-renderer";
-        _str += "\n4: Toggle HDR";
-        _str += "\n5: Change HDR tonemapping";
+        if (BULB_HDR_AVAILABLE) _str += "\n4: Toggle HDR";
+        _str += "\n5: Change tonemapping";
         _str += "\n6: Toggle normal map";
         _str += "\nL: Create new disco light";
         _str += "\nArrows/WASD: Move";
