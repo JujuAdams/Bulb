@@ -12,3 +12,5 @@
 - [BulbAmbienceSprite](BulbAmbienceSprite)
 - [BulbShadowOverlay](BulbShadowOverlay)
 - [BulbLightOverlay](BulbLightOverlay)
+- [BulbDrawLitApplicationSurface](BulbDrawLitApplicationSurface)
+- [Normal Map Functions](NormalMapFunctions)
