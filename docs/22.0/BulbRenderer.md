@@ -10,6 +10,8 @@
 |----------|--------|-----------------------------------------------------------------------------------------------------------------------------|
 |`[camera]`|camera  |Camera to use as the point of view for light rendering. If not specified, the renderer will attempt to render the entire room|
 
+A renderer struct is a container for lots of variables and methods that enable the rendering of lights. By itself, a renderer won't do anything. You need to add lights and occluders to a renderer (see `BulbLight()`, `BulbSunlight()`, `BulbDynamicOccluder()`, and `BulbStaticOccluder()`) for lights and shadows to appear. Additionally, you must call the `.Update()` method on a renderer to update its internal lighting surface. Finally, you must call the `BulbDrawLitApplicationSurface()` function (or the `.DrawLitSurface()` method) to allow a renderer to affect your game. Whilst I've tried to keep the process as simple as possible, there are a lot of steps to getting a renderer set up in your project. The [Quick Start](Quick-Start) guide makes a basic implementation as smooth as possible.
+
 !> A renderer struct will allocate vertex buffers and surfaces for its use. Remember to call the `.Free()` method when discarding a renderer struct otherwise you will create a memory leak. You must free and recreate your renderer when changing rooms.
 
 &nbsp;
