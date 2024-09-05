@@ -21,13 +21,15 @@ When created, a `BulbSunlight` will be added to the given renderer. A light can 
 
 The created struct has the following public member variables:
 
-|Variable      |Datatype      |Purpose                                                                          |
-|--------------|--------------|---------------------------------------------------------------------------------|
-|`angle`       |number        |Direction of the light                                                           |
-|`blend`       |integer       |Blend colour to use for the light                                                |
-|`alpha`       |number        |Transparency value for the light, from `0.0` (invisible) to `1.0` (fully visible)|
-|`visible`     |boolean       |Whether to draw the light at all                                                 |
-|`penumbraSize`|number        |Size of the penumbra when using the `BULB_MODE.SOFT_BM_ADD` rendering mode       |
+|Variable      |Datatype|Purpose                                                                                   |
+|--------------|--------|------------------------------------------------------------------------------------------|
+|`angle`       |number  |Direction of the light                                                                    |
+|`blend`       |integer |Blend colour to use for the light                                                         |
+|`intensity`   |number  |Brightness of the light. `0` is completely invisible. Values higher than `1` will render incorrectly unless the renderer is operating in HDR mode|
+|`visible`     |boolean |Whether to draw the light at all                                                          |
+|`penumbraSize`|number  |Size of the penumbra when using the `BULB_MODE.SOFT_BM_ADD` rendering mode                |
+|`normalMap`   |boolean |Whether the light should respect the normal map. Defaults to `BULB_DEFAULT_USE_NORMAL_MAP`|
+|`normalMapZ`  |number  |The "z" component of the light for purposes of normal mapping. Defaults to `BULB_DEFAULT_NORMAL_MAP_Z`|
 
 &nbsp;
 

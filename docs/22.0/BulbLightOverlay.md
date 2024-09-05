@@ -24,18 +24,18 @@ When created, a `BulbLightOverlay` will be added to the given renderer. A light 
 
 The created struct has the following public member variables:
 
-|Variable |Datatype    |Purpose                                                                          |
-|---------|------------|---------------------------------------------------------------------------------|
-|`sprite` |sprite index|Sprite to draw for the light                                                     |
-|`image`  |number      |Image index of the given sprite to draw. Negative values are **not** supported   |
-|`x`      |number      |x-position of the light                                                          |
-|`y`      |number      |y-position of the light                                                          |
-|`xscale` |number      |Horizontal scaling of the light                                                  |
-|`yscale` |number      |Vertical scaling of the light                                                    |
-|`angle`  |number      |Rotation of the light                                                            |
-|`blend`  |integer     |Blend colour to use for the light                                                |
-|`alpha`  |number      |Transparency value for the light, from `0.0` (invisible) to `1.0` (fully visible)|
-|`visible`|boolean     |Whether to draw the light at all                                                 |
+|Variable   |Datatype    |Purpose                                                                          |
+|-----------|------------|---------------------------------------------------------------------------------|
+|`sprite`   |sprite index|Sprite to draw for the light                                                     |
+|`image`    |number      |Image index of the given sprite to draw. Negative values are **not** supported   |
+|`x`        |number      |x-position of the light                                                          |
+|`y`        |number      |y-position of the light                                                          |
+|`xscale`   |number      |Horizontal scaling of the light                                                  |
+|`yscale`   |number      |Vertical scaling of the light                                                    |
+|`angle`    |number      |Rotation of the light                                                            |
+|`blend`    |integer     |Blend colour to use for the light                                                |
+|`intensity`|number      |Brightness of the light. `0` is completely invisible. Values higher than `1` will render incorrectly unless the renderer is operating in HDR mode|
+|`visible`  |boolean     |Whether to draw the light at all                                                 |
 
 &nbsp;
 
