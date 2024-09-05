@@ -1,3 +1,6 @@
+/// Constructor. Creates a Bulb renderer struct that is responsible for the final renderering of
+/// lights in your game.
+/// 
 /// @param [camera]
 /// 
 /// Full list of variables:
