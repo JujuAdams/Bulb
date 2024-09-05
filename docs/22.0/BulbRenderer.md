@@ -119,6 +119,8 @@ Updates the internal lighting/shadow surface for the renderer struct.
 
 Draws a surface, lit up by the renderer. The surface will be appropriately gamma corrected, tonemapped, and bloomed as per the renderer's settings.
 
+!> Be careful not to draw a lit surface to itself! This can cause serious rendering errors. If you'd like to draw the application surface, please see `BulbDrawLitApplicationSurface()`.
+
 &nbsp;
 
 ## .RefreshStaticOccluders
