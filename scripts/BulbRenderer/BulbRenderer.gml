@@ -107,19 +107,18 @@ function BulbRenderer(_camera) constructor
     
     Update = function()
     {
-        static _worldMatrix = [1,0,0,0,   0,1,0,0,   0,0,1,0,   0,0,0,1];
+        //static _worldMatrix = [1,0,0,0,   0,1,0,0,   0,0,1,0,   0,0,0,1];
         
         //Deploy PROPER MATHS in case the dev is using matrices
         
         var _viewMatrix = camera_get_view_mat(__camera);
         var _projMatrix = camera_get_proj_mat(__camera);
         
-        var _cameraX = -_viewMatrix[12];
-        var _cameraY = -_viewMatrix[13];
-        var _cameraW = round(abs(2/_projMatrix[0]));
-        var _cameraH = round(abs(2/_projMatrix[5]));
-        var _cameraL = _cameraX - _cameraW/2;
-        var _cameraT = _cameraY - _cameraH/2;
+        var _cameraA  = -darctan2(_viewMatrix[1], _viewMatrix[0]);
+        var _cameraCX = -_viewMatrix[12];
+        var _cameraCY = -_viewMatrix[13];
+        var _cameraW  = round(abs(2/_projMatrix[0]));
+        var _cameraH  = round(abs(2/_projMatrix[5]));
         
         //Force a regeneration of vertex buffers if we're swapped between hard/soft lights
         if (soft != __oldSoft)
@@ -160,13 +159,21 @@ function BulbRenderer(_camera) constructor
             __FreeNormalMapSurface();
         }
         
-        var _cameraR  = _cameraL + _cameraW;
-        var _cameraB  = _cameraT + _cameraH;
-        var _cameraCX = _cameraL + 0.5*_cameraW;
-        var _cameraCY = _cameraT + 0.5*_cameraH;
+        var _rotatedW = _cameraW*abs(dcos(_cameraA)) + _cameraH*abs(dsin(_cameraA));
+        var _rotatedH = _cameraW*abs(dsin(_cameraA)) + _cameraH*abs(dcos(_cameraA));
+        
+        var _boundaryL = _cameraCX - _rotatedW/2;
+        var _boundaryT = _cameraCY - _rotatedH/2;
+        var _boundaryR = _cameraCX + _rotatedW/2;
+        var _boundaryB = _cameraCY + _rotatedH/2;
+        
+        var _boundaryExpandedL = _boundaryL - BULB_DYNAMIC_OCCLUDER_RANGE;
+        var _boundaryExpandedT = _boundaryT - BULB_DYNAMIC_OCCLUDER_RANGE;
+        var _boundaryExpandedR = _boundaryR + BULB_DYNAMIC_OCCLUDER_RANGE;
+        var _boundaryExpandedB = _boundaryB + BULB_DYNAMIC_OCCLUDER_RANGE;
         
         //Construct our wipe/static/dynamic vertex buffers
-        __UpdateVertexBuffers(_cameraL, _cameraT, _cameraR, _cameraB, _cameraW, _cameraH);
+        __UpdateVertexBuffers(_boundaryExpandedL, _boundaryExpandedT, _boundaryExpandedR, _boundaryExpandedB);
         
         //Create accumulating renderer surface
         surface_set_target(GetLightSurface());
@@ -175,9 +182,9 @@ function BulbRenderer(_camera) constructor
         
         //Really we should use the view matrix for this, but GameMaker's sprite culling is fucked
         //If we use a proper view matrix then renderer sprites are culling, leading to no renderer being drawn
-        _worldMatrix[@ 12] = -_cameraL;
-        _worldMatrix[@ 13] = -_cameraT;
-        matrix_set(matrix_world, _worldMatrix);
+        _viewMatrix[12] += _cameraW/2;
+        _viewMatrix[13] += _cameraH/2;
+        matrix_set(matrix_world, _viewMatrix);
         
         //Record the current texture filter state, then set our new filter state
         var _old_tex_filter = gpu_get_tex_filter();
@@ -187,7 +194,7 @@ function BulbRenderer(_camera) constructor
         draw_clear(__GetAmbientColor());
         
         //If we're not forcing deferred rendering everywhere, update those lights
-        __AccumulateLights(_cameraL, _cameraT, _cameraR, _cameraB, _cameraCX, _cameraCY, _cameraW, _cameraH);
+        __AccumulateLights(_boundaryL, _boundaryT, _boundaryR, _boundaryB, _cameraCX, _cameraCY, _cameraW, _cameraH, _cameraA);
         
         //Restore the old filter state
         gpu_set_tex_filter(_old_tex_filter);

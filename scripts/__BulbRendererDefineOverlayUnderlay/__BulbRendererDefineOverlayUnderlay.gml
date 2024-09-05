@@ -6,7 +6,7 @@ function __BulbRendererDefineOverlayUnderlay()
     __shadowOverlayArray  = [];
     __lightOverlayArray   = [];
     
-    __AccumulateAmbienceSprite = function(_cameraL, _cameraT, _cameraR, _cameraB)
+    __AccumulateAmbienceSprite = function(_boundaryL, _boundaryT, _boundaryR, _boundaryB)
     {
         //Now draw ambience overlay sprites, if we have any
         var _size = array_length(__ambienceSpriteArray);
@@ -31,7 +31,7 @@ function __BulbRendererDefineOverlayUnderlay()
                             __CheckSpriteDimensions();
                             
                             //If this light is active, do some drawing
-                            if (__IsOnScreen(_cameraL, _cameraT, _cameraR, _cameraB))
+                            if (__IsOnScreen(_boundaryL, _boundaryT, _boundaryR, _boundaryB))
                             {
                                 draw_sprite_ext(sprite, image, x, y, xscale, yscale, angle, blend, alpha);
                             }
@@ -46,7 +46,7 @@ function __BulbRendererDefineOverlayUnderlay()
         }
     }
     
-    __AccumulateShadowOverlay = function(_cameraL, _cameraT, _cameraR, _cameraB)
+    __AccumulateShadowOverlay = function(_boundaryL, _boundaryT, _boundaryR, _boundaryB)
     {
         //Now draw shadow overlay sprites, if we have any
         var _size = array_length(__shadowOverlayArray);
@@ -75,7 +75,7 @@ function __BulbRendererDefineOverlayUnderlay()
                             __CheckSpriteDimensions();
                             
                             //If this light is active, do some drawing
-                            if (__IsOnScreen(_cameraL, _cameraT, _cameraR, _cameraB))
+                            if (__IsOnScreen(_boundaryL, _boundaryT, _boundaryR, _boundaryB))
                             {
                                 draw_sprite_ext(sprite, image, x, y, xscale, yscale, angle, c_white, alpha);
                             }
@@ -92,7 +92,7 @@ function __BulbRendererDefineOverlayUnderlay()
         }
     }
     
-    __AccumulateLightOverlay = function(_cameraL, _cameraT, _cameraR, _cameraB)
+    __AccumulateLightOverlay = function(_boundaryL, _boundaryT, _boundaryR, _boundaryB)
     {
         static _u_fIntensity = shader_get_uniform(__shdBulbIntensity, "u_fIntensity");
         
@@ -121,7 +121,7 @@ function __BulbRendererDefineOverlayUnderlay()
                         __CheckSpriteDimensions();
                         
                         //If this light is active, do some drawing
-                        if (__IsOnScreen(_cameraL, _cameraT, _cameraR, _cameraB))
+                        if (__IsOnScreen(_boundaryL, _boundaryT, _boundaryR, _boundaryB))
                         {
                             shader_set_uniform_f(_u_fIntensity, intensity);
                             draw_sprite_ext(sprite, image, x, y, xscale, yscale, angle, blend, 1);

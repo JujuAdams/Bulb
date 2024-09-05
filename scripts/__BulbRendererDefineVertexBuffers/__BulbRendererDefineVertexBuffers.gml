@@ -32,14 +32,8 @@ function __BulbRendererDefineVertexBuffers()
         }
     }
     
-    __UpdateVertexBuffers = function(_cameraL, _cameraT, _cameraR, _cameraB, _cameraW, _cameraH)
+    __UpdateVertexBuffers = function(_boundaryL, _boundaryT, _boundaryR, _boundaryB)
     {
-        ///////////Discover camera variables
-        var _cameraExpL = _cameraL - BULB_DYNAMIC_OCCLUDER_RANGE;
-        var _cameraExpT = _cameraT - BULB_DYNAMIC_OCCLUDER_RANGE;
-        var _cameraExpR = _cameraR + BULB_DYNAMIC_OCCLUDER_RANGE;
-        var _cameraExpB = _cameraB + BULB_DYNAMIC_OCCLUDER_RANGE;
-        
         //One-time construction of the static occluder geometry
         if (__staticVBuffer == undefined)
         {
@@ -117,7 +111,7 @@ function __BulbRendererDefineVertexBuffers()
                 {
                     with(_weak.ref)
                     {
-                        if (__IsOnScreen(_cameraExpL, _cameraExpT, _cameraExpR, _cameraExpB)) __BulbAddOcclusionSoft(_dynamicVBuffer);
+                        if (__IsOnScreen(_boundaryL, _boundaryT, _boundaryR, _boundaryB)) __BulbAddOcclusionSoft(_dynamicVBuffer);
                     }
                     
                     ++_i;
@@ -141,7 +135,7 @@ function __BulbRendererDefineVertexBuffers()
                 {
                     with(_weak.ref)
                     {
-                        if (__IsOnScreen(_cameraExpL, _cameraExpT, _cameraExpR, _cameraExpB)) __BulbAddOcclusionHard(_dynamicVBuffer);
+                        if (__IsOnScreen(_boundaryL, _boundaryT, _boundaryR, _boundaryB)) __BulbAddOcclusionHard(_dynamicVBuffer);
                     }
                     
                     ++_i;

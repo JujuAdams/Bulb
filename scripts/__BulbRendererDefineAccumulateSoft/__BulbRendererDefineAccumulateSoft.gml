@@ -2,7 +2,7 @@
 
 function __BulbRendererDefineAccumulateSoft()
 {
-    __AccumulateSoftLights = function(_cameraL, _cameraT, _cameraR, _cameraB, _cameraCX, _cameraCY, _cameraW, _cameraH, _normalCoeff)
+    __AccumulateSoftLights = function(_boundaryL, _boundaryT, _boundaryR, _boundaryB, _cameraCX, _cameraCY, _cameraW, _cameraH, _cameraA, _normalCoeff)
     {
         static _shdBulbSoftShadows_u_vLight                   = shader_get_uniform(__shdBulbSoftShadows,              "u_vLight"      );
         static _shdBulbSoftShadowsSunlight_u_vLightVector     = shader_get_uniform(__shdBulbSoftShadowsSunlight,      "u_vLightVector");
@@ -39,7 +39,7 @@ function __BulbRendererDefineAccumulateSoft()
                         __CheckSpriteDimensions();
                         
                         //If this light is active, do some drawing
-                        if (__IsOnScreen(_cameraL, _cameraT, _cameraR, _cameraB))
+                        if (__IsOnScreen(_boundaryL, _boundaryT, _boundaryR, _boundaryB))
                         {
                             if (castShadows)
                             {
@@ -130,7 +130,7 @@ function __BulbRendererDefineAccumulateSoft()
                         
                         //Clear the alpha channel for the light's visual area
                         gpu_set_blendmode_ext(bm_one, bm_zero);
-                        draw_sprite_ext(__sprBulbPixel, 0, _cameraL, _cameraT, _cameraW+1, _cameraH+1, 0, c_black, 1);
+                        draw_sprite_ext(__sprBulbPixel, 0, _boundaryL, _boundaryT, _boundaryR - _boundaryL, _boundaryB - _boundaryT, 0, c_black, 1);
                         
                         //Cut out shadows in the alpha channel
                         gpu_set_blendmode(bm_subtract);
@@ -156,7 +156,7 @@ function __BulbRendererDefineAccumulateSoft()
                             shader_set_uniform_f(_sshdBulbSunlightWithoutNormalMap_u_fIntensity, intensity);
                         }
                         
-                        draw_sprite_ext(__sprBulbPixel, 0, _cameraL, _cameraT, _cameraW+1, _cameraH+1, 0, blend, 1);
+                        draw_sprite_ext(__sprBulbPixel, 0, _boundaryL, _boundaryT, _boundaryR - _boundaryL, _boundaryB - _boundaryT, 0, blend, 1);
                     }
                 }
                 

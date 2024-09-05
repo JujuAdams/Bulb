@@ -2,7 +2,7 @@
 
 function __BulbRendererDefineAccumulateHard()
 {
-    __AccumulateHardLights = function(_cameraL, _cameraT, _cameraR, _cameraB, _cameraCX, _cameraCY, _cameraW, _cameraH, _normalCoeff)
+    __AccumulateHardLights = function(_boundaryL, _boundaryT, _boundaryR, _boundaryB, _cameraCX, _cameraCY, _cameraW, _cameraH, _cameraA, _normalCoeff)
     {
         static _shdBulbHardShadows_u_vLight                   = shader_get_uniform(__shdBulbHardShadows,              "u_vLight"      );
         static _shdBulbHardShadows_u_fNormalCoeff             = shader_get_uniform(__shdBulbHardShadows,              "u_fNormalCoeff");
@@ -76,7 +76,7 @@ function __BulbRendererDefineAccumulateHard()
                         __CheckSpriteDimensions();
                         
                         //If this light is active, do some drawing
-                        if (__IsOnScreen(_cameraL, _cameraT, _cameraR, _cameraB))
+                        if (__IsOnScreen(_boundaryL, _boundaryT, _boundaryR, _boundaryB))
                         {
                             if (castShadows)
                             {
@@ -179,7 +179,7 @@ function __BulbRendererDefineAccumulateHard()
                         }
                                 
                         gpu_set_stencil_func(cmpfunc_greater);
-                        draw_sprite_ext(__sprBulbPixel, 0, _cameraL, _cameraT, _cameraW+1, _cameraH+1, 0, blend, 1);
+                        draw_sprite_ext(__sprBulbPixel, 0, _boundaryL, _boundaryT, _boundaryR - _boundaryL, _boundaryB - _boundaryT, 0, blend, 1);
                         gpu_set_stencil_func(cmpfunc_always);
                     }
                 }

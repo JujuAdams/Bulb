@@ -134,26 +134,26 @@ function __BulbRendererDefineLight()
         return GetLightValue(_worldX, _worldY, _cameraLeft, _cameraTop,  _cameraViewWidth, _cameraViewHeight);
     }
     
-    __AccumulateLights = function(_cameraL, _cameraT, _cameraR, _cameraB, _cameraCX, _cameraCY, _cameraW, _cameraH)
+    __AccumulateLights = function(_boundaryL, _boundaryT, _boundaryR, _boundaryB, _cameraCX, _cameraCY, _cameraW, _cameraH, _cameraA)
     {
-        __AccumulateAmbienceSprite(_cameraL, _cameraT, _cameraR, _cameraB);
+        __AccumulateAmbienceSprite(_boundaryL, _boundaryT, _boundaryR, _boundaryB);
         
         var _normalCoeff = selfLighting? -1 : 1;
         
         //Iterate over all non-deferred lights...
         if (soft)
         {
-            __AccumulateSoftLights(_cameraL, _cameraT, _cameraR, _cameraB, _cameraCX, _cameraCY, _cameraW, _cameraH, _normalCoeff);
+            __AccumulateSoftLights(_boundaryL, _boundaryT, _boundaryR, _boundaryB, _cameraCX, _cameraCY, _cameraW, _cameraH, _cameraA, _normalCoeff);
         }
         else
         {
-            __AccumulateHardLights(_cameraL, _cameraT, _cameraR, _cameraB, _cameraCX, _cameraCY, _cameraW, _cameraH, _normalCoeff);
+            __AccumulateHardLights(_boundaryL, _boundaryT, _boundaryR, _boundaryB, _cameraCX, _cameraCY, _cameraW, _cameraH, _cameraA, _normalCoeff);
         }
         
         shader_reset();
         
-        __AccumulateShadowOverlay(_cameraL, _cameraT, _cameraR, _cameraB);
-        __AccumulateLightOverlay(_cameraL, _cameraT, _cameraR, _cameraB);
+        __AccumulateShadowOverlay(_boundaryL, _boundaryT, _boundaryR, _boundaryB);
+        __AccumulateLightOverlay(_boundaryL, _boundaryT, _boundaryR, _boundaryB);
         
         //Restore default behaviour
         gpu_set_colorwriteenable(true, true, true, true);
