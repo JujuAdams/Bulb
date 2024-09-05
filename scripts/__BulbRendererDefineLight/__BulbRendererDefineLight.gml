@@ -59,11 +59,6 @@ function __BulbRendererDefineLight()
         var _x = (_worldX - _cameraL) * (surface_get_width( _surface) / _cameraW);
         var _y = (_worldY - _cameraT) * (surface_get_height(_surface) / _cameraH);
         
-        if (mouse_check_button_pressed(mb_middle))
-        {
-            show_debug_message("1");
-        }
-        
         var _result = surface_getpixel_ext(_surface, _x, _y);
         if (not is_array(_result))
         {
