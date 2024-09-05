@@ -10,7 +10,7 @@
 
 **What platforms does Bulb support?**
 
-Everything! You might run into edge cases on platforms that I don't regularly test; please [report any bugs](https://github.com/JujuAdams/Bulb/issues) if and when you find them.
+Everything, apart from HTML5. You might run into edge cases on platforms that I don't regularly test; please [report any bugs](https://github.com/JujuAdams/Bulb/issues) if and when you find them.
 
 &nbsp;
 
