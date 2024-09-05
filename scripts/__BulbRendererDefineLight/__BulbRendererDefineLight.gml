@@ -59,131 +59,138 @@ function __BulbRendererDefineLight()
         var _x = (_worldX - _cameraL) * (surface_get_width( _surface) / _cameraW);
         var _y = (_worldY - _cameraT) * (surface_get_height(_surface) / _cameraH);
         
+        if (mouse_check_button_pressed(mb_middle))
+        {
+            show_debug_message("1");
+        }
+        
         var _result = surface_getpixel_ext(_surface, _x, _y);
         if (not is_array(_result))
         {
-            var _colour = _result;
+            //Unpack 32-bit colour
+            var _resultR = ( _result        & 0xFF) / 255;
+            var _resultG = ((_result >>  8) & 0xFF) / 255;
+            var _resultB = ((_result >> 16) & 0xFF) / 255;
+            var _resultA = ((_result >> 24) & 0xFF) / 255;
         }
         else
         {
-            _result[0] *= exposure;
-            _result[1] *= exposure;
-            _result[2] *= exposure;
-            _result[3]  = clamp(_result[3], 0, 1); //Clamp the alpha channel
+            //Unpack array of floating point values
+            var _resultR = _result[0];
+            var _resultG = _result[1];
+            var _resultB = _result[2];
+            var _resultA = _result[3];
+        }
+        
+        _resultR *= exposure;
+        _resultG *= exposure;
+        _resultB *= exposure;
+        _resultA  = 255*clamp(_resultA, 0, 1); //Clamp the alpha channel
+        
+        static _funcLuminance = function(_red, _green, _blue)
+        {
+            return 0.2126*_red + 0.7152*_green + 0.0722*_blue;
+        }
+        
+        var _tonemap = GetTonemap();
+        
+        if (_tonemap == BULB_TONEMAP_BAD_GAMMA)
+        {
+            _resultR = 255*clamp(_resultR, 0, 1);
+            _resultG = 255*clamp(_resultG, 0, 1);
+            _resultB = 255*clamp(_resultB, 0, 1);
+        }
+        else if (_tonemap == BULB_TONEMAP_HBD)
+        {
+            _resultR = max(0, _resultR - 0.004);
+            _resultG = max(0, _resultG - 0.004);
+            _resultB = max(0, _resultB - 0.004);
             
-            static _funcLuminance = function(_red, _green, _blue)
+            _resultR = (_resultR * (6.2*_resultR + 0.5)) / (_resultR * (6.2*_resultR + 1.7) + 0.06);
+            _resultG = (_resultG * (6.2*_resultG + 0.5)) / (_resultG * (6.2*_resultG + 1.7) + 0.06);
+            _resultB = (_resultB * (6.2*_resultB + 0.5)) / (_resultB * (6.2*_resultB + 1.7) + 0.06);
+            
+            //Already includes gamma correction in calculation, no power() call needed
+            _resultR = 255*clamp(_resultR, 0, 1);
+            _resultG = 255*clamp(_resultG, 0, 1);
+            _resultB = 255*clamp(_resultB, 0, 1);
+        }
+        else if (_tonemap == BULB_TONEMAP_UNREAL3)
+        {
+            _resultR = _resultR / (_resultR + 0.155) * 1.019;
+            _resultG = _resultG / (_resultG + 0.155) * 1.019;
+            _resultB = _resultB / (_resultB + 0.155) * 1.019;
+            
+            //Already includes gamma correction in calculation, no power() call needed
+            _resultR = 255*clamp(_resultR, 0, 1);
+            _resultG = 255*clamp(_resultG, 0, 1);
+            _resultB = 255*clamp(_resultB, 0, 1);
+        }
+        else
+        {
+            if (_tonemap == BULB_TONEMAP_CLAMP)
             {
-                return 0.2126*_red + 0.7152*_green + 0.0722*_blue;
+                //Nothing else needed
             }
-            
-            var _tonemap = GetTonemap();
-            
-            if (_tonemap == BULB_TONEMAP_BAD_GAMMA)
+            else if (_tonemap == BULB_TONEMAP_REINHARD)
             {
-                _result[0] = 255*clamp(_result[0], 0, 1);
-                _result[1] = 255*clamp(_result[1], 0, 1);
-                _result[2] = 255*clamp(_result[2], 0, 1);
+                var _luminance    = _funcLuminance(_resultR, _resultG, _resultB);
+                var _luminanceNew = _luminance / (1 + _luminance);
+                
+                _resultR *= _luminanceNew / _luminance;
+                _resultG *= _luminanceNew / _luminance;
+                _resultB *= _luminanceNew / _luminance;
             }
-            else if (_tonemap == BULB_TONEMAP_HBD)
+            else if (_tonemap == BULB_TONEMAP_REINHARD_EXTENDED)
             {
-                var _r = max(0, _result[0] - 0.004);
-                var _g = max(0, _result[1] - 0.004);
-                var _b = max(0, _result[2] - 0.004);
+                var _luminance    = _funcLuminance(_resultR, _resultG, _resultB);
+                var _luminanceNew = _luminance * (1.0 + (_luminance / (4*4))) / (1 + _luminance);
                 
-                _r = (_r * (6.2*_r + 0.5)) / (_r * (6.2*_r + 1.7) + 0.06);
-                _g = (_g * (6.2*_g + 0.5)) / (_g * (6.2*_g + 1.7) + 0.06);
-                _b = (_b * (6.2*_b + 0.5)) / (_b * (6.2*_b + 1.7) + 0.06);
+                _resultR *= _luminanceNew / _luminance;
+                _resultG *= _luminanceNew / _luminance;
+                _resultB *= _luminanceNew / _luminance;
+            }
+            else if (_tonemap == BULB_TONEMAP_UNCHARTED2)
+            {
+                _resultR *= 4;
+                _resultG *= 4;
+                _resultB *= 4;
                 
-                _result[0] = 255*clamp(_r, 0, 1);
-                _result[1] = 255*clamp(_g, 0, 1);
-                _result[2] = 255*clamp(_b, 0, 1);
+                static _uc2_A = 0.15;
+                static _uc2_B = 0.50;
+                static _uc2_C = 0.10;
+                static _uc2_D = 0.20;
+                static _uc2_E = 0.02;
+                static _uc2_F = 0.30;
+                
+                _resultR = ((_resultR*(_uc2_A*_resultR + _uc2_C*_uc2_B) + _uc2_D*_uc2_E) / (_resultR*(_uc2_A*_resultR + _uc2_B) + _uc2_D*_uc2_F)) - _uc2_E/_uc2_F;
+                _resultG = ((_resultG*(_uc2_A*_resultG + _uc2_C*_uc2_B) + _uc2_D*_uc2_E) / (_resultG*(_uc2_A*_resultG + _uc2_B) + _uc2_D*_uc2_F)) - _uc2_E/_uc2_F;
+                _resultB = ((_resultB*(_uc2_A*_resultB + _uc2_C*_uc2_B) + _uc2_D*_uc2_E) / (_resultB*(_uc2_A*_resultB + _uc2_B) + _uc2_D*_uc2_F)) - _uc2_E/_uc2_F;
             }
             else if (_tonemap == BULB_TONEMAP_UNREAL3)
             {
-                var _r = _result[0];
-                var _g = _result[1];
-                var _b = _result[2];
+                _resultR = max(0, _resultR - 0.004);
+                _resultG = max(0, _resultG - 0.004);
+                _resultB = max(0, _resultB - 0.004);
                 
-                _r = _r / (_r + 0.155) * 1.019;
-                _g = _g / (_g + 0.155) * 1.019;
-                _b = _b / (_b + 0.155) * 1.019;
-                
-                _result[0] = 255*clamp(_r, 0, 1);
-                _result[1] = 255*clamp(_g, 0, 1);
-                _result[2] = 255*clamp(_b, 0, 1);
+                _resultR = (_resultR * (6.2*_resultR + 0.5)) / (_resultR * (6.2*_resultR + 1.7) + 0.06);
+                _resultG = (_resultG * (6.2*_resultG + 0.5)) / (_resultG * (6.2*_resultG + 1.7) + 0.06);
+                _resultB = (_resultB * (6.2*_resultB + 0.5)) / (_resultB * (6.2*_resultB + 1.7) + 0.06);
             }
-            else
+            else if (_tonemap == BULB_TONEMAP_ACES)
             {
-                if (_tonemap == BULB_TONEMAP_CLAMP)
-                {
-                    //Nothing else needed
-                }
-                else if (_tonemap == BULB_TONEMAP_REINHARD)
-                {
-                    var _luminance    = _funcLuminance(_result[0], _result[1], _result[2]);
-                    var _luminanceNew = _luminance / (1 + _luminance);
-                    
-                    _result[0] *= _luminanceNew / _luminance;
-                    _result[1] *= _luminanceNew / _luminance;
-                    _result[2] *= _luminanceNew / _luminance;
-                }
-                else if (_tonemap == BULB_TONEMAP_REINHARD_EXTENDED)
-                {
-                    var _luminance    = _funcLuminance(_result[0], _result[1], _result[2]);
-                    var _luminanceNew = _luminance * (1.0 + (_luminance / (4*4))) / (1 + _luminance);
-                    
-                    _result[0] *= _luminanceNew / _luminance;
-                    _result[1] *= _luminanceNew / _luminance;
-                    _result[2] *= _luminanceNew / _luminance;
-                }
-                else if (_tonemap == BULB_TONEMAP_UNCHARTED2)
-                {
-                    var _r = 4*_result[0];
-                    var _g = 4*_result[1];
-                    var _b = 4*_result[2];
-                    
-                    static _uc2_A = 0.15;
-                    static _uc2_B = 0.50;
-                    static _uc2_C = 0.10;
-                    static _uc2_D = 0.20;
-                    static _uc2_E = 0.02;
-                    static _uc2_F = 0.30;
-                    
-                    _result[0] = ((_r*(_uc2_A*_r+_uc2_C*_uc2_B)+_uc2_D*_uc2_E)/(_r*(_uc2_A*_r+_uc2_B)+_uc2_D*_uc2_F))-_uc2_E/_uc2_F;
-                    _result[1] = ((_g*(_uc2_A*_g+_uc2_C*_uc2_B)+_uc2_D*_uc2_E)/(_g*(_uc2_A*_g+_uc2_B)+_uc2_D*_uc2_F))-_uc2_E/_uc2_F;
-                    _result[2] = ((_b*(_uc2_A*_b+_uc2_C*_uc2_B)+_uc2_D*_uc2_E)/(_b*(_uc2_A*_b+_uc2_B)+_uc2_D*_uc2_F))-_uc2_E/_uc2_F;
-                }
-                else if (_tonemap == BULB_TONEMAP_UNREAL3)
-                {
-                    var _r = max(0, _result[0] - 0.004);
-                    var _g = max(0, _result[1] - 0.004);
-                    var _b = max(0, _result[2] - 0.004);
-                    
-                    _result[0] = (_r * (6.2*_r + 0.5)) / (_r * (6.2*_r + 1.7) + 0.06);
-                    _result[1] = (_g * (6.2*_g + 0.5)) / (_g * (6.2*_g + 1.7) + 0.06);
-                    _result[2] = (_b * (6.2*_b + 0.5)) / (_b * (6.2*_b + 1.7) + 0.06);
-                }
-                else if (_tonemap == BULB_TONEMAP_ACES)
-                {
-                    var _r = _result[0];
-                    var _g = _result[1];
-                    var _b = _result[2];
-                    
-                    _result[0] = (_r*(2.51*_r + 0.03)) / (_r*(2.43*_r + 0.59) + 0.14);
-                    _result[1] = (_g*(2.51*_g + 0.03)) / (_g*(2.43*_g + 0.59) + 0.14);
-                    _result[2] = (_b*(2.51*_b + 0.03)) / (_b*(2.43*_b + 0.59) + 0.14);
-                }
-                
-                _result[0] = 255*clamp(power(_result[0], 1/BULB_GAMMA), 0, 1);
-                _result[1] = 255*clamp(power(_result[1], 1/BULB_GAMMA), 0, 1);
-                _result[2] = 255*clamp(power(_result[2], 1/BULB_GAMMA), 0, 1);
+                _resultR = (_resultR*(2.51*_resultR + 0.03)) / (_resultR*(2.43*_resultR + 0.59) + 0.14);
+                _resultG = (_resultG*(2.51*_resultG + 0.03)) / (_resultG*(2.43*_resultG + 0.59) + 0.14);
+                _resultB = (_resultB*(2.51*_resultB + 0.03)) / (_resultB*(2.43*_resultB + 0.59) + 0.14);
             }
             
-            _result[3] = 255*clamp(_result[3], 0, 1);
-            var _colour = (_result[3] << 24) | (_result[2] << 16) | (_result[1] << 8) | _result[0];
+            //Final gamma correction stage
+            _resultR = 255*clamp(power(_resultR, 1/BULB_GAMMA), 0, 1);
+            _resultG = 255*clamp(power(_resultG, 1/BULB_GAMMA), 0, 1);
+            _resultB = 255*clamp(power(_resultB, 1/BULB_GAMMA), 0, 1);
         }
         
-        return _colour;
+        return ((_resultA << 24) | (_resultB << 16) | (_resultG << 8) | _resultR);
     }
     
     GetLightValueFromCamera = function(_worldX, _worldY, _camera)
