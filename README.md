@@ -2,7 +2,7 @@
 
 <h1 align="center">Bulb 22.0.3 Beta</h1>
 
-<p align="center">2D lighting and shadows for GameMaker 2022 LTS</p>
+<p align="center">2D lighting and shadows for GameMaker 2024.6 (and 2022 LTS)</p>
 
 &nbsp;
 
