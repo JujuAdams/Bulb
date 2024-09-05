@@ -60,7 +60,7 @@ We're also going to be drawing the application surface manually in the next step
 application_surface_draw_enable(false);
 
 //Instantiate and set up a renderer
-renderer = new BulbRenderer(c_dkgray, BULB_MODE.HARD_BM_MAX, false);
+renderer = new BulbRenderer();
 renderer.ambientColor = c_dkgray;
 renderer.soft = false;
 renderer.smooth = false;
@@ -153,4 +153,6 @@ occluder.y = y;
 
 ### 8. Run the game!
 
-With any luck upon running the game you'll see a light and a shadow cast by the player instance. As you move the player around, the shadow should change position such that it's pointing away from the light. As an additional exercise, try adding more lights and occluders. You can also start tweaking parameters on the renderer and lights to create a lighting setup that looks best for your game.
+With any luck upon running the game you'll see a light and a shadow cast by the player instance. As you move the player around, the shadow should change position such that it's pointing away from the light. As an additional exercise, try adding more lights and occluders. You can also start tweaking parameters on the renderer and lights to create a lighting setup that looks best for your game. 
+
+Finally, most games will be using a camera. You can specify a camera when creating a renderer (`new BulbRenderer(camera)`) or you can change the camera for a renderer with the `.SetCamera()` method.
