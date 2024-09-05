@@ -20,8 +20,8 @@ if (mouse_check_button(mb_left) and (alarm_get(0) <= 0))
 
 //Update camera position
 camera_set_view_pos(oRendererPar.camera,
-                    round(x - 0.5*camera_get_view_width( oRendererPar.camera)),
-                    round(y - 0.5*camera_get_view_height(oRendererPar.camera)));
+                    x - 0.5*camera_get_view_width( oRendererPar.camera),
+                    y - 0.5*camera_get_view_height(oRendererPar.camera));
 
 if (keyboard_check(ord("Q"))) camera_set_view_angle(oRendererPar.camera, camera_get_view_angle(oRendererPar.camera) + 0.5);
 if (keyboard_check(ord("E"))) camera_set_view_angle(oRendererPar.camera, camera_get_view_angle(oRendererPar.camera) - 0.5);
