@@ -49,28 +49,40 @@ Make sure that the room has a white background so you can see where the light is
 
 ### 3. Create a renderer
 
-In a new object called `objLightController`, we create a Bulb renderer. We choose a dark (but not pitch black) ambient colour to demonstrate lighting, and we choose a basic [unsmoothed lighting mode](GML-Functions#bulbrendererambientcolour-mode-smooth-constructor).
+In a new object called `objLightController`, we create a Bulb renderer. A renderer will be instantiated with a bunch of default properties set up for us. We're going to override a few of them to make this demo clearer to follow: We choose a dark (but not pitch black) ambient colour to demonstrate lighting and we choose a basic hard shadow lighting mode.
+
+We're also going to be drawing the application surface manually in the next step so we'll need to turn off automatic application surface drawing too.
 
 ```GML
 ///Create Event for objLightController
 
+//We'll be drawing the application surface ourselves (see Post-Draw event)
+application_surface_draw_enable(false);
+
+//Instantiate and set up a renderer
 renderer = new BulbRenderer(c_dkgray, BULB_MODE.HARD_BM_MAX, false);
+renderer.ambientColor = c_dkgray;
+renderer.soft = false;
+renderer.smooth = false;
 ```
 
 &nbsp;
 
-### 4. Call an update and draw method
+### 4. Call the update method and draw function
 
-In the Draw End event for `objLightController` we update and draw the renderer. We use the Draw End event to ensure the lighting surface is drawn over the top of everything else. The `.Update()` call ensures what's on the lighting surface matches the game state, and the `.Draw()` call draws the renderer's lighting surface.
-
-*`.Update()` can be called in any event, but it's often convenient to execute it before drawing the lighting surface.*
+In the Post-Draw event for `objLightController` we update the renderer and draw the application surface. The `.Update()` call ensures what's on the lighting surface matches the game state, and the `BulbDrawLitApplicationSurface()` call draws the application surface but using the lighting surface provided by the renderer. We use the Post-Draw event as this is where the application surface is typically drawn as part of GameMaker's native draw pipeline.
 
 ```GML
-///Draw End Event for objLightController
+///Post-Draw Event for objLightController
 
-renderer.Update(0, 0, room_width, room_height);
-renderer.Draw(0, 0);
+//Update the lights and shadows on the renderer
+renderer.Update();
+
+//Draw the application surface, lit up by the renderer
+BulbDrawLitApplicationSurface(renderer);
 ```
+
+?> `.Update()` can be called in any event, but it's often convenient to execute it before drawing the lighting surface.
 
 &nbsp;
 
@@ -136,3 +148,9 @@ y += 4*(keyboard_check(vk_down) - keyboard_check(vk_up));
 occluder.x = x;
 occluder.y = y;
 ```
+
+&nbsp;
+
+### 8. Run the game!
+
+With any luck upon running the game you'll see a light and a shadow cast by the player instance. As you move the player around, the shadow should change position such that it's pointing away from the light. As an additional exercise, try adding more lights and occluders. You can also start tweaking parameters on the renderer and lights to create a lighting setup that looks best for your game.
