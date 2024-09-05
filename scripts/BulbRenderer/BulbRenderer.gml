@@ -22,17 +22,19 @@
 /// 
 /// Full list of methods:
 /// 
+/// `.Free()`
 /// `.SetCamera(camera)`
 /// `.GetCamera()`
 /// `.SetSurfaceDimensions(width, height)`
 /// `.GetSurfaceDimensions()`
 /// `.Update()`
 /// `.DrawLitSurface(surface, x, y, width, height, [textureFiltering], [alphaBlend])`
-/// `.Free()`
 /// `.GetTonemap()`
-/// `.RefreshStaticOccluders()`
+/// `.GetLightSurface()`
+/// `.GetLightValue()`
 /// `.GetNormalMapSurface()
 /// `.DrawNormalMapDebug()`
+/// `.RefreshStaticOccluders()`
 
 function BulbRenderer(_camera) constructor
 {
@@ -110,8 +112,6 @@ function BulbRenderer(_camera) constructor
     
     Update = function()
     {
-        //static _worldMatrix = [1,0,0,0,   0,1,0,0,   0,0,1,0,   0,0,0,1];
-        
         //Deploy PROPER MATHS in case the dev is using matrices
         
         var _viewMatrix = camera_get_view_mat(__camera);
@@ -445,7 +445,6 @@ function BulbRenderer(_camera) constructor
         GetLightSurface    = _nullFunc;
         __FreeLightSurface = _nullFunc;
         GetLightValue      = _nullFunc;
-        __AccumulateLights = _nullFunc;
     }
     
     GetTonemap = function()
