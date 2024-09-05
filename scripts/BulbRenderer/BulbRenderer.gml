@@ -31,9 +31,9 @@
 /// `.DrawLitSurface(surface, x, y, width, height, [textureFiltering], [alphaBlend])`
 /// `.GetTonemap()`
 /// `.GetLightSurface()`
-/// `.GetLightValue()`
+/// `.GetLightValue(x, y)`
 /// `.GetNormalMapSurface()
-/// `.DrawNormalMapDebug()`
+/// `.DrawNormalMapDebug(x, y, width, height)`
 /// `.RefreshStaticOccluders()`
 
 function BulbRenderer(_camera) constructor
