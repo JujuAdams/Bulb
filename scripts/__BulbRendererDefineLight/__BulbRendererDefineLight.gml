@@ -138,19 +138,14 @@ function __BulbRendererDefineLight()
     {
         __AccumulateAmbienceSprite(_boundaryL, _boundaryT, _boundaryR, _boundaryB);
         
-        var _normalCoeff = selfLighting? -1 : 1;
-        
-        //Iterate over all non-deferred lights...
         if (soft)
         {
-            __AccumulateSoftLights(_boundaryL, _boundaryT, _boundaryR, _boundaryB, _cameraCX, _cameraCY, _cameraW, _cameraH, _cameraA, _normalCoeff);
+            __AccumulateSoftLights(_boundaryL, _boundaryT, _boundaryR, _boundaryB, _cameraCX, _cameraCY, _cameraW, _cameraH, _cameraA, selfLighting? -1 : 1);
         }
         else
         {
-            __AccumulateHardLights(_boundaryL, _boundaryT, _boundaryR, _boundaryB, _cameraCX, _cameraCY, _cameraW, _cameraH, _cameraA, _normalCoeff);
+            __AccumulateHardLights(_boundaryL, _boundaryT, _boundaryR, _boundaryB, _cameraCX, _cameraCY, _cameraW, _cameraH, _cameraA, selfLighting? -1 : 1);
         }
-        
-        shader_reset();
         
         __AccumulateShadowOverlay(_boundaryL, _boundaryT, _boundaryR, _boundaryB);
         __AccumulateLightOverlay(_boundaryL, _boundaryT, _boundaryR, _boundaryB);

@@ -114,11 +114,29 @@ function BulbRenderer(_camera) constructor
         var _viewMatrix = camera_get_view_mat(__camera);
         var _projMatrix = camera_get_proj_mat(__camera);
         
-        var _cameraA  = -darctan2(_viewMatrix[1], _viewMatrix[0]);
-        var _cameraCX = -_viewMatrix[12];
-        var _cameraCY = -_viewMatrix[13];
+        var _matrixCos =  _viewMatrix[ 0];
+        var _matrixSin =  _viewMatrix[ 1];
+        var _matrixX   = -_viewMatrix[12];
+        var _matrixY   = -_viewMatrix[13];
+        
+        var _cameraA  = -darctan2(_matrixSin, _matrixCos);
+        var _cameraCX =  _matrixX*_matrixCos + _matrixY*_matrixSin;
+        var _cameraCY = -_matrixX*_matrixSin + _matrixY*_matrixCos;
         var _cameraW  = round(abs(2/_projMatrix[0]));
         var _cameraH  = round(abs(2/_projMatrix[5]));
+        
+        var _rotatedW = _cameraW*abs(_matrixCos) + _cameraH*abs(_matrixSin);
+        var _rotatedH = _cameraW*abs(_matrixSin) + _cameraH*abs(_matrixCos);
+        
+        var _boundaryL = _cameraCX - _rotatedW/2;
+        var _boundaryT = _cameraCY - _rotatedH/2;
+        var _boundaryR = _cameraCX + _rotatedW/2;
+        var _boundaryB = _cameraCY + _rotatedH/2;
+        
+        var _boundaryExpandedL = _boundaryL - BULB_DYNAMIC_OCCLUDER_RANGE;
+        var _boundaryExpandedT = _boundaryT - BULB_DYNAMIC_OCCLUDER_RANGE;
+        var _boundaryExpandedR = _boundaryR + BULB_DYNAMIC_OCCLUDER_RANGE;
+        var _boundaryExpandedB = _boundaryB + BULB_DYNAMIC_OCCLUDER_RANGE;
         
         //Force a regeneration of vertex buffers if we're swapped between hard/soft lights
         if (soft != __oldSoft)
@@ -158,19 +176,6 @@ function BulbRenderer(_camera) constructor
         {
             __FreeNormalMapSurface();
         }
-        
-        var _rotatedW = _cameraW*abs(dcos(_cameraA)) + _cameraH*abs(dsin(_cameraA));
-        var _rotatedH = _cameraW*abs(dsin(_cameraA)) + _cameraH*abs(dcos(_cameraA));
-        
-        var _boundaryL = _cameraCX - _rotatedW/2;
-        var _boundaryT = _cameraCY - _rotatedH/2;
-        var _boundaryR = _cameraCX + _rotatedW/2;
-        var _boundaryB = _cameraCY + _rotatedH/2;
-        
-        var _boundaryExpandedL = _boundaryL - BULB_DYNAMIC_OCCLUDER_RANGE;
-        var _boundaryExpandedT = _boundaryT - BULB_DYNAMIC_OCCLUDER_RANGE;
-        var _boundaryExpandedR = _boundaryR + BULB_DYNAMIC_OCCLUDER_RANGE;
-        var _boundaryExpandedB = _boundaryB + BULB_DYNAMIC_OCCLUDER_RANGE;
         
         //Construct our wipe/static/dynamic vertex buffers
         __UpdateVertexBuffers(_boundaryExpandedL, _boundaryExpandedT, _boundaryExpandedR, _boundaryExpandedB);
