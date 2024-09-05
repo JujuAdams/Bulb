@@ -6,9 +6,9 @@
 /// @param [width]
 /// @param [height]
 /// @param [textureFiltering]
-/// @param [alphaBlend]
+/// @param [alphaBlend=false]
 
-function BulbDrawLitApplicationSurface(_renderer, _x = undefined, _y = undefined, _width = undefined, _height = undefined, _textureFiltering = undefined, _alphaBlend = undefined)
+function BulbDrawLitApplicationSurface(_renderer, _x = undefined, _y = undefined, _width = undefined, _height = undefined, _textureFiltering = undefined, _alphaBlend = false)
 {
     if ((_x == undefined) || (_y == undefined) || (_width == undefined) || (_height == undefined))
     {
@@ -29,7 +29,7 @@ function BulbDrawLitApplicationSurface(_renderer, _x = undefined, _y = undefined
         
         if (_alphaBlend != undefined)
         {
-            var _oldAlphaBlend = gpu_get_tex_filter();
+            var _oldAlphaBlend = gpu_get_blendenable();
             gpu_set_blendenable(_alphaBlend);
         }
         
