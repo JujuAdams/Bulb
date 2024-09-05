@@ -39,4 +39,4 @@ if (renderer.normalMap)
 }
 
 //Update the renderer. You should do this after updating the normal map!
-renderer.UpdateFromCamera(camera);
+renderer.Update();

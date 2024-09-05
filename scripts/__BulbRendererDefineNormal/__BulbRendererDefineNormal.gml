@@ -16,9 +16,9 @@ function __BulbRendererDefineNormal()
             __BulbError("Cannot call .GetNormalMapSurface(), `normalMap` is not set to `true`");
         }
         
-        if ((surfaceWidth <= 0) || (surfaceHeight <= 0)) return undefined;
+        if ((__surfaceWidth <= 0) || (__surfaceHeight <= 0)) return undefined;
         
-        if ((__normalSurface != undefined) && ((surface_get_width(__normalSurface) != surfaceWidth) || (surface_get_height(__normalSurface) != surfaceHeight)))
+        if ((__normalSurface != undefined) && ((surface_get_width(__normalSurface) != __surfaceWidth) || (surface_get_height(__normalSurface) != __surfaceHeight)))
         {
             surface_free(__normalSurface);
             __normalSurface = undefined;
@@ -26,7 +26,7 @@ function __BulbRendererDefineNormal()
         
         if ((__normalSurface == undefined) || !surface_exists(__normalSurface))
         {
-            __normalSurface = surface_create(surfaceWidth, surfaceHeight);
+            __normalSurface = surface_create(__surfaceWidth, __surfaceHeight);
             
             surface_set_target(__normalSurface);
             BulbNormalMapClear();

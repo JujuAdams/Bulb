@@ -1,34 +1,37 @@
-// Full list of variables:
-// 
-// `.ambientColor`        | `c_black`           | Baseline ambient light color
-// `.ambientInGammaSpace` | `false`             | Whether the above is in gamma space (`true`) or linear space {`false`)
-// `.smooth`              | `true`              | Whether to use texture filtering (bilinear interpolation) where possible
-// `.soft`                | `true`              | Whether to use soft shadows
-// `.selfLighting`        | `false`             | Whether to allow light to enter but not escape occluders. Hard shadow mode only
-// `.exposure`            | `1.0`               | Exposure for the entire lighting render. Should usually be left at `1.0` when not in HDR mode
-// `.ldrTonemap`          | `BULB_TONEMAP_CLAMP`| Tonemap to use when not in HDR mode. Should usually be left at `BULB_TONEMAP_CLAMP`
-// `.hdr`                 | `false`             | Whether to use HDR rendering or not. HDR surface is 16-bit
-// `.hdrTonemap`          | `BULB_TONEMAP_HBD`  | Tonemap to use when in HDR mode
-// `.hdrBloomIntensity`   | `0`                 | Intensity of the bloom effect
-// `.hdrBloomIterations`  | `3`                 | Number of Kawase blur iterations to apply to the bloom
-// `.hdrBloomThesholdMin` | `0.6`               | Lower threshold for bloom cut-off
-// `.hdrBloomThesholdMax` | `0.8`               | Upper threshold for bloom cut-off
-// `.normalMap`           | Config macro        | Whether normal mapping should be used. Defaults to `BULB_DEFAULT_USE_NORMAL_MAP`
-// 
-// Full list of methods:
-// 
-// `.SetSurfaceDimensionsFromCamera(camera)`
-// `.SetSurfaceDimensions(width, height)`
-// `.UpdateFromCamera(camera)`
-// `.Update(left, top, width, height)`
-// `.DrawLitSurface(surface, x, y, width, height, [textureFiltering], [alphaBlend])`
-// `.Free()`
-// `.GetTonemap()`
-// `.RefreshStaticOccluders()`
-// `.GetNormalMapSurface()
-// `.DrawNormalMapDebug()`
+/// @param [camera]
+/// 
+/// Full list of variables:
+/// 
+/// `.ambientColor`        | `c_black`           | Baseline ambient light color
+/// `.ambientInGammaSpace` | `false`             | Whether the above is in gamma space (`true`) or linear space {`false`)
+/// `.smooth`              | `true`              | Whether to use texture filtering (bilinear interpolation) where possible
+/// `.soft`                | `true`              | Whether to use soft shadows
+/// `.selfLighting`        | `false`             | Whether to allow light to enter but not escape occluders. Hard shadow mode only
+/// `.exposure`            | `1.0`               | Exposure for the entire lighting render. Should usually be left at `1.0` when not in HDR mode
+/// `.ldrTonemap`          | `BULB_TONEMAP_CLAMP`| Tonemap to use when not in HDR mode. Should usually be left at `BULB_TONEMAP_CLAMP`
+/// `.hdr`                 | `false`             | Whether to use HDR rendering or not. HDR surface is 16-bit
+/// `.hdrTonemap`          | `BULB_TONEMAP_HBD`  | Tonemap to use when in HDR mode
+/// `.hdrBloomIntensity`   | `0`                 | Intensity of the bloom effect
+/// `.hdrBloomIterations`  | `3`                 | Number of Kawase blur iterations to apply to the bloom
+/// `.hdrBloomThesholdMin` | `0.6`               | Lower threshold for bloom cut-off
+/// `.hdrBloomThesholdMax` | `0.8`               | Upper threshold for bloom cut-off
+/// `.normalMap`           | Config macro        | Whether normal mapping should be used. Defaults to `BULB_DEFAULT_USE_NORMAL_MAP`
+/// 
+/// Full list of methods:
+/// 
+/// `.SetCamera(camera)`
+/// `.GetCamera()`
+/// `.SetSurfaceDimensions(width, height)`
+/// `.GetSurfaceDimensions()`
+/// `.Update()`
+/// `.DrawLitSurface(surface, x, y, width, height, [textureFiltering], [alphaBlend])`
+/// `.Free()`
+/// `.GetTonemap()`
+/// `.RefreshStaticOccluders()`
+/// `.GetNormalMapSurface()
+/// `.DrawNormalMapDebug()`
 
-function BulbRenderer() constructor
+function BulbRenderer(_camera) constructor
 {
     static _system = __BulbSystem();
     
@@ -49,75 +52,74 @@ function BulbRenderer() constructor
         return vertex_format_end();
     })();
     
-    //Assign the ambient colour used for the darkest areas of the screen. This can be changed on the fly
-    ambientColor = c_black;
-    ambientInGammaSpace = false;
-    
-    //The smoothing mode controls texture filtering both when accumulating lights and when drawing the resulting surface
-    smooth = true;
-    
-    selfLighting = false;
-    
-    soft = true;
-    __oldSoft = undefined;
-    
-    exposure   = 1;
-    ldrTonemap = BULB_TONEMAP_CLAMP;
-    
-    surfaceWidth  = -1;
-    surfaceHeight = -1;
-    
-    __BulbRendererDefineHDR();
-    __BulbRendererDefineNormal();
-    __BulbRendererDefineOverlayUnderlay();
-    __BulbRendererDefineAccumulateSoft();
-    if (_system.__hasStencil) __BulbRendererDefineAccumulateHard() else __BulbRendererDefineAccumulateHardNoStencil();
-    __BulbRendererDefineVertexBuffers();
-    __BulbRendererDefineLight();
     
     
-    
-    
-    SetSurfaceDimensionsFromCamera = function(_camera)
+    SetCamera = function(_camera)
     {
-        var _projMatrix = camera_get_proj_mat(_camera);
-        var _width  = round(abs(2/_projMatrix[0]));
-        var _height = round(abs(2/_projMatrix[5]));
+        if (__cameraImplicit)
+        {
+            camera_destroy(__camera);
+        }
         
-        return SetSurfaceDimensions(_width, _height);
+        if (_camera != undefined)
+        {
+            __camera         = _camera;
+            __cameraImplicit = false;
+        }
+        else
+        {
+            __camera         = camera_create_view(0, 0, room_width, room_height, 0,   noone, 0, 0, 0, 0);
+            __cameraImplicit = true;
+        }
+        
+        if ((__surfaceWidth < 0) || (__surfaceHeight < 0))
+        {
+            //Set the lighting surface dimensions from the camera
+            var _projMatrix = camera_get_proj_mat(__camera);
+            var _width  = round(abs(2/_projMatrix[0]));
+            var _height = round(abs(2/_projMatrix[5]));
+            SetSurfaceDimensions(_width, _height);
+        }
+    }
+    
+    GetCamera = function()
+    {
+        return __camera;
     }
     
     SetSurfaceDimensions = function(_width, _height)
     {
-        surfaceWidth  = _width;
-        surfaceHeight = _height;
+        __surfaceWidth  = _width;
+        __surfaceHeight = _height;
         
         GetLightSurface();
     }
     
-    UpdateFromCamera = function(_camera)
+    GetSurfaceDimensions = function()
     {
-        //Deploy PROPER MATHS in case the dev is using matrices
+        static _result = {};
         
-        var _viewMatrix = camera_get_view_mat(_camera);
-        var _projMatrix = camera_get_proj_mat(_camera);
+        _result.width  = __surfaceWidth;
+        _result.height = __surfaceHeight;
         
-        var _cameraX          = -_viewMatrix[12];
-        var _cameraY          = -_viewMatrix[13];
-        var _cameraViewWidth  = round(abs(2/_projMatrix[0]));
-        var _cameraViewHeight = round(abs(2/_projMatrix[5]));
-        var _cameraLeft       = _cameraX - _cameraViewWidth/2;
-        var _cameraTop        = _cameraY - _cameraViewHeight/2;
-        
-        return Update(_cameraLeft, _cameraTop, _cameraViewWidth, _cameraViewHeight);
+        return _result;
     }
     
-    Update = function(_cameraL, _cameraT, _cameraW, _cameraH)
+    Update = function()
     {
         static _worldMatrix = [1,0,0,0,   0,1,0,0,   0,0,1,0,   0,0,0,1];
         
-        if (surfaceWidth  <= 0) surfaceWidth  = _cameraW;
-        if (surfaceHeight <= 0) surfaceHeight = _cameraH;
+        //Deploy PROPER MATHS in case the dev is using matrices
+        
+        var _viewMatrix = camera_get_view_mat(__camera);
+        var _projMatrix = camera_get_proj_mat(__camera);
+        
+        var _cameraX = -_viewMatrix[12];
+        var _cameraY = -_viewMatrix[13];
+        var _cameraW = round(abs(2/_projMatrix[0]));
+        var _cameraH = round(abs(2/_projMatrix[5]));
+        var _cameraL = _cameraX - _cameraW/2;
+        var _cameraT = _cameraY - _cameraH/2;
         
         //Force a regeneration of vertex buffers if we're swapped between hard/soft lights
         if (soft != __oldSoft)
@@ -451,4 +453,37 @@ function BulbRenderer() constructor
             }
         }
     }
+    
+    
+    
+    //Assign the ambient colour used for the darkest areas of the screen. This can be changed on the fly
+    ambientColor = c_black;
+    ambientInGammaSpace = false;
+    
+    //The smoothing mode controls texture filtering both when accumulating lights and when drawing the resulting surface
+    smooth = true;
+    
+    selfLighting = false;
+    
+    soft = true;
+    __oldSoft = undefined;
+    
+    exposure   = 1;
+    ldrTonemap = BULB_TONEMAP_CLAMP;
+    
+    __camera         = undefined;
+    __cameraImplicit = false;
+    
+    __surfaceWidth  = -1;
+    __surfaceHeight = -1;
+    
+    __BulbRendererDefineHDR();
+    __BulbRendererDefineNormal();
+    __BulbRendererDefineOverlayUnderlay();
+    __BulbRendererDefineAccumulateSoft();
+    if (_system.__hasStencil) __BulbRendererDefineAccumulateHard() else __BulbRendererDefineAccumulateHardNoStencil();
+    __BulbRendererDefineVertexBuffers();
+    __BulbRendererDefineLight();
+    
+    SetCamera(_camera);
 }

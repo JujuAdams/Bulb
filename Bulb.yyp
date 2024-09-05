@@ -139,10 +139,10 @@
     {"resourceType":"GMFolder","resourceVersion":"1.0","name":"Normal Map","folderPath":"folders/Bulb/Normal Map.yy","order":0,},
     {"resourceType":"GMFolder","resourceVersion":"1.0","name":"Example","folderPath":"folders/Example.yy","order":0,},
     {"resourceType":"GMFolder","resourceVersion":"1.0","name":"rmTest Objects","folderPath":"folders/Example/rmTest Objects.yy","order":5,},
+    {"resourceType":"GMFolder","resourceVersion":"1.0","name":"rmTestLightStrip","folderPath":"folders/Example/rmTestLightStrip.yy","order":7,},
     {"resourceType":"GMFolder","resourceVersion":"1.0","name":"rmTestSoft","folderPath":"folders/Example/rmTestSoft.yy","order":6,},
     {"resourceType":"GMFolder","resourceVersion":"1.0","name":"Sprites","folderPath":"folders/Example/Sprites.yy","order":8,},
     {"resourceType":"GMFolder","resourceVersion":"1.0","name":"Rooms","folderPath":"folders/Rooms.yy","order":0,},
-    {"resourceType":"GMFolder","resourceVersion":"1.0","name":"rmTestLightStrip","folderPath":"folders/Example/rmTestLightStrip.yy","order":7,},
   ],
   "AudioGroups": [
     {"resourceType":"GMAudioGroup","resourceVersion":"1.3","name":"audiogroup_default","targets":-1,},

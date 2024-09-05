@@ -14,8 +14,7 @@ view_set_camera(0, camera);
 application_surface_draw_enable(false);
 
 //Start the renderer system
-renderer = new BulbRenderer();
-renderer.SetSurfaceDimensionsFromCamera(camera);
+renderer = new BulbRenderer(camera);
 
 //Set up ambient light. As this is a lighting value, the ambient color is defined in linear color
 //space.

@@ -11,9 +11,12 @@ function __BulbRendererDefineLight()
     
     GetLightSurface = function()
     {
-        if ((surfaceWidth <= 0) || (surfaceHeight <= 0)) return undefined;
+        if ((__surfaceWidth <= 0) || (__surfaceHeight <= 0)) return undefined;
         
-        if ((__lightSurface != undefined) && ((surface_get_width(__lightSurface) != surfaceWidth) || (surface_get_height(__lightSurface) != surfaceHeight)))
+        var _surfaceWidth  = floor(__surfaceWidth);
+        var _surfaceHeight = floor(__surfaceHeight);
+        
+        if ((__lightSurface != undefined) && ((surface_get_width(__lightSurface) != _surfaceWidth) || (surface_get_height(__lightSurface) != _surfaceHeight)))
         {
             surface_free(__lightSurface);
             __lightSurface = undefined;
@@ -26,11 +29,11 @@ function __BulbRendererDefineLight()
             {
                 //Work around compile error in LTS
                 var _surface_create = surface_create;
-                __lightSurface = _surface_create(surfaceWidth, surfaceHeight, hdr? surface_rgba16float : surface_rgba8unorm);
+                __lightSurface = _surface_create(_surfaceWidth, _surfaceHeight, hdr? surface_rgba16float : surface_rgba8unorm);
             }
             else
             {
-                __lightSurface = surface_create(surfaceWidth, surfaceHeight);
+                __lightSurface = surface_create(_surfaceWidth, _surfaceHeight);
             }
             
             surface_set_target(__lightSurface);
