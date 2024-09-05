@@ -8,7 +8,7 @@
 
 |Argument  |Datatype    |Purpose                                                                       |
 |----------|------------|------------------------------------------------------------------------------|
-|`renderer`|renderer    |Renderer to add this occluder to                                              |
+|`renderer`|renderer    |Renderer to add this light to                                                 |
 |`sprite`  |sprite index|Sprite to draw for the light                                                  |
 |`image`   |number      |Image index of the given sprite to draw. Negative values are **not** supported|
 |`x`       |number      |x-position of the light                                                       |
