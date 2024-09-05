@@ -442,11 +442,10 @@ function BulbRenderer(_camera) constructor
         __UpdateVertexBuffers  = _nullFunc;
         
         //__BulbRendererDefineLight()
-        GetLightSurface         = _nullFunc;
-        __FreeLightSurface      = _nullFunc;
-        GetLightValue           = _nullFunc;
-        GetLightValueFromCamera = _nullFunc;
-        __AccumulateLights      = _nullFunc;
+        GetLightSurface    = _nullFunc;
+        __FreeLightSurface = _nullFunc;
+        GetLightValue      = _nullFunc;
+        __AccumulateLights = _nullFunc;
     }
     
     GetTonemap = function()

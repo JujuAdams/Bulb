@@ -53,11 +53,19 @@ function __BulbRendererDefineLight()
         }
     }
     
-    GetLightValue = function(_worldX, _worldY, _cameraL, _cameraT, _cameraW, _cameraH)
+    GetLightValue = function(_worldX, _worldY)
     {
         var _surface = GetLightSurface();
-        var _x = (_worldX - _cameraL) * (surface_get_width( _surface) / _cameraW);
-        var _y = (_worldY - _cameraT) * (surface_get_height(_surface) / _cameraH);
+        
+        //Deploy PROPER MATHS in case the dev is using matrices
+        var _viewMatrix = camera_get_view_mat(__camera);
+        var _projMatrix = camera_get_proj_mat(__camera);
+        var _cameraW    = round(abs(2/_projMatrix[0]));
+        var _cameraH    = round(abs(2/_projMatrix[5]));
+        
+        var _vector = matrix_transform_vertex(matrix_multiply(_viewMatrix, _projMatrix), _worldX, _worldY, 0);
+        var _x      = _cameraW * (0.5 + 0.5*_vector[0]);
+        var _y      = _cameraH * (0.5 - 0.5*_vector[1]); //Silly GM matrix quirk
         
         var _result = surface_getpixel_ext(_surface, _x, _y);
         if (not is_array(_result))
@@ -186,22 +194,5 @@ function __BulbRendererDefineLight()
         }
         
         return ((_resultA << 24) | (_resultB << 16) | (_resultG << 8) | _resultR);
-    }
-    
-    GetLightValueFromCamera = function(_worldX, _worldY, _camera)
-    {
-        //Deploy PROPER MATHS in case the dev is using matrices
-        
-        var _viewMatrix = camera_get_view_mat(_camera);
-        var _projMatrix = camera_get_proj_mat(_camera);
-        
-        var _cameraX          = -_viewMatrix[12];
-        var _cameraY          = -_viewMatrix[13];
-        var _cameraViewWidth  = round(abs(2/_projMatrix[0]));
-        var _cameraViewHeight = round(abs(2/_projMatrix[5]));
-        var _cameraLeft       = _cameraX - _cameraViewWidth/2;
-        var _cameraTop        = _cameraY - _cameraViewHeight/2;
-        
-        return GetLightValue(_worldX, _worldY, _cameraLeft, _cameraTop,  _cameraViewWidth, _cameraViewHeight);
     }
 }
