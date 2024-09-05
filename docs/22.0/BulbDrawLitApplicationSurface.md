@@ -15,3 +15,7 @@
 |`[height]`          |number  |heighr to draw the application surface. If not specified, the height returned by `application_get_position()` will be used             |
 |`[textureFiltering]`|boolean |Whether to use texture filtering when drawing the application surface. If not specified, the texture filter setting will not be changed|
 |`[alphaBlend]`      |boolean |Whether to use texture filtering when drawing the application surface. If not specified, alpha blending will be disabled               |
+
+This function should typically be called in the Post Draw event as a replacement for native automatic drawing or other manual drawing (`draw_surface_stretched(application_surface, ...)` etc.) of the application surface.
+
+?> You'll probably want to call `application_surface_draw_enable(false)` at the start of your game if you're using this function.
