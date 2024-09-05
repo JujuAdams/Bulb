@@ -133,25 +133,4 @@ function __BulbRendererDefineLight()
         
         return GetLightValue(_worldX, _worldY, _cameraLeft, _cameraTop,  _cameraViewWidth, _cameraViewHeight);
     }
-    
-    __AccumulateLights = function(_boundaryL, _boundaryT, _boundaryR, _boundaryB, _cameraCX, _cameraCY, _cameraW, _cameraH, _cameraA)
-    {
-        __AccumulateAmbienceSprite(_boundaryL, _boundaryT, _boundaryR, _boundaryB);
-        
-        if (soft)
-        {
-            __AccumulateSoftLights(_boundaryL, _boundaryT, _boundaryR, _boundaryB, _cameraCX, _cameraCY, _cameraW, _cameraH, _cameraA, selfLighting? -1 : 1);
-        }
-        else
-        {
-            __AccumulateHardLights(_boundaryL, _boundaryT, _boundaryR, _boundaryB, _cameraCX, _cameraCY, _cameraW, _cameraH, _cameraA, selfLighting? -1 : 1);
-        }
-        
-        __AccumulateShadowOverlay(_boundaryL, _boundaryT, _boundaryR, _boundaryB);
-        __AccumulateLightOverlay(_boundaryL, _boundaryT, _boundaryR, _boundaryB);
-        
-        //Restore default behaviour
-        gpu_set_colorwriteenable(true, true, true, true);
-        gpu_set_blendmode(bm_normal);
-    }
 }

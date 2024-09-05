@@ -117,19 +117,18 @@ function BulbRenderer(_camera) constructor
         var _viewMatrix = camera_get_view_mat(__camera);
         var _projMatrix = camera_get_proj_mat(__camera);
         
-        var _matrixCos =  _viewMatrix[ 0];
-        var _matrixSin =  _viewMatrix[ 1];
+        var _cameraCos =  _viewMatrix[ 0];
+        var _cameraSin =  _viewMatrix[ 1];
         var _matrixX   = -_viewMatrix[12];
         var _matrixY   = -_viewMatrix[13];
         
-        var _cameraA  = -darctan2(_matrixSin, _matrixCos);
-        var _cameraCX =  _matrixX*_matrixCos + _matrixY*_matrixSin;
-        var _cameraCY = -_matrixX*_matrixSin + _matrixY*_matrixCos;
+        var _cameraCX =  _matrixX*_cameraCos + _matrixY*_cameraSin;
+        var _cameraCY = -_matrixX*_cameraSin + _matrixY*_cameraCos;
         var _cameraW  = round(abs(2/_projMatrix[0]));
         var _cameraH  = round(abs(2/_projMatrix[5]));
         
-        var _rotatedW = _cameraW*abs(_matrixCos) + _cameraH*abs(_matrixSin);
-        var _rotatedH = _cameraW*abs(_matrixSin) + _cameraH*abs(_matrixCos);
+        var _rotatedW = _cameraW*abs(_cameraCos) + _cameraH*abs(_cameraSin);
+        var _rotatedH = _cameraW*abs(_cameraSin) + _cameraH*abs(_cameraCos);
         
         var _boundaryL = _cameraCX - _rotatedW/2;
         var _boundaryT = _cameraCY - _rotatedH/2;
@@ -201,8 +200,24 @@ function BulbRenderer(_camera) constructor
         //Clear the light surface with the ambient colour
         draw_clear(__GetAmbientColor());
         
-        //If we're not forcing deferred rendering everywhere, update those lights
-        __AccumulateLights(_boundaryL, _boundaryT, _boundaryR, _boundaryB, _cameraCX, _cameraCY, _cameraW, _cameraH, _cameraA);
+        //Accumulate lights and shadows onto the lighting surface
+        __AccumulateAmbienceSprite(_boundaryL, _boundaryT, _boundaryR, _boundaryB);
+        
+        if (soft)
+        {
+            __AccumulateSoftLights(_boundaryL, _boundaryT, _boundaryR, _boundaryB, _cameraCX, _cameraCY, _cameraW, _cameraH, _cameraCos, _cameraSin, selfLighting? -1 : 1);
+        }
+        else
+        {
+            __AccumulateHardLights(_boundaryL, _boundaryT, _boundaryR, _boundaryB, _cameraCX, _cameraCY, _cameraW, _cameraH, _cameraCos, _cameraSin, selfLighting? -1 : 1);
+        }
+        
+        __AccumulateShadowOverlay(_boundaryL, _boundaryT, _boundaryR, _boundaryB);
+        __AccumulateLightOverlay(_boundaryL, _boundaryT, _boundaryR, _boundaryB);
+        
+        //Restore default behaviour
+        gpu_set_colorwriteenable(true, true, true, true);
+        gpu_set_blendmode(bm_normal);
         
         //Restore the old filter state
         gpu_set_tex_filter(_old_tex_filter);

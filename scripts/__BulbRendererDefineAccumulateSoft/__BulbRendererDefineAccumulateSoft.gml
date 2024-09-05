@@ -2,7 +2,7 @@
 
 function __BulbRendererDefineAccumulateSoft()
 {
-    __AccumulateSoftLights = function(_boundaryL, _boundaryT, _boundaryR, _boundaryB, _cameraCX, _cameraCY, _cameraW, _cameraH, _cameraA, _normalCoeff)
+    __AccumulateSoftLights = function(_boundaryL, _boundaryT, _boundaryR, _boundaryB, _cameraCX, _cameraCY, _cameraW, _cameraH, _cameraCos, _cameraSin, _normalCoeff)
     {
         static _shdBulbSoftShadows_u_vLight                   = shader_get_uniform(__shdBulbSoftShadows,              "u_vLight"      );
         static _shdBulbSoftShadowsSunlight_u_vLightVector     = shader_get_uniform(__shdBulbSoftShadowsSunlight,      "u_vLightVector");
@@ -20,7 +20,7 @@ function __BulbRendererDefineAccumulateSoft()
             shader_set(__shdBulbLightWithNormalMap);
             texture_set_stage(shader_get_sampler_index(__shdBulbLightWithNormalMap, "u_sNormalMap"), surface_get_texture(GetNormalMapSurface()));
             shader_set_uniform_f(shader_get_uniform(__shdBulbLightWithNormalMap, "u_vCamera"), _cameraCX, _cameraCY, _cameraW/2, _cameraH/2);
-            shader_set_uniform_f(shader_get_uniform(__shdBulbLightWithNormalMap, "u_vCameraVector"), dcos(_cameraA), dsin(_cameraA));
+            shader_set_uniform_f(shader_get_uniform(__shdBulbLightWithNormalMap, "u_vCameraVector"), _cameraCos, _cameraSin);
         }
         
         var _i = 0;
