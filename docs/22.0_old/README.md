@@ -3,14 +3,13 @@
 <p align="center">2D lighting and shadows for GameMaker 2022 LTS by <a href="https://www.jujuadams.com/" target="_blank">Juju Adams</a></p>
 
 <p align="center"><a href="https://github.com/JujuAdams/Bulb/releases/" target="_blank">Download the .yymps</a></p>
-<p align="center">Talk about Bulb on the <a href="https://discord.gg/8ESK9Z2Y7D" target="_blank">Discord server</a></p>
 
 ---
 
 
 **What platforms does Bulb support?**
 
-Everything! You might run into edge cases on platforms that I don't regularly test; please [report any bugs](https://github.com/JujuAdams/Bulb/issues) if and when you find them.
+Everything apart from HTML5! You might run into edge cases on platforms that I don't regularly test; please [report any bugs](https://github.com/JujuAdams/Bulb/issues) if and when you find them.
 
 &nbsp;
 
@@ -34,7 +33,7 @@ Great! Please make a [feature request](https://github.com/JujuAdams/Bulb/issues)
 
 **I found a bug, and it both scares and mildly annoys me. What is the best way to get the problem solved?**
 
-Please make a [bug report](https://github.com/JujuAdams/Bulb/issues). We check GitHub every day and bug fixes usually go out a couple days after that. You can also grab me on the [Discord server](https://discord.gg/8krYCqr), but that's not a replacement for a nice clear bug report.
+Please make a [bug report](https://github.com/JujuAdams/Bulb/issues). We check GitHub every day and bug fixes usually go out a couple days after that.
 
 &nbsp;
 

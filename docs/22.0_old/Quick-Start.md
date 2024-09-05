@@ -21,7 +21,7 @@ Renderers act as the main "controllers" for Bulb's lighting system. Lights and o
 
 Renderers must be updated regularly (typically once a frame) in order for the lighting information on their surface to be up-to-date with the current game state. Renderers must also be manually instructed to draw their surface for that surface to be visible. We'll cover how to do this below. Finally, renderers **must have their memory freed manually** by calling their `.Free()` method when you don't need the renderer any more. Not calling `.Free()` will result in a memory leak that may end up crashing your game.
 
-The standard Bulb lights emit light shaped by using a sprite and cast shadows emitting from a single point. They can be rotated, scaled, translated, coloured etc. as you see fit by adjusting their member variables. As mentioned above, lights must be added to a renderer to be visible. Lighting sprites respect the origin of a sprite so conical lights, whilst internally considered point sources within Bulb, are supported by moving the sprite's origin. A sunlight light source, also known as a directional light, is also available in Bulb.
+Point lights emit light, shaped by using a sprite, and cast shadows emitting from a single point. They can be rotated, scaled, translated, coloured etc. as you see fit by adjusting their member variables. As mentioned above, lights must be added to a renderer to be visible. Lighting sprites respect the origin of a sprite so conical lights, whilst internally considered point sources within Bulb, are supported by moving the sprite's origin. Directional lights, such as sunlight, are also available in Bulb.
 
 Occluders are defined as a series of shadow-casting edges ("lines") that are typically arranged into polygons. Occluders can be scaled and rotated by adjusting their member variables. There are two subtypes of occluder - "static" and "dynamic". Dynamic occluders can be added and removed to/from a renderer, and can be moved or otherwise transformed, every frame without any extra work. Static occluders are not as flexible but are much faster.
 
@@ -93,7 +93,7 @@ In a new object called `objLight` we create a Room Start event (which is guarant
 ```GML
 ///Room Start Event for objLight
 
-light = new BulbLight(objLightController.renderer, sprLight, 0, x, y);
+light = new BulbPointLight(objLightController.renderer, sprLight, 0, x, y);
 ```
 
 &nbsp;

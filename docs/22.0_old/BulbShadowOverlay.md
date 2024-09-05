@@ -2,13 +2,17 @@
 
 &nbsp;
 
-`BulbShadowOverlay(renderer)` ***constructor***
+`BulbShadowOverlay(renderer, sprite, image, x, y)` ***constructor***
 
 **Constructor returns:** `BulbShadowOverlay` struct
 
-|Argument  |Datatype    |Purpose                               |
-|----------|------------|--------------------------------------|
-|`renderer`|renderer    |Renderer to add this shadow overlay to|
+|Argument  |Datatype    |Purpose                                                                       |
+|----------|------------|------------------------------------------------------------------------------|
+|`renderer`|renderer    |Renderer to add this occluder to                                              |
+|`sprite`  |sprite index|Sprite to draw for the light                                                  |
+|`image`   |number      |Image index of the given sprite to draw. Negative values are **not** supported|
+|`x`       |number      |x-position of the light                                                       |
+|`y`       |number      |y-position of the light                                                       |
 
 When created, a `BulbShadowOverlay` will be added to the given renderer. An overlay can be added (and removed) from multiple renderers as you see fit.
 

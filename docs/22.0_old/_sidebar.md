@@ -5,10 +5,9 @@
 ---
 
 - [BulbRenderer](BulbRenderer)
-- [BulbLight](BulbLight)
-- [BulbSunlight](BulbSunlight)
+- [BulbPointLight](BulbPointLight)
+- [BulbDirectionalLight](BulbDirectionalLight)
 - [BulbDynamicOccluder](BulbDynamicOccluder)
 - [BulbStaticOccluder](BulbStaticOccluder)
-- [BulbAmbienceSprite](BulbAmbienceSprite)
 - [BulbShadowOverlay](BulbShadowOverlay)
 - [BulbLightOverlay](BulbLightOverlay)
