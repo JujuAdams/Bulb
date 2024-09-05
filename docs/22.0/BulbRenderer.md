@@ -12,7 +12,7 @@
 
 A renderer struct is a container for lots of variables and methods that enable the rendering of lights. By itself, a renderer won't do anything. There are a few hoops to jump through first:
 
-- You must add lights and occluders to a renderer (see `BulbLight()`, `BulbSunlight()`, `BulbDynamicOccluder()`, and `BulbStaticOccluder()`) for lights and shadows to appear
+- You must add lights and occluders to a renderer for lights and shadows to appear (see `BulbLight()`, `BulbSunlight()`, `BulbDynamicOccluder()`, and `BulbStaticOccluder()`)
 
 - You must call the `.Update()` method on a renderer to update its internal lighting surface
 
