@@ -10,13 +10,13 @@
 
 **What platforms does Bulb support?**
 
-Everything! You might run into edge cases on platforms that I don't regularly test; please [report any bugs](https://github.com/JujuAdams/Bulb/issues) if and when you find them.
+Everything, apart from HTML5. HDR may not be supported on all platforms owing to variable hardware support for HDR surfaces. You might run into edge cases on platforms that I don't regularly test; please [report any bugs](https://github.com/JujuAdams/Bulb/issues) if and when you find them.
 
 &nbsp;
 
 **What versions of GameMaker does Bulb support?**
 
-Bulb primarily supports GameMaker LTS 2022, and in theory supports every version of GameMaker later than that. Later versions of GameMaker may change functionality in a way that Bulb is not forwards-compatible with, but Bulb uses only native GameMaker functions so is in the best possible position for long-term compatibility.
+Bulb primarily supports GameMaker 2024.6 and in theory supports every version of GameMaker. Bulb is also compatible with GameMaker LTS 2022 though HDR rendering is unavailable in that particular version of GameMaker.
 
 &nbsp;
 
