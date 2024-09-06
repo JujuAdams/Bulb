@@ -117,9 +117,11 @@ Updates the internal lighting/shadow surface for the renderer struct.
 |`[textureFiltering]`|boolean |Whether to use texture filtering when drawing the application surface. If not specified, the texture filter setting will not be changed|
 |`[alphaBlend]`      |boolean |Whether to use texture filtering when drawing the application surface. If not specified, the alpha blending setting will not be changed|
 
-Draws a surface, lit up by the renderer. The surface will be appropriately gamma corrected, tonemapped, and bloomed as per the renderer's settings.
+Bulb uses gamma correct lighting and, as such, works in a slightly different way to most other GameMaker lighting systems. Instead of multiplying the light on top of a source surface (typically the application surface), Bulb instead combines the source surface with the lighting in a special shader called a "tonemapping" shader. This process is complex, especially for HDR lighting and bloom, so it is wrapped up inside this helper method.
 
-!> Be careful not to draw a lit surface to itself! This can cause serious rendering errors. If you'd like to draw the application surface, please see `BulbDrawLitApplicationSurface()`.
+!> Be careful not to draw a lit surface to itself! This can cause serious rendering errors.
+
+?> If you'd like to draw the application surface, you'll probably find it easier to use `BulbDrawLitApplicationSurface()`.
 
 &nbsp;
 
