@@ -28,8 +28,8 @@ The created struct has the following public member variables:
 |`intensity`   |number  |Brightness of the light. `0` is completely invisible. Values higher than `1` will render incorrectly unless the renderer is operating in HDR mode|
 |`visible`     |boolean |Whether to draw the light at all                                                          |
 |`penumbraSize`|number  |Size of the penumbra when using the `BULB_MODE.SOFT_BM_ADD` rendering mode                |
-|`normalMap`   |boolean |Whether the light should respect the normal map. Defaults to `BULB_DEFAULT_USE_NORMAL_MAP`|
-|`normalMapZ`  |number  |The "z" component of the light for purposes of normal mapping. Defaults to `BULB_DEFAULT_NORMAL_MAP_Z`|
+|`normalMap`   |boolean |Whether the light should respect the normal map. Defaults to `BULB_DEFAULT_USE_NORMAL_MAP` (which itself defaults to `false`)|
+|`normalMapZ`  |number  |The "z" component of the light for purposes of normal mapping. Defaults to `BULB_DEFAULT_NORMAL_MAP_Z` (which itself defaults to `0.2`)|
 
 &nbsp;
 
