@@ -10,9 +10,7 @@
 |----------|------------|--------------------------------------|
 |`renderer`|renderer    |Renderer to add this shadow overlay to|
 
-Shadow overlays are drawn after normal lights (`BulbLight` and `BulbSunlight`) but before light overlays (`BulbLightOverlay`). Shadow overlays are useful for stenciling out areas that must be in shadow, for example foreground objects that obscure lighting that is active in the midground gameplay layer. Shadow overlays are simple graphics and don't affect typical the shadow casting from lights per se.
-
-When created, a `BulbLightOverlay` will be added to the given renderer. A light can be added (and removed) from multiple renderers as you see fit.
+Lights overlays are drawn right at the end of a renderer's `.Update()` method execution. This means they are drawn over the top of shadow overlays (`BulbShadowOverlay`). Light overlays are useful for stenciling out areas that must be well-lit, for example highlighting treasure in the darkness. Light overlays are simple graphics and don't cast shadows or respond to the normal map. When created, a `BulbLightOverlay` will be added to the given renderer. A light can be added (and removed) from multiple renderers as you see fit.
 
 ?> You must maintain a reference to a created `BulbLightOverlay` yourself. Bulb tracks lights using a **weak reference** such that when you discard the reference to the light, the light is also automatically removed from the renderer. This makes memory management a lot safer, but does require that you keep your own strong reference to keep a light alive.
 
