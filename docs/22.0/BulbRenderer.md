@@ -57,7 +57,7 @@ The created struct has the following public member variables. These may be set a
 |--------|--------|-------|
 |None    |        |       |
 
-Frees memory associated with the renderer struct (vertex buffers and a surface).
+Frees memory associated with the renderer struct (vertex buffers and surfaces). Once you've called this method, the renderer will be disabled.
 
 &nbsp;
 
@@ -71,6 +71,8 @@ Frees memory associated with the renderer struct (vertex buffers and a surface).
 |--------|--------|-------|
 |`camera`|camera  |Camera to use as the point of view for light rendering. If `undefined` is used as the camera, then renderer will attempt to render the entire room|
 
+?> Calling this function will reset any custom surface dimensions you may have set, e.g. with `.SetSurfaceDimensions()`, to the width and height of the camera in room-space.
+
 &nbsp;
 
 ## .GetCamera
@@ -83,7 +85,7 @@ Frees memory associated with the renderer struct (vertex buffers and a surface).
 |--------|--------|-------|
 |None    |        |       |
 
-This function will always return a valid camera. If the renderer was instantiated with no camera or `.SetCamera()` was called using `undefined` as the camera, this function will return a camera that encompasses the entire room.
+This function will always return a valid camera. If the renderer was instantiated with no camera, or `.SetCamera()` was called using `undefined` as the camera, this function will return a camera that encompasses the entire room.
 
 &nbsp;
 
@@ -194,7 +196,9 @@ Returns the current tonemap. If in HDR mode this will return `.hdrTonemap`, othe
 |--------|--------|-------|
 |None    |        |       |
 
-This function may return `undefined` if no surface exists for the renderer.
+Returns the internal surface inside the renderer that is being used for light accumulation. This surface is volatile, like all other GameMaker surfaces, so be careful if you intend to access this surface regularly. This surface is updated by calling the `.Update()` renderer method. You can modify this surface as you see fit; a common thing to do is to apply blur to the surface to create softer lighting. The lighting surface will be 8-bit per channel RGBA if `.hdr` is set to `false` or the lighting surface will be 16-bit per channel RGBA if `.hdr` is set to `true` (HDR is not available in GameMaker LTS 2022).
+
+?> This function may return `undefined` if no surface exists for the renderer.
 
 &nbsp;
 
@@ -225,7 +229,9 @@ If you sample a colour outside the view, this function will return black (`0`). 
 |--------|--------|-------|
 |None    |        |       |
 
-This function may return `undefined` if no normal map surface exists for the renderer.
+Returns the internal surface inside the renderer that is being used for the normal map. This surface is volatile, like all other GameMaker surfaces, so be careful if you intend to access this surface regularly. You can, and should, modify this surface by adding normal map data to it. [Multiple functions](NormalMapFunctions) are provided with Bulb for normal map adjustment, though you can use your own if you'd like. The normal map uses a positive Z value (blue channel) to point directly towards the camera such that `#7F7FFF` is a "flat" normal.
+
+?> This function may return `undefined` if no normal map surface exists for the renderer.
 
 &nbsp;
 
