@@ -1,4 +1,4 @@
-# BulbPointLight
+# BulbLight
 
 &nbsp;
 
@@ -38,8 +38,8 @@ The created struct has the following public member variables:
 |`visible`     |boolean     |Whether to draw the light at all                                                          |
 |`castShadows` |boolean     |Whether the light casts shadow. Not casting shadows is much faster!                       |
 |`penumbraSize`|number      |Size of the penumbra when using the `BULB_MODE.SOFT_BM_ADD` rendering mode                |
-|`normalMap`   |boolean     |Whether the light should respect the normal map. Defaults to `BULB_DEFAULT_USE_NORMAL_MAP`|
-|`normalMapZ`  |number      |The "z" component of the light for purposes of normal mapping. Defaults to `BULB_DEFAULT_NORMAL_MAP_Z`|
+|`normalMap`   |boolean     |Whether the light should respect the normal map. Defaults to `BULB_DEFAULT_USE_NORMAL_MAP` (which itself defaults to `false`)|
+|`normalMapZ`  |number      |The "z" component of the light for purposes of normal mapping. Defaults to `BULB_DEFAULT_NORMAL_MAP_Z` (which itself defaults to `0.2`)|
 
 &nbsp;
 
