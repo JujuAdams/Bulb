@@ -1,4 +1,4 @@
-# BulbPointLight
+# BulbLight
 
 &nbsp;
 
