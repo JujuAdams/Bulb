@@ -10,7 +10,7 @@
 |----------|------------|--------------------------------------|
 |`renderer`|renderer    |Renderer to add this shadow overlay to|
 
-When created, a `BulbShadowOverlay` will be added to the given renderer. An overlay can be added (and removed) from multiple renderers as you see fit.
+Shadow overlays are drawn after normal lights (`BulbLight` and `BulbSunlight`) but before light overlays (`BulbLightOverlay`). Shadow overlays are useful for stenciling out areas that must be in shadow, for example foreground objects that obscure lighting that is active in the midground gameplay layer. Shadow overlays are simple graphics and don't affect typical the shadow casting from lights per se. When created, a `BulbShadowOverlay` will be added to the given renderer. An overlay can be added (and removed) from multiple renderers as you see fit.
 
 ?> You must maintain a reference to a created `BulbShadowOverlay` yourself. Bulb tracks overlays using a **weak reference** such that when you discard the reference to the overlay, the overlay is also automatically removed from the renderer. This makes memory management a lot safer, but does require that you keep your own strong reference to keep a overlay alive.
 
