@@ -14,6 +14,10 @@
 |`x`       |number      |x-position of the light                                                       |
 |`y`       |number      |y-position of the light                                                       |
 
+This type of light is a point light source with shadows radiating outwards from the centre of the light. Lights use a sprite as a light "texture" and, as such, can be used to draw conical lights easily. Lights will be set up to cast shadows by default but this can be disabled per light. When attached to a renderer that is using soft shadows, the size of a light's penumbra can be adjusted too. This is helpful when simulating broad light sources such as windows or fireplaces.
+
+A light's intensity is typically a value from `0` to `1` but when using HDR rendering, a light's intensity can exceed `1` to represent very bright light sources. Lights can be affected by a normal map too, should one be set up, and a light's "height" over the normal map can be adjusted too which changes how strongly the normal mapping effect is.
+
 When created, a `BulbLight` will be added to the given renderer. A light can be added (and removed) from multiple renderers as you see fit.
 
 ?> You must maintain a reference to a created `BulbLight` yourself. Bulb tracks lights using a **weak reference** such that when you discard the reference to the light, the light is also automatically removed from the renderer. This makes memory management a lot safer, but does require that you keep your own strong reference to keep a light alive.
@@ -39,7 +43,7 @@ The created struct has the following public member variables:
 |`castShadows` |boolean     |Whether the light casts shadow. Not casting shadows is much faster!                       |
 |`penumbraSize`|number      |Size of the penumbra when using the `BULB_MODE.SOFT_BM_ADD` rendering mode                |
 |`normalMap`   |boolean     |Whether the light should respect the normal map. Defaults to `BULB_DEFAULT_USE_NORMAL_MAP` (which itself defaults to `false`)|
-|`normalMapZ`  |number      |The "z" component of the light for purposes of normal mapping. Defaults to `BULB_DEFAULT_NORMAL_MAP_Z` (which itself defaults to `0.2`)|
+|`normalMapZ`  |number      |The "z" component of the light for purposes of normal mapping. Lower values intensify the effect of normal mapping. Defaults to `BULB_DEFAULT_NORMAL_MAP_Z` (which itself defaults to `0.2`)|
 
 &nbsp;
 
