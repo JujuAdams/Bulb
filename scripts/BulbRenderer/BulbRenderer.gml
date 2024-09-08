@@ -185,16 +185,13 @@ function BulbRenderer(_camera) constructor
         //Create accumulating renderer surface
         surface_set_target(GetLightSurface());
         
+        //Set the view/projection matrices
+        camera_apply(__camera);
+        
+        //Set up some GPU state
+        var _oldNoCulling = gpu_get_cullmode();
+        var _oldTexFilter = gpu_get_tex_filter();
         gpu_set_cullmode(cull_noculling);
-        
-        //Really we should use the view matrix for this, but GameMaker's sprite culling is fucked
-        //If we use a proper view matrix then renderer sprites are culling, leading to no renderer being drawn
-        _viewMatrix[12] += _cameraW/2;
-        _viewMatrix[13] += _cameraH/2;
-        matrix_set(matrix_world, _viewMatrix);
-        
-        //Record the current texture filter state, then set our new filter state
-        var _old_tex_filter = gpu_get_tex_filter();
         gpu_set_tex_filter(smooth);
         
         //Clear the light surface with the ambient colour
@@ -218,12 +215,10 @@ function BulbRenderer(_camera) constructor
         //Restore default behaviour
         gpu_set_colorwriteenable(true, true, true, true);
         gpu_set_blendmode(bm_normal);
-        
-        //Restore the old filter state
-        gpu_set_tex_filter(_old_tex_filter);
+        gpu_set_cullmode(_oldNoCulling);
+        gpu_set_tex_filter(_oldTexFilter);
         
         surface_reset_target();
-        matrix_set(matrix_world, matrix_build_identity());
     }
     
     DrawLitSurface = function(_surface, _x, _y, _width, _height, _textureFiltering = undefined, _alphaBlend = undefined)
