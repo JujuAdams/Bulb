@@ -5,10 +5,10 @@ function __BulbRendererDefineHDR()
     hdr         = false;
     hdrTonemap  = BULB_TONEMAP_HBD;
     
-    hdrBloomIntensity   = 0;
-    hdrBloomIterations  = 3;
-    hdrBloomThesholdMin = 0.6;
-    hdrBloomThesholdMax = 0.8;
+    hdrBloomIntensity    = 0;
+    hdrBloomIterations   = 3;
+    hdrBloomThresholdMin = 0.6;
+    hdrBloomThresholdMax = 0.8;
     
     __oldHDR                = undefined;
     __oldHDRBloomIterations = undefined;

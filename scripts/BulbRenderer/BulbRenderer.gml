@@ -5,20 +5,20 @@
 /// 
 /// Full list of variables:
 /// 
-/// `.ambientColor`        | `c_black`           | Baseline ambient light color
-/// `.ambientInGammaSpace` | `false`             | Whether the above is in gamma space (`true`) or linear space {`false`)
-/// `.smooth`              | `true`              | Whether to use texture filtering (bilinear interpolation) where possible
-/// `.soft`                | `true`              | Whether to use soft shadows
-/// `.selfLighting`        | `false`             | Whether to allow light to enter but not escape occluders. Hard shadow mode only
-/// `.exposure`            | `1.0`               | Exposure for the entire lighting render. Should usually be left at `1.0` when not in HDR mode
-/// `.ldrTonemap`          | `BULB_TONEMAP_CLAMP`| Tonemap to use when not in HDR mode. Should usually be left at `BULB_TONEMAP_CLAMP`
-/// `.hdr`                 | `false`             | Whether to use HDR rendering or not. HDR surface is 16-bit
-/// `.hdrTonemap`          | `BULB_TONEMAP_HBD`  | Tonemap to use when in HDR mode
-/// `.hdrBloomIntensity`   | `0`                 | Intensity of the bloom effect
-/// `.hdrBloomIterations`  | `3`                 | Number of Kawase blur iterations to apply to the bloom
-/// `.hdrBloomThesholdMin` | `0.6`               | Lower threshold for bloom cut-off
-/// `.hdrBloomThesholdMax` | `0.8`               | Upper threshold for bloom cut-off
-/// `.normalMap`           | Config macro        | Whether normal mapping should be used. Defaults to `BULB_DEFAULT_USE_NORMAL_MAP`
+/// `.ambientColor`         | `c_black`           | Baseline ambient light color
+/// `.ambientInGammaSpace`  | `false`             | Whether the above is in gamma space (`true`) or linear space {`false`)
+/// `.smooth`               | `true`              | Whether to use texture filtering (bilinear interpolation) where possible
+/// `.soft`                 | `true`              | Whether to use soft shadows
+/// `.selfLighting`         | `false`             | Whether to allow light to enter but not escape occluders. Hard shadow mode only
+/// `.exposure`             | `1.0`               | Exposure for the entire lighting render. Should usually be left at `1.0` when not in HDR mode
+/// `.ldrTonemap`           | `BULB_TONEMAP_CLAMP`| Tonemap to use when not in HDR mode. Should usually be left at `BULB_TONEMAP_CLAMP`
+/// `.hdr`                  | `false`             | Whether to use HDR rendering or not. HDR surface is 16-bit
+/// `.hdrTonemap`           | `BULB_TONEMAP_HBD`  | Tonemap to use when in HDR mode
+/// `.hdrBloomIntensity`    | `0`                 | Intensity of the bloom effect
+/// `.hdrBloomIterations`   | `3`                 | Number of Kawase blur iterations to apply to the bloom
+/// `.hdrBloomThresholdMin` | `0.6`               | Lower threshold for bloom cut-off
+/// `.hdrBloomThresholdMax` | `0.8`               | Upper threshold for bloom cut-off
+/// `.normalMap`            | Config macro        | Whether normal mapping should be used. Defaults to `BULB_DEFAULT_USE_NORMAL_MAP`
 /// 
 /// Full list of methods:
 /// 
@@ -321,7 +321,7 @@ function BulbRenderer(_camera) constructor
                 
                 surface_set_target(__bloomSurfaceArray[0]);
                 shader_set(__shdBulbKawaseDownWithThreshold);
-                shader_set_uniform_f(_u_vThreshold, hdrBloomThesholdMin, hdrBloomThesholdMax);
+                shader_set_uniform_f(_u_vThreshold, hdrBloomThresholdMin, hdrBloomThresholdMax);
                 shader_set_uniform_f(shader_get_uniform(__shdBulbKawaseDownWithThreshold, "u_vTexel"), texture_get_texel_width(surface_get_texture(__hdrSurface)), texture_get_texel_height(surface_get_texture(__hdrSurface)));
                 draw_surface_stretched(__hdrSurface, 0, 0, surface_get_width(__bloomSurfaceArray[0]), surface_get_height(__bloomSurfaceArray[0]));
                 shader_reset();
