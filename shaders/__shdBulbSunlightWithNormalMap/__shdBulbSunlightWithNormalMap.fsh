@@ -6,6 +6,8 @@ uniform sampler2D u_sNormalMap;
 uniform vec4      u_vInfo;
 uniform vec4      u_vCamera;
 
+const float u_fSpecularIntensity = 1.0;
+
 void main()
 {
     #ifdef _YY_HLSL11_
@@ -16,8 +18,8 @@ void main()
     
     vec3 lightPos = vec3((u_vInfo.xy - u_vCamera.xy) / u_vCamera.zw, u_vInfo.z);
     
-    vec4 normalSample = texture2D(u_sNormalMap, 0.5 + 0.5*objectPos);
+    vec4 normalSpecular = texture2D(u_sNormalMap, 0.5 + 0.5*objectPos);
     
     gl_FragColor = v_vColour*texture2D(gm_BaseTexture, v_vTexcoord);
-    gl_FragColor.rgb *= u_vInfo.w*max(0.0, dot(vec3(-u_vInfo.xy, u_vInfo.z), 2.0*normalSample.xyz - 1.0));
+    gl_FragColor.rgb *= u_vInfo.w*((u_fSpecularIntensity*(1.0 - normalSpecular.w) + 1.0)*max(0.0, dot(vec3(-u_vInfo.xy, u_vInfo.z), 2.0*normalSpecular.xyz - 1.0)));
 }
