@@ -23,10 +23,10 @@ function __BulbRendererDefineAccumulateHardNoStencil()
             texture_set_stage(shader_get_sampler_index(__shdBulbLightWithNormalMap, "u_sNormalMap"), surface_get_texture(GetNormalMapSurface()));
             shader_set_uniform_f(shader_get_uniform(__shdBulbLightWithNormalMap, "u_vCamera"), _cameraCX, _cameraCY, _cameraW/2, _cameraH/2);
             shader_set_uniform_f(shader_get_uniform(__shdBulbLightWithNormalMap, "u_vCameraVector"), _cameraCos, _cameraSin);
-            shader_set_uniform_f(shader_get_uniform(__shdBulbLightWithNormalMap, "u_fSpecularIntensity"), BULB_SPECULAR_MAP_INTENSITY);
+            shader_set_uniform_f(shader_get_uniform(__shdBulbLightWithNormalMap, "u_fSpecularIntensity"), hdr? BULB_SPECULAR_MAP_INTENSITY : 0);
             
             shader_set(__shdBulbSunlightWithNormalMap);
-            shader_set_uniform_f(shader_get_uniform(__shdBulbSunlightWithNormalMap, "u_fSpecularIntensity"), BULB_SPECULAR_MAP_INTENSITY);
+            shader_set_uniform_f(shader_get_uniform(__shdBulbSunlightWithNormalMap, "u_fSpecularIntensity"), hdr? BULB_SPECULAR_MAP_INTENSITY : 0);
         }
         
         //bm_max requires some trickery with alpha to get good-looking results
