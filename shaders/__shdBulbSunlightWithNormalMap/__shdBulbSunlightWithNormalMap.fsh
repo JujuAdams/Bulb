@@ -5,8 +5,7 @@ varying vec2 v_vPosition;
 uniform sampler2D u_sNormalMap;
 uniform vec4      u_vInfo;
 uniform vec4      u_vCamera;
-
-const float u_fSpecularIntensity = 1.0;
+uniform float     u_fSpecularIntensity;
 
 void main()
 {

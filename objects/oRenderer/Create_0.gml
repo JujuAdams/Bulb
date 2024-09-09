@@ -32,7 +32,7 @@ renderer.normalMap = true;
 
 //Set up HDR
 renderer.hdr = true;
-renderer.hdrBloomIntensity = 0.05;
+renderer.hdrBloomIntensity = 0.5;
 renderer.hdrBloomIterations = 4;
 
 //Copy the HDR tonemap across to LDR. You normally want to stick to `BULB_TONEMAP_CLAMP` when nont

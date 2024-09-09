@@ -7,8 +7,8 @@ function __BulbRendererDefineHDR()
     
     hdrBloomIntensity    = 0;
     hdrBloomIterations   = 3;
-    hdrBloomThresholdMin = 0.6;
-    hdrBloomThresholdMax = 0.8;
+    hdrBloomThresholdMin = 0.4;
+    hdrBloomThresholdMax = 0.9;
     
     __oldHDR                = undefined;
     __oldHDRBloomIterations = undefined;

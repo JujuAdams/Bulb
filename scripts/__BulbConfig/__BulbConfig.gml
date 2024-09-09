@@ -18,7 +18,7 @@
 
 // How intense the specular map effect should be. This generally is only noticeable when using HDR
 // lighting. The specular map is packed into the alpha channel of the normal map surface.
-#macro BULB_SPECULAR_MAP_INTENSITY  4.0
+#macro BULB_SPECULAR_MAP_INTENSITY  10.0
 
 // The default notional "z height" for lights and sunlight. This z value is only used when
 // calculating normal map influence on lights. A lower value brings the light closer to the plane,
