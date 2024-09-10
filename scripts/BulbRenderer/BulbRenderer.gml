@@ -77,14 +77,11 @@ function BulbRenderer(_camera) constructor
             __cameraImplicit = true;
         }
         
-        if ((__surfaceWidth < 0) || (__surfaceHeight < 0))
-        {
-            //Set the lighting surface dimensions from the camera
-            var _projMatrix = camera_get_proj_mat(__camera);
-            var _width  = round(abs(2/_projMatrix[0]));
-            var _height = round(abs(2/_projMatrix[5]));
-            SetSurfaceDimensions(_width, _height);
-        }
+        //Set the lighting surface dimensions from the camera
+        var _projMatrix = camera_get_proj_mat(__camera);
+        var _width  = round(abs(2/_projMatrix[0]));
+        var _height = round(abs(2/_projMatrix[5]));
+        SetSurfaceDimensions(_width, _height);
     }
     
     GetCamera = function()
