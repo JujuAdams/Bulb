@@ -25,6 +25,29 @@ function BulbStaticOccluder(_renderer) constructor
         array_push(vertexArray, _x1, _y1, _x2, _y2, _y2-_y1, _x1-_x2);
     }
     
+    static AddCircle = function(_radius, _x = 0, _y = 0, _edges = 24)
+    {
+        if (__destroyed) return;
+        
+        var _angle = 0;
+        var _angleStep = 360 / _edges;
+        
+        var _x2 = _x + lengthdir_x(_radius, _angle);
+        var _y2 = _y + lengthdir_y(_radius, _angle);
+        
+        repeat(_edges)
+        { 
+            _angle -= _angleStep;
+            
+            var _x1 = _x2;
+            var _y1 = _y2;
+            _x2 = _x + lengthdir_x(_radius, _angle);
+            _y2 = _y + lengthdir_y(_radius, _angle);
+            
+            array_push(vertexArray, _x1, _y1, _x2, _y2, _y2-_y1, _x1-_x2);
+        }
+    }
+    
     static ClearEdges = function(_x1, _y1, _x2, _y2)
     {
         if (__destroyed) return;
