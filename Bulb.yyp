@@ -51,6 +51,7 @@
     {"id":{"name":"BulbNormalMapClear","path":"scripts/BulbNormalMapClear/BulbNormalMapClear.yy",},"order":0,},
     {"id":{"name":"BulbNormalMapDrawSelf","path":"scripts/BulbNormalMapDrawSelf/BulbNormalMapDrawSelf.yy",},"order":1,},
     {"id":{"name":"BulbNormalMapDrawSprite","path":"scripts/BulbNormalMapDrawSprite/BulbNormalMapDrawSprite.yy",},"order":2,},
+    {"id":{"name":"oCircularOccluder","path":"objects/oCircularOccluder/oCircularOccluder.yy",},"order":1,},
     {"id":{"name":"BulbNormalMapDrawSpriteExt","path":"scripts/BulbNormalMapDrawSpriteExt/BulbNormalMapDrawSpriteExt.yy",},"order":3,},
     {"id":{"name":"BulbNormalMapShaderReset","path":"scripts/BulbNormalMapShaderReset/BulbNormalMapShaderReset.yy",},"order":5,},
     {"id":{"name":"BulbNormalMapShaderSet","path":"scripts/BulbNormalMapShaderSet/BulbNormalMapShaderSet.yy",},"order":4,},

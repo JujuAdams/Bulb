@@ -22,6 +22,7 @@
         {"resourceType":"GMRInstance","resourceVersion":"1.0","name":"inst_7E49EC20","properties":[],"isDnd":false,"objectId":{"name":"oSunlight","path":"objects/oSunlight/oSunlight.yy",},"inheritCode":false,"hasCreationCode":false,"colour":4294967295,"rotation":0.0,"scaleX":1.0,"scaleY":1.0,"imageIndex":0,"imageSpeed":1.0,"inheritedItemId":null,"frozen":false,"ignore":false,"inheritItemSettings":false,"x":96.0,"y":32.0,},
         {"resourceType":"GMRInstance","resourceVersion":"1.0","name":"inst_5FF3F20B","properties":[],"isDnd":false,"objectId":{"name":"oLightDiscoooo","path":"objects/oLightDiscoooo/oLightDiscoooo.yy",},"inheritCode":false,"hasCreationCode":false,"colour":4294967295,"rotation":0.0,"scaleX":1.0,"scaleY":1.0,"imageIndex":0,"imageSpeed":1.0,"inheritedItemId":null,"frozen":false,"ignore":false,"inheritItemSettings":false,"x":2016.0,"y":1152.0,},
         {"resourceType":"GMRInstance","resourceVersion":"1.0","name":"inst_C98ECDA","properties":[],"isDnd":false,"objectId":{"name":"oLightDiscoooo","path":"objects/oLightDiscoooo/oLightDiscoooo.yy",},"inheritCode":false,"hasCreationCode":false,"colour":4294967295,"rotation":0.0,"scaleX":1.0,"scaleY":1.0,"imageIndex":0,"imageSpeed":1.0,"inheritedItemId":null,"frozen":false,"ignore":false,"inheritItemSettings":false,"x":1984.0,"y":1216.0,},
+        {"resourceType":"GMRInstance","resourceVersion":"1.0","name":"inst_F2A1CC6","properties":[],"isDnd":false,"objectId":{"name":"oCircularOccluder","path":"objects/oCircularOccluder/oCircularOccluder.yy",},"inheritCode":false,"hasCreationCode":false,"colour":4294967295,"rotation":0.0,"scaleX":1.0,"scaleY":1.0,"imageIndex":0,"imageSpeed":1.0,"inheritedItemId":null,"frozen":false,"ignore":false,"inheritItemSettings":false,"x":2304.0,"y":1632.0,},
       ],"visible":true,"depth":-99,"userdefinedDepth":true,"inheritLayerDepth":false,"inheritLayerSettings":false,"inheritVisibility":true,"inheritSubLayers":true,"gridX":32,"gridY":32,"layers":[],"hierarchyFrozen":false,"effectEnabled":true,"effectType":null,"properties":[],},
     {"resourceType":"GMRInstanceLayer","resourceVersion":"1.0","name":"Lights","instances":[
         {"resourceType":"GMRInstance","resourceVersion":"1.0","name":"inst_306B3BD4","properties":[],"isDnd":false,"objectId":{"name":"oLightDiscoooo","path":"objects/oLightDiscoooo/oLightDiscoooo.yy",},"inheritCode":false,"hasCreationCode":false,"colour":4294967295,"rotation":0.0,"scaleX":1.0,"scaleY":1.0,"imageIndex":0,"imageSpeed":1.0,"inheritedItemId":null,"frozen":false,"ignore":false,"inheritItemSettings":false,"x":2418.0,"y":1918.0,},
@@ -1080,6 +1081,7 @@
     {"name":"inst_7E49EC20","path":"rooms/rmTest/rmTest.yy",},
     {"name":"inst_5FF3F20B","path":"rooms/rmTest/rmTest.yy",},
     {"name":"inst_C98ECDA","path":"rooms/rmTest/rmTest.yy",},
+    {"name":"inst_F2A1CC6","path":"rooms/rmTest/rmTest.yy",},
   ],
   "inheritCreationOrder": false,
   "sequenceId": null,
