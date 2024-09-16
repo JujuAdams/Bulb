@@ -123,7 +123,21 @@ Bulb uses gamma correct lighting and, as such, works in a slightly different way
 
 !> Be careful not to draw a lit surface to itself! This can cause serious rendering errors.
 
-?> If you'd like to draw the application surface, you'll probably find it easier to use `BulbDrawLitApplicationSurface()`.
+?> This function is intended to be called in a Draw GUI event, though you're welcome to use it wherever. If you'd like to draw the application surface, you'll probably find it easier to use `BulbDrawLitApplicationSurface()`.
+
+&nbsp;
+
+## .GetOutputSurface
+
+`.GetOutputSurface(surface)`
+
+**Returns:** Surface, containing a copy of the input surface but lit
+
+|Argument |Datatype|Purpose                                           |
+|---------|--------|--------------------------------------------------|
+|`surface`|surface |Surface to copy to the output surface for lighting|
+
+This function returns a surface that is a copy of the input surface but lit up using the light accumulated by the renderer. The dimensions of the output surface will match the input surface. This function is similar to `.DrawLitSurface()` but doesn't do the drawing for you and is therefore helpful as a component of a post-processing pipeline.
 
 &nbsp;
 
