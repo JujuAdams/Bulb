@@ -55,6 +55,23 @@ Adds an occlusion edge (a shadow-casting line) to the occluder. Edges should be 
 
 &nbsp;
 
+## .AddCircle
+
+`.AddEdge(radius, [x=0], [y=0], [edges=24])`
+
+**Returns:** N/A (`undefined`)
+
+|Argument |Datatype|Purpose                                                   |
+|---------|--------|----------------------------------------------------------|
+|`radius` |number  |Radius of the circle to add to the occluder               |
+|`[x]`    |number  |x-coordinate of the centre of the circle. Defaults to `0` |     
+|`[y]`    |number  |y-coordinate of the centre of the circle. Defaults to `0` |     
+|`[edges]`|number  |Number of edges to create for the circle. Defaults to `24`|
+
+Helper function to add a circle to the occluder. The circle will be made of multiple individual straight edges.
+
+&nbsp;
+
 ## .ClearEdges
 
 `.ClearEdges()`
