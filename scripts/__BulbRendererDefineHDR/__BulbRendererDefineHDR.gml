@@ -2,6 +2,8 @@
 
 function __BulbRendererDefineHDR()
 {
+    static _system = __BulbSystem();
+    
     hdr         = false;
     hdrTonemap  = BULB_TONEMAP_HBD;
     
@@ -14,45 +16,52 @@ function __BulbRendererDefineHDR()
     __oldHDRBloomIterations = undefined;
     
     //Surface used for HDR composition prior to tonemapping
-    //This is a per-channel 64-bit RGBA surface and is only created on demand (i.e. in HDR mode)
-    __hdrSurface = undefined;
+    //This is a 16-bit float RGBA surface and is only created on demand
+    __outputSurface = undefined;
     
     __bloomSurfaceArray = [];
     
     
     
-    __GetHDRSurface = function(_width, _height)
+    __GetOutputSurface = function(_width, _height)
     {
         if ((_width <= 0) || (_height <= 0)) return undefined;
         
-        if ((__hdrSurface != undefined) && ((surface_get_width(__hdrSurface) != _width) || (surface_get_height(__hdrSurface) != _height)))
+        if ((__outputSurface != undefined) && ((surface_get_width(__outputSurface) != _width) || (surface_get_height(__outputSurface) != _height)))
         {
-            surface_free(__hdrSurface);
-            __hdrSurface = undefined;
+            surface_free(__outputSurface);
+            __outputSurface = undefined;
         }
         
-        if ((__hdrSurface == undefined) || !surface_exists(__hdrSurface))
+        if ((__outputSurface == undefined) || !surface_exists(__outputSurface))
         {
-            //Work around compile error in LTS
-            var _surface_create = surface_create;
-            __hdrSurface = _surface_create(_width, _height, surface_rgba16float);
+            if (hdr && _system.__hdrAvailable)
+            {
+                //Work around compile error in LTS
+                var _surface_create = surface_create;
+                __outputSurface = _surface_create(_width, _height, surface_rgba16float);
+            }
+            else
+            {
+                __outputSurface = surface_create(_width, _height);
+            }
             
-            surface_set_target(__hdrSurface);
+            surface_set_target(__outputSurface);
             draw_clear(c_black);
             surface_reset_target();
             
             __FreeBloomSurfaces();
         }
         
-        return __hdrSurface;
+        return __outputSurface;
     }
     
-    __FreeHDRSurface = function()
+    __FreeOutputSurface = function()
     {
-        if ((__hdrSurface != undefined) && surface_exists(__hdrSurface))
+        if ((__outputSurface != undefined) && surface_exists(__outputSurface))
         {
-            surface_free(__hdrSurface);
-            __hdrSurface = undefined;
+            surface_free(__outputSurface);
+            __outputSurface = undefined;
         }
     }
     

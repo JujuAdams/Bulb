@@ -28,6 +28,7 @@
 /// `.SetSurfaceDimensions(width, height)`
 /// `.GetSurfaceDimensions()`
 /// `.Update()`
+/// `.GetOutputSurface(surface)`
 /// `.DrawLitSurface(surface, x, y, width, height, [textureFiltering], [alphaBlend])`
 /// `.GetTonemap()`
 /// `.GetLightSurface()`
@@ -160,7 +161,7 @@ function BulbRenderer(_camera) constructor
             
             if (not _hdr)
             {
-                __FreeHDRSurface();
+                __FreeOutputSurface();
             }
         }
         
@@ -218,6 +219,95 @@ function BulbRenderer(_camera) constructor
         surface_reset_target();
     }
     
+    __GetTonemapShader = function()
+    {
+        var _hdrTonemap = GetTonemap();
+        if (_hdrTonemap == BULB_TONEMAP_CLAMP)
+        {
+            return __shdBulbTonemapClamp;
+        }
+        else if (_hdrTonemap == BULB_TONEMAP_REINHARD)
+        {
+            return __shdBulbTonemapReinhard;
+        }
+        else if (_hdrTonemap == BULB_TONEMAP_REINHARD_EXTENDED)
+        {
+            return __shdBulbTonemapReinhardExtended;
+        }
+        else if (_hdrTonemap == BULB_TONEMAP_ACES)
+        {
+            return __shdBulbTonemapACES;
+        }
+        else if (_hdrTonemap == BULB_TONEMAP_UNCHARTED2)
+        {
+            return __shdBulbTonemapUncharted2;
+        }
+        else if (_hdrTonemap == BULB_TONEMAP_UNREAL3)
+        {
+            return __shdBulbTonemapUnreal3;
+        }
+        else if (_hdrTonemap == BULB_TONEMAP_HBD)
+        {
+            return __shdBulbTonemapHBD;
+        }
+        else
+        {
+            return __shdBulbTonemapBadGamma;
+        }
+    }
+    
+    GetOutputSurface = function(_surface)
+    {
+        static _u_fIntensity = shader_get_uniform(__shdBulbIntensity, "u_fIntensity");
+        static _u_vThreshold = shader_get_uniform(__shdBulbKawaseDownWithThreshold, "u_vThreshold");
+        
+        var _oldTextureFiltering = gpu_get_tex_filter();
+        
+        var _shader = __GetTonemapShader();
+        
+        var _surfaceWidth  = surface_get_width( _surface);
+        var _surfaceHeight = surface_get_height(_surface);
+        __GetOutputSurface(_surfaceWidth, _surfaceHeight);
+        
+        surface_set_target(__outputSurface);
+        draw_clear(c_black);
+        surface_reset_target();
+        
+        if (hdr && _system.__hdrAvailable)
+        {
+            __BulbError("HDR not supported by .GetOutputSurface() (yet)");
+        }
+        else
+        {
+            gpu_set_colorwriteenable(true, true, true, false);
+            surface_copy(__outputSurface, 0, 0, _surface);
+            
+            if ((__lightSurface != undefined) && surface_exists(__lightSurface))
+            {
+                surface_set_target(__outputSurface);
+                
+                gpu_set_tex_filter(smooth);
+                gpu_set_blendenable(true);
+                
+                gpu_set_blendmode_ext(bm_dest_color, bm_zero);
+                
+                shader_set(_shader);
+                shader_set_uniform_f(shader_get_uniform(_shader, "u_fExposure"), exposure);
+                draw_surface_stretched(__lightSurface, 0, 0, _surfaceWidth, _surfaceHeight);
+                shader_reset();
+                
+                gpu_set_blendmode(bm_normal);
+                
+                surface_reset_target();
+            }
+        }
+        
+        gpu_set_tex_filter(_oldTextureFiltering);
+        gpu_set_colorwriteenable(true, true, true, true);
+        
+        return __outputSurface;
+    }
+    
     DrawLitSurface = function(_surface, _x, _y, _width, _height, _textureFiltering = undefined, _alphaBlend = undefined)
     {
         static _u_fIntensity = shader_get_uniform(__shdBulbIntensity, "u_fIntensity");
@@ -226,58 +316,26 @@ function BulbRenderer(_camera) constructor
         var _oldTextureFiltering = gpu_get_tex_filter();
         var _oldAlphaBlend       = gpu_get_blendenable();
         
-        var _hdrTonemap = GetTonemap();
-        if (_hdrTonemap == BULB_TONEMAP_CLAMP)
-        {
-            var _shader = __shdBulbTonemapClamp;
-        }
-        else if (_hdrTonemap == BULB_TONEMAP_REINHARD)
-        {
-            var _shader = __shdBulbTonemapReinhard;
-        }
-        else if (_hdrTonemap == BULB_TONEMAP_REINHARD_EXTENDED)
-        {
-            var _shader = __shdBulbTonemapReinhardExtended;
-        }
-        else if (_hdrTonemap == BULB_TONEMAP_ACES)
-        {
-            var _shader = __shdBulbTonemapACES;
-        }
-        else if (_hdrTonemap == BULB_TONEMAP_UNCHARTED2)
-        {
-            var _shader = __shdBulbTonemapUncharted2;
-        }
-        else if (_hdrTonemap == BULB_TONEMAP_UNREAL3)
-        {
-            var _shader = __shdBulbTonemapUnreal3;
-        }
-        else if (_hdrTonemap == BULB_TONEMAP_HBD)
-        {
-            var _shader = __shdBulbTonemapHBD;
-        }
-        else
-        {
-            var _shader = __shdBulbTonemapBadGamma;
-        }
+        var _shader = __GetTonemapShader();
         
         if (hdr && _system.__hdrAvailable)
         {
             var _surfaceWidth  = surface_get_width( _surface);
             var _surfaceHeight = surface_get_height(_surface);
             
-            __GetHDRSurface(_surfaceWidth, _surfaceHeight);
+            __GetOutputSurface(_surfaceWidth, _surfaceHeight);
             
-            surface_set_target(__hdrSurface);
+            surface_set_target(__outputSurface);
             draw_clear(c_black);
             surface_reset_target();
             
             gpu_set_colorwriteenable(true, true, true, false);
             
             shader_set(__shdBulbGammaToLinear);
-            surface_copy(__hdrSurface, 0, 0, _surface);
+            surface_copy(__outputSurface, 0, 0, _surface);
             shader_reset();
             
-            surface_set_target(__hdrSurface);
+            surface_set_target(__outputSurface);
             gpu_set_blendmode_ext(bm_zero, bm_src_color);
             shader_set(__shdBulbIntensity);
             
@@ -319,8 +377,8 @@ function BulbRenderer(_camera) constructor
                 surface_set_target(__bloomSurfaceArray[0]);
                 shader_set(__shdBulbKawaseDownWithThreshold);
                 shader_set_uniform_f(_u_vThreshold, hdrBloomThresholdMin, hdrBloomThresholdMax);
-                shader_set_uniform_f(shader_get_uniform(__shdBulbKawaseDownWithThreshold, "u_vTexel"), texture_get_texel_width(surface_get_texture(__hdrSurface)), texture_get_texel_height(surface_get_texture(__hdrSurface)));
-                draw_surface_stretched(__hdrSurface, 0, 0, surface_get_width(__bloomSurfaceArray[0]), surface_get_height(__bloomSurfaceArray[0]));
+                shader_set_uniform_f(shader_get_uniform(__shdBulbKawaseDownWithThreshold, "u_vTexel"), texture_get_texel_width(surface_get_texture(__outputSurface)), texture_get_texel_height(surface_get_texture(__outputSurface)));
+                draw_surface_stretched(__outputSurface, 0, 0, surface_get_width(__bloomSurfaceArray[0]), surface_get_height(__bloomSurfaceArray[0]));
                 shader_reset();
                 surface_reset_target();
                 
@@ -351,7 +409,7 @@ function BulbRenderer(_camera) constructor
                     }
                 }
                 
-                surface_set_target(__hdrSurface);
+                surface_set_target(__outputSurface);
                 
                     gpu_set_blendmode(bm_add);
                     shader_set(__shdBulbIntensity);
@@ -368,7 +426,7 @@ function BulbRenderer(_camera) constructor
             shader_set_uniform_f(shader_get_uniform(_shader, "u_fExposure"), 1);
             if (_textureFiltering != undefined) gpu_set_tex_filter(_textureFiltering);
             if (_alphaBlend != undefined) gpu_set_blendenable(_alphaBlend);
-            draw_surface_stretched(__hdrSurface, _x, _y, _width, _height);
+            draw_surface_stretched(__outputSurface, _x, _y, _width, _height);
             shader_reset();
         }
         else
@@ -401,15 +459,26 @@ function BulbRenderer(_camera) constructor
     {
         __FreeVertexBuffers();
         __FreeLightSurface();
-        __FreeHDRSurface();
+        __FreeOutputSurface();
         __FreeBloomSurfaces();
         __FreeNormalMapSurface();
         
         var _nullFunc = function() {}
         
+        //BulbRenderer()
+        SetCamera              = _nullFunc;
+        GetCamera              = _nullFunc;
+        SetSurfaceDimensions   = _nullFunc;
+        GetSurfaceDimensions   = _nullFunc;
+        Update                 = _nullFunc;
+        GetOutputSurface       = _nullFunc;
+        DrawLitSurface         = _nullFunc;
+        GetTonemap             = _nullFunc;
+        RefreshStaticOccluders = _nullFunc;
+        
         //__BulbRendererDefineHDR()
-        __GetHDRSurface     = _nullFunc;
-        __FreeHDRSurface    = _nullFunc;
+        __GetOutputSurface  = _nullFunc;
+        __FreeOutputSurface = _nullFunc;
         __FreeBloomSurfaces = _nullFunc;
         
         //__BulbRendererDefineNormal()
