@@ -28,22 +28,22 @@ Whilst I've tried to keep the process as simple as possible, there are a lot of 
 
 The created struct has the following public member variables. These may be set as needed.
 
-|Variable              |Datatype|Typical Value       |Purpose                                                                                      |
-|----------------------|--------|--------------------|---------------------------------------------------------------------------------------------|
-|`.ambientColor`       |color   |`c_black`           |Baseline ambient light color                                                                 |
-|`.ambientInGammaSpace`|boolean |`false`             |Whether the above is in gamma space (`true`) or linear space {`false`)                       |
-|`.smooth`             |boolean |`true`              |Whether to use texture filtering (bilinear interpolation) where possible                     |
-|`.soft`               |boolean |`true`              |Whether to use soft shadows                                                                  |
-|`.selfLighting`       |boolean |`false`             |Whether to allow light to enter but not escape occluders. Supported in hard shadow mode only |
-|`.exposure`           |number  |`1.0`               |Exposure for the entire lighting render. Should usually be left at `1.0` when not in HDR mode|
-|`.ldrTonemap`         |constant|`BULB_TONEMAP_CLAMP`|Tonemap to use when not in HDR mode. Should usually be left at `BULB_TONEMAP_CLAMP`          |
-|`.hdr`                |boolean |`false`             |Whether to use HDR rendering or not. HDR surface is 16-bit                                   |
-|`.hdrTonemap`         |constant|`BULB_TONEMAP_HBD`  |Tonemap to use when in HDR mode                                                              |
-|`.hdrBloomIntensity`  |number  |`0`                 |Intensity of the bloom effect                                                                |
-|`.hdrBloomIterations` |number  |`3`                 |Number of Kawase blur iterations to apply to the bloom                                       |
-|`.hdrBloomThesholdMin`|number  |`0.6`               |Lower threshold for bloom cut-off                                                            |
-|`.hdrBloomThesholdMax`|number  |`0.8`               |Upper threshold for bloom cut-off                                                            |
-|`.normalMap`          |boolean |Config macro        |Whether normal mapping should be used. Defaults to `BULB_DEFAULT_USE_NORMAL_MAP`             |
+|Variable              |Datatype|Typical Value      |Purpose                                                                                      |
+|----------------------|--------|-------------------|---------------------------------------------------------------------------------------------|
+|`.ambientColor`       |color   |`c_black`          |Baseline ambient light color                                                                 |
+|`.ambientInGammaSpace`|boolean |`false`            |Whether the above is in gamma space (`true`) or linear space {`false`)                       |
+|`.smooth`             |boolean |`true`             |Whether to use texture filtering (bilinear interpolation) where possible                     |
+|`.soft`               |boolean |`true`             |Whether to use soft shadows                                                                  |
+|`.selfLighting`       |boolean |`false`            |Whether to allow light to enter but not escape occluders. Supported in hard shadow mode only |
+|`.exposure`           |number  |`1.0`              |Exposure for the entire lighting render. Should usually be left at `1.0` when not in HDR mode|
+|`.ldrTonemap`         |constant|`BULB_TONEMAP_NONE`|Tonemap to use when not in HDR mode. Should usually be left at `BULB_TONEMAP_NONE`           |
+|`.hdr`                |boolean |`false`            |Whether to use HDR rendering or not. HDR surface is 16-bit                                   |
+|`.hdrTonemap`         |constant|`BULB_TONEMAP_HBD` |Tonemap to use when in HDR mode                                                              |
+|`.hdrBloomIntensity`  |number  |`0`                |Intensity of the bloom effect                                                                |
+|`.hdrBloomIterations` |number  |`3`                |Number of Kawase blur iterations to apply to the bloom                                       |
+|`.hdrBloomThesholdMin`|number  |`0.6`              |Lower threshold for bloom cut-off                                                            |
+|`.hdrBloomThesholdMax`|number  |`0.8`              |Upper threshold for bloom cut-off                                                            |
+|`.normalMap`          |boolean |Config macro       |Whether normal mapping should be used. Defaults to `BULB_DEFAULT_USE_NORMAL_MAP`             |
 
 &nbsp;
 
@@ -138,6 +138,8 @@ Bulb uses gamma correct lighting and, as such, works in a slightly different way
 |`surface`|surface |Surface to copy to the output surface for lighting|
 
 This function returns a surface that is a copy of the input surface but lit up using the light accumulated by the renderer. The dimensions of the output surface will match the input surface. This function is similar to `.DrawLitSurface()` but doesn't do the drawing for you and is therefore helpful as a component of a post-processing pipeline.
+
+?> It is often helpful to set the tonemapping for a renderer to `BULB_TONEMAP_NONE` when working with other post-processing effects. This tonemap setting ensures the cleanest possible data is being outputted.
 
 &nbsp;
 
