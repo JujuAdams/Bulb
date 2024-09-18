@@ -141,6 +141,8 @@ This function returns a surface that is a copy of the input surface but lit up u
 
 ?> It is often helpful to set the tonemapping for a renderer to `BULB_TONEMAP_NONE` when working with other post-processing effects. This tonemap setting ensures the cleanest possible data is being outputted.
 
+!> `.GetOutputSurface()` is not compatible with bloom in HDR mode.
+
 &nbsp;
 
 ## .RefreshStaticOccluders
