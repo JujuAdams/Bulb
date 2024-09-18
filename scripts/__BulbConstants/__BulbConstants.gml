@@ -1,7 +1,7 @@
 // Feather disable all
 
-#macro BULB_VERSION  "22.0.5 Beta"
-#macro BULB_DATE     "2024-09-16"
+#macro BULB_VERSION  "22.0.6 Beta"
+#macro BULB_DATE     "2024-09-18"
 
 #macro BULB_TONEMAP_NONE               0
 #macro BULB_TONEMAP_CLAMP              1

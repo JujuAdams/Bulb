@@ -4,7 +4,7 @@
   "name": "Windows",
   "option_windows_display_name": "Bulb",
   "option_windows_executable_name": "${project_name}.exe",
-  "option_windows_version": "22.0.5.0",
+  "option_windows_version": "22.0.6.0",
   "option_windows_company_info": "Juju Adams",
   "option_windows_product_info": "Bulb",
   "option_windows_copyright_info": "Juju Adams (c) 2024",
