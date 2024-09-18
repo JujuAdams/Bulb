@@ -4,6 +4,7 @@ function DebugOverlay()
     switch(renderer.GetTonemap())
     {
         case BULB_TONEMAP_BAD_GAMMA:         _tonemapName = "\"Bad Gamma!\""             break;
+        case BULB_TONEMAP_NONE:              _tonemapName = "\"None\""                   break;
         case BULB_TONEMAP_CLAMP:             _tonemapName = "\"Clamp\""                  break;
         case BULB_TONEMAP_REINHARD:          _tonemapName = "\"Reinhard\"";              break;
         case BULB_TONEMAP_REINHARD_EXTENDED: _tonemapName = "\"Reinhard Extended\"";     break;

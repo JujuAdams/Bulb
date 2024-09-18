@@ -131,7 +131,7 @@ function __BulbRendererDefineLight()
         }
         else
         {
-            if (_tonemap == BULB_TONEMAP_CLAMP)
+            if ((_tonemap == BULB_TONEMAP_NONE) || (_tonemap == BULB_TONEMAP_CLAMP))
             {
                 //Nothing else needed
             }

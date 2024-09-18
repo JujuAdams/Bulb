@@ -18,7 +18,7 @@ if (keyboard_check_pressed(ord("3"))) renderer.selfLighting = !renderer.selfLigh
 if (keyboard_check_pressed(ord("4"))) renderer.hdr = !renderer.hdr;
 if (keyboard_check_pressed(ord("5")))
 {
-    renderer.hdrTonemap = (renderer.hdrTonemap + 1) mod 8;
+    renderer.hdrTonemap = (renderer.hdrTonemap + 1) mod 9;
     renderer.ldrTonemap = renderer.hdrTonemap;
 }
 
