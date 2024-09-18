@@ -62,7 +62,6 @@
     {"id":{"name":"DebugOverlay","path":"scripts/DebugOverlay/DebugOverlay.yy",},"order":2,},
     {"id":{"name":"rmTestLightStrip","path":"rooms/rmTestLightStrip/rmTestLightStrip.yy",},"order":1,},
     {"id":{"name":"VertexCake","path":"scripts/VertexCake/VertexCake.yy",},"order":3,},
-    {"id":{"name":"__shdBulbGammaToLinear","path":"shaders/__shdBulbGammaToLinear/__shdBulbGammaToLinear.yy",},"order":0,},
     {"id":{"name":"__shdBulbHardShadows","path":"shaders/__shdBulbHardShadows/__shdBulbHardShadows.yy",},"order":0,},
     {"id":{"name":"__shdBulbHardShadowsSunlight","path":"shaders/__shdBulbHardShadowsSunlight/__shdBulbHardShadowsSunlight.yy",},"order":0,},
     {"id":{"name":"__shdBulbIntensity","path":"shaders/__shdBulbIntensity/__shdBulbIntensity.yy",},"order":1,},
