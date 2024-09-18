@@ -357,6 +357,9 @@ function BulbRenderer(_camera) constructor
             
             //Copy across the light surface to the output
             surface_set_target(__outputSurface);
+            draw_clear(c_black);
+            
+            gpu_set_colorwriteenable(true, true, true, false);
             gpu_set_blendmode_ext(bm_one, bm_zero);
             
             shader_set(__shdBulbIntensity);
@@ -365,6 +368,8 @@ function BulbRenderer(_camera) constructor
             shader_reset();
             
             surface_reset_target();
+            
+            gpu_set_colorwriteenable(true, true, true, true);
             gpu_set_blendmode(bm_normal);
             
             //Create new bloom surfaces on demand
@@ -391,7 +396,7 @@ function BulbRenderer(_camera) constructor
             
             //Perform Kawase blur
             gpu_set_tex_filter(true);
-            gpu_set_blendenable(true);
+            gpu_set_blendenable(false);
             
             surface_set_target(__bloomSurfaceArray[0]);
             shader_set(__shdBulbKawaseDownWithThreshold);
@@ -427,6 +432,8 @@ function BulbRenderer(_camera) constructor
                     --_i;
                 }
             }
+            
+            gpu_set_blendenable(true);
             
             surface_set_target(__outputSurface);
                 
