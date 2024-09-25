@@ -317,7 +317,6 @@ function BulbRenderer(_camera) constructor
     DrawLitSurface = function(_surface, _x, _y, _width, _height, _textureFiltering = undefined, _alphaBlend = undefined)
     {
         static _u_fIntensity = shader_get_uniform(__shdBulbIntensity, "u_fIntensity");
-        static _u_vThreshold = shader_get_uniform(__shdBulbKawaseDownWithThreshold, "u_vThreshold");
         
         if (surface_get_target() == _surface)
         {
@@ -377,80 +376,7 @@ function BulbRenderer(_camera) constructor
             gpu_set_colorwriteenable(true, true, true, true);
             gpu_set_blendmode(bm_normal);
             
-            //Create new bloom surfaces on demand
-            if (array_length(__bloomSurfaceArray) < hdrBloomIterations)
-            {
-                __FreeBloomSurfaces();
-                
-                var _bloomWidth  = _surfaceWidth;
-                var _bloomHeight = _surfaceHeight;
-                
-                //Work around compile error in LTS
-                var _surface_create = surface_create;
-                
-                var _i = 0;
-                repeat(hdrBloomIterations)
-                {
-                    _bloomWidth  = _bloomWidth  div 2;
-                    _bloomHeight = _bloomHeight div 2;
-                    __bloomSurfaceArray[_i] = _surface_create(_bloomWidth, _bloomHeight, surface_rgba16float);
-                    
-                    ++_i;
-                }
-            }
-            
-            //Perform Kawase blur
-            gpu_set_tex_filter(true);
-            gpu_set_blendenable(false);
-            
-            surface_set_target(__bloomSurfaceArray[0]);
-            shader_set(__shdBulbKawaseDownWithThreshold);
-            shader_set_uniform_f(_u_vThreshold, hdrBloomThresholdMin, hdrBloomThresholdMax);
-            shader_set_uniform_f(shader_get_uniform(__shdBulbKawaseDownWithThreshold, "u_vTexel"), texture_get_texel_width(surface_get_texture(__outputSurface)), texture_get_texel_height(surface_get_texture(__outputSurface)));
-            draw_surface_stretched(__outputSurface, 0, 0, surface_get_width(__bloomSurfaceArray[0]), surface_get_height(__bloomSurfaceArray[0]));
-            shader_reset();
-            surface_reset_target();
-            
-            if (hdrBloomIterations >= 2)
-            {
-                var _i = 1;
-                repeat(hdrBloomIterations-1)
-                {
-                    surface_set_target(__bloomSurfaceArray[_i]);
-                        shader_set(__shdBulbKawaseDown);
-                        shader_set_uniform_f(shader_get_uniform(__shdBulbKawaseDown, "u_vTexel"), texture_get_texel_width(surface_get_texture(__bloomSurfaceArray[_i-1])), texture_get_texel_height(surface_get_texture(__bloomSurfaceArray[_i-1])));
-                        draw_surface_stretched(__bloomSurfaceArray[_i-1], 0, 0, surface_get_width(__bloomSurfaceArray[_i]), surface_get_height(__bloomSurfaceArray[_i]));
-                    surface_reset_target();
-                    
-                    ++_i;
-                }
-                
-                var _i = hdrBloomIterations-1;
-                repeat(hdrBloomIterations-1)
-                {
-                    surface_set_target(__bloomSurfaceArray[_i-1]);
-                        shader_set(__shdBulbKawaseUp);
-                        shader_set_uniform_f(shader_get_uniform(__shdBulbKawaseUp, "u_vTexel"), texture_get_texel_width(surface_get_texture(__bloomSurfaceArray[_i])), texture_get_texel_height(surface_get_texture(__bloomSurfaceArray[_i])));
-                        draw_surface_stretched(__bloomSurfaceArray[_i], 0, 0, surface_get_width(__bloomSurfaceArray[_i-1]), surface_get_height(__bloomSurfaceArray[_i-1]));
-                    surface_reset_target();
-                    
-                    --_i;
-                }
-            }
-            
-            gpu_set_blendenable(true);
-            
-            surface_set_target(__outputSurface);
-                
-                gpu_set_blendmode(bm_add);
-                shader_set(__shdBulbIntensity);
-                shader_set_uniform_f(_u_fIntensity, hdrBloomIntensity);
-                draw_surface_stretched_ext(__bloomSurfaceArray[0], 0, 0, _surfaceWidth, _surfaceHeight, c_white, 1);
-                
-                gpu_set_blendmode(bm_normal);
-                shader_reset();
-                
-            surface_reset_target();
+            __KawaseBloom(_surfaceWidth, _surfaceHeight);
             
             //Use the output surface as the lighting source for the tonemapping shader
             gpu_set_tex_filter(_textureFiltering ?? _oldTextureFiltering);
@@ -466,6 +392,89 @@ function BulbRenderer(_camera) constructor
         
         gpu_set_tex_filter(_oldTextureFiltering);
         gpu_set_blendenable(_oldAlphaBlend);
+    }
+    
+    __KawaseBloom = function(_surfaceWidth, _surfaceHeight)
+    {
+        static _u_fIntensity = shader_get_uniform(__shdBulbIntensity, "u_fIntensity");
+        static _u_vThreshold = shader_get_uniform(__shdBulbKawaseDownWithThreshold, "u_vThreshold");
+        
+        var _bloomSurfaceArray = __bloomSurfaceArray;
+        
+        //Create new bloom surfaces on demand
+        if (array_length(_bloomSurfaceArray) < hdrBloomIterations)
+        {
+            __FreeBloomSurfaces();
+            
+            var _bloomWidth  = _surfaceWidth;
+            var _bloomHeight = _surfaceHeight;
+            
+            //Work around compile error in LTS
+            var _surface_create = surface_create;
+            
+            var _i = 0;
+            repeat(hdrBloomIterations)
+            {
+                _bloomWidth  = _bloomWidth  div 2;
+                _bloomHeight = _bloomHeight div 2;
+                _bloomSurfaceArray[_i] = _surface_create(_bloomWidth, _bloomHeight, surface_rgba16float);
+                
+                ++_i;
+            }
+        }
+        
+        //Perform Kawase blur
+        gpu_set_tex_filter(true);
+        gpu_set_blendenable(false);
+        
+        surface_set_target(_bloomSurfaceArray[0]);
+        shader_set(__shdBulbKawaseDownWithThreshold);
+        shader_set_uniform_f(_u_vThreshold, hdrBloomThresholdMin, hdrBloomThresholdMax);
+        shader_set_uniform_f(shader_get_uniform(__shdBulbKawaseDownWithThreshold, "u_vTexel"), texture_get_texel_width(surface_get_texture(__outputSurface)), texture_get_texel_height(surface_get_texture(__outputSurface)));
+        draw_surface_stretched(__outputSurface, 0, 0, surface_get_width(_bloomSurfaceArray[0]), surface_get_height(_bloomSurfaceArray[0]));
+        shader_reset();
+        surface_reset_target();
+        
+        if (hdrBloomIterations >= 2)
+        {
+            var _i = 1;
+            repeat(hdrBloomIterations-1)
+            {
+                surface_set_target(_bloomSurfaceArray[_i]);
+                    shader_set(__shdBulbKawaseDown);
+                    shader_set_uniform_f(shader_get_uniform(__shdBulbKawaseDown, "u_vTexel"), texture_get_texel_width(surface_get_texture(_bloomSurfaceArray[_i-1])), texture_get_texel_height(surface_get_texture(_bloomSurfaceArray[_i-1])));
+                    draw_surface_stretched(_bloomSurfaceArray[_i-1], 0, 0, surface_get_width(_bloomSurfaceArray[_i]), surface_get_height(_bloomSurfaceArray[_i]));
+                surface_reset_target();
+                    
+                ++_i;
+            }
+            
+            var _i = hdrBloomIterations-1;
+            repeat(hdrBloomIterations-1)
+            {
+                surface_set_target(_bloomSurfaceArray[_i-1]);
+                    shader_set(__shdBulbKawaseUp);
+                    shader_set_uniform_f(shader_get_uniform(__shdBulbKawaseUp, "u_vTexel"), texture_get_texel_width(surface_get_texture(_bloomSurfaceArray[_i])), texture_get_texel_height(surface_get_texture(_bloomSurfaceArray[_i])));
+                    draw_surface_stretched(_bloomSurfaceArray[_i], 0, 0, surface_get_width(_bloomSurfaceArray[_i-1]), surface_get_height(_bloomSurfaceArray[_i-1]));
+                surface_reset_target();
+                
+                --_i;
+            }
+        }
+            
+        gpu_set_blendenable(true);
+        
+        surface_set_target(__outputSurface);
+            
+            gpu_set_blendmode(bm_add);
+            shader_set(__shdBulbIntensity);
+            shader_set_uniform_f(_u_fIntensity, hdrBloomIntensity);
+            draw_surface_stretched_ext(_bloomSurfaceArray[0], 0, 0, _surfaceWidth, _surfaceHeight, c_white, 1);
+            
+            gpu_set_blendmode(bm_normal);
+            shader_reset();
+            
+        surface_reset_target();
     }
     
     Free = function()
@@ -488,6 +497,7 @@ function BulbRenderer(_camera) constructor
         DrawLitSurface         = _nullFunc;
         GetTonemap             = _nullFunc;
         RefreshStaticOccluders = _nullFunc;
+        __KawaseBloom          = _nullFunc;
         
         //__BulbRendererDefineHDR()
         __GetOutputSurface  = _nullFunc;
