@@ -56,9 +56,6 @@ We're also going to be drawing the application surface manually in the next step
 ```GML
 ///Create Event for objLightController
 
-//We'll be drawing the application surface ourselves (see Post-Draw event)
-application_surface_draw_enable(false);
-
 //Instantiate and set up a renderer
 renderer = new BulbRenderer();
 renderer.ambientColor = c_dkgray;
@@ -70,7 +67,7 @@ renderer.smooth = false;
 
 ### 4. Call the update method and draw function
 
-In the Post-Draw event for `objLightController` we update the renderer and draw the application surface. The `.Update()` call ensures what's on the lighting surface matches the game state, and the `BulbDrawLitApplicationSurface()` call draws the application surface but using the lighting surface provided by the renderer. We use the Post-Draw event as this is where the application surface is typically drawn as part of GameMaker's native draw pipeline.
+In the Post-Draw event for `objLightController` we update the renderer and light the application surface. The `.Update()` call ensures what's on the lighting surface matches the game state, and the `BulbApplyLightingToSurface()` call applies lighting directly to the application surface. We use the Post-Draw event as this is where the application surface is typically drawn as part of GameMaker's native draw pipeline.
 
 ```GML
 ///Post-Draw Event for objLightController
@@ -78,11 +75,13 @@ In the Post-Draw event for `objLightController` we update the renderer and draw 
 //Update the lights and shadows on the renderer
 renderer.Update();
 
-//Draw the application surface, lit up by the renderer
-BulbDrawLitApplicationSurface(renderer);
+//Apply the lighting to the application surface
+BulbApplyLightingToSurface(renderer, application_surface);
 ```
 
 ?> `.Update()` can be called in any event, but it's often convenient to execute it before drawing the lighting surface.
+
+!> `BulbApplyLightingToSurface()` is a convenient function but it is slow. If you are worried about performance, you should use `BulbDrawLitSurface()`.
 
 &nbsp;
 
