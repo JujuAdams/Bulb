@@ -105,6 +105,7 @@
     {"id":{"name":"sLightTorch","path":"sprites/sLightTorch/sLightTorch.yy",},"order":9,},
     {"id":{"name":"sPlayerMask","path":"sprites/sPlayerMask/sPlayerMask.yy",},"order":10,},
     {"id":{"name":"__BulbRendererDefineAccumulateHardNoStencil","path":"scripts/__BulbRendererDefineAccumulateHardNoStencil/__BulbRendererDefineAccumulateHardNoStencil.yy",},"order":1,},
+    {"id":{"name":"BulbApplyLightingToSurface","path":"scripts/BulbApplyLightingToSurface/BulbApplyLightingToSurface.yy",},"order":4,},
     {"id":{"name":"oRenderer2","path":"objects/oRenderer2/oRenderer2.yy",},"order":2,},
     {"id":{"name":"BulbSpecularMapDrawSelf","path":"scripts/BulbSpecularMapDrawSelf/BulbSpecularMapDrawSelf.yy",},"order":1,},
     {"id":{"name":"sPyramid","path":"sprites/sPyramid/sPyramid.yy",},"order":11,},
