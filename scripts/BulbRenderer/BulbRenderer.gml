@@ -262,62 +262,19 @@ function BulbRenderer(_camera) constructor
     
     GetOutputSurface = function(_surface)
     {
-        static _u_fIntensity = shader_get_uniform(__shdBulbIntensity, "u_fIntensity");
-        static _u_vThreshold = shader_get_uniform(__shdBulbKawaseDownWithThreshold, "u_vThreshold");
-        
-        var _oldTextureFiltering = gpu_get_tex_filter();
-        var _oldAlphaBlend       = gpu_get_blendenable();
-        
-        gpu_set_tex_filter(false);
-        gpu_set_blendenable(false);
-        
-        var _shader = __GetTonemapShader();
-        var _exposureUniform = shader_get_uniform(_shader, "u_fExposure")
-        var _sampler = shader_get_sampler_index(_shader, "u_sLightMap");
-        
         var _surfaceWidth  = surface_get_width( _surface);
         var _surfaceHeight = surface_get_height(_surface);
         __GetOutputSurface(_surfaceWidth, _surfaceHeight);
         
-        if not (hdr && _system.__hdrAvailable && ((hdrBloomIntensity > 0) && (hdrBloomIterations >= 1)))
-        {
-            //Using LDR or HDR without bloom
-            
-            surface_set_target(__outputSurface);
-            
-            if ((__lightSurface != undefined) && surface_exists(__lightSurface))
-            {
-                shader_set(_shader);
-                shader_set_uniform_f(_exposureUniform, exposure);
-                texture_set_stage(_sampler, surface_get_texture(__lightSurface));
-                gpu_set_tex_filter_ext(_sampler, smooth);
-                draw_surface_stretched(_surface, 0, 0, _surfaceWidth, _surfaceHeight);
-                shader_reset();
-            }
-            else
-            {
-                draw_surface_stretched(_surface, 0, 0, _surfaceWidth, _surfaceHeight);
-            }
-            
-            surface_reset_target();
-        }
-        else
-        {
-            //HDR with bloom
-            
-            __BulbError("Bloom not supported by .GetOutputSurface() (yet)");
-        }
-        
-        gpu_set_tex_filter(_oldTextureFiltering);
-        gpu_set_blendenable(_oldAlphaBlend);
+        surface_set_target(__outputSurface);
+        DrawLitSurface(_surface, 0, 0, _surfaceWidth, _surfaceHeight, false, false);
+        surface_reset_target();
         
         return __outputSurface;
     }
     
     DrawLitSurface = function(_surface, _x, _y, _width, _height, _textureFiltering = undefined, _alphaBlend = undefined)
     {
-        static _u_fIntensity = shader_get_uniform(__shdBulbIntensity, "u_fIntensity");
-        
         if (surface_get_target() == _surface)
         {
             __BulbError("Cannot call .DrawLitSurface() when the destination surface and drawn surface are the same\nIf you are drawing the application surface, use a Post-Draw event or GUI draw event");
@@ -326,83 +283,50 @@ function BulbRenderer(_camera) constructor
         var _oldTextureFiltering = gpu_get_tex_filter();
         var _oldAlphaBlend       = gpu_get_blendenable();
         
-        var _shader = __GetTonemapShader();
-        var _exposureUniform = shader_get_uniform(_shader, "u_fExposure")
-        var _sampler = shader_get_sampler_index(_shader, "u_sLightMap");
+        if (_textureFiltering != undefined) gpu_set_tex_filter(_textureFiltering);
+        if (_alphaBlend != undefined) gpu_set_blendenable(_alphaBlend);
         
-        if not (hdr && _system.__hdrAvailable && ((hdrBloomIntensity > 0) && (hdrBloomIterations >= 1)))
+        if ((__lightSurface != undefined) && surface_exists(__lightSurface))
         {
-            //Using LDR or HDR without bloom
-            
-            if ((__lightSurface != undefined) && surface_exists(__lightSurface))
+            if (hdr && _system.__hdrAvailable
+            && (hdrBloomIntensity > 0) && (hdrBloomIterations >= 1)
+            && (__lightSurface != undefined) && surface_exists(__lightSurface))
             {
-                if (_textureFiltering != undefined) gpu_set_tex_filter(_textureFiltering);
-                if (_alphaBlend != undefined) gpu_set_blendenable(_alphaBlend);
-                
-                shader_set(_shader);
-                shader_set_uniform_f(_exposureUniform, exposure);
-                texture_set_stage(_sampler, surface_get_texture(__lightSurface));
-                gpu_set_tex_filter_ext(_sampler, smooth);
-                draw_surface_stretched(_surface, _x, _y, _width, _height);
-                shader_reset();
+                __KawaseBloom(__lightSurface, 1/max(0.0001, exposure));
             }
-            else
-            {
-                draw_surface_stretched(_surface, _x, _y, _width, _height);
-            }
-        }
-        else
-        {
-            //HDR with bloom
             
-            var _surfaceWidth  = surface_get_width( _surface);
-            var _surfaceHeight = surface_get_height(_surface);
-            __GetOutputSurface(_surfaceWidth, _surfaceHeight);
-            
-            //Copy across the light surface to the output
-            surface_set_target(__outputSurface);
-            draw_clear(c_black);
-            
-            gpu_set_colorwriteenable(true, true, true, false);
-            gpu_set_blendmode_ext(bm_one, bm_zero);
-            
-            shader_set(__shdBulbIntensity);
-            shader_set_uniform_f(_u_fIntensity, exposure);
-            draw_surface_stretched(__lightSurface, 0, 0, _surfaceWidth, _surfaceHeight);
-            shader_reset();
-            
-            surface_reset_target();
-            
-            gpu_set_colorwriteenable(true, true, true, true);
-            gpu_set_blendmode(bm_normal);
-            
-            __KawaseBloom(_surfaceWidth, _surfaceHeight);
-            
-            //Use the output surface as the lighting source for the tonemapping shader
-            gpu_set_tex_filter(_textureFiltering ?? _oldTextureFiltering);
-            gpu_set_blendenable(_alphaBlend ?? _oldAlphaBlend);
+            var _shader = __GetTonemapShader();
+            var _exposureUniform = shader_get_uniform(_shader, "u_fExposure");
+            var _sampler = shader_get_sampler_index(_shader, "u_sLightMap");
             
             shader_set(_shader);
-            shader_set_uniform_f(_exposureUniform, 1); //Already applied the exposure pre-bloom
-            texture_set_stage(_sampler, surface_get_texture(__outputSurface));
+            shader_set_uniform_f(_exposureUniform, exposure);
+            texture_set_stage(_sampler, surface_get_texture(__lightSurface));
             gpu_set_tex_filter_ext(_sampler, smooth);
             draw_surface_stretched(_surface, _x, _y, _width, _height);
             shader_reset();
+        }
+        else
+        {
+            draw_surface_stretched(_surface, _x, _y, _width, _height);
         }
         
         gpu_set_tex_filter(_oldTextureFiltering);
         gpu_set_blendenable(_oldAlphaBlend);
     }
     
-    __KawaseBloom = function(_surfaceWidth, _surfaceHeight)
+    __KawaseBloom = function(_surface, _thresholdCoeff)
     {
         static _u_fIntensity = shader_get_uniform(__shdBulbIntensity, "u_fIntensity");
         static _u_vThreshold = shader_get_uniform(__shdBulbKawaseDownWithThreshold, "u_vThreshold");
         
+        var _surfaceWidth  = surface_get_width( _surface);
+        var _surfaceHeight = surface_get_height(_surface);
+        
         var _bloomSurfaceArray = __bloomSurfaceArray;
         
         //Create new bloom surfaces on demand
-        if (array_length(_bloomSurfaceArray) < hdrBloomIterations)
+        if (array_length(_bloomSurfaceArray) < hdrBloomIterations-1)
         {
             __FreeBloomSurfaces();
             
@@ -424,14 +348,17 @@ function BulbRenderer(_camera) constructor
         }
         
         //Perform Kawase blur
+        var _oldTextureFiltering = gpu_get_tex_filter();
+        var _oldAlphaBlend       = gpu_get_blendenable();
+        
         gpu_set_tex_filter(true);
         gpu_set_blendenable(false);
         
         surface_set_target(_bloomSurfaceArray[0]);
         shader_set(__shdBulbKawaseDownWithThreshold);
-        shader_set_uniform_f(_u_vThreshold, hdrBloomThresholdMin, hdrBloomThresholdMax);
-        shader_set_uniform_f(shader_get_uniform(__shdBulbKawaseDownWithThreshold, "u_vTexel"), texture_get_texel_width(surface_get_texture(__outputSurface)), texture_get_texel_height(surface_get_texture(__outputSurface)));
-        draw_surface_stretched(__outputSurface, 0, 0, surface_get_width(_bloomSurfaceArray[0]), surface_get_height(_bloomSurfaceArray[0]));
+        shader_set_uniform_f(_u_vThreshold, hdrBloomThresholdMin*_thresholdCoeff, hdrBloomThresholdMax*_thresholdCoeff);
+        shader_set_uniform_f(shader_get_uniform(__shdBulbKawaseDownWithThreshold, "u_vTexel"), texture_get_texel_width(surface_get_texture(_surface)), texture_get_texel_height(surface_get_texture(_surface)));
+        draw_surface_stretched(_surface, 0, 0, surface_get_width(_bloomSurfaceArray[0]), surface_get_height(_bloomSurfaceArray[0]));
         shader_reset();
         surface_reset_target();
         
@@ -464,9 +391,9 @@ function BulbRenderer(_camera) constructor
             
         gpu_set_blendenable(true);
         
-        surface_set_target(__outputSurface);
+        surface_set_target(_surface);
             
-            gpu_set_blendmode(bm_add);
+            gpu_set_blendmode_ext(bm_one, bm_one);
             shader_set(__shdBulbIntensity);
             shader_set_uniform_f(_u_fIntensity, hdrBloomIntensity);
             draw_surface_stretched_ext(_bloomSurfaceArray[0], 0, 0, _surfaceWidth, _surfaceHeight, c_white, 1);
@@ -475,6 +402,9 @@ function BulbRenderer(_camera) constructor
             shader_reset();
             
         surface_reset_target();
+        
+        gpu_set_tex_filter(_oldTextureFiltering);
+        gpu_set_blendenable(_oldAlphaBlend);
     }
     
     Free = function()
