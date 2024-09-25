@@ -1,6 +1,6 @@
 <p align="center"><img src="https://raw.githubusercontent.com/JujuAdams/Bulb/master/LOGO.png" style="display:block; margin:auto; width:300px"></p>
 
-<h1 align="center">Bulb 22.0.6 Beta</h1>
+<h1 align="center">Bulb 22.0.7</h1>
 
 <p align="center">2D lighting and shadows for GameMaker 2024.8 (and 2022 LTS)</p>
 
