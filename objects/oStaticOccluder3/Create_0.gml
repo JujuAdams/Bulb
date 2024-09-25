@@ -1,4 +1,4 @@
-occluder        = new BulbStaticOccluder(oRenderer3.lighting);
+occluder        = new BulbStaticOccluder(oRenderer3.renderer);
 occluder.x      = x;
 occluder.y      = y;
 occluder.xscale = image_xscale;

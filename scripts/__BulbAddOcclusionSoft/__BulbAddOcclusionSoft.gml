@@ -39,6 +39,13 @@ function __BulbAddOcclusionSoft(_vbuff)
         vertex_position_3d(_vbuff,   _newAx, _newAy, __BULB_ZFAR); vertex_normal(_vbuff,   _newDx, _newDy,  0); vertex_texcoord(_vbuff,  1, 1);
         vertex_position_3d(_vbuff,   _newBx, _newBy, __BULB_ZFAR); vertex_normal(_vbuff,   _newDx, _newDy,  0); vertex_texcoord(_vbuff,  1, 1);
         
+        if (BULB_COMPENSATE_FOR_NEAR_OCCLUDERS)
+        {
+            vertex_position_3d(_vbuff,   _newAx, _newAy, __BULB_ZFAR);                                 vertex_normal(_vbuff,   _newDx, _newDy, 0); vertex_texcoord(_vbuff,  1, 1);
+            vertex_position_3d(_vbuff,   0.5*(_newAx + _newBx), 0.5*(_newAy + _newBy), 2*__BULB_ZFAR); vertex_normal(_vbuff,   _newDx, _newDy, 0); vertex_texcoord(_vbuff,  1, 1);
+            vertex_position_3d(_vbuff,   _newBx, _newBy, __BULB_ZFAR);                                 vertex_normal(_vbuff,   _newDx, _newDy, 0); vertex_texcoord(_vbuff,  1, 1);
+        }
+        
         //Add data for the soft shadows
         vertex_position_3d(_vbuff,   _newAx, _newAy, __BULB_ZFAR); vertex_normal(_vbuff,   _newDx, _newDy,  0); vertex_texcoord(_vbuff,  1, 0);
         vertex_position_3d(_vbuff,   _newAx, _newAy, 0);           vertex_normal(_vbuff,   _newDx, _newDy,  0); vertex_texcoord(_vbuff,  0, 1);

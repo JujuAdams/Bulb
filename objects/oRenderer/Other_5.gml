@@ -5,5 +5,5 @@ camera_destroy(camera);
 //Destroy the walls vertex buffer
 staticBlocks.Free();
 
-//Destroy the lighting system (you still need to destroy each light instance!)
-lighting.Free();
+//Destroy the renderer system (you still need to destroy each light instance!)
+renderer.Free();

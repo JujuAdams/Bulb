@@ -1,10 +1,9 @@
-occluder        = new BulbStaticOccluder(oRenderer.lighting);
+occluder        = new BulbStaticOccluder(oRendererPar.renderer);
 occluder.x      = x;
 occluder.y      = y;
 occluder.xscale = image_xscale;
 occluder.yscale = image_yscale;
 occluder.angle  = image_angle;
-occluder.AddToRenderer(oRenderer.vision);
 
 var _l = -0.5*sprite_get_width(sprite_index);
 var _t = -0.5*sprite_get_height(sprite_index);

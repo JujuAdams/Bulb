@@ -5,9 +5,12 @@ function BulbSunlight(_renderer, _angle) constructor
 {
     visible = true;
     
-    angle = _angle;
-    blend = c_white;
-    alpha = 1.0;
+    normalMap  = BULB_DEFAULT_USE_NORMAL_MAP;
+    normalMapZ = BULB_DEFAULT_NORMAL_MAP_Z;
+    
+    angle     = _angle;
+    blend     = c_white;
+    intensity = 1.0;
     
     penumbraSize = 0.0;
     

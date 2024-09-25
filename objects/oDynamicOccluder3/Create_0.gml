@@ -1,6 +1,6 @@
 image_angle = random(360);
 
-occluder        = new BulbDynamicOccluder(oRenderer3.lighting);
+occluder        = new BulbDynamicOccluder(oRenderer3.renderer);
 occluder.x      = x;
 occluder.y      = y;
 occluder.xscale = image_xscale;

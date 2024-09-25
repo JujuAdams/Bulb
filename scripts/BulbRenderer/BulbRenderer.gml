@@ -1,1019 +1,531 @@
-/// @param ambientColour
-/// @param mode
-/// @param smooth
+/// Constructor. Creates a Bulb renderer struct that is responsible for the final renderering of
+/// lights in your game.
+/// 
+/// @param [camera]
+/// 
+/// Full list of variables:
+/// 
+/// `.ambientColor`         | `c_black`           | Baseline ambient light color
+/// `.ambientInGammaSpace`  | `false`             | Whether the above is in gamma space (`true`) or linear space {`false`)
+/// `.smooth`               | `true`              | Whether to use texture filtering (bilinear interpolation) where possible
+/// `.soft`                 | `true`              | Whether to use soft shadows
+/// `.selfLighting`         | `false`             | Whether to allow light to enter but not escape occluders. Hard shadow mode only
+/// `.exposure`             | `1.0`               | Exposure for the entire lighting render. Should usually be left at `1.0` when not in HDR mode
+/// `.ldrTonemap`           | `BULB_TONEMAP_NONE` | Tonemap to use when not in HDR mode. Should usually be left at `BULB_TONEMAP_NONE`
+/// `.hdr`                  | `false`             | Whether to use HDR rendering or not. HDR surface is 16-bit
+/// `.hdrTonemap`           | `BULB_TONEMAP_HBD`  | Tonemap to use when in HDR mode
+/// `.hdrBloomIntensity`    | `0`                 | Intensity of the bloom effect
+/// `.hdrBloomIterations`   | `3`                 | Number of Kawase blur iterations to apply to the bloom
+/// `.hdrBloomThresholdMin` | `0.6`               | Lower threshold for bloom cut-off
+/// `.hdrBloomThresholdMax` | `0.8`               | Upper threshold for bloom cut-off
+/// `.normalMap`            | Config macro        | Whether normal mapping should be used. Defaults to `BULB_DEFAULT_USE_NORMAL_MAP`
+/// 
+/// Full list of methods:
+/// 
+/// `.Free()`
+/// `.SetCamera(camera)`
+/// `.GetCamera()`
+/// `.SetSurfaceDimensions(width, height)`
+/// `.GetSurfaceDimensions()`
+/// `.Update()`
+/// `.GetOutputSurface(surface)`
+/// `.DrawLitSurface(surface, x, y, width, height, [textureFiltering], [alphaBlend])`
+/// `.GetTonemap()`
+/// `.GetLightSurface()`
+/// `.GetLightValue(x, y)`
+/// `.GetNormalMapSurface()
+/// `.DrawNormalMapDebug(x, y, width, height)`
+/// `.RefreshStaticOccluders()`
 
-enum BULB_MODE
+function BulbRenderer(_camera) constructor
 {
-    HARD_BM_ADD,
-    HARD_BM_ADD_SELFLIGHTING,
-    HARD_BM_MAX,
-    HARD_BM_MAX_SELFLIGHTING,
-    SOFT_BM_ADD,
-    __SIZE
-}
-
-function BulbRenderer(_ambientColour, _mode, _smooth) constructor
-{
-    //Assign the ambient colour used for the darkest areas of the screen. This can be changed on the fly
-    ambientColor = _ambientColour;
+    static _system = __BulbSystem();
     
-    //The smoothing mode controls texture filtering both when accumulating lights and when drawing the resulting __surface
-    smooth = _smooth;
-    
-    mode = _mode;
-    
-    surfaceWidth  = -1;
-    surfaceHeight = -1;
-    
-    //Initialise variables used and updated in .__UpdateVertexBuffers()
-    __staticVBuffer  = undefined; //Vertex buffer describing the geometry of static occluder objects
-    __dynamicVBuffer = undefined; //As above but for dynamic shadow occluders. This is updated every step
-    __surface        = undefined; //Screen-space __surface for final accumulation of lights
-    
-    __staticOccludersArray  = [];
-    __dynamicOccludersArray = [];
-    __lightsArray           = [];
-    __sunlightArray         = [];
-    __ambienceSpriteArray   = [];
-    __shadowOverlayArray    = [];
-    __lightOverlayArray     = [];
-    
-    __freed   = false;
-    __oldMode = undefined;
-    
-    __clipEnabled      = false;
-    __clipSurface      = undefined;
-    __clipIsShadow     = true;
-    __clipAlpha        = 1.0;
-    __clipInvert       = false;
-    __clipValueToAlpha = false;
-    
-    
-    
-    #region Public Methods
-    
-    static SetSurfaceDimensionsFromCamera = function(_camera)
+    static _vformat3DNormal = (function()
     {
-        var _projMatrix = camera_get_proj_mat(_camera);
+        vertex_format_begin();
+        vertex_format_add_position_3d();
+        vertex_format_add_normal();
+        return vertex_format_end();
+    })();
+
+    static _vformat3DNormalTex = (function()
+    {
+        vertex_format_begin();
+        vertex_format_add_position_3d();
+        vertex_format_add_normal();
+        vertex_format_add_texcoord();
+        return vertex_format_end();
+    })();
+    
+    
+    
+    SetCamera = function(_camera)
+    {
+        if (__cameraImplicit)
+        {
+            camera_destroy(__camera);
+        }
+        
+        if (_camera != undefined)
+        {
+            __camera         = _camera;
+            __cameraImplicit = false;
+        }
+        else
+        {
+            __camera         = camera_create_view(0, 0, room_width, room_height, 0,   noone, 0, 0, 0, 0);
+            __cameraImplicit = true;
+        }
+        
+        //Set the lighting surface dimensions from the camera
+        var _projMatrix = camera_get_proj_mat(__camera);
         var _width  = round(abs(2/_projMatrix[0]));
         var _height = round(abs(2/_projMatrix[5]));
+        SetSurfaceDimensions(_width, _height);
+    }
+    
+    GetCamera = function()
+    {
+        return __camera;
+    }
+    
+    SetSurfaceDimensions = function(_width, _height)
+    {
+        __surfaceWidth  = _width;
+        __surfaceHeight = _height;
         
-        return SetSurfaceDimensions(_width, _height);
+        GetLightSurface();
     }
     
-    static SetSurfaceDimensions = function(_width, _height)
+    GetSurfaceDimensions = function()
     {
-        surfaceWidth  = _width;
-        surfaceHeight = _height;
+        static _result = {};
         
-        GetSurface();
-        GetClippingSurface();
+        _result.width  = __surfaceWidth;
+        _result.height = __surfaceHeight;
+        
+        return _result;
     }
     
-    static SetClippingSurface = function(_clipIsShadow, _clipAlpha, _clipInvert = false, _hsvValueToAlpha = false)
-    {
-        __clipEnabled      = true;
-        __clipIsShadow     = _clipIsShadow;
-        __clipAlpha        = _clipAlpha;
-        __clipInvert       = _clipInvert;
-        __clipValueToAlpha = _hsvValueToAlpha;
-    }
-    
-    static RemoveClippingSurface = function()
-    {
-        __clipEnabled = false;
-        __FreeClipSurface();
-    }
-    
-    static CopyClippingSurface = function(_surface)
-    {
-        gpu_set_blendmode_ext(bm_one, bm_zero);
-        surface_copy(GetClippingSurface(), 0, 0, _surface);
-        gpu_set_blendmode(bm_normal);
-    }
-    
-    static SetAmbientColor = function(_color)
-    {
-        ambientColor = _color;
-    }
-    
-    static GetAmbientColor = function()
-    {
-        return ambientColor;
-    }
-    
-    static UpdateFromCamera = function(_camera)
+    Update = function()
     {
         //Deploy PROPER MATHS in case the dev is using matrices
         
-        var _viewMatrix = camera_get_view_mat(_camera);
-        var _projMatrix = camera_get_proj_mat(_camera);
+        var _viewMatrix = camera_get_view_mat(__camera);
+        var _projMatrix = camera_get_proj_mat(__camera);
         
-        var _cameraX          = -_viewMatrix[12];
-        var _cameraY          = -_viewMatrix[13];
-        var _cameraViewWidth  = round(abs(2/_projMatrix[0]));
-        var _cameraViewHeight = round(abs(2/_projMatrix[5]));
-        var _cameraLeft       = _cameraX - _cameraViewWidth/2;
-        var _cameraTop        = _cameraY - _cameraViewHeight/2;
+        var _cameraCos =  _viewMatrix[ 0];
+        var _cameraSin =  _viewMatrix[ 1];
+        var _matrixX   = -_viewMatrix[12];
+        var _matrixY   = -_viewMatrix[13];
         
-        return Update(_cameraLeft, _cameraTop, _cameraViewWidth, _cameraViewHeight);
-    }
-    
-    static Update = function(_cameraL, _cameraT, _cameraW, _cameraH)
-    {
-        if (__freed) return undefined;
+        var _cameraCX =  _matrixX*_cameraCos + _matrixY*_cameraSin;
+        var _cameraCY = -_matrixX*_cameraSin + _matrixY*_cameraCos;
+        var _cameraW  = round(abs(2/_projMatrix[0]));
+        var _cameraH  = round(abs(2/_projMatrix[5]));
         
-        static _worldMatrix = [1,0,0,0,   0,1,0,0,   0,0,1,0,   0,0,0,1];
+        var _rotatedW = _cameraW*abs(_cameraCos) + _cameraH*abs(_cameraSin);
+        var _rotatedH = _cameraW*abs(_cameraSin) + _cameraH*abs(_cameraCos);
         
-        if (surfaceWidth  <= 0) surfaceWidth  = _cameraW;
-        if (surfaceHeight <= 0) surfaceHeight = _cameraH;
+        var _boundaryL = _cameraCX - _rotatedW/2;
+        var _boundaryT = _cameraCY - _rotatedH/2;
+        var _boundaryR = _cameraCX + _rotatedW/2;
+        var _boundaryB = _cameraCY + _rotatedH/2;
         
-        if (mode != __oldMode)
+        var _boundaryExpandedL = _boundaryL - BULB_DYNAMIC_OCCLUDER_RANGE;
+        var _boundaryExpandedT = _boundaryT - BULB_DYNAMIC_OCCLUDER_RANGE;
+        var _boundaryExpandedR = _boundaryR + BULB_DYNAMIC_OCCLUDER_RANGE;
+        var _boundaryExpandedB = _boundaryB + BULB_DYNAMIC_OCCLUDER_RANGE;
+        
+        //Force a regeneration of vertex buffers if we're swapped between hard/soft lights
+        if (soft != __oldSoft)
         {
-            __oldMode = mode;
+            __oldSoft = soft;
             __FreeVertexBuffers();
         }
         
-        var _cameraR  = _cameraL + _cameraW;
-        var _cameraB  = _cameraT + _cameraH;
-        var _cameraCX = _cameraL + 0.5*_cameraW;
-        var _cameraCY = _cameraT + 0.5*_cameraH;
+        //Determine whether we actually want HDR
+        var _hdr = (hdr && _system.__hdrAvailable);
+        
+        //Force regeneration/freeing of surfaces if the HDR state has changed
+        if (_hdr != __oldHDR)
+        {
+            __oldHDR = _hdr;
+            
+            if (__lightSurface != undefined)
+            {
+                surface_free(__lightSurface);
+                __lightSurface = undefined;
+            }
+            
+            if (not _hdr)
+            {
+                __FreeOutputSurface();
+            }
+        }
+        
+        //Manage bloom surfaces if the number of iterations has changed
+        if ((not _hdr) || (hdrBloomIterations != __oldHDRBloomIterations))
+        {
+            __FreeBloomSurfaces();
+        }
+        
+        //Free up memory if the normal map state has changed
+        if ((not normalMap) && __oldNormalMap)
+        {
+            __FreeNormalMapSurface();
+        }
         
         //Construct our wipe/static/dynamic vertex buffers
-        __UpdateVertexBuffers(_cameraL, _cameraT, _cameraR, _cameraB, _cameraW, _cameraH);
+        __UpdateVertexBuffers(_boundaryExpandedL, _boundaryExpandedT, _boundaryExpandedR, _boundaryExpandedB);
         
-        //Create accumulating lighting __surface
-        surface_set_target(GetSurface());
+        //Create accumulating renderer surface
+        surface_set_target(GetLightSurface());
         
+        //Set the view/projection matrices
+        camera_apply(__camera);
+        
+        //Set up some GPU state
+        var _oldNoCulling = gpu_get_cullmode();
+        var _oldTexFilter = gpu_get_tex_filter();
         gpu_set_cullmode(cull_noculling);
-        
-        //Really we should use the view matrix for this, but GameMaker's sprite culling is fucked
-        //If we use a proper view matrix then lighting sprites are culling, leading to no lighting being drawn
-        _worldMatrix[@ 12] = -_cameraL;
-        _worldMatrix[@ 13] = -_cameraT;
-        matrix_set(matrix_world, _worldMatrix);
-        
-        //Record the current texture filter state, then set our new filter state
-        var _old_tex_filter = gpu_get_tex_filter();
         gpu_set_tex_filter(smooth);
         
-        //Clear the __surface with the ambient colour
-        draw_clear(ambientColor);
+        //Clear the light surface with the ambient colour
+        draw_clear(__GetAmbientColor());
         
-        //If we're not forcing deferred rendering everywhere, update those lights
-        __AccumulateLights(_cameraL, _cameraT, _cameraR, _cameraB, _cameraCX, _cameraCY, _cameraW, _cameraH);
+        //Accumulate lights and shadows onto the lighting surface
+        __AccumulateAmbienceSprite(_boundaryL, _boundaryT, _boundaryR, _boundaryB);
         
-        if (__clipEnabled) __ApplyClippingSurface();
-        
-        //Restore the old filter state
-        gpu_set_tex_filter(_old_tex_filter);
-        
-        surface_reset_target();
-        matrix_set(matrix_world, matrix_build_identity());
-    }
-    
-    /// @param camera
-    /// @param [alpha]
-    static DrawOnCamera = function()
-    {
-        var _camera = argument[0];
-        var _alpha  = ((argument_count > 1) && (argument[1] != undefined))? argument[1] : undefined;
-        
-        var _viewMatrix = camera_get_view_mat(_camera);
-        var _projMatrix = camera_get_proj_mat(_camera);
-        
-        //Deploy PROPER MATHS in case the dev is using matrices
-        var _cameraX          = -_viewMatrix[12];
-        var _cameraY          = -_viewMatrix[13];
-        var _cameraViewWidth  = round(abs(2/_projMatrix[0]));
-        var _cameraViewHeight = round(abs(2/_projMatrix[5]));
-        var _cameraLeft       = _cameraX - _cameraViewWidth/2;
-        var _cameraTop        = _cameraY - _cameraViewHeight/2;
-        
-        return Draw(_cameraLeft, _cameraTop, _cameraViewWidth, _cameraViewHeight, _alpha);
-    }
-    
-    /// @param x
-    /// @param y
-    /// @param [width]
-    /// @param [height]
-    /// @param [alpha]
-    static Draw = function()
-    {
-        if (__freed) return undefined;
-        
-        var _x      = argument[0];
-        var _y      = argument[1];
-        var _width  = ((argument_count > 2) && (argument[2] != undefined))? argument[2] : surfaceWidth;
-        var _height = ((argument_count > 3) && (argument[3] != undefined))? argument[3] : surfaceHeight;
-        var _alpha  = ((argument_count > 4) && (argument[4] != undefined))? argument[4] : 1.0;
-        
-        if ((__surface != undefined) && surface_exists(__surface))
+        if (soft)
         {
-            //Record the current texture filter state, then set our new filter state
-            var _old_tex_filter = gpu_get_tex_filter();
-            gpu_set_tex_filter(smooth);
-            
-            gpu_set_colorwriteenable(true, true, true, false);
-            
-            if (_alpha == 1.0)
-            {
-                //Don't use the shader if we don't have to!
-                gpu_set_blendmode_ext(bm_dest_color, bm_zero);
-                draw_surface_stretched(__surface, _x, _y, _width, _height);
-            }
-            else
-            {
-                gpu_set_blendmode_ext(bm_dest_color, bm_inv_src_alpha);
-                shader_set(__shdBulbFinalRender);
-                draw_surface_stretched_ext(__surface, _x, _y, _width, _height, c_white, _alpha);
-                shader_reset();
-            }
-            
-            gpu_set_blendmode(bm_normal);
-            gpu_set_colorwriteenable(true, true, true, true);
-            
-            //Restore the old filter state
-            gpu_set_tex_filter(_old_tex_filter);
-        }
-    }
-    
-    static GetSurface = function()
-    {
-        if (__freed) return undefined;
-        if ((surfaceWidth <= 0) || (surfaceHeight <= 0)) return undefined;
-        
-        if ((__surface != undefined) && ((surface_get_width(__surface) != surfaceWidth) || (surface_get_height(__surface) != surfaceHeight)))
-        {
-            surface_free(__surface);
-            __surface = undefined;
-        }
-        
-        if ((__surface == undefined) || !surface_exists(__surface))
-        {
-            __surface = surface_create(surfaceWidth, surfaceHeight);
-            
-            surface_set_target(__surface);
-            draw_clear_alpha(c_black, 1.0);
-            surface_reset_target();
-        }
-        
-        return __surface;
-    }
-    
-    static GetClippingSurface = function()
-    {
-        if (__freed || !__clipEnabled) return undefined;
-        if ((surfaceWidth <= 0) || (surfaceHeight <= 0)) return undefined;
-        
-        if ((__clipSurface != undefined) && ((surface_get_width(__clipSurface) != surfaceWidth) || (surface_get_height(__clipSurface) != surfaceHeight)))
-        {
-            surface_free(__clipSurface);
-            __clipSurface = undefined;
-        }
-        
-        if ((__clipSurface == undefined) || !surface_exists(__clipSurface))
-        {
-            __clipSurface = surface_create(surfaceWidth, surfaceHeight);
-            
-            surface_set_target(__clipSurface);
-            
-            if (__clipInvert)
-            {
-                draw_clear_alpha(c_black, 0.0);
-            }
-            else
-            {
-                draw_clear_alpha(c_white, 1.0);
-            }
-            
-            surface_reset_target();
-        }
-        
-        return __clipSurface;
-    }
-    
-    static RefreshStaticOccluders = function()
-    {
-        if (__freed) return undefined;
-        
-        if (__staticVBuffer != undefined)
-        {
-            vertex_delete_buffer(__staticVBuffer);
-            __staticVBuffer = undefined;
-        }
-    }
-    
-    static Free = function()
-    {
-        __FreeVertexBuffers();
-        __FreeSurface();
-        __FreeClipSurface();
-        
-        __freed = true;
-    }
-    
-    static GetSurfacePixel = function(_worldX, _worldY, _cameraL, _cameraT, _cameraW, _cameraH)
-    {
-        var _surface = GetSurface();
-        var _x = (_worldX - _cameraL) * (surface_get_width( _surface) / _cameraW);
-        var _y = (_worldY - _cameraT) * (surface_get_height(_surface) / _cameraH);
-        return surface_getpixel_ext(_surface, _x, _y);
-    }
-    
-    static GetSurfacePixelFromCamera = function(_worldX, _worldY, _camera)
-    {
-        //Deploy PROPER MATHS in case the dev is using matrices
-        
-        var _viewMatrix = camera_get_view_mat(_camera);
-        var _projMatrix = camera_get_proj_mat(_camera);
-        
-        var _cameraX          = -_viewMatrix[12];
-        var _cameraY          = -_viewMatrix[13];
-        var _cameraViewWidth  = round(abs(2/_projMatrix[0]));
-        var _cameraViewHeight = round(abs(2/_projMatrix[5]));
-        var _cameraLeft       = _cameraX - _cameraViewWidth/2;
-        var _cameraTop        = _cameraY - _cameraViewHeight/2;
-        
-        return GetSurfacePixel(_worldX, _worldY, _cameraLeft, _cameraTop,  _cameraViewWidth, _cameraViewHeight);
-    }
-    
-    #endregion
-    
-    static __FreeVertexBuffers = function()
-    {
-        if (__staticVBuffer != undefined)
-        {
-            vertex_delete_buffer(__staticVBuffer);
-            __staticVBuffer = undefined;
-        }
-        
-        if (__dynamicVBuffer != undefined)
-        {
-            vertex_delete_buffer(__dynamicVBuffer);
-            __dynamicVBuffer = undefined;
-        }
-    }
-    
-    static __FreeSurface = function()
-    {
-        if ((__surface != undefined) && surface_exists(__surface))
-        {
-            surface_free(__surface);
-            __surface = undefined;
-        }
-    }
-    
-    static __FreeClipSurface = function()
-    {
-        if ((__clipSurface != undefined) && surface_exists(__clipSurface))
-        {
-            surface_free(__clipSurface);
-            __clipSurface = undefined;
-        }
-    }
-    
-    #region Update vertex buffers
-    
-    static __UpdateVertexBuffers = function(_cameraL, _cameraT, _cameraR, _cameraB, _cameraW, _cameraH)
-    {
-        if (__freed) return undefined;
-        
-        ///////////Discover camera variables
-        var _cameraExpL = _cameraL - BULB_DYNAMIC_OCCLUDER_RANGE;
-        var _cameraExpT = _cameraT - BULB_DYNAMIC_OCCLUDER_RANGE;
-        var _cameraExpR = _cameraR + BULB_DYNAMIC_OCCLUDER_RANGE;
-        var _cameraExpB = _cameraB + BULB_DYNAMIC_OCCLUDER_RANGE;
-        
-        //One-time construction of the static occluder geometry
-        if (__staticVBuffer == undefined)
-        {
-            //Create a new vertex buffer
-            __staticVBuffer = vertex_create_buffer();
-            var _staticVBuffer = __staticVBuffer;
-            
-            //Add static shadow caster vertices to the relevant vertex buffer
-            if (mode == BULB_MODE.SOFT_BM_ADD)
-            {
-                vertex_begin(__staticVBuffer, global.__bulbFormat3DNormalTex);
-                
-                var _array = __staticOccludersArray;
-                var _i = 0;
-                repeat(array_length(_array))
-                {
-                    var _weak = _array[_i];
-                    if (!weak_ref_alive(_weak) || _weak.ref.__destroyed)
-                    {
-                        array_delete(_array, _i, 1);
-                    }
-                    else
-                    {
-                        with(_weak.ref) __BulbAddOcclusionSoft(_staticVBuffer);
-                        ++_i;
-                    }
-                }
-            }
-            else
-            {
-                vertex_begin(__staticVBuffer, global.__bulbFormat3DNormal);
-                
-                var _array = __staticOccludersArray;
-                var _i = 0;
-                repeat(array_length(_array))
-                {
-                    var _weak = _array[_i];
-                    if (!weak_ref_alive(_weak) || _weak.ref.__destroyed)
-                    {
-                        array_delete(_array, _i, 1);
-                    }
-                    else
-                    {
-                        with(_weak.ref) __BulbAddOcclusionHard(_staticVBuffer);
-                        ++_i;
-                    }
-                }
-            }
-            
-            vertex_end(__staticVBuffer);
-            
-            //Freeze this buffer for speed boosts later on (though only if we have vertices in this buffer)
-            if (vertex_get_number(__staticVBuffer) > 0) vertex_freeze(__staticVBuffer);
-        }
-        
-        //Refresh the dynamic occluder geometry
-        if (__dynamicVBuffer == undefined) __dynamicVBuffer = vertex_create_buffer();
-        var _dynamicVBuffer = __dynamicVBuffer;
-        
-        //Add dynamic occluder vertices to the relevant vertex buffer
-        if (mode == BULB_MODE.SOFT_BM_ADD)
-        {
-            vertex_begin(_dynamicVBuffer, global.__bulbFormat3DNormalTex);
-            
-            var _array = __dynamicOccludersArray;
-            var _i = 0;
-            repeat(array_length(_array))
-            {
-                var _weak = _array[_i];
-                if (!weak_ref_alive(_weak) || _weak.ref.__destroyed)
-                {
-                    array_delete(_array, _i, 1);
-                }
-                else
-                {
-                    with(_weak.ref)
-                    {
-                        if (__IsOnScreen(_cameraExpL, _cameraExpT, _cameraExpR, _cameraExpB)) __BulbAddOcclusionSoft(_dynamicVBuffer);
-                    }
-                    
-                    ++_i;
-                }
-            }
+            __AccumulateSoftLights(_boundaryL, _boundaryT, _boundaryR, _boundaryB, _cameraCX, _cameraCY, _cameraW, _cameraH, _cameraCos, _cameraSin, selfLighting? -1 : 1);
         }
         else
         {
-            vertex_begin(_dynamicVBuffer, global.__bulbFormat3DNormal);
-            
-            var _array = __dynamicOccludersArray;
-            var _i = 0;
-            repeat(array_length(_array))
-            {
-                var _weak = _array[_i];
-                if (!weak_ref_alive(_weak) || _weak.ref.__destroyed)
-                {
-                    array_delete(_array, _i, 1);
-                }
-                else
-                {
-                    with(_weak.ref)
-                    {
-                        if (__IsOnScreen(_cameraExpL, _cameraExpT, _cameraExpR, _cameraExpB)) __BulbAddOcclusionHard(_dynamicVBuffer);
-                    }
-                    
-                    ++_i;
-                }
-            }
+            __AccumulateHardLights(_boundaryL, _boundaryT, _boundaryR, _boundaryB, _cameraCX, _cameraCY, _cameraW, _cameraH, _cameraCos, _cameraSin, selfLighting? -1 : 1);
         }
         
-        vertex_end(_dynamicVBuffer);
-    }
-    
-    #endregion
-    
-    #region Accumulate lights
-    
-    static __AccumulateLights = function(_cameraL, _cameraT, _cameraR, _cameraB, _cameraCX, _cameraCY, _cameraW, _cameraH)
-    {
-        if (__freed) return undefined;
-        
-        __AccumulateAmbienceSprite(_cameraL, _cameraT, _cameraR, _cameraB);
-        
-        var _normalCoeff = ((mode == BULB_MODE.HARD_BM_ADD_SELFLIGHTING) || (mode == BULB_MODE.HARD_BM_MAX_SELFLIGHTING))? -1 : 1;
-        
-        //Iterate over all non-deferred lights...
-        if (mode == BULB_MODE.SOFT_BM_ADD)
-        {
-            __AccumulateSoftLights(_cameraL, _cameraT, _cameraR, _cameraB, _cameraCX, _cameraCY, _cameraW, _cameraH, _normalCoeff);
-        }
-        else
-        {
-            __AccumulateHardLights(_cameraL, _cameraT, _cameraR, _cameraB, _cameraCX, _cameraCY, _cameraW, _cameraH, _normalCoeff);
-        }
-        
-        __AccumulateShadowOverlay(_cameraL, _cameraT, _cameraR, _cameraB);
-        __AccumulateLightOverlay(_cameraL, _cameraT, _cameraR, _cameraB);
+        __AccumulateShadowOverlay(_boundaryL, _boundaryT, _boundaryR, _boundaryB);
+        __AccumulateLightOverlay(_boundaryL, _boundaryT, _boundaryR, _boundaryB);
         
         //Restore default behaviour
         gpu_set_colorwriteenable(true, true, true, true);
         gpu_set_blendmode(bm_normal);
+        gpu_set_cullmode(_oldNoCulling);
+        gpu_set_tex_filter(_oldTexFilter);
+        
+        surface_reset_target();
     }
     
-    static __AccumulateAmbienceSprite = function(_cameraL, _cameraT, _cameraR, _cameraB)
+    __GetTonemapShader = function()
     {
-        //Now draw shadow overlay sprites, if we have any
-        var _size = array_length(__ambienceSpriteArray);
-        if (_size > 0)
+        var _hdrTonemap = GetTonemap();
+        if (_hdrTonemap == BULB_TONEMAP_NONE)
         {
-            gpu_set_colorwriteenable(true, true, true, false);
-            
-            var _i = 0;
-            repeat(_size)
-            {
-                var _weak = __ambienceSpriteArray[_i];
-                if (!weak_ref_alive(_weak) || _weak.ref.__destroyed)
-                {
-                    array_delete(__ambienceSpriteArray, _i, 1);
-                }
-                else
-                {
-                    with(_weak.ref)
-                    {
-                        if (visible)
-                        {
-                            __CheckSpriteDimensions();
-                            
-                            //If this light is active, do some drawing
-                            if (__IsOnScreen(_cameraL, _cameraT, _cameraR, _cameraB))
-                            {
-                                draw_sprite_ext(sprite, image, x, y, xscale, yscale, angle, blend, alpha);
-                            }
-                        }
-                    }
-                    
-                    ++_i;
-                }
-            }
-            
-            gpu_set_colorwriteenable(true, true, true, true);
+            return __shdBulbTonemapNone;
         }
-    }
-    
-    static __AccumulateShadowOverlay = function(_cameraL, _cameraT, _cameraR, _cameraB)
-    {
-        //Now draw shadow overlay sprites, if we have any
-        var _size = array_length(__shadowOverlayArray);
-        if (_size > 0)
+        else if (_hdrTonemap == BULB_TONEMAP_CLAMP)
         {
-            if (BULB_SHADOW_OVERLAY_HSV_VALUE_TO_ALPHA)
-            {
-                shader_set(__shdBulbHSVValueToAlpha);
-            }
-            else
-            {
-                //Leverage the fog system to force the colour of the sprites we draw (alpha channel passes through)
-                shader_reset();
-                gpu_set_fog(true, ambientColor, 0, 0);
-            }
-            
-            //Don't touch the alpha channel
-            //TODO - We may need to adjust the alpha channel for use with sharing occlusion values
-            gpu_set_colorwriteenable(true, true, true, false);
-            
-            var _ambientColor = ambientColor;
-            var _i = 0;
-            repeat(_size)
-            {
-                var _weak = __shadowOverlayArray[_i];
-                if (!weak_ref_alive(_weak) || _weak.ref.__destroyed)
-                {
-                    array_delete(__shadowOverlayArray, _i, 1);
-                }
-                else
-                {
-                    with(_weak.ref)
-                    {
-                        if (visible)
-                        {
-                            __CheckSpriteDimensions();
-                            
-                            //If this light is active, do some drawing
-                            if (__IsOnScreen(_cameraL, _cameraT, _cameraR, _cameraB))
-                            {
-                                //We send the ambient colour over as well even though we have fogging on
-                                //This allow us to colour the sprite when using the __shdBulbHSVValueToAlpha shader
-                                draw_sprite_ext(sprite, image, x, y, xscale, yscale, angle, _ambientColor, alpha);
-                            }
-                        }
-                    }
-                    
-                    ++_i;
-                }
-            }
-            
-            if (BULB_SHADOW_OVERLAY_HSV_VALUE_TO_ALPHA)
-            {
-                //Don't use the value->alpha shader carry on
-                shader_reset();
-            }
-            else
-            {
-                //We're already using the default GM shader, though let's reset the fog value
-                gpu_set_fog(false, c_fuchsia, 0, 0);
-            }
+            return __shdBulbTonemapClamp;
+        }
+        else if (_hdrTonemap == BULB_TONEMAP_REINHARD)
+        {
+            return __shdBulbTonemapReinhard;
+        }
+        else if (_hdrTonemap == BULB_TONEMAP_REINHARD_EXTENDED)
+        {
+            return __shdBulbTonemapReinhardExtended;
+        }
+        else if (_hdrTonemap == BULB_TONEMAP_ACES)
+        {
+            return __shdBulbTonemapACES;
+        }
+        else if (_hdrTonemap == BULB_TONEMAP_UNCHARTED2)
+        {
+            return __shdBulbTonemapUncharted2;
+        }
+        else if (_hdrTonemap == BULB_TONEMAP_UNREAL3)
+        {
+            return __shdBulbTonemapUnreal3;
+        }
+        else if (_hdrTonemap == BULB_TONEMAP_HBD)
+        {
+            return __shdBulbTonemapHBD;
         }
         else
         {
+            return __shdBulbTonemapBadGamma;
+        }
+    }
+    
+    GetOutputSurface = function(_surface)
+    {
+        var _surfaceWidth  = surface_get_width( _surface);
+        var _surfaceHeight = surface_get_height(_surface);
+        __GetOutputSurface(_surfaceWidth, _surfaceHeight);
+        
+        surface_set_target(__outputSurface);
+        DrawLitSurface(_surface, 0, 0, _surfaceWidth, _surfaceHeight, false, false);
+        surface_reset_target();
+        
+        return __outputSurface;
+    }
+    
+    DrawLitSurface = function(_surface, _x, _y, _width, _height, _textureFiltering = undefined, _alphaBlend = undefined)
+    {
+        if (surface_get_target() == _surface)
+        {
+            __BulbError("Cannot call .DrawLitSurface() when the destination surface and drawn surface are the same\nIf you are drawing the application surface, use a Post-Draw event or GUI draw event");
+        }
+        
+        var _oldTextureFiltering = gpu_get_tex_filter();
+        var _oldAlphaBlend       = gpu_get_blendenable();
+        
+        if (_textureFiltering != undefined) gpu_set_tex_filter(_textureFiltering);
+        if (_alphaBlend != undefined) gpu_set_blendenable(_alphaBlend);
+        
+        if ((__lightSurface != undefined) && surface_exists(__lightSurface))
+        {
+            if (hdr && _system.__hdrAvailable
+            && (hdrBloomIntensity > 0) && (hdrBloomIterations >= 1)
+            && (__lightSurface != undefined) && surface_exists(__lightSurface))
+            {
+                __KawaseBloom(__lightSurface, 1/max(0.0001, exposure));
+            }
+            
+            var _shader = __GetTonemapShader();
+            var _exposureUniform = shader_get_uniform(_shader, "u_fExposure");
+            var _sampler = shader_get_sampler_index(_shader, "u_sLightMap");
+            
+            shader_set(_shader);
+            shader_set_uniform_f(_exposureUniform, exposure);
+            texture_set_stage(_sampler, surface_get_texture(__lightSurface));
+            gpu_set_tex_filter_ext(_sampler, smooth);
+            draw_surface_stretched(_surface, _x, _y, _width, _height);
             shader_reset();
         }
-    }
-    
-    static __AccumulateLightOverlay = function(_cameraL, _cameraT, _cameraR, _cameraB)
-    {
-        //Finally, draw light overlay sprites too
-        //We use the overarching blend mode for the renderer
-        if ((mode == BULB_MODE.HARD_BM_MAX) || (mode == BULB_MODE.HARD_BM_MAX_SELFLIGHTING))
-        {
-            gpu_set_blendmode(bm_max);
-        }
         else
         {
-            gpu_set_blendmode(bm_add);
+            draw_surface_stretched(_surface, _x, _y, _width, _height);
         }
         
-        //Don't touch the alpha channel though
-        gpu_set_colorwriteenable(true, true, true, false);
-        
-        var _i = 0;
-        repeat(array_length(__lightOverlayArray))
-        {
-            var _weak = __lightOverlayArray[_i];
-            if (!weak_ref_alive(_weak) || _weak.ref.__destroyed)
-            {
-                array_delete(__lightOverlayArray, _i, 1);
-            }
-            else
-            {
-                with(_weak.ref)
-                {
-                    if (visible)
-                    {
-                        __CheckSpriteDimensions();
-                        
-                        //If this light is active, do some drawing
-                        if (__IsOnScreen(_cameraL, _cameraT, _cameraR, _cameraB))
-                        {
-                            draw_sprite_ext(sprite, image, x, y, xscale, yscale, angle, blend, alpha);
-                        }
-                    }
-                }
-                
-                ++_i;
-            }
-        }
+        gpu_set_tex_filter(_oldTextureFiltering);
+        gpu_set_blendenable(_oldAlphaBlend);
     }
     
-    #endregion
-    
-    #region Accumulate soft lights
-    
-    static __AccumulateSoftLights = function(_cameraL, _cameraT, _cameraR, _cameraB, _cameraCX, _cameraCY, _cameraW, _cameraH, _normalCoeff)
+    __KawaseBloom = function(_surface, _thresholdCoeff)
     {
-        if (__freed) return undefined;
+        static _u_fIntensity = shader_get_uniform(__shdBulbIntensity, "u_fIntensity");
+        static _u_vThreshold = shader_get_uniform(__shdBulbKawaseDownWithThreshold, "u_vThreshold");
         
-        static _u_vLight                = shader_get_uniform(__shdBulbSoftShadows,         "u_vLight"      );
-        static _sunlight_u_vLightVector = shader_get_uniform(__shdBulbSoftShadowsSunlight, "u_vLightVector");
+        var _surfaceWidth  = surface_get_width( _surface);
+        var _surfaceHeight = surface_get_height(_surface);
         
-        var _staticVBuffer  = __staticVBuffer;
-        var _dynamicVBuffer = __dynamicVBuffer;
+        var _bloomSurfaceArray = __bloomSurfaceArray;
         
-        var _i = 0;
-        repeat(array_length(__lightsArray))
+        //Create new bloom surfaces on demand
+        if (array_length(_bloomSurfaceArray) < hdrBloomIterations-1)
         {
-            var _weak = __lightsArray[_i];
-            if (!weak_ref_alive(_weak) || _weak.ref.__destroyed)
+            __FreeBloomSurfaces();
+            
+            var _bloomWidth  = _surfaceWidth;
+            var _bloomHeight = _surfaceHeight;
+            
+            //Work around compile error in LTS
+            var _surface_create = surface_create;
+            
+            var _i = 0;
+            repeat(hdrBloomIterations)
             {
-                array_delete(__lightsArray, _i, 1);
-            }
-            else
-            {
-                with(_weak.ref)
-                {
-                    if (visible)
-                    {
-                        __CheckSpriteDimensions();
-                        
-                        //If this light is active, do some drawing
-                        if (__IsOnScreen(_cameraL, _cameraT, _cameraR, _cameraB))
-                        {
-                            if (castShadows)
-                            {
-                                //Only write into the alpha channel
-                                gpu_set_colorwriteenable(false, false, false, true);
-                                
-                                //Clear the alpha channel for the light's visual area
-                                gpu_set_blendmode_ext(bm_one, bm_zero);
-                                draw_sprite_ext(sprite, image,
-                                                x, y,
-                                                xscale, yscale, angle,
-                                                c_black, alpha);
-                                
-                                //Cut out shadows in the alpha channel
-                                gpu_set_blendmode(bm_subtract);
-                                
-                                shader_set(__shdBulbSoftShadows);
-                                shader_set_uniform_f(_u_vLight, x, y, penumbraSize);
-                                vertex_submit(_staticVBuffer,  pr_trianglelist, -1);
-                                vertex_submit(_dynamicVBuffer, pr_trianglelist, -1);
-                                
-                                //Set the light sprite to borrowing the alpha channel already on the surface
-                                gpu_set_colorwriteenable(true, true, true, false);
-                                gpu_set_blendmode_ext(bm_dest_alpha, bm_one);
-                                
-                                //Draw light sprite
-                                shader_reset();
-                                draw_sprite_ext(sprite, image,
-                                                x, y,
-                                                xscale, yscale, angle,
-                                                blend, 1);
-                            }
-                            else
-                            {
-                                //No shadows - draw the light sprite normally
-                                gpu_set_blendmode(bm_add);
-                                draw_sprite_ext(sprite, image,
-                                                x, y,
-                                                xscale, yscale, angle,
-                                                blend, alpha);
-                            }
-                        }
-                    }
-                }
+                _bloomWidth  = _bloomWidth  div 2;
+                _bloomHeight = _bloomHeight div 2;
+                _bloomSurfaceArray[_i] = _surface_create(_bloomWidth, _bloomHeight, surface_rgba16float);
                 
                 ++_i;
             }
         }
         
-        var _i = 0;
-        repeat(array_length(__sunlightArray))
+        //Perform Kawase blur
+        var _oldTextureFiltering = gpu_get_tex_filter();
+        var _oldAlphaBlend       = gpu_get_blendenable();
+        
+        gpu_set_tex_filter(true);
+        gpu_set_blendenable(false);
+        
+        surface_set_target(_bloomSurfaceArray[0]);
+        shader_set(__shdBulbKawaseDownWithThreshold);
+        shader_set_uniform_f(_u_vThreshold, hdrBloomThresholdMin*_thresholdCoeff, hdrBloomThresholdMax*_thresholdCoeff);
+        shader_set_uniform_f(shader_get_uniform(__shdBulbKawaseDownWithThreshold, "u_vTexel"), texture_get_texel_width(surface_get_texture(_surface)), texture_get_texel_height(surface_get_texture(_surface)));
+        draw_surface_stretched(_surface, 0, 0, surface_get_width(_bloomSurfaceArray[0]), surface_get_height(_bloomSurfaceArray[0]));
+        shader_reset();
+        surface_reset_target();
+        
+        if (hdrBloomIterations >= 2)
         {
-            var _weak = __sunlightArray[_i];
-            if (!weak_ref_alive(_weak) || _weak.ref.__destroyed)
+            var _i = 1;
+            repeat(hdrBloomIterations-1)
             {
-                array_delete(__sunlightArray, _i, 1);
-            }
-            else
-            {
-                with(_weak.ref)
-                {
-                    if (visible)
-                    {
-                        //Only write into the alpha channel
-                        gpu_set_colorwriteenable(false, false, false, true);
-                        
-                        //Clear the alpha channel for the light's visual area
-                        gpu_set_blendmode_ext(bm_one, bm_zero);
-                        draw_sprite_ext(__sprBulbPixel, 0, _cameraL, _cameraT, _cameraW+1, _cameraH+1, 0, c_black, alpha);
-                        
-                        //Cut out shadows in the alpha channel
-                        gpu_set_blendmode(bm_subtract);
-                        
-                        shader_set(__shdBulbSoftShadowsSunlight);
-                        shader_set_uniform_f(_sunlight_u_vLightVector, dcos(angle), -dsin(angle), penumbraSize);
-                        vertex_submit(_staticVBuffer,  pr_trianglelist, -1);
-                        vertex_submit(_dynamicVBuffer, pr_trianglelist, -1);
-                        
-                        //Set the light sprite to borrowing the alpha channel already on the surface
-                        gpu_set_colorwriteenable(true, true, true, false);
-                        gpu_set_blendmode_ext(bm_dest_alpha, bm_one);
-                        
-                        //Draw light sprite
-                        shader_reset();
-                        draw_sprite_ext(__sprBulbPixel, 0, _cameraL, _cameraT, _cameraW+1, _cameraH+1, 0, blend, 1);
-                    }
-                }
-                
+                surface_set_target(_bloomSurfaceArray[_i]);
+                    shader_set(__shdBulbKawaseDown);
+                    shader_set_uniform_f(shader_get_uniform(__shdBulbKawaseDown, "u_vTexel"), texture_get_texel_width(surface_get_texture(_bloomSurfaceArray[_i-1])), texture_get_texel_height(surface_get_texture(_bloomSurfaceArray[_i-1])));
+                    draw_surface_stretched(_bloomSurfaceArray[_i-1], 0, 0, surface_get_width(_bloomSurfaceArray[_i]), surface_get_height(_bloomSurfaceArray[_i]));
+                surface_reset_target();
+                    
                 ++_i;
-            }
-        }
-        
-        gpu_set_blendmode(bm_normal);
-    }
-    
-    #endregion
-    
-    #region Accumulate hard lights
-    
-    static __AccumulateHardLights = function(_cameraL, _cameraT, _cameraR, _cameraB, _cameraCX, _cameraCY, _cameraW, _cameraH, _normalCoeff)
-    {
-        if (__freed) return undefined;
-        
-        static _u_vLight                = shader_get_uniform(__shdBulbHardShadows,         "u_vLight"      );
-        static _u_fNormalCoeff          = shader_get_uniform(__shdBulbHardShadows,         "u_fNormalCoeff");
-        static _sunlight_u_vLightVector = shader_get_uniform(__shdBulbHardShadowsSunlight, "u_vLightVector");
-        static _sunlight_u_fNormalCoeff = shader_get_uniform(__shdBulbHardShadowsSunlight, "u_fNormalCoeff");
-        
-        var _staticVBuffer  = __staticVBuffer;
-        var _dynamicVBuffer = __dynamicVBuffer;
-        
-        //bm_max requires some trickery with alpha to get good-looking results
-        //Determine the blend mode and "default" shader accordingly
-        if ((mode == BULB_MODE.HARD_BM_MAX) || (mode == BULB_MODE.HARD_BM_MAX_SELFLIGHTING))
-        {
-            var _resetShader = __shdBulbPremultiplyAlpha;
-            gpu_set_blendmode(bm_max);
-        }
-        else
-        {
-            var _resetShader = __shdBulbPassThrough;
-            gpu_set_blendmode(bm_add);
-        }
-        
-        //Set up the coefficient to flip normals
-        //We use this to control self-lighting
-        shader_set(__shdBulbHardShadows);
-        shader_set_uniform_f(_u_fNormalCoeff, _normalCoeff);
-        
-        //Also do the same for our sunlight shader, provided we have any sunlight sources
-        if (array_length(__sunlightArray) > 0)
-        {
-            shader_set(__shdBulbHardShadowsSunlight);
-            shader_set_uniform_f(_sunlight_u_fNormalCoeff, _normalCoeff);
-        }
-        
-        //Set our default shader
-        shader_set(_resetShader);
-        
-        //And switch on z-testing. We'll use z-testing for stenciling
-        gpu_set_ztestenable(true);
-        gpu_set_zwriteenable(true);
-        gpu_set_zfunc(cmpfunc_lessequal);
-        
-        var _i = 0;
-        repeat(array_length(__lightsArray))
-        {
-            var _weak = __lightsArray[_i];
-            if (!weak_ref_alive(_weak) || _weak.ref.__destroyed)
-            {
-                array_delete(__lightsArray, _i, 1);
-            }
-            else
-            {
-                with(_weak.ref)
-                {
-                    if (visible)
-                    {
-                        __CheckSpriteDimensions();
-                        
-                        //If this light is active, do some drawing
-                        if (__IsOnScreen(_cameraL, _cameraT, _cameraR, _cameraB))
-                        {
-                            if (castShadows)
-                            {
-                                //Turn off all RGBA writing, leaving only z-writing
-                                gpu_set_colorwriteenable(false, false, false, false);
-                                
-                                //Guarantee that we're going to write to the z-buffer with the next operations
-                                gpu_set_zfunc(cmpfunc_always);
-                                
-                                //Reset z-buffer
-                                draw_sprite_ext(sprite, image,
-                                                x, y,
-                                                xscale, yscale, angle,
-                                                c_black, 1);
-                                
-                                //Stencil out shadow areas
-                                shader_set(__shdBulbHardShadows);
-                                shader_set_uniform_f(_u_vLight, x, y);
-                                vertex_submit(_staticVBuffer,  pr_trianglelist, -1);
-                                vertex_submit(_dynamicVBuffer, pr_trianglelist, -1);
-                                
-                                //Swap to drawing RGB data (no alpha to make the output surface tidier)
-                                gpu_set_colorwriteenable(true, true, true, false);
-                                gpu_set_zfunc(cmpfunc_lessequal);
-                                
-                                //Reset shader and draw the light itself, but "behind" the shadows
-                                shader_set(_resetShader);                      
-                                draw_sprite_ext(sprite, image,
-                                                x, y,
-                                                xscale, yscale, angle,
-                                                blend, alpha);
-                            }
-                            else
-                            {
-                                //Ensure any previous changes to the z-buffer don't leak across
-                                gpu_set_colorwriteenable(true, true, true, false);
-                                gpu_set_zfunc(cmpfunc_always);
-                                
-                                //Just draw the sprite, no fancy stuff here
-                                draw_sprite_ext(sprite, image,
-                                                x, y,
-                                                xscale, yscale, angle,
-                                                blend, alpha);
-                            }
-                        }
-                    }
-                }
-                
-                ++_i;
-            }
-        }
-        
-        var _i = 0;
-        repeat(array_length(__sunlightArray))
-        {
-            var _weak = __sunlightArray[_i];
-            if (!weak_ref_alive(_weak) || _weak.ref.__destroyed)
-            {
-                array_delete(__sunlightArray, _i, 1);
-            }
-            else
-            {
-                with(_weak.ref)
-                {
-                    if (visible)
-                    {
-                        //Turn off all RGBA writing, leaving only z-writing
-                        gpu_set_colorwriteenable(false, false, false, false);
-                        
-                        //Guarantee that we're going to write to the z-buffer with the next operations
-                        gpu_set_zfunc(cmpfunc_always);
-                        
-                        //Full surface clear of the z-buffer
-                        draw_sprite_ext(__sprBulbPixel, 0, _cameraL, _cameraT, _cameraW+1, _cameraH+1, 0, c_black, 0);
-                        
-                        //Stencil out shadow areas
-                        shader_set(__shdBulbHardShadowsSunlight);
-                        shader_set_uniform_f(_sunlight_u_vLightVector, dcos(angle), -dsin(angle));
-                        vertex_submit(_staticVBuffer,  pr_trianglelist, -1);
-                        vertex_submit(_dynamicVBuffer, pr_trianglelist, -1);
-                        
-                        //Swap to drawing RGB data (no alpha to make the output surface tidier)
-                        gpu_set_colorwriteenable(true, true, true, false);
-                        gpu_set_zfunc(cmpfunc_lessequal);
-                        
-                        //Reset shader and draw the light itself, but "behind" the shadows
-                        shader_set(_resetShader);
-                        draw_sprite_ext(__sprBulbPixel, 0, _cameraL, _cameraT, _cameraW+1, _cameraH+1, 0, blend, alpha);
-                    }
-                }
-                
-                ++_i;
-            }
-        }
-        
-        gpu_set_zfunc(cmpfunc_lessequal);
-        gpu_set_blendmode(bm_normal);
-        gpu_set_ztestenable(false);
-        gpu_set_zwriteenable(false);
-    }
-    
-    #endregion
-    
-    #region Clip Surface
-    
-    static __ApplyClippingSurface = function()
-    {
-        if (__freed || !__clipEnabled) return undefined;
-        
-        var _clipSurface = GetClippingSurface();
-        if (_clipSurface != undefined)
-        {
-            if (!__clipInvert) //Intended to be (!__clipInvert)
-            {
-                //Use an inverse alpha so that we paint visible areas onto the clip surface
-                //Inverted mode should use GameMaker's standard alpha blending
-                //...this makes sense if you think about it, trust me
-                gpu_set_blendmode_ext(bm_inv_src_alpha, bm_src_alpha);
             }
             
-            gpu_set_colorwriteenable(true, true, true, false);
-            
-            if (__clipValueToAlpha)
+            var _i = hdrBloomIterations-1;
+            repeat(hdrBloomIterations-1)
             {
-                //Apply the HSV value->alpha conversion shader if so desired
-                shader_set(__shdBulbHSVValueToAlpha);
-                draw_surface_ext(_clipSurface, 0, 0, 1, 1, 0, __clipIsShadow? ambientColor : c_white, __clipAlpha);
-                shader_reset();
+                surface_set_target(_bloomSurfaceArray[_i-1]);
+                    shader_set(__shdBulbKawaseUp);
+                    shader_set_uniform_f(shader_get_uniform(__shdBulbKawaseUp, "u_vTexel"), texture_get_texel_width(surface_get_texture(_bloomSurfaceArray[_i])), texture_get_texel_height(surface_get_texture(_bloomSurfaceArray[_i])));
+                    draw_surface_stretched(_bloomSurfaceArray[_i], 0, 0, surface_get_width(_bloomSurfaceArray[_i-1]), surface_get_height(_bloomSurfaceArray[_i-1]));
+                surface_reset_target();
+                
+                --_i;
             }
-            else
-            {
-                draw_surface_ext(_clipSurface, 0, 0, 1, 1, 0, __clipIsShadow? ambientColor : c_white, __clipAlpha);
-            }
+        }
             
-            //Reset GPU state
+        gpu_set_blendenable(true);
+        
+        surface_set_target(_surface);
+            
+            gpu_set_blendmode_ext(bm_one, bm_one);
+            shader_set(__shdBulbIntensity);
+            shader_set_uniform_f(_u_fIntensity, hdrBloomIntensity);
+            draw_surface_stretched_ext(_bloomSurfaceArray[0], 0, 0, _surfaceWidth, _surfaceHeight, c_white, 1);
+            
             gpu_set_blendmode(bm_normal);
-            gpu_set_colorwriteenable(true, true, true, true);
+            shader_reset();
+            
+        surface_reset_target();
+        
+        gpu_set_tex_filter(_oldTextureFiltering);
+        gpu_set_blendenable(_oldAlphaBlend);
+    }
+    
+    Free = function()
+    {
+        __FreeVertexBuffers();
+        __FreeLightSurface();
+        __FreeOutputSurface();
+        __FreeBloomSurfaces();
+        __FreeNormalMapSurface();
+        
+        var _nullFunc = function() {}
+        
+        //BulbRenderer()
+        SetCamera              = _nullFunc;
+        GetCamera              = _nullFunc;
+        SetSurfaceDimensions   = _nullFunc;
+        GetSurfaceDimensions   = _nullFunc;
+        Update                 = _nullFunc;
+        GetOutputSurface       = _nullFunc;
+        DrawLitSurface         = _nullFunc;
+        GetTonemap             = _nullFunc;
+        RefreshStaticOccluders = _nullFunc;
+        __KawaseBloom          = _nullFunc;
+        
+        //__BulbRendererDefineHDR()
+        __GetOutputSurface  = _nullFunc;
+        __FreeOutputSurface = _nullFunc;
+        __FreeBloomSurfaces = _nullFunc;
+        
+        //__BulbRendererDefineNormal()
+        GetNormalMapSurface    = _nullFunc;
+        DrawNormalMapDebug     = _nullFunc;
+        __FreeNormalMapSurface = _nullFunc;
+        
+        //__BulbRendererDefineOverlayUnderlay()
+        __AccumulateAmbienceSprite = _nullFunc;
+        __AccumulateShadowOverlay  = _nullFunc;
+        __AccumulateLightOverlay   = _nullFunc;
+        
+        //__BulbRendererDefineAccumulateSoft()
+        __AccumulateSoftLights = _nullFunc;
+        
+        //__BulbRendererDefineAccumulateHard()
+        __AccumulateHardLights = _nullFunc;
+        
+        //__BulbRendererDefineVertexBuffers()
+        RefreshStaticOccluders = _nullFunc;
+        __FreeVertexBuffers    = _nullFunc;
+        __UpdateVertexBuffers  = _nullFunc;
+        
+        //__BulbRendererDefineLight()
+        GetLightSurface    = _nullFunc;
+        __FreeLightSurface = _nullFunc;
+        GetLightValue      = _nullFunc;
+    }
+    
+    GetTonemap = function()
+    {
+        return (hdr && _system.__hdrAvailable)? hdrTonemap : ldrTonemap;
+    }
+    
+    __GetAmbientColor = function()
+    {
+        if (GetTonemap() == BULB_TONEMAP_BAD_GAMMA)
+        {
+            if (ambientInGammaSpace)
+            {
+                return ambientColor;
+            }
+            else
+            {
+                return make_color_rgb(255*power(color_get_red(  ambientColor)/255, 1/BULB_GAMMA),
+                                      255*power(color_get_green(ambientColor)/255, 1/BULB_GAMMA),
+                                      255*power(color_get_blue( ambientColor)/255, 1/BULB_GAMMA));
+            }
+        }
+        else
+        {
+            if (ambientInGammaSpace)
+            {
+                return make_color_rgb(255*power(color_get_red(  ambientColor)/255, BULB_GAMMA),
+                                      255*power(color_get_green(ambientColor)/255, BULB_GAMMA),
+                                      255*power(color_get_blue( ambientColor)/255, BULB_GAMMA));
+            }
+            else
+            {
+                return ambientColor;
+            }
         }
     }
     
-    #endregion
+    
+    
+    //Assign the ambient colour used for the darkest areas of the screen. This can be changed on the fly
+    ambientColor = c_black;
+    ambientInGammaSpace = false;
+    
+    //The smoothing mode controls texture filtering both when accumulating lights and when drawing the resulting surface
+    smooth = true;
+    
+    selfLighting = false;
+    
+    soft = true;
+    __oldSoft = undefined;
+    
+    exposure   = 1;
+    ldrTonemap = BULB_TONEMAP_NONE;
+    
+    __camera         = undefined;
+    __cameraImplicit = false;
+    
+    __surfaceWidth  = -1;
+    __surfaceHeight = -1;
+    
+    __BulbRendererDefineHDR();
+    __BulbRendererDefineNormal();
+    __BulbRendererDefineOverlayUnderlay();
+    __BulbRendererDefineAccumulateSoft();
+    if (_system.__hasStencil) __BulbRendererDefineAccumulateHard() else __BulbRendererDefineAccumulateHardNoStencil();
+    __BulbRendererDefineVertexBuffers();
+    __BulbRendererDefineLight();
+    
+    SetCamera(_camera);
 }

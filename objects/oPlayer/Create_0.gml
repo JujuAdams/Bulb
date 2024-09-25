@@ -1,10 +1,10 @@
-light = new BulbLight(oRenderer.lighting, sLightTorch, 0, x, y);
+light = new BulbLight(oRendererPar.renderer, sLightTorch, 0, x, y);
+light.z = 100;
 light.penumbraSize = 30;
 light.yscale = 0.5;
 light.blend = make_colour_rgb(255, 255, 100);
+light.intensity = 1.5;
 
-visionCone = new BulbLight(oRenderer.vision, sLightTorch, 0, x, y);
-visionCone.penumbraSize = 30;
-visionCone.xscale = 2;
-visionCone.yscale = 2;
-visionCone.blend = c_white;
+//Turn on normal maps for this light
+//This would typically be done using the `BULB_DEFAULT_USE_NORMAL_MAP`
+light.normalMap = true;

@@ -1,0 +1,1 @@
+staticBlocks.Bake(oStaticOccluder, sStaticBlock, 0, true);

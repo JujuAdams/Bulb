@@ -8,18 +8,19 @@ function BulbLight(_renderer, _sprite, _image, _x, _y) constructor
 {
     visible = true;
     
-    x         = _x;
-    y         = _y;
-    xprevious = x;
-    yprevious = y;
+    x = _x;
+    y = _y;
     
-    sprite = _sprite;
-    image  = _image;
-    xscale = 1.0;
-    yscale = 1.0;
-    angle  = 0.0;
-    blend  = c_white;
-    alpha  = 1.0;
+    normalMap  = BULB_DEFAULT_USE_NORMAL_MAP;
+    normalMapZ = BULB_DEFAULT_NORMAL_MAP_Z;
+    
+    sprite    = _sprite;
+    image     = _image;
+    xscale    = 1.0;
+    yscale    = 1.0;
+    angle     = 0.0;
+    blend     = c_white;
+    intensity = 1.0;
     
     penumbraSize = 0.0;
     

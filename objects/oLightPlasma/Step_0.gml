@@ -1,10 +1,10 @@
 if (destroying)
 {
-    light.alpha -= 0.05;
+    light.intensity -= 0.2;
     
-    if (light.alpha <= 0)
+    if (light.intensity <= 0)
     {
-        light.alpha = 0;
+        light.intensity = 0;
         light.Destroy();
         instance_destroy();
     }
