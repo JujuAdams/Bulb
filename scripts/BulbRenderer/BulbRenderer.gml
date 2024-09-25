@@ -319,6 +319,11 @@ function BulbRenderer(_camera) constructor
         static _u_fIntensity = shader_get_uniform(__shdBulbIntensity, "u_fIntensity");
         static _u_vThreshold = shader_get_uniform(__shdBulbKawaseDownWithThreshold, "u_vThreshold");
         
+        if (surface_get_target() == _surface)
+        {
+            __BulbError("Cannot call .DrawLitSurface() when the destination surface and drawn surface are the same\nIf you are drawing the application surface, use a Post-Draw event or GUI draw event");
+        }
+        
         var _oldTextureFiltering = gpu_get_tex_filter();
         var _oldAlphaBlend       = gpu_get_blendenable();
         
