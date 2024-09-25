@@ -1,7 +1,7 @@
 {
   "resourceType": "GMScript",
   "resourceVersion": "1.0",
-  "name": "BulbDrawLitApplicationSurface",
+  "name": "BulbDrawLitSurface",
   "isDnD": false,
   "isCompatibility": false,
   "parent": {

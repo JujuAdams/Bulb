@@ -1,6 +1,7 @@
 // Feather disable all
 
 /// @param bulbRenderer
+/// @param surface
 /// @param [x]
 /// @param [y]
 /// @param [width]
@@ -8,8 +9,13 @@
 /// @param [textureFiltering]
 /// @param [alphaBlend=false]
 
-function BulbDrawLitApplicationSurface(_renderer, _x = undefined, _y = undefined, _width = undefined, _height = undefined, _textureFiltering = undefined, _alphaBlend = false)
+function BulbDrawLitSurface(_renderer, _surface, _x = undefined, _y = undefined, _width = undefined, _height = undefined, _textureFiltering = undefined, _alphaBlend = false)
 {
+    if (surface_get_target() == _surface)
+    {
+        __BulbError("Cannot call BulbDrawLitSurface() when the destination surface and drawn surface are the same\nIf you are drawing the application surface, use a Post-Draw event or GUI draw event");
+    }
+    
     if ((_x == undefined) || (_y == undefined) || (_width == undefined) || (_height == undefined))
     {
         var _positionArray = application_get_position();
@@ -33,7 +39,7 @@ function BulbDrawLitApplicationSurface(_renderer, _x = undefined, _y = undefined
             gpu_set_blendenable(_alphaBlend);
         }
         
-        draw_surface_stretched(application_surface, _x, _y, _width, _height);
+        draw_surface_stretched(_surface, _x, _y, _width, _height);
         
         if (_textureFiltering != undefined)
         {
@@ -47,6 +53,6 @@ function BulbDrawLitApplicationSurface(_renderer, _x = undefined, _y = undefined
     }
     else
     {
-        _renderer.DrawLitSurface(application_surface, _x, _y, _width, _height, _textureFiltering, _alphaBlend);
+        _renderer.DrawLitSurface(_surface, _x, _y, _width, _height, _textureFiltering, _alphaBlend);
     }
 }

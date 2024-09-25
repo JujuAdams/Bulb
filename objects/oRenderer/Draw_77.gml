@@ -1,5 +1,5 @@
 //Draw the application surface to the screen
-BulbDrawLitApplicationSurface(renderer);
+BulbDrawLitSurface(renderer, application_surface);
 
 if (keyboard_check(ord("N")))
 {

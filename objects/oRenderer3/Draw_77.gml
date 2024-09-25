@@ -1,1 +1,1 @@
-BulbDrawLitApplicationSurface(renderer);
+BulbDrawLitSurface(renderer, application_surface);
