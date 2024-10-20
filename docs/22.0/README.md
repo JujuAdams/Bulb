@@ -20,6 +20,12 @@ Bulb primarily supports GameMaker 2024.6 and in theory supports every version of
 
 &nbsp;
 
+**Does this library support GMRT / "new runtime"?**
+
+No, GMRT is not supported by this library.
+
+&nbsp;
+
 **How is Bulb licensed? Can I use it for commercial projects?**
 
 [Bulb is released under the MIT license](https://github.com/JujuAdams/Bulb/blob/master/LICENSE). This means you can use it for whatever purpose you want, including commercial projects. It'd mean a lot to me if you'd drop my name in the credits (Juju Adams) and/or say thanks, but you're under no obligation to do so.
