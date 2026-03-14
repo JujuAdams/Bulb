@@ -50,6 +50,12 @@ Bulb is built and maintained by [Juju](https://www.jujuadams.com/) who has been 
 
 &nbsp;
 
+**Has AI been used to make this library?**
+
+This library was made with human hands. No generative AI models have been used to make this library.
+
+&nbsp;
+
 **Can I send you donations? Are you going to start a Patreon?**
 
 Thank you for wanting to show your appreciation - it really does mean a lot to me personally - but I'm fortunate enough to have a stable income from gamedev. I'm not looking to join Patreon as a creator at this moment in time. If you'd like to support my work then drop me a credit in your game and/or give a shout-out on the social media platform of your choice.
